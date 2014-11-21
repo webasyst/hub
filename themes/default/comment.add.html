@@ -1,0 +1,46 @@
+{*
+    add form for COMMENTS & ANSWERS
+*}
+
+<section class="comment-form" id="comment-form">
+
+    <form method="post">
+
+        {if !$wa->user()->isAuth()}
+
+            <!-- guest users may not post in the Hub, because voting won't work otherwise -->
+
+            <div id="user-auth-provider" data-provider="signup">
+                {sprintf('[`To add a comment please <a href="%s">sign up</a> or <a href="%s">login</a>`]',$wa->signupUrl(),$wa->loginUrl())}
+            </div>
+
+            {$wa->authAdapters()}
+
+        {else}
+
+            <!-- authorized -->
+            <div class="comment-form-fields">
+                <p>
+                    <label>[`Your name`]</label>
+                    <strong><img src="{$user.photo_url_20}" class="userpic" alt="{$wa->user()->get('name')|escape}" title="{$wa->user()->get('name')|escape}">{$wa->user()->get('name')|escape}</strong>
+                    <a href="?logout">[`log out`]</a>
+                </p>
+                <div class="comment-body">
+                    <label>[`Comment`]</label>
+                    <div class="comment-redactor"><textarea data-upload-url="{$wa->getUrl('/frontend/uploadImage')}" id="comment-text" name="text" rows="10" cols="45"></textarea></div>
+                </div>
+            </div>
+
+            <div class="comment-submit">
+                <input type="submit" class="save" value="[`Add comment`]">
+                {$wa->csrf()}
+                <input type="hidden" name="parent_id" value="0">
+                <input type="hidden" name="topic_id" value="{$topic.id}">
+                <input type="hidden" name="count" value="{$comments_count}">
+                <input type="hidden" name="type" value="{if $types[$topic.type_id].type == 'question'}answer{else}comment{/if}">
+            </div>
+        {/if}
+
+    </form>
+
+</section>

@@ -1,0 +1,40 @@
+{capture name="comment_list"}
+    {foreach $comments as $id => $comment}
+        <li data-id="{$comment.id}" class="h-comment">{include file="./include.comment.html" inline}</li>
+    {/foreach}
+{/capture}
+
+<script type="text/javascript" src="{$wa_app_static_url}js/lazy.load.js"></script>
+<script type="text/javascript" src="{$wa_app_static_url}js/comments.js"></script>
+<div class="block double-padded" id="comments-wrapper">
+    <h1>[`Comments`]</h1>
+    <div class="h-comments">
+        <ul>{$smarty.capture.comment_list}</ul>
+        <div id="h-comment-add" style="display:none;">
+            {include './include.addComment.html' inline}
+        </div>
+    </div>
+    <div class="lazyloading-wrapper">
+        <div class="lazyloading-progress-string">{_w('%d comment','%d comments', $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
+        <a href="javascript:void(0);" class="lazyloading-link" {if $count >= $total_count}style="display:none;"{/if}>[`Show more comments`]</a>
+        <span class="lazyloading-progress" style="display:none">
+            <i class="icon16 loading"></i> [`Loading`] <span class="lazyloading-chunk">{_w('%d comment', '%d comments', min($total_count - $count, $count))}...</span>
+        </span>
+    </div>
+</div>
+<script>
+    document.title = '{"[`comments`]"|cat:" — ":{$wa->accountName()}}';
+    $.comments.init({
+        statuses: {
+            deleted: '{hubCommentModel::STATUS_DELETED}',
+                 published: '{hubCommentModel::STATUS_PUBLISHED}'
+        },
+        lazy_loading: {
+            auto: true,
+            total_count: {$total_count},
+            count: {$count}
+        },
+        container: '#comments-wrapper'
+    });
+    $('#h-all-comments').find('.count-new:first').text({if $sidebar_counters.new}'+{$sidebar_counters.new}'{else}''{/if});
+</script>

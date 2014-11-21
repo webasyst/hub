@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
+
+    {$wa->css()}
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/hub.css?v{$wa->version()}">
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/glyphs.css?v{$wa->version()}">
+    <link rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css?v={$wa->version()}">
+
+    <link href="{$wa_url}wa-content/css/jquery-ui/base/jquery.ui.autocomplete.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{$wa_url}wa-content/js/farbtastic/farbtastic.css" type="text/css" />
+    <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/jquery-tagsinput/jquery.tagsinput.css">
+
+    <script src="{$wa_url}wa-content/js/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="{$wa_url}wa-content/js/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+
+    {wa_js file="js/hub.min.js"}
+        {$wa_url}wa-content/js/jquery-wa/wa.core.js
+        {$wa_url}wa-content/js/jquery-wa/wa.dialog.js
+        {$wa_url}wa-content/js/jquery-plugins/jquery.history.js
+        {$wa_url}wa-content/js/jquery-plugins/jquery.store.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.core.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.widget.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.mouse.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.position.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.autocomplete.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.draggable.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.droppable.min.js
+        {$wa_url}wa-content/js/jquery-ui/jquery.ui.sortable.min.js
+        {$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js
+        {$wa_url}wa-content/js/farbtastic/farbtastic.js
+        {$wa_url}wa-content/js/jquery-plugins/jquery-tagsinput/jquery.tagsinput.min.js
+
+        {$wa_app_static_url}js/jquery.sticky.js
+        {$wa_app_static_url}js/lazy.load.js
+        {$wa_app_static_url}js/hub.js
+        {$wa_app_static_url}js/sidebar.js
+    {/wa_js}
+
+    <script type="text/javascript" src="{$wa_url}wa-content/js/ace/ace.js"></script>
+    <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/redactor/redactor.css">
+    <script src="{$wa_url}wa-content/js/redactor/redactor.min.js"></script>
+    {if substr($wa->locale(), 0, 2)!='en'}<script src="{$wa_url}wa-content/js/redactor/{substr($wa->locale(), 0, 2)}.js"></script>{/if}
+    <script src="{$wa_url}wa-content/js/jquery-wa/editor.js?v{$wa->version()}"></script>
+    {$wa->js()}
+</head>
+<body>
+    <div id="wa">
+        {$wa->header()}
+        <div id="wa-app">
+            <div class="sidebar left200px top-padded">
+                {include file="./include.sidebar.html" inline}
+            </div>
+            <div class="content left200px" id="c-core">
+                <div class="block not-padded c-core-content" id="content">
+                    <div class="block">
+                        <h1 class="wa-page-heading">[`Loading...`]</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $.hub.init({json_encode(['accountName' => $wa->accountName()])});
+    </script>
+</body>
+</html>

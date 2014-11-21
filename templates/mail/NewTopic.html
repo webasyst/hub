@@ -1,0 +1,14 @@
+{*
+ * Sent to backend users manually selected in backend topic editor.
+ * See hubTopicsSaveController.
+ *
+ *}
+{sprintf('[`Hi %s,`]', $contact.name)}
+<br><br>
+{sprintf_wp('%s posted a new topic <a href="%s"><strong>%s</strong></a> and invites you to take a look:', htmlspecialchars($sender.name), $wa->url(1)|cat:substr($wa_app_url, 1):'#/topic/':$topic.id:'/', $topic.title|escape)}
+<br><br>
+<div style="font-weight: bold;">{$message|escape|nl2br}</div>
+<br><br>
+--<br>
+{$wa->accountName()}<br>
+<a href="{$wa->domainUrl()}">{$wa->domainUrl()}</a>

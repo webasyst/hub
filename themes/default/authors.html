@@ -1,0 +1,13 @@
+<h1>[`Authors`]</h1>
+
+<ul class="lazyloading-list">
+    {foreach $authors as $a}
+    <li><a href="{$a.url}">{$a.name}</a> <b>{$a.rate}</b></li>
+    {/foreach}
+</ul>
+
+{if isset($pages_count) && $pages_count > 1}
+<div class="block lazyloading-paging" data-times="1" data-link-text="[`Load more`]">
+    {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+</div>
+{/if}

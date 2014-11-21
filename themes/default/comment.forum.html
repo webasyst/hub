@@ -1,0 +1,38 @@
+<div class="meta">
+    <a href="{$comment.author.url|default:'#comment':$comment.id}">
+        <img src="{$comment.author.photo_url_50}" class="userpic" alt="{$comment.author.name|escape}" title="{$comment.author.name|escape}">
+    </a>
+</div>
+
+<div class="meta-ousted">
+
+    <!-- author -->
+    <div class="credentials">
+
+        <a class="username" href="{$comment.author.url|default:'#comment':$comment.id}">
+            <span itemprop="creator">{$comment.author.name|escape}</span>
+            {if !empty($comment.author.badge)}
+                <span class="staff"{if !empty($comment.author.badge_color)} style="background-color: {$comment.author.badge_color}"{/if}>{$comment.author.badge}</span>
+            {/if}
+        </a>
+
+        <meta itemprop="commentTime" content="{"Y-m-d\TH:i"|date:$comment.datetime_ts}">
+        <span class="hint date aux">{$comment.datetime|wa_datetime:"humandatetime"}</span>
+
+        {if !empty($comment.editable)}
+        <div class="edit-links">
+            <a href="#">[`Edit`]</a>
+            <a href="#">[`Delete`]</a>
+        </div>
+        {/if}
+    </div>
+
+    <!-- comment text -->
+    <div itemprop="commentText" class="text">{$comment.text}</div>
+
+    {* @event frontend_comments.%plugin_id% *}
+    {if !empty($comment.plugins)}
+    {foreach $comment.plugins as $_}{$_}{/foreach}
+    {/if}
+
+</div>

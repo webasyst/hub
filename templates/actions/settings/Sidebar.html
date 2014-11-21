@@ -1,0 +1,41 @@
+<ul class="menu-v stack with-icons">
+    <li class="{if empty($type) && empty($hub)}selected {/if}top-padded">
+        <a href="#/settings/">
+            <i class="icon16 settings"></i>[`Settings`]
+        </a>
+    </li>
+</ul>
+
+{if $is_admin}
+    <!-- hubs -->
+    <h5 class="heading">
+        <a href="#/settings/hub/add/" class="count"><i class="icon16 add"></i></a>
+        [`Hubs`]
+    </h5>
+    <ul class="menu-v stack with-icons">
+        {foreach $hubs as $h}
+        <li{if !empty($hub) && ($hub.id == $h.id)} class="selected"{/if}>
+            <a href="#/settings/hub/{$h.id}/"{if $h.status && !$h.urls} style="color: #aaa;"{/if}>{strip}<i class="icon16 color{if !empty($h.params.color)} h-{$h.params.color}{/if}"></i>{/strip}<span class="js-hub-name">{$h.name|default:'[`(no name)`]'|escape}</span>
+                {if !$h.status}
+                    <i class="icon10 lock-bw no-overhanging"></i>
+                {/if}
+            </a>
+        </li>
+        {/foreach}
+    </ul>
+{/if}
+
+{if $is_admin}
+    <!-- topic types -->
+    <h5 class="heading">
+        <a href="#/settings/type/new/" class="count"><i class="icon16 add"></i></a>
+        [`Topic types`]
+    </h5>
+    <ul class="menu-v stack with-icons">
+        {foreach $types as $t}
+        <li{if !empty($type) && ($type.id == $t.id)} class="selected"{/if}>
+            <a href="#/settings/type/{$t.id}/">{hubHelper::getGlyph($t.glyph, 16, true)}<span class="js-type-name">{$t.name|escape}</span></a>
+        </li>
+        {/foreach}
+    </ul>
+{/if}

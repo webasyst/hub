@@ -1,0 +1,64 @@
+{*
+ * Sub-template included in comments/Comments.html and topics/Topics.html
+ *}
+
+<div class="{if $comment.status == hubCommentModel::STATUS_DELETED}h-deleted{/if}" id="h-comment-{$comment.id}">
+
+    <div class="float-right">
+        <strong class="{if $comment.vote > 0}h-positive{else if $comment.vote < 0}h-negative{else}gray{/if} total-score">{if $comment.vote > 0}+{/if}{$comment.vote}</strong>
+        {if !($comment.status == hubCommentModel::STATUS_DELETED)}
+            {if empty($comment.author.vote)}{$comment.author.vote = 0}{/if}
+            <a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($comment.votes_up),true)}"><i class="icon16 hbicns up{if $comment.author.vote<=0}-bw{/if}"></i></a>
+            <a href="javascript:void(0)" class="h-vote-down" title="{_w('%d vote','%d votes',abs($comment.votes_down),true)}"><i class="icon16 hbicns down{if $comment.author.vote>=0}-bw{/if}"></i></a>
+        {/if}
+    </div>
+
+    {capture name=commentor_name}
+        {if $comment.author}<i class="icon16 userpic20" style="background-image: url('{$comment.author.photo_url_20}');"></i><span class="bold">{$comment.author.name|escape}</span>{else}<i class="icon16 userpic20" style="background-image: url('{$wa_url}wa-content/img/userpic20.jpg');"></i>{/if}
+    {/capture}
+
+    {if $comment.contact_id != 0}
+        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="bold h-comment-author{if !empty($comment['is_updated'])} highlighted{/if}">{$smarty.capture.commentor_name}</a>
+    {else}
+        <span class="h-comment-author{if !empty($comment['is_updated'])} highlighted{/if}">{$smarty.capture.commentor_name}</span>
+    {/if}
+
+    {if !empty($comment.topic)}
+        <span class="hint">[`on topic`] <strong><a href="#/topic/{$comment.topic.id}/">{$comment.topic.title|escape}</a></strong></span>
+    {/if}
+
+    <span class="hint{if !empty($comment['is_updated'])} highlighted{/if}">
+        {$comment.datetime|wa_datetime:"humandatetime"}, {$comment.ip}
+    </span>
+
+    {if !empty($comment.can_delete)}
+        <a href="#" class="small h-comment-delete" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if}>[`delete`]</a>
+        <a href="#" class="small h-comment-restore" {if $comment.status == hubCommentModel::STATUS_PUBLISHED}style="display: none;"{/if}>[`restore`]</a>
+    {/if}
+
+    {if empty($comment.topic) && (!empty($topic) && !empty($topic.type) && $topic.type.type == hubTopicModel::TYPE_QUESTION) && !$comment.depth}{strip}
+        <a href="#" class="small h-comment-solution"
+               data-solution="{if $comment.solution}1{/if}">
+            {if !$comment.solution}[`Mark as solution`]{else}[`Unmark solution`]{/if}
+        </a>
+    {/strip}{/if}
+
+    <div class="h-comment-text">
+        {if $comment.status == hubCommentModel::STATUS_DELETED}
+            <em class="gray strike">[`comment deleted`]</em>
+        {else}
+            {$comment.text}
+        {/if}
+        {if !empty($comment.parent)}
+            <span class="hint">[`in reply to`]
+                <strong>
+                    {strip_tags($comment.parent.text)|truncate:100}
+                </strong>
+            </span>
+        {/if}
+    </div>
+
+    {if empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting)}
+        <a href="#" class="h-comment-reply small inline-link"><b><i>[`reply`]</i></b></a>
+    {/if}
+</div>

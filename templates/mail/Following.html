@@ -1,0 +1,15 @@
+{*
+ * Sent to contacts who are following a topic
+ * when someone adds a comment.
+ *
+ * Mail subject is hardcoded in hubCommentsAddController and hubFrontendCommentsAddController.
+ *}
+{sprintf('[`Hi %s,`]', $contact.name)}
+<br><br>
+{sprintf('[`%s posted a new comment on <a href="%s"><strong>%s</strong></a> topic you are following:`]', $comment.author.name|escape, $topic.url|escape, $topic.title)}
+<br><br>
+<div style="font-weight: bold;">{$comment.text}</div>
+<br><br>
+--<br>
+{$wa->accountName()}<br>
+<a href="{$wa->domainUrl()}">{$wa->domainUrl()}</a>

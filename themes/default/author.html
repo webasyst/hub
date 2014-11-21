@@ -1,0 +1,22 @@
+
+{if $wa->userId() == $author.contact_id}
+
+    <h1>[`My topics`]</h1>
+
+    <ul class="menu-h">
+        <li{if !empty($author_following)} class="selected"{/if}><a href="{$wa_app_url}author/{$wa->user()->getId()}/following/">[`Following`]</a></li>
+        <li{if !empty($author_topics)} class="selected"{/if}><a href="{$wa_app_url}author/{$wa->user()->getId()}/">[`My topics`]</a></li>
+    </ul>
+
+{else}
+
+    <h1>{sprintf('[`Topics by %s`]',$author.name)}</h1>
+    <p><img src="{$author.photo_url_96}" class="userpic" alt="{$author.name|escape}"></p>
+
+{/if}
+
+<!-- plugin hook: 'frontend_author' -->
+{* @event frontend_author.%plugin_id% *}
+{foreach $frontend_author as $_}{$_}{/foreach}
+
+{include file="list-topics.html"}

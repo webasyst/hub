@@ -1,0 +1,65 @@
+{*
+    mixed list of topics:
+    pages, discussions, questions, and feedback topics altogether
+*}
+
+{if empty($topics)}
+
+    <p class="empty-topic-list">[`There are no topics in this view.`]</p>
+
+{else}
+    <ul class="topics lazyloading-list">
+
+        {foreach $topics as $t}
+            <li>
+                {if !empty($types[$t.type_id])}
+                    {$_topic_type = $types[$t.type_id]}
+                {else}
+                    {* corrupted/missing topic type? fallback to 'custom' *}
+                    {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom','name'=> _w('Unknown topic type')]}
+                {/if}
+
+                <!-- glyph -->
+                <div class="meta">
+                    <a href="{$t.url|escape}">{hubHelper::getGlyph($_topic_type.glyph, 32, $t.is_updated, [ title=>$_topic_type.name,contact=>ifempty($t.author,[]) ] )}</a>
+                </div>
+
+                <a href="{$t.url|escape}" class="big{if !empty($t.is_updated)} bold{/if}">{$t.title|escape}</a>
+
+                {if !empty($t.badge)}
+                    <span class="badge badge-{$t.badge.id}"><i></i>{$t.badge.name}</span>
+                {/if}
+
+                {if $_topic_type.type != 'forum'}
+                    <strong class="rating {if $t.votes_sum > 0}positive{elseif $t.votes_sum < 0}negative{else}gray{/if}">{if $t.votes_sum > 0}+{/if}{$t.votes_sum}</strong>
+                {/if}
+
+                <!-- author -->
+                {if $_topic_type.type == 'forum' && !empty($t.author)}
+                    <br>
+                    <span class="hint">
+                        {sprintf('[`by %s`]', $t.author.name|escape)}
+                    </span>
+                {else}
+                    <span class="hint">{$t.create_datetime|wa_datetime:"humandatetime"}</span>
+                {/if}
+
+                <!-- replies -->
+                <div class="replies{if !empty($t.is_updated)} bold{/if}">
+                    <span class="hint">{_w('%d reply', '%d replies', $t.comments_count)}</span>
+                </div>
+
+                {if $_topic_type.type != 'forum'}
+                    <p>{strip_tags($t.content)|truncate:255}</p>
+                {/if}
+            </li>
+        {/foreach}
+    </ul>
+
+    {if isset($pages_count) && $pages_count > 1}
+    <div class="block lazyloading-paging" data-times="1" data-link-text="[`Load more`]">
+        {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+    </div>
+    {/if}
+
+{/if}

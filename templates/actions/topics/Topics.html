@@ -1,0 +1,275 @@
+<div class="h-stream{if !empty($hub_color)} h-{$hub_color}{/if}">
+
+    <div class="h-header">
+        <div class="h-search-form">
+            <form id="search-form">
+                <input id="search-query" type="search" placeholder="[`Search topics`]" autocomplete="off" {if isset($query)}value="{$query|escape}"{/if}>
+            </form>
+            <script type="text/javascript">
+                $('#search-form').submit(function () {
+                    if ($('#search-query').val()) {
+                        $.wa.setHash('#/search/' + $('#search-query').val());
+                    }
+                    return false;
+                });
+            </script>
+        </div>
+
+        <ul class="menu-h h-sort js-bulk-menu">
+            <li>
+                <a href="#" class="gray inline-link"><i class="icon16 checkboxes"></i><b><i>[`Select`]</i></b></a>
+            </li>
+            {if !empty($category.id)||!empty($hub.id)}
+                <li style="display: none;">
+                    <a href="#" class="js-bulk-action" data-action="move" data-category="{if !empty($category.id)}{$category.id}{/if}" data-hub="{if !empty($hub.id)}{$hub.id}{elseif !empty($category.hub_id)}{$category.hub_id}{/if}"><i class="icon16 move"></i>[`Move`]<span class="indicator js-count">0</span></a>
+                </li>
+            {/if}
+            <li style="display: none;">
+                <a href="#" class="js-bulk-action" data-action="delete" data-confirm="[`Selected topics will be permanently deleted. Are you sure?`]"><i class="icon16 delete"></i>[`Delete`]<span class="indicator js-count">0</span></a>
+            </li>
+            <li style="display: none;">
+                <a href="#" class="gray inline-link"><b><i>[`Cancel`]</i></b></a>
+            </li>
+        </ul>
+        {if $type != 'search'}
+        <ul class="menu-h h-sort js-sort-menu">
+
+            <li class="{if !$order || $order == 'recent'} selected{/if}">
+                <a href="#/{if $hash}{$hash}/{/if}recent/">[`Newest`] <!-- create_datetime --> </a>
+            </li>
+            <li{if $order == 'popular'} class="selected"{/if}>
+                <a href="#/{if $hash}{$hash}/{/if}popular/">[`Popular`] <!-- top rated --> </a>
+            </li>
+            <li{if $order == 'updated'} class="selected"{/if}>
+                <a href="#/{if $hash}{$hash}/{/if}updated/">[`Updated`] <!-- last commented --> </a>
+            </li>
+            {*
+            <li{if $order == 'archive'} class="selected"{/if}>
+                <a href="#/{if $hash}{$hash}/{/if}archive/">[`Archive`] <!-- archive --> </a>
+            </li>
+            *}
+        </ul>
+        {/if}
+
+
+        <div class="h-stream-title">
+
+            <h1 class="list-title{if empty($title)} gray{/if}">
+                {if !empty($hub_context) && $type != 'hub'}
+                    <a href="#/hub/{$hub_context.id}/" class="back">&larr; {$hub_context.name|default:'[`(no name)`]'|escape}</a>
+                {/if}
+                {$title|default:'[`(no name)`]'|escape}
+            </h1>
+
+            {if $type == 'category'}
+                {if $is_admin}
+                    <a href="#" class="list-title-suffix stream-edit inline-link" data-category-id="{ifset($category.id)}"><i class="icon16 settings"></i><b><i>[`Category settings`]</i></b></a>
+                {/if}
+            {elseif $type == 'filter'}
+                {if $is_admin || (-$filter.contact_id == $wa->userId())}
+                    <a href="#" class="list-title-suffix stream-edit inline-link" data-filter-id="{ifset($filter.id)}"><i class="icon16 funnel"></i><b><i>[`Customize filter`]</i></b></a>
+                {/if}
+            {elseif $type == 'tag'}
+                <i class="icon16 tags list-title-suffix"></i>
+            {elseif $type == 'hub'}
+                {if !$hub.status}
+                    <i class="icon16 lock-bw list-title-suffix"></i>
+                {/if}
+                {if $is_admin}
+                    <a href="#/settings/hub/{ifset($hub.id)}/" class="gray list-title-suffix inline-link"><i class="icon16 settings"></i>[`Hub settings`]</a>
+                {/if}
+            {/if}
+
+            {if $type == 'hub' && !empty($tags)}
+                <div class="tags" style="display: none">
+                    {foreach $tags as $tag}
+                    <a href="#/tag/{$tag.id}/" style="font-size: {$tag.size}%; opacity: {$tag.opacity}">{$tag.name|escape}</a>
+                    {/foreach}
+                </div>
+            {/if}
+
+        </div>
+
+        <div class="clear-right"></div>
+
+    </div>
+
+    {if $type == 'hub' && $hub.status && !$hub_context.urls }
+        <div class="block double-padded">
+            <p class="small">
+                {sprintf('[`This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, <a href="%s">create a route</a> for Hub app and this hub in your Site app routing settings.`]', "../site/#/routing/")}
+            </p>
+        </div>
+    {/if}
+
+    <div class="h-saved block double-padded" style="display: none;">
+        <a href="#" class="h-close-saved">&times;</a>
+        <i class="icon16 yes"></i> [`Saved`]
+    </div>
+
+    <div id="h-content">
+
+
+        <div id="h-stream-settings" class="block double-padded" style="display: none;">
+            filter settings here: both new & edit
+            ...move SettingsFilter.html here
+        </div>
+
+
+        {if !empty($topics)}
+            <ul class="h-topics">
+            {foreach $topics as $t}
+
+                <li data-id="{$t.id}" class="h-topic{if empty($hubs[$t.hub_id].status)} h-private{/if} {if !empty($t.follow)}h-followed{else}h-not-followed{/if} {if $t.hub_color != 'white'}h-color-marker h-{$t.hub_color}{/if}">
+                    {$_r = $t.votes_up - $t.votes_down}
+
+                    {if !empty($types[$t.type_id])}
+                        {$_topic_type = $types[$t.type_id]}
+                    {else}
+                        {* corrupted/missing topic type? fallback to 'custom' *}
+                        {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom','name'=> _w('Unknown topic type')]}
+                    {/if}
+
+                    <div class="h-topic-meta">
+
+                        <input type="checkbox" class="js-bulk-mode" value="{$t.id}">
+
+                        {if 000}
+                            <i class="icon16 sort"></i>
+                        {/if}
+
+                        <a href="#/topic/{$t.id}/">{hubHelper::getGlyph( $_topic_type.glyph, 32, $t.is_updated && !empty($t.new_comments), [ title=>$_topic_type.name,contact=>ifempty($t.contact,[]) ] )}</a>
+
+                    </div>
+
+
+
+                    <!-- latest comments & follow -->
+                    <div class="h-replies">
+                        {if count($t.new_comments) > 0}
+                            <a href="javascript:void(0)" class="inline-link toggle-comments"><b><i>{_w('%d new reply', '%d new replies', count($t.new_comments))}</i></b></a>
+                        {elseif !empty($t.follow)}
+                            <span class="gray">[`No new replies`]</span>
+                        {else}
+                            <span class="gray">{_w('%d reply', '%d replies', $t.comments_count)}</span>
+                        {/if}
+                       <a href="#" title="[`Follow`]" data-topic="{$t.id}" class="h-follow bold"><i class="icon16 star{if empty($t.follow)}-empty{/if}"></i><span class="followers-count">{if !empty($t.follow)}[`Following`]{/if}</span></a>
+                    </div>
+
+                    <h3>
+
+                        <a href="#/topic/{$t.id}/" class="{if !empty($t.is_updated) && !empty($t.new_comments)}bold{/if}">
+                            {if $t.priority}
+                                <i class="icon16 status-{if $t.priority == 1}red{else}blue{/if}" title="{if $t.priority == 1}[`High priority`]{else}[`Low priority`]{/if}"></i>
+                            {/if}
+                            {if !empty($t.title)}{$t.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
+                        </a>
+
+                        {if $t.badge}
+                            <span class="h-badge h-answered h-{$t.badge.id}">{* <i class="icon10 h-badge-icon"></i> *}{$t.badge.name}</span>
+                        {/if}
+
+                        {if $_topic_type.type == 'forum'}
+                            <br>
+                            <span class="hint{if $t.is_new} highlighted{/if}">
+                                {sprintf('[`by %s`]', $t.contact.name|escape)}
+                            </span>
+                        {/if}
+
+                        <span class="hint{if $t.is_new} highlighted{/if}">
+                            {$t.create_datetime|wa_datetime:"humandatetime"}
+                        </span>
+
+                        {if $_topic_type.type != 'forum'}
+                            <strong class="h-rating {if $_r > 0}h-positive{elseif $_r < 0}h-negative{else}gray{/if}">{if $_r > 0}+{/if}{$_r}</strong>
+                        {/if}
+
+                    </h3>
+
+                    {if $_topic_type.type != 'forum'}
+                        <p class="h-topic-summary">{strip_tags($t.content)|truncate:255}</p>
+                    {/if}
+                    {if !empty($t.new_comments)}
+                        {$load_js_for_comments = true}
+                        <div class="h-comments{if empty($t.follow)} hidden{/if}">
+                            <ul>
+                                {foreach $t.new_comments as $comment}
+                                    <li data-id="{$comment.id}" class="h-comment">{include file="../comments/include.comment.html" inline}</li>
+                                {/foreach}
+                            </ul>
+                            <div id="h-comment-add" style="display:none;">
+                                {include '../comments/include.addComment.html' inline}
+                            </div>
+                        </div>
+                    {/if}
+
+                </li>
+            {/foreach}
+            </ul>
+
+            {if isset($pages_count) && $pages_count > 1}
+            <div class="block lazyloading-paging"  data-link-text="[`Load more`]">
+                {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+            </div>
+            {/if}
+        {else}
+
+            <p class="h-empty-view">[`There are no topics in this view.`]</p>
+
+        {/if}
+
+    </div>
+
+    {if $topics_count}
+    <div class="h-footer">
+        <p>{sprintf('[`%d topics of %d`]', $loaded_count, $topics_count)}</p>
+        {if $page < $pages_count}
+            <em><i class="icon16 loading"></i> [`Loading...`]</em>
+        {/if}
+    </div>
+    {/if}
+
+    <div class="clear-both"></div>
+
+</div>
+
+<div id="h-bulk-topics-move">
+
+</div>
+
+<script>$(function () {
+    $.wa.locale = $.extend($.wa.locale, {
+        'Loading...': "[`Loading...`]",
+        'Following': "[`Following`]",
+        'Are you sure?': "[`Are you sure?`]",
+        'Select at least one topic':"[`Select at least one topic`]"
+    });
+
+
+    $.hub.topics.init({
+        topics_count:{$topics_count}
+    });
+    $.hub.initLazyLoad();
+
+    // Controller for comments
+    {if !empty($load_js_for_comments)}
+        $.ajax({ // Load JS script, making sure it WILL get cached in non-debug mode
+              dataType: "script",
+              url: "{$wa_app_static_url}js/comments.js?{$wa->version('hub')}",
+              cache: true
+        }).done(function() {
+            $.comments.init({
+                statuses: {
+                    deleted: '{hubCommentModel::STATUS_DELETED}',
+                    published: '{hubCommentModel::STATUS_PUBLISHED}'
+                },
+                container: '#h-content'
+            });
+        });
+    {/if}
+
+    $('.h-saved .h-close-saved').on('click', function() {
+        $(this).closest('.h-saved').slideUp();
+        return false;
+    });
+});</script>

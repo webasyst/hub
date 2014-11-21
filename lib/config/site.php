@@ -1,0 +1,36 @@
+<?php
+
+wa('hub');
+$hub_model = new hubHubModel();
+$hubs = $hub_model->getNames(true);
+
+return array(
+    'params' => array(
+        'hub_id' => array(
+            'name' => _w('Hub'),
+            'type' => 'select',
+            'items' => $hubs
+        ),
+        'home_sort' => array(
+            'name' => _w('Homepage default topic sort order'),
+            'type' => 'select',
+            'items' => array(
+                'popular' => _w('Popular'),
+                'recent' => _w('Newest'),
+                'updated' => _w('Updated'),
+            )
+        ),
+        'title' => array(
+            'name' => _w('Homepage title <title>'),
+            'type' => 'input',
+        ),
+        'meta_keywords' => array(
+            'name' => _w('Homepage META Keywords'),
+            'type' => 'input'
+        ),
+        'meta_description' => array(
+            'name' => _w('Homepage META Description'),
+            'type' => 'textarea'
+        ),
+    )
+);

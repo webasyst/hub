@@ -1,0 +1,272 @@
+<div class="shadowed">
+
+    <div class="sidebar left200px h-settings-sidebar">
+        {include file="./Sidebar.html" inline}
+    </div>
+
+    <div class="content left200px blank bordered-left">
+        <div class="block double-padded">
+        <form method="post" action="?module=settings&action=typeSave&id={$type.id|default:'new'}" id="h-type-settings-form">
+            <div class="float-right">
+                <ul class="menu-h">
+                    {if !empty($type.id)}
+                    <li><a href="#" class="js-hub-type-delete"><i class="icon16 delete"></i>[`Delete topic type`]</a></li>
+                    {/if}
+                </ul>
+            </div>
+
+            <h1>{if empty($type.name)}[`New topic type`]{else}{$type.name|escape}{/if}</h1>
+
+            <div class="fields form">
+              <div class="field-group">
+                  <div class="field">
+                      <div class="name">
+                          [`Type name`]
+                      </div>
+                      <div class="value bold">
+                          <input type="text" class="large" name="type[name]" value="{$type.name|escape}" placeholder="[`Type name`]">
+                      </div>
+                  </div>
+                  <div class="field">
+                      <div class="name">
+                          [`Glyph`]
+                      </div>
+                      <div class="value">
+                          <ul class="menu-h js-type-settings-glyphs h-settings-glyph">
+                              <li class="{if ($type.glyph == 'userpic')}selected{/if}"><a href="#" data-glyph="userpic">{hubHelper::getGlyph('userpic', 32, true)}</a></li>
+                              {foreach hubHelper::getGlyphs() as $glyph}
+                                  <li class="{if ($type.glyph == $glyph)}selected{/if}"><a href="#" data-glyph="{$glyph}">{hubHelper::getGlyph($glyph, 32, $type.glyph == $glyph)}</a></li>
+                              {/foreach}
+                              <li class="{if strpos($type.glyph, '.')} selected{/if}"><a href="#" class="inline-link hint"><b><i>[`custom glyph`]</i></b></a></li>
+                          </ul>
+                          <input type="hidden" name="type[glyph]" value="{if !strpos($type.glyph, '.')}{$type.glyph|escape}{/if}" {if strpos($type.glyph, '.')} disabled="disabled" {/if}>
+                      </div>
+                      <div class="value no-shift"{if !strpos($type.glyph, '.')} style="display: none;" {/if}>
+                          <span class="small">[`Or enter glyph image URL (image will be scaled to 32x32 px image)`]:</span><br>
+                          <input type="text" name="type[glyph]" value="{if strpos($type.glyph, '.')}{$type.glyph}{/if}" placeholder="https://example.com/custom/image.png" class="long"{if !strpos($type.glyph, '.')} disabled="disabled"{/if}>
+                          {if strpos($type.glyph, '.')}<br>{hubHelper::getGlyph($type.glyph, 32, true)}{/if}
+                      </div>
+                  </div>
+
+                  <div class="field">
+                      <div class="name">
+                          [`Functionality`]
+                      </div>
+                      {foreach hubHelper::getBaseTypes() as $type_id => $type_info}
+                          {if $type_id != 'custom'}
+                          <div class="value no-shift">
+                              <label>
+                                  <input type="radio" name="type[type]"{if $type.type eq $type_id} checked="checked"{/if} value="{$type_id}" {if !"`$smarty.current_dir`/types/`$type_id`.html"|file_exists} disabled="disabled" {/if}> {$type_info.name}
+                                  <span class="hint">topic.{$type_id}.html</span>
+                                  <p class="hint">{$type_info.description}</p>
+                              </label>
+                          </div>
+                          {/if}
+                      {/foreach}
+
+                  </div>
+              </div>
+
+              {foreach hubHelper::getBaseTypes() as $type_id => $type_info}
+                  <div class="field-group js-type-settings-type" id="h-type-settings-type-{$type_id}">
+                      {if "`$smarty.current_dir`/types/`$type_id`.html"|file_exists}
+                      {include file="./types/{$type_id}.html"}
+                      {/if}
+                  </div>
+              {/foreach}
+
+              <div class="field">
+                  <div class="value">
+                      <input type="submit" class="button green" value="[`Save`]">
+                  </div>
+                  <div class="value no-shift js-hub-type-settings-message">
+
+                  </div>
+
+              </div>
+
+            </div>
+        </form>
+            <div class="clear-both"></div>
+        </div>
+    </div>
+
+</div>
+
+{* type delete dialog*}
+{if !empty($type.id)}
+<div class="dialog width500px height300px" id="h-type-delete-dialog">
+    <div class="dialog-background"></div>
+    <form method="post" action="?module=settings&action=typeDelete">
+        <input type="hidden" name="id" value="{$type.id}">
+        <div class="dialog-window">
+            <div class="dialog-content">
+                <div class="dialog-content-indent">
+                    <h1>[`Delete topic type`]</h1>
+                    {if $type.topics_count}
+                        <p>{sprintf('[`There are <strong>%d topics</strong> with %s type. By deleting this topic type you should either change type for all these topics or delete them.`]',$type.topics_count,$type.name|escape)}</p>
+                        <label>
+                            <input type="radio" name="delete" checked="checked" {* disabled="disabled" *} value="move">
+                            [`Change type of these topics to`]
+                        </label>
+                        <select name="type_id"{if false} disabled="disabled"{/if}>
+                            {foreach $types as $_type_id => $_type}
+                                <option value="{$_type_id}"{if $_type_id eq $type.id} disabled="disabled"{/if}>{$_type.name|escape}</option>
+                            {/foreach}
+                        </select>
+                        <br><br>
+                        <label>
+                            <input type="radio" name="delete"{if false} checked="checked"{/if} value="delete">
+                            {sprintf('[`Delete all %d topics permanently`]', $type.topics_count)}
+                        </label>
+                    {else}
+                        <input type="hidden" name="delete" value="safe">
+                        <p>{sprintf('[`There are no topics of %s type, so it can be easily deleted.`]', $type.name|escape)}</p>
+                    {/if}
+                    <span class="errormsg"></span>
+
+                </div>
+            </div>
+            <div class="dialog-buttons">
+                <div class="dialog-buttons-gradient">
+                    <input type="submit" value="[`Delete topic type`]" class="button red">
+                    [`or`] <a class="cancel" href="#">[`cancel`]</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{/if}
+
+<script type="text/javascript">
+    $(function () {
+        var $form = $('#h-type-settings-form');
+        var voting_selector = ':input[name^="type\\[settings\\]\\[voting\\]"]';
+
+        $form.find('.js-type-settings-type').hide().find(':input').attr('disabled', true);
+
+        $form.find(':input[name="type\\[type\\]"]').change(function () {
+            if (this.checked) {
+                $form.find('.js-type-settings-type').hide().find(':input').attr('disabled', true);
+                var $type_settings =$form.find('#h-type-settings-type-' + this.value);
+                $type_settings.show().find(':input').attr('disabled', null).change();
+            }
+        }).change();
+
+
+        $form.find(voting_selector + '[value="\\+"]').change(function (event) {
+            var $dislike = $(this).parents('div.field').find(voting_selector + '[value="\\-"]');
+            if (this.checked) {
+                $dislike.attr('disabled', null);
+                $dislike.attr('checked', $dislike.data('user-checked') || $dislike.get(0).defaultChecked ? true : null);
+            } else {
+                $dislike.attr('disabled', true);
+                if (event.originalEvent) {
+                    $dislike.data('user-checked', $dislike.is(':checked'));
+                }
+                $dislike.attr('checked', null);
+            }
+        });
+
+        $form.find(voting_selector+'[value="\\+"]').each(function(){
+            $(this).change();
+        });
+
+        var $glyphs = $form.find('.js-type-settings-glyphs');
+        var $glyph_input = $form.find(':input[name="type\\[glyph\\]"]:first');
+        var $glyph_input_url = $form.find(':input[name="type\\[glyph\\]"]:last');
+        $glyphs.on('click', 'li > a', function () {
+            $glyphs.find('.selected').removeClass('selected');
+            var $this = $(this);
+
+            var glyph = $this.data('glyph');
+            if (glyph) {
+                $this.parents('li').addClass('selected');
+                $this.find('i').addClass('selected');
+
+                $glyph_input.attr('disabled', null);
+                $glyph_input.val(glyph);
+
+               // $this.parents('ul').find('li:hidden').show();
+                $glyph_input_url.attr('disabled', true);
+                $glyph_input_url.parents('div.value').hide();
+            } else {
+                //$this.parents('li').hide();
+                $glyph_input.attr('disabled', true);
+                $glyph_input_url.attr('disabled', null);
+                $glyph_input_url.parents('div.value').show();
+            }
+            return false;
+        });
+
+        {if !empty($type.id)}
+        $('a.js-hub-type-delete:first').click(function () {
+            $('#h-type-delete-dialog').waDialog({
+                onLoad: function(d){
+                    $('#h-type-delete-dialog').find('.errormsg').text('');
+                },
+                onSubmit: function (d) {
+                    var $form = $(this);
+                    d.find(':input.error').removeClass('error');
+                    $.post($form.attr('action'), $form.serialize(), function (r) {
+                        if (r.status == 'ok') {
+                            d.trigger('close');
+                            window.location.hash='/settings/'
+                        } else {
+                            d.find('.errormsg').text(r.errors.join("\n"));
+                            console.log(r.errors);
+
+                        }
+                    }, 'json').error(function(r){
+                        console.log(r);
+                    });
+                    return false;
+
+                }
+            });
+            return false;
+        });
+        {/if}
+
+        $form.submit(function () {
+            var $message = $form.find('.js-hub-type-settings-message');
+            $message.show().html('<i class="icon16 loading"></>');
+            $.ajax({
+                url: $form.attr('action'),
+                dataType: 'json',
+                type: 'post',
+                data: $form.serialize(),
+                success: function (r) {
+                    if (r.status != 'ok') {
+                        if (typeof error === 'function') {
+                            if (error(r) !== false) {
+                                default_error_handler(r);
+                            }
+                        } else {
+                            default_error_handler(r);
+                        }
+                        return;
+                    }
+                    $message.show().html(r.data.message || '<i class="icon16 yes"></>');
+                    if (r.data.hash) {
+                        window.location.hash = r.data.hash;
+                    } else {
+                        if (r.data.id) {
+                            var $type = $('.h-settings-sidebar:first').find('a[href="\\#/settings/type/' + r.data.id + '/"]');
+                            $type.find('.js-type-name').text(r.data.name);
+                            $type.find('.js-glyph').replaceWith(r.data.glyph_html);
+                        }
+                        setTimeout(function () {
+                            $message.hide();
+                        }, 5000);
+                    }
+                }
+            });
+
+            return false;
+        });
+
+        $form.find('input:text:visible:first').focus();
+    });
+
+</script>

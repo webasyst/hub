@@ -1,0 +1,17 @@
+{*
+ * Sent to 'page' topic author when a frontend user
+ * downrates his topic with a comment.
+ *
+ * Mail subject is hardcoded in hubFrontendVoteController.
+ *
+ *}
+[`Hi,`]
+<br><br>
+{sprintf_wp('%s suggests you to improve your <a href="%s"><strong>%s</strong></a> topic:', htmlspecialchars($sender.name), $topic.url|escape, $topic.title|escape)}<br><br>
+
+<div style="font-weight: bold;"><i>{$comment_text|escape|nl2br}</i></div>
+
+<br><br>
+--<br>
+{$wa->accountName()}<br>
+<a href="{$wa->domainUrl()}">{$wa->domainUrl()}</a>

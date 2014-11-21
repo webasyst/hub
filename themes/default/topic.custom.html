@@ -1,0 +1,167 @@
+{*
+    CUSTOM topic type:
+
+    This is when magic comes and makes Hub app even more special!
+
+*}
+
+<strong style="color: red; background: yellow;">CUSTOM TOPIC TYPE</strong>
+
+<article class="topic type-question" itemscope itemtype="http://schema.org/Question">
+
+    <h1 itemprop="name">
+        {$topic.title|escape}
+        <!-- plugin hook: 'frontend_topic.title_suffix' -->
+        {* @event frontend_topic.%plugin_id%.title_suffix *}
+        {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
+        {if $topic.badge}
+            <span class="badge badge-{$topic.badge.id}"><i></i>{$topic.badge.name}</span>
+        {/if}
+    </h1>
+
+    <div class="vote qa">
+        <a href="#" class="minus"><i class="icon16 down{if $voted >= 0}-bw{else} disabled{/if}"></i></a>
+        <a href="#" class="plus"><i class="icon16 up{if $voted <= 0}-bw{/if}"></i></a>
+        <strong class="{if $topic.votes_sum > 0}positive{elseif $topic.votes_sum < 0}negative{/if}">{$topic.votes_sum}</strong>
+    </div>
+
+    <div class="meta-ousted">
+
+        <div itemprop="articleBody" class="topic-content">
+            {$topic.content}
+        </div>
+
+        <!-- plugin hook: 'frontend_topic.body' -->
+        {* @event frontend_topic.%plugin_id%.body *}
+        {foreach $frontend_topic as $_}{$_.body}{/foreach}
+
+        <div class="credentials">
+            {if !empty($topic.author)}
+                <a href="{$topic.author.url}">
+                    <img src="{$topic.author.photo_url_20}" class="userpic" alt="">
+                </a>
+                <a href="{$topic.author.url}" class="username" itemprop="author">{$topic.author.name}</a>
+            {/if}
+        </div>
+
+        <span class="aux">[`Posted`]: {$topic.create_datetime|wa_date:'humandate'}</span>
+        <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+
+        <div class="tags">
+            {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
+        </div>
+
+        {if !empty($topic.editable)}
+        <div class="edit-links">
+            <a href="{$topic.edit_url}">[`Edit topic`]</a>
+            <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+        </div>
+        {/if}
+
+    </div>
+
+
+
+    <section class="comments answers" id="comments" itemscope itemtype="http://schema.org/UserComments">
+
+        <!-- plugin hook: 'frontend_topic.comments' -->
+        {* @event frontend_topic.%plugin_id%.comments *}
+        {foreach $frontend_topic as $_}{$_.comments}{/foreach}
+
+        {if !empty($comments)}
+
+            <!-- hierarchical comment tree -->
+            <h3 class="comments-header">{_w('%d answer', '%d answers', $comments_count)}</h3>
+
+            <ul class="menu-h sorting aux">
+                <li class="selected" data-order="votes">
+                  <a href="#" class="inline-link"><b><i>[`votes`]</i></b></a>
+                </li>
+                <li data-order="newest">
+                  <a href="#" class="inline-link"><b><i>[`newest`]</i></b></a>
+                </li>
+            </ul>
+
+            {$depth=-1}
+            {foreach $comments as $comment}
+                {if $comment.depth < $depth}
+
+                    {$loop=($depth-$comment.depth)}
+                    {section name="end-comment" loop=$loop}
+                            <ul></ul>
+                            </li>
+                        </ul>
+                    {/section}
+
+                    {$depth=$comment.depth}
+                {/if}
+
+                {if $comment.depth == $depth}
+                    </li>
+                    <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}">
+                {/if}
+
+                {if $comment.depth > $depth}
+                    <ul>
+                        <li data-id={$comment.id} data-parent-id="{$comment.parent_id}">
+                        {$depth=$comment.depth}
+                {/if}
+
+                {include file="comment.html" comment=$comment inline}
+
+            {/foreach}
+
+            {section name="end-comment" loop=$depth + 1}
+                        <ul></ul>
+                    </li>
+                </ul>
+            {/section}
+
+        {else}
+
+            <!-- no comments yet -->
+            <h3 class="comments-header" style="display:none"></h3>
+            <ul style="display:none"></ul>
+
+        {/if}
+
+    </section>
+
+</article>
+
+{* Add comment form *}
+{if $comments_allowed}
+    <!-- follow this topic -->
+    <div class="follow">
+        {if 1}
+            <input type="button" class="button" value="[`Follow`]">
+            <i class="icon16 star"></i> [`New answers will be sent to you by email`]
+        {else}
+            <input type="button" class="button gray" value="&checkmark; [`Following`]">
+            <i class="icon16 star"></i> [`%d more users are following this topic`]
+        {/if}
+    </div>
+
+    <h4>[`Add comment`]</h4>
+    {include file="comment.add.html" inline}
+{else}
+    {if $topic.badge == 'archived'}
+        <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
+    {else}
+        <p><em>[`Posting new comments is disabled for this topic.`]</em></p>
+    {/if}
+{/if}
+
+<script>$(function() {
+    var wrapper = $('#topic-and-comments');
+    var vote_url = "{$wa->getUrl('/frontend/vote')|escape:js}";
+    var login_url = "{$wa->loginUrl()|escape:js}";
+    var follow_url = "{$wa->getUrl('/frontend/topicFollow')|escape:js}";
+
+    {if $wa->user()->getId()}
+        $.hub.initTopicVotes(wrapper, vote_url, '{$topic.id}');
+        $.hub.initFollowingButton(wrapper, follow_url, '{$topic.id}');
+    {else}
+        $.hub.initTopicVotesGuest(wrapper, login_url);
+    {/if}
+});</script>
