@@ -46,6 +46,7 @@ class hubTopicsInfoAction extends waViewAction
         $comment_model = new hubCommentModel();
 
         $types = hubHelper::getTypes();
+        $base_types = hubHelper::getBaseTypes();
         $topic['type'] = ifempty($types[$topic['type_id']]);
         $possible_badges = hubHelper::getBadgesByType($topic['type']);
 
@@ -65,7 +66,11 @@ class hubTopicsInfoAction extends waViewAction
         $hub = hubHelper::getHub($topic['hub_id']);
 
         // Topic comments
-        $comments = $comment_model->getFullTree($topic['id'], '*,is_updated,contact,vote,can_delete');
+        if (!empty($base_types[$topic['type']['type']]['solution'])) {
+            $comments = $comment_model->getFullTree($topic['id'], '*,is_updated,contact,vote,can_delete,my_vote', 'solution DESC, votes_sum DESC');
+        } else {
+            $comments = $comment_model->getFullTree($topic['id'], '*,is_updated,contact,vote,can_delete,my_vote');
+        }
         foreach ($comments as &$c) {
             $c['topic'] = $topic;
         }
@@ -84,7 +89,7 @@ class hubTopicsInfoAction extends waViewAction
             'topic_public_url'   => $topic_public_url,
             'possible_badges'    => $possible_badges,
             'comments_count'     => $comment_model->count($topic['id']),
-            'current_author'     => hubCommentModel::getAuthorInfo(wa()->getUser()->getId()),
+            'current_author'     => hubHelper::getAuthor($this->getUserId()),
             'notifications_sent' => waRequest::request('notifications_sent'),
             'can_edit_delete'    => ($topic['contact_id'] == wa()->getUser()->getId() && $access_level >= hubRightConfig::RIGHT_READ_WRITE)
                                         || $access_level >= hubRightConfig::RIGHT_FULL,

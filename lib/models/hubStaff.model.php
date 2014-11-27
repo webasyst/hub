@@ -22,8 +22,8 @@ class hubStaffModel extends waModel
             );
         }
         if ($staff) {
-            $contacts_collection = new waContactsCollection('id/'.implode(',', array_keys($staff)));
-            $contacts = $contacts_collection->getContacts('*,email,photo_url_96,photo_url_50,photo_url_20');
+            $contacts_collection = new waContactsCollection('id/'.implode(',', array_keys($staff)), array('photo_url_2x' => true));
+            $contacts = $contacts_collection->getContacts('*,email,photo_url_96,photo_url_50,photo_url_32,photo_url_20');
             foreach ($staff as $contact_id => $row) {
                 if (isset($contacts[$contact_id])) {
                     $c = $contacts[$contact_id];

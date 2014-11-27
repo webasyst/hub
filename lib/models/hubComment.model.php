@@ -197,7 +197,6 @@ class hubCommentModel extends waNestedSetModel
 
     private function workupList(&$data, $fields, $escape)
     {
-
         $fields = array_fill_keys(explode(',', $fields), 1);
 
         if (isset($fields['contact']) || isset($fields['author'])) {
@@ -208,21 +207,30 @@ class hubCommentModel extends waNestedSetModel
             $contact_ids = array_unique($contact_ids);
             $contacts = hubHelper::getAuthor($contact_ids);
 
-            $vote_model = new hubVoteModel();
-            $votes = $vote_model->getVotes($contact_ids, array_keys($data));
-
             foreach ($data as &$item) {
                 if (isset($contacts[$item['contact_id']])) {
                     $item['author'] = $contacts[$item['contact_id']];
                     if ($escape) {
                         $item['author']['name'] = htmlspecialchars($item['author']['name']);
                     }
-                    $item['author']['vote'] = ifset($votes[$item['contact_id']][$item['id']]['vote'], 0);
                 } else {
                     $item['author'] = array();
                 }
             }
             unset($item);
+        }
+
+        if (isset($fields['my_vote'])) {
+            $votes = array();
+            $contact_id = wa()->getUser()->getId();
+            if ($contact_id) {
+                $vote_model = new hubVoteModel();
+                $votes = $vote_model->getVotes(array($contact_id), array_keys($data));
+            }
+            foreach ($data as &$item) {
+                $item['my_vote'] = ifset($votes[$contact_id][$item['id']]['vote'], 0);
+            }
+            unset($item, $votes);
         }
 
         if (!empty($fields['is_updated']) || !empty($fields['is_new'])) {
@@ -372,36 +380,6 @@ class hubCommentModel extends waNestedSetModel
     }
 
     /**
-     * @param int|array $contact_id
-     * @return array
-     */
-    public static function getAuthorInfo($contact_id)
-    {
-        $fields = 'id,name,email,photo_url_50,photo_url_20';
-        $contact_ids = (array)$contact_id;
-        $collection = new waContactsCollection('id/'.implode(',', $contact_ids));
-        $contacts = $collection->getContacts($fields, 0, count($contact_ids));
-
-        foreach($contacts as &$c) {
-            if ($c['email']) {
-                $c['photo_url_20'] = hubHelper::getGravatarUrl($c['email'][0], 20, $c['photo_url_20']);
-                $c['photo_url_50'] = hubHelper::getGravatarUrl($c['email'][0], 50, $c['photo_url_50']);
-            }
-        }
-        unset($c);
-
-        if (is_numeric($contact_id)) {
-            if (isset($contacts[$contact_id])) {
-                return $contacts[$contact_id];
-            } else {
-                return array_fill_keys(explode(',', $fields), '');
-            }
-        } else {
-            return $contacts;
-        }
-    }
-
-    /**
      * Add `is_updated` field to every comment in $items:
      * whether a comment has been created or changed since last time user logged in.
      */
@@ -423,15 +401,17 @@ class hubCommentModel extends waNestedSetModel
         return $this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime()))->fetchField('cnt');
     }
 
-    public function countNewToMyTopics($recalc = false)
+    public function countNewToMyFollowing()
     {
         $sql = "SELECT COUNT(id) AS cnt
-                FROM `{$this->table}`
+                FROM `{$this->table}` AS c
+                    JOIN hub_following AS f
+                        ON f.topic_id=c.topic_id
                 WHERE datetime > ?
-                    AND t.contact_id = ?";
+                    AND f.contact_id = ?";
         return $this->query($sql, array(
             date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime()),
-            wa('hub')->getUser()->getId()
+            wa()->getUser()->getId()
         ))->fetchField('cnt');
     }
 
@@ -494,6 +474,11 @@ class hubCommentModel extends waNestedSetModel
         if (!$id) {
             return false;
         }
+
+        // Write to wa_log
+        class_exists('waLogModel') || wa('webasyst');
+        $log_model = new waLogModel();
+        $log_model->add('comment_add');
 
         // topic.comments_count contains number of top-level approved comments for the topic
         $update = array(
@@ -572,6 +557,11 @@ class hubCommentModel extends waNestedSetModel
         }
 
         $this->updateById($comment_id, array('status' => $status));
+
+        // Write to wa_log
+        class_exists('waLogModel') || wa('webasyst');
+        $log_model = new waLogModel();
+        $log_model->add($status == self::STATUS_DELETED ? 'comment_delete' : 'comment_restore');
 
         // Update stats in hub_author
         $author_model = new hubAuthorModel();

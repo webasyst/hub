@@ -206,11 +206,14 @@ class hubTopicModel extends waModel
         if (empty($item['status']) && !empty($data['status'])) {
             // Publish
             $this->updateStatsWhenPublished($id, $data + $item);
-        } else {
-            if (empty($data['status']) && !empty($item['status'])) {
-                // Unpublish
-                $this->updateStatsWhenUnpublished($id, $data + $item);
-            }
+        } else if (empty($data['status']) && !empty($item['status'])) {
+            // Unpublish
+            $this->updateStatsWhenUnpublished($id, $data + $item);
+        } else if (!empty($item['status'])) {
+            // Modification of published topic
+            class_exists('waLogModel') || wa('webasyst');
+            $log_model = new waLogModel();
+            $log_model->add('topic_edit');
         }
     }
 
@@ -244,7 +247,7 @@ class hubTopicModel extends waModel
             $topic_tags_model = new hubTopicTagsModel();
             if (!$topic_id) {
                 $this->updateByField($data, array('hub_id' => $target_hub_id));
-                $topic_tags_model->remap($target_hub_id, array('hub_id' => $hub_id));
+                $topic_tags_model->remap($target_hub_id, 'hub_id', $hub_id);
             } else {
                 $this->updateById($topic_id, array('hub_id' => $target_hub_id));
                 $topic_tags_model->remap($target_hub_id, 'topic_id', $topic_id);
@@ -322,6 +325,11 @@ class hubTopicModel extends waModel
         // Update category
         $category_model = new hubCategoryModel();
         $category_model->updateCategoriesStats($id, +1);
+
+        // Write to wa_log
+        class_exists('waLogModel') || wa('webasyst');
+        $log_model = new waLogModel();
+        $log_model->add('topic_publish');
     }
 
     protected function updateStatsWhenUnpublished($id, $data)
@@ -341,6 +349,11 @@ class hubTopicModel extends waModel
         // Update category
         $category_model = new hubCategoryModel();
         $category_model->updateCategoriesStats($id, -1);
+
+        // Write to wa_log
+        class_exists('waLogModel') || wa('webasyst');
+        $log_model = new waLogModel();
+        $log_model->add('topic_unpublish');
     }
 
     /**

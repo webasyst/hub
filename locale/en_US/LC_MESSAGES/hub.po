@@ -748,7 +748,7 @@ msgstr ""
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:12
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:69
 msgid "None"
-msgstr "medium"
+msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:193
 msgid ""
@@ -1687,7 +1687,7 @@ msgstr ""
 #: /wa-apps/hub/themes/default/topic.feedback.html:80
 #: /wa-apps/hub/themes/default/topic.page.html:115
 #: /wa-apps/hub/themes/default/topic.question.html:94
-msgid "You are following this topic!"
+msgid "You are following this topic"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/topic.feedback.html:81
@@ -1796,4 +1796,101 @@ msgstr ""
 
 #: /wa-apps/hub/lib/config/site.php:15
 msgid "Homepage default topic sort order"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/Settings.html:11
+msgid "Settings successfully updated"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:79
+msgid "Topics"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:79
+msgid "+1 vote for user’s topic gives +%s kudos"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:82
+msgid "+1 vote for user’s answer gives +%s kudos"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:85
+msgid "+1 vote for user’s comment gives +%s kudos"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/Settings.html:18
+msgid "My personal settings"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/Settings.html:30
+msgid "New comments on topics I follow"
+msgstr ""
+
+#: /wa-apps/hub/themes/default/authors.html:16
+msgid "%d topics, %d answers, and %d comments"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:59
+msgid "This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, create a route using the form below or using <a href=\"%s\">Site app</a> routing settings."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:73
+msgid "Specify the public URL for this new hub on your site:"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:77
+msgid "Do not publish this hub on the site just yet"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/types/page.html:16
+msgid "Frontend posting"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/types/page.html:21
+msgid "Topics of this type can be added by frontend users"
+msgstr ""
+
+#: /wa-apps/hub/lib/actions/backend/hubBackendWelcome.action.php:170
+msgid "support"
+msgstr ""
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:415
+msgid "[Incorrect video embed]"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:3
+msgid "published a topic"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:4
+msgid "unpublished a topic"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:5
+msgid "modified a published topic"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:6
+msgid "added a comment"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:7
+msgid "modified a comment"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:8
+msgid "deleted a comment"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/logs.php:9
+msgid "restored a comment"
+msgstr ""
+
+#: /wa-apps/hub/themes/_webasystcom1/banner.html:4
+#: /wa-apps/hub/themes/default/banner.html:4
+msgid "Find the answer"
+msgstr ""
+
+#: /wa-apps/hub/themes/default/author.html:2
+msgid "All authors"
 msgstr ""

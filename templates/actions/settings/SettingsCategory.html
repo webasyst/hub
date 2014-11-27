@@ -125,10 +125,10 @@
                                     <strong>[`Filter by topic type`]</strong>
 
                                 </label>
-                                {hubHelper::getGlyph('info')}
+                                {hubHelper::getGlyph('info', 16, true)}
                                 <select name="category[conditions][type_id]"{if !empty($category.id) && empty($category.type)} disabled="disabled" {/if}>
                                     {foreach $types as $t}
-                                        <option value="{$t.id}" data-type="{$t.type|escape}" data-glyph="{hubHelper::getGlyph($t.glyph)|escape}" {if ifset($category.conditions.type_id)==$t.id} selected="selected"{/if}>{$t.name|escape}</option>
+                                        <option value="{$t.id}" data-type="{$t.type|escape}" data-glyph="{hubHelper::getGlyph($t.glyph, 16, true)|escape}" {if ifset($category.conditions.type_id)==$t.id} selected="selected"{/if}>{$t.name|escape}</option>
                                     {/foreach}
                                 </select>
 
@@ -166,7 +166,7 @@
                             </div>
                             <div class="value">
                                 <select name="category[sorting]">
-                                    <option value=""{if ifset($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual`]</option>
+                                    <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual`]</option>
                                     {foreach $sorts as $s => $s_name}
                                     {if $s != 'unanswered'}
                                     <option value="{$s}"{if $category.sorting == $s} selected="selected"{/if}>{$s_name} [`topics on top`]</option>

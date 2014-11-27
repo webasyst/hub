@@ -15,7 +15,8 @@
                 {elseif count($hubs) <= 0}
                     <th class="bold">[`All hubs`]</th>
                 {else}
-                    <th>{$hubs[0].name|default:'[`(no name)`]'|escape}</th>
+                    {$hub = reset($hubs)}
+                    <th>{$hub.name|default:'[`(no name)`]'|escape}</th>
                 {/if}
 
             </tr>
@@ -24,8 +25,7 @@
         <tbody>
             {function stats_row_html a=null stats=null}
 
-                {if 1 ||
-                (empty($stats.hub_id) && $kudos_globally_enabled) || (!empty($stats.hub_id) && !empty($hubs[$stats.hub_id]) && !empty($hubs[$stats.hub_id].params.kudos))}
+                {if (empty($stats.hub_id) && $kudos_globally_enabled) || (!empty($stats.hub_id) && !empty($hubs[$stats.hub_id]) && !empty($hubs[$stats.hub_id].params.kudos))}
                     <div class="h-author-kudos">
                         <span class="h-kudos{if $stats.rate > 0} h-positive{/if}">{if $stats.rate > 0}+{/if}{$stats.rate}</span>
                         <br>
@@ -49,7 +49,7 @@
                 <tr>
                     <td class="h-author-name">
                         <a href="{$wa_backend_url}contacts/#/contact/{$a.id}"{if !$a.id} class="gray"{/if}>
-                            <i class="icon16 userpic20" style="background-image:url('{$a.photo_url_20|default:sprintf('%swa-content/img/userpic20@2x.jpg',$wa_url)}');"></i>
+                            <img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_url)}" class="userpic">
                             {$a.name|default:'[`(missing contact)`]'|escape}
                         </a>
                     </td>

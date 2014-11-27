@@ -62,10 +62,11 @@ class hubFrontendTopicAction extends hubFrontendAction
         $comment_model = new hubCommentModel();
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']]['type'] : 'custom';
 
-        if ($topic_type == 'question') {
-            $comments = $comment_model->getFullTree($topic['id'], '*,author,vote', 'solution DESC, votes_sum DESC', true);
-        } elseif ($topic_type == 'forum') {
+        $base_types = hubHelper::getBaseTypes();
 
+        if (!empty($base_types[$topic_type]['solution'])) {
+            $comments = $comment_model->getFullTree($topic['id'], '*,author,vote,my_vote', 'solution DESC, votes_sum DESC', true);
+        } elseif ($topic_type == 'forum') {
             $limit = $this->getConfig()->getOption('comments_per_page');
             if (!$limit) {
                 $limit = 20;
@@ -76,7 +77,7 @@ class hubFrontendTopicAction extends hubFrontendAction
             }
             $offset = ($page - 1) * $limit;
 
-            $comments = $comment_model->getList('*,author,vote', array(
+            $comments = $comment_model->getList('*,author,vote,my_vote', array(
                 'offset' => $offset,
                 'limit' => $limit,
                 'order' => 'left_key',
@@ -93,7 +94,7 @@ class hubFrontendTopicAction extends hubFrontendAction
             }
             $this->view->assign('pages_count', $pages_count);
         } else {
-            $comments = $comment_model->getFullTree($topic['id'], '*,author,vote', 'left_key', true);
+            $comments = $comment_model->getFullTree($topic['id'], '*,author,vote,my_vote', 'left_key', true);
         }
 
         // comment.editable for smarty
@@ -122,6 +123,7 @@ class hubFrontendTopicAction extends hubFrontendAction
         }
 
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']] : null;
+        $comments_allowed = $topic['badge']['id'] != 'archived' && ifset($this->types[$topic['type_id']]['settings']['commenting'], 1) != 0;
         $this->view->assign(array(
             'tags' => $tags,
             'topic' => $topic,
@@ -130,7 +132,7 @@ class hubFrontendTopicAction extends hubFrontendAction
             'following' => $following,
             'topic_type' => $topic_type,
             'comments_count' => count($comments),
-            'comments_allowed' => $topic['badge'] != 'archived' && ifset($topic_type['settings']['commenting'], 1) != 0,
+            'comments_allowed' => $comments_allowed,
             'breadcrumbs' => $this->getBreadcrumbs($id),
         ));
 

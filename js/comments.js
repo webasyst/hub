@@ -108,12 +108,14 @@
             // Voting for comments
             this.container.on('click', 'a.h-vote-up,a.h-vote-down', function() {
                 var $a = $(this);
-                var $li = $a.closest('li');
                 var vote = $a.hasClass('h-vote-down') ? -1 : 1;
-                var comment_id = $li.data('id');
+                var comment_id = $a.closest('li').data('id');
+                if (!comment_id) {
+                    return;
+                }
 
-                var $i_up = $li.find('i.up,i.up-bw');
-                var $i_down = $li.find('i.down,i.down-bw');
+                var $i_up = $a.parent().find('i.up,i.up-bw');
+                var $i_down = $a.parent().find('i.down,i.down-bw');
                 if (vote > 0) {
                     $i_up.removeClass('up-bw').addClass('up');
                     $i_down.removeClass('down').addClass('down-bw');
@@ -242,7 +244,7 @@
             }, function(r) {
                 if (r.status == 'ok') {
                     var item = container.find('li[data-id=' + comment_id + ']').find('.h-comment-solution:first');
-                    item.text(!solution ? $_('valid answer') : $_('remove anwsered badge'));
+                    item.text(!solution ? $_('Mark as solution') : $_('Unmark solution'));
                     item.data('solution', solution ? 1 : '');
                 }
             }, 'json');

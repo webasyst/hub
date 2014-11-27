@@ -16,7 +16,7 @@ class hubSettingsTypeSaveController extends waJsonController
             $model->updateById($type_id, $type);
             $this->response['name'] = $type['name'];
             $this->response['glyph'] = $type['glyph'];
-            $this->response['glyph_html'] = hubHelper::getGlyph($type['glyph']);
+            $this->response['glyph_html'] = hubHelper::getGlyph($type['glyph'], 16, true);
             $this->response['id'] = $type_id;
         } else {
             $type_id = $model->insert($type);

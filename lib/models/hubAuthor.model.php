@@ -228,7 +228,7 @@ class hubAuthorModel extends waModel
         // Data from wa_contact
         $contact_fields = 'id,name,photo,email,photo_url_50,photo_url_32,photo_url_20';
         $empty_contact = array_fill_keys(explode(',', $contact_fields), '');
-        $collection = new waContactsCollection('id/'.implode(',', array_keys($result)));
+        $collection = new waContactsCollection('id/'.implode(',', array_keys($result)), array('photo_url_2x' => true));
         $contacts = $collection->getContacts($contact_fields, 0, count($result));
         foreach($contacts as &$c) {
             if ($c['email']) {
@@ -238,6 +238,25 @@ class hubAuthorModel extends waModel
             }
         }
         unset($c);
+
+        // Data from hub_staff
+        if (!empty($options['hub_id']) && !empty($fields['badge'])) {
+            $staff_model = new hubStaffModel();
+            $staff = $staff_model->getByField(array(
+                'hub_id' => $options['hub_id'],
+                'contact_id' => array_keys($result),
+            ), 'contact_id');
+            foreach($result as &$a) {
+                if (!empty($staff[$a['contact_id']])) {
+                    $a['badge'] = $staff[$a['contact_id']]['badge'];
+                    $a['badge_color'] = $staff[$a['contact_id']]['badge_color'];
+                } else {
+                    $a['badge'] = '';
+                    $a['badge_color'] = '';
+                }
+            }
+            unset($a);
+        }
 
         // Stats from all hubs separately
         if (empty($options['hub_id']) && !empty($fields['stats_by_hub'])) {

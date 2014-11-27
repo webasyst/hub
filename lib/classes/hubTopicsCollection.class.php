@@ -90,8 +90,34 @@ class hubTopicsCollection
                 }
             }
 
-            if (($sort = waRequest::get('sort')) || (isset($this->options['sort']) && $sort = $this->options['sort'])) {
+            if ($type) {
+                $method = strtolower($type).'Prepare';
+                if (method_exists($this, $method)) {
+                    $this->$method(isset($this->hash[1]) ? $this->hash[1] : '', $auto_title);
+                } else {
+                    $this->where[] = '0';
+                }
+            } else {
+                if ($auto_title) {
+                    $this->addTitle(_w('All topics'));
+                }
+                if ($this->options['hub_id']) {
+                    $this->where[] = 't.hub_id = '.(int)$this->options['hub_id'];
+                }
+            }
+
+            if (isset($this->options['sort'])) {
+                $sort = $this->options['sort'];
+            } else {
+                $sort = waRequest::get('sort');
+            }
+            if ($sort && $type != 'search') {
                 switch ($sort) {
+                    case 'manual':
+                        if ($this->info && !empty($this->info['hub_id']) && isset($this->info['type']) && $this->info['type'] == 0) {
+                            $this->order_by = $this->getTableAlias('hub_topic_categories').'1.sort DESC';
+                            break;
+                        }
                     case 'recent':
                         $this->order_by = 't.create_datetime DESC';
                         break;
@@ -111,21 +137,6 @@ class hubTopicsCollection
                 }
             }
 
-            if ($type) {
-                $method = strtolower($type).'Prepare';
-                if (method_exists($this, $method)) {
-                    $this->$method(isset($this->hash[1]) ? $this->hash[1] : '', $auto_title);
-                } else {
-                    $this->where[] = '0';
-                }
-            } else {
-                if ($auto_title) {
-                    $this->addTitle(_w('All topics'));
-                }
-                if ($this->options['hub_id']) {
-                    $this->where[] = 't.hub_id = '.(int)$this->options['hub_id'];
-                }
-            }
 
             if ($this->prepared) {
                 return;
@@ -280,14 +291,14 @@ class hubTopicsCollection
         $sql .= $this->getOrderBy();
         $sql .= " LIMIT ".($offset ? $offset.',' : '').(int)$limit;
 
-
         $data = $this->getModel()->query($sql)->fetchAll('id');
 
         if (!$data) {
             return array();
         }
 
-        // set badges
+        $topic_ids_solution = array();
+        $types = hubHelper::getTypes();
         $badges = hubHelper::getBadges();
         foreach ($data as &$row) {
             if (!empty($row['badge'])) {
@@ -297,82 +308,135 @@ class hubTopicsCollection
                     $row['badge'] = $b;
                 }
             }
+            if (!empty($types[$row['type_id']]['solution'])) {
+                $topic_ids_solution[] = $row['id'];
+            }
         }
         unset($row);
 
-        $ids = array_keys($data);
-
-        // add other fields
-        foreach ($this->other_fields as $field) {
-            switch ($field) {
-                case 'url':
-                    if ($data) {
-                        $topic = reset($data);
-
-                        $topic_url = wa()->getRouteUrl('hub/frontend/topic', array(
-                            'id' => '%ID%',
-                            'topic_url' => '%URL%',
-                            'hub_id' => $topic['hub_id']
-                        ));
-
-                        foreach ($data as &$t) {
-                            $t['url'] = str_replace(array('%ID%', '%URL%'), array($t['id'], $t['url']), $topic_url);
-                        }
-                        unset($t);
-                    }
-                    break;
-                case 'tags':
-                    $topic_tags_model = new hubTopicTagsModel();
-                    $tag_ids = array();
-                    $rows = $topic_tags_model->getByField('topic_id', $ids, true);
-                    foreach ($rows as $row) {
-                        $tag_ids[] = $row['tag_id'];
-                    }
-                    if ($tag_ids) {
-                        $tag_ids = array_unique($tag_ids);
-                        $tag_model = new hubTagModel();
-                        $tags = $tag_model->getById($tag_ids);
-                        $tag_url = wa()->getRouteUrl('hub/frontend/tag', array('tag' => '%TAG%'));
-                        foreach ($rows as $row) {
-                            $tag = $tags[$row['tag_id']];
-                            $tag['url'] = str_replace('%TAG%', urlencode($tag['name']), $tag_url);
-                            $data[$row['topic_id']]['tags'][] = $tag;
-                        }
-                    }
-                    break;
-                case 'author':
-                case 'contact':
-                    $contact_ids = array();
-                    foreach ($data as $t) {
-                        $contact_ids[] = $t['contact_id'];
-                    }
-                    $contacts = hubHelper::getAuthor(array_unique($contact_ids));
-                    foreach ($data as &$t) {
-                        if (isset($contacts[$t['contact_id']])) {
-                            $c = $contacts[$t['contact_id']];
-                            $t[$field] = $c;
-                        }
-                    }
-                    unset($t);
-                    break;
-                case 'hub_color':
-                    $hub_params_model = new hubHubParamsModel();
-                    $hub_colors = $hub_params_model->getByField('name', 'color', 'hub_id');
-                    foreach ($data as &$t) {
-                        if (empty($hub_colors[$t['hub_id']])) {
-                            $t['hub_color'] = 'white';
-                        } else {
-                            $t['hub_color'] = $hub_colors[$t['hub_id']]['value'];
-                        };
-                    }
-                    unset($t);
-                    break;
-                case 'is_updated':
-                    $this->getModel()->checkForNew($data);
-                    break;
+        if ($topic_ids_solution) {
+            $comment_model = new hubCommentModel();
+            $solutions = $comment_model->getList('*,author', array(
+                'where' => array('topic_id' => $topic_ids_solution, 'solution' => 1),
+                'order' => 'votes_sum DESC',
+                'escape' => true
+            ));
+            foreach ($solutions as $s) {
+                if (!isset($data[$s['topic_id']]['solution'])) {
+                    $data[$s['topic_id']]['solution'] = $s;
+                }
             }
         }
+
+        $ids = array_keys($data);
+
+        $other_fields = array_fill_keys($this->other_fields, true);
+        $defaults = array_fill_keys($this->other_fields, null);
+
+        if (!empty($other_fields['url'])) {
+            $topic = reset($data);
+
+            $topic_url = wa()->getRouteUrl('hub/frontend/topic', array(
+                'id' => '%ID%',
+                'topic_url' => '%URL%',
+                'hub_id' => $topic['hub_id']
+            ));
+
+            foreach ($data as &$t) {
+                $t['url'] = str_replace(array('%ID%', '%URL%'), array($t['id'], $t['url']), $topic_url);
+            }
+            unset($t);
+        }
+
+        if (!empty($other_fields['tags'])) {
+            $tag_ids = array();
+            $defaults['tags'] = array();
+
+            // Fetch all [topic_id => tag_id] pairs
+            $topic_tags_model = new hubTopicTagsModel();
+            $rows = $topic_tags_model->getByField('topic_id', $ids, true);
+            foreach ($rows as $row) {
+                $tag_ids[$row['tag_id']] = 1;
+            }
+            $tag_ids = array_keys($tag_ids);
+
+            if ($tag_ids) {
+
+                // Fetch tag info and prepare frontend URL for each one
+                $tag_model = new hubTagModel();
+                $tags = $tag_model->getById($tag_ids);
+                foreach($tags as &$t) {
+                    $tag['url'] = wa()->getRouteUrl('hub/frontend/tag', array(
+                        'tag' => urlencode($t['name']),
+                        'hub_id' => $t['hub_id'],
+                    ));
+                }
+                unset($t);
+
+                // Finally, assign tags to topics
+                foreach ($rows as $row) {
+                    $tag = $tags[$row['tag_id']];
+                    $data[$row['topic_id']]['tags'][] = $tag;
+                }
+            }
+        }
+
+        if (!empty($other_fields['author']) || !empty($other_fields['contact'])) {
+            $contact_ids = array();
+            foreach ($data as $t) {
+                $contact_ids[] = $t['contact_id'];
+            }
+            $contacts = hubHelper::getAuthor(array_unique($contact_ids));
+            foreach ($data as &$t) {
+                if (isset($contacts[$t['contact_id']])) {
+                    $c = $contacts[$t['contact_id']];
+                    if (!empty($other_fields['author'])) {
+                        $t['author'] = $c;
+                    }
+                    if (!empty($other_fields['contact'])) {
+                        $t['contact'] = $c;
+                    }
+                }
+            }
+            unset($t);
+        }
+
+        if (!empty($other_fields['hub_color'])) {
+            $hub_params_model = new hubHubParamsModel();
+            $hub_colors = $hub_params_model->getByField('name', 'color', 'hub_id');
+            foreach ($data as &$t) {
+                if (empty($hub_colors[$t['hub_id']])) {
+                    $t['hub_color'] = 'white';
+                } else {
+                    $t['hub_color'] = $hub_colors[$t['hub_id']]['value'];
+                };
+            }
+            unset($t);
+        }
+
+        if (!empty($other_fields['is_updated'])) {
+            $this->getModel()->checkForNew($data);
+        }
+
+        if (!empty($other_fields['follow'])) {
+            $following_model = new hubFollowingModel();
+            $rows = $following_model->getByField(
+                array(
+                    'contact_id' => wa()->getUser()->getId(),
+                    'topic_id'   => $ids,
+                ),
+                true
+            );
+            foreach ($rows as $row) {
+                $data[$row['topic_id']]['follow'] = 1;
+            }
+        }
+
+        foreach ($data as &$t) {
+            $t += $defaults;
+        }
         unset($t);
+
         return $data;
     }
 
@@ -617,12 +681,14 @@ class hubTopicsCollection
                 $this->prepare(true, false);
                 $this->setHash(implode('/', $hash));
             } else {
-                $this->addJoin('hub_topic_categories', null, ':table.category_id = '.(int)$category['id']);
+                $alias = $this->addJoin('hub_topic_categories', null, ':table.category_id = '.(int)$category['id']);
 
             }
             $this->filtered = $filtered;
             if (!waRequest::get('sort')) {
                 switch ($category['sorting']) {
+                    case 'manual':
+                        $this->order_by = $alias.'.sort DESC';
                     case 'recent':
                         $this->order_by = 't.create_datetime DESC';
                         break;

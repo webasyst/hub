@@ -46,7 +46,12 @@ class hubTopicTagsModel extends waModel
 
     public function getTagsByField($field, $value = null)
     {
-        $where = is_array($field) ? $this->getWhereByField($field, 'tt') : $this->getWhereByField($field, $value, 'tt');
+        if ($field == 'hub_id') {
+            $tag_model = new hubTagModel();
+            $where = $tag_model->getWhereByField($field, $value, 't');
+        } else {
+            $where = is_array($field) ? $this->getWhereByField($field, 'tt') : $this->getWhereByField($field, $value, 'tt');
+        }
         $sql = "SELECT t.* FROM {$this->table} tt JOIN hub_tag t ON tt.tag_id = t.id
                 WHERE ".$where;
         return $this->query($sql)->fetchAll();
@@ -76,7 +81,23 @@ class hubTopicTagsModel extends waModel
             foreach ($map as $tag_id => $target_id) {
                 if ($tag_id != $target_id) {
                     $field['tag_id'] = $tag_id;
-                    $this->updateByField($field, array('tag_id' => $target_id));
+                    if (isset($field['hub_id'])) {
+                        $current_hub_id = $field['hub_id'];
+                        unset($field['hub_id']);
+                        $where = array(
+                            $tag_model->getWhereByField('hub_id', $current_hub_id, true),
+                            $this->getWhereByField($field, true),
+                        );
+                        $sql = "UPDATE {$this->table}
+                        JOIN {$tag_model->getTableName()} ON (`{$this->table}`.`tag_id`=`{$tag_model->getTableName()}`.`id`)
+                        SET `tag_id` = ".$this->getFieldValue('tag_id', $target_id)."
+                        WHERE (\n\t".implode("\n)\n\tAND\n(\n\t", $where)."\n)";
+
+                        $this->exec($sql);
+
+                    } else {
+                        $this->updateByField($field, array('tag_id' => $target_id));
+                    }
                 }
             }
         }

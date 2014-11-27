@@ -20,12 +20,13 @@ class hubHelper
     {
         return array(
             'page'     => array(
-                'name'        => _w('Page'),
-                'description' => _w(
+                'name'         => _w('Page'),
+                'description'  => _w(
                     'Articles, guides, how-tos, tutorials and other materials that should be considered as static informational pages authored by a particular user.'
                 ),
+                'frontend_add' => false,
                 // available sorting options
-                'sorting'     => array(
+                'sorting'      => array(
                     'recent',
                     'popular',
                     'updated',
@@ -47,6 +48,7 @@ class hubHelper
                     'updated',
                     'unanswered',
                 ),
+                'solution'    => true,
             ),
             'feedback' => array(
                 'name'        => _w('Feedback (+/-)'),
@@ -56,6 +58,7 @@ class hubHelper
                     'popular',
                     'updated',
                 ),
+                'solution'    => true,
             ),
             'custom'   => array(
                 'name'        => _w('Custom'),
@@ -270,10 +273,22 @@ class hubHelper
             if ($size == 16) {
                 $size = 20;
             }
-
-            $contact_id = ifset($params['contact_id'], ifempty($params['contact']['id'], wa()->getUser()->getId()));
-            $photo_id = ifempty($params['contact']['photo'], wa()->getUser()->get('photo'));
-            $attributes['style'] = sprintf(' background-image: url(%s);', waContact::getPhotoUrl($contact_id, $photo_id, $size));
+            if (!empty($params['contact_id'])) {
+                $contact_id = $params['contact_id'];
+            } elseif (!empty($params['contact']['id'])) {
+                $contact_id = $params['contact']['id'];
+            }
+            if (!empty($contact_id)) {
+                $photo_id = !empty($params['contact']['photo']) ? $params['contact']['photo'] : null;
+                if (!empty($params['contact']['email'])) {
+                    $photo_url = hubHelper::getGravatarUrl($params['contact']['email'][0], $size, waContact::getPhotoUrl($contact_id, $photo_id, $size, $size, 'person', true));
+                } else {
+                    $photo_url = waContact::getPhotoUrl($contact_id, $photo_id, $size, $size, 'person', true);
+                }
+                $attributes['style'] = sprintf(' background-image: url(%s);', $photo_url);
+            } else {
+                $attributes['style'] = sprintf(' background-image: url(%s);', waContact::getPhotoUrl(null, null, $size, $size, 'person', true));
+            }
 
             if ($size == 20) {
                 $attributes['class'] .= " icon16 userpic20"; //for proper appearance in within .menu-v and .menu-h
@@ -334,29 +349,71 @@ class hubHelper
 
     public static function getTypes()
     {
+        $base_types = self::getBaseTypes();
         $type_model = new hubTypeModel();
         $types = $type_model->getAll('id');
         foreach ($types as &$type) {
             $type['settings'] = json_decode(ifset($type['settings'], '{}'), true);
+            if (isset($base_types[$type['type']])) {
+                foreach ($base_types[$type['type']] as $k => $v) {
+                    if (!isset($type[$k])) {
+                        $type[$k] = $v;
+                    }
+                }
+            }
             unset($type);
         }
         return $types;
     }
 
-    // Helper for sanitizeHtml()
-    public static function sanitizeHtmlAHref($m)
+    protected static function sanitizeUrl($url)
     {
+        if (empty($url)) {
+            return '';
+        }
+        $url_alphanumeric = preg_replace('~&amp;[^;]+;~i', '', $url);
+        $url_alphanumeric = preg_replace('~[^a-z0-9:]~i', '', $url_alphanumeric);
+        if (preg_match('~^(javascript|vbscript):~i', $url_alphanumeric)) {
+            return '';
+        }
+
         static $url_validator = null;
         if (!$url_validator) {
             $url_validator = new waUrlValidator();
         }
-        $url = preg_replace('~^javascript:~i', '', trim($m[1]));
 
         if (!$url_validator->isValid($url)) {
             $url = 'http://'.$url;
         }
 
+        return $url;
+    }
+
+    // Helper for sanitizeHtml()
+    public static function sanitizeHtmlAHref($m)
+    {
+        $url = self::sanitizeUrl(ifset($m[1]));
         return '<a href="'.self::$attr_start.$url.self::$attr_end.'" target="_blank" rel="nofollow">';
+    }
+
+    // Helper for sanitizeHtml()
+    public static function sanitizeHtmlImg($m)
+    {
+        $url = self::sanitizeUrl(ifset($m[1]));
+        if (!$url) {
+            return '';
+        }
+        return '<img src="'.self::$attr_start.$url.self::$attr_end.'">';
+    }
+
+    public static function sanitizeHtmlIframe($m)
+    {
+        $url = $m[1];
+        if (preg_match('~^//player.vimeo.com/video/[0-9]+$|^//www.youtube.com/embed/[a-z0-9]+$~i', $url)) {
+            return html_entity_decode($m[0], ENT_COMPAT, 'UTF-8');
+        } else {
+            return _w('[Incorrect video embed]');
+        }
     }
 
     protected static $attr_end = null;
@@ -371,14 +428,21 @@ class hubHelper
     {
         // Make sure it's a valid UTF-8 string
         $content = preg_replace('~\\xED[\\xA0-\\xBF][\\x80-\\xBF]~', '?', mb_convert_encoding($content, 'UTF-8', 'UTF-8'));
+
+        // Replace all &entities; with UTF8 chars, except for &, <, >.
+        $content = str_replace(array('&amp;','&lt;','&gt;'), array('&amp;amp;','&amp;lt;','&amp;gt;'), $content);
+        $content = preg_replace('/(&#*\w+)[\x00-\x20]+;/u', '$1;', $content);
+        $content = preg_replace('/(&#x*[0-9A-F]+);*/iu', '$1;', $content);
+        $content = html_entity_decode($content, ENT_COMPAT, 'UTF-8');
+
+        // Remove redactor data-attribute
         $content = preg_replace('/(<[^>]+)data-redactor[^\s>]+/uis', '$1', $content);
 
         // Encode everything that seems unsafe.
-        // Does not re-encode existing entities if they are present (4th parameter false).
         $content = htmlentities($content, ENT_QUOTES, 'UTF-8');
 
         //
-        // Decode back tags that are allowed.
+        // The plan is: to quote everything, then unquote parts that seem safe.
         //
 
         // A trick we use to make sure there are no tags inside attributes of other tags.
@@ -396,28 +460,44 @@ class hubHelper
                     href=&quot;
                         ([^"><]+?)
                     &quot;
-                    (\s.*?)?
+                    (.*?)
                 &gt;
             ~iux',
             array('hubHelper', 'sanitizeHtmlAHref'),
             $content
         );
 
-        // Simple tags: <b>, <i>, <u>, <pre>, <blockquote> and closing counterparts
-        $content = preg_replace(
+        // iframes for youtube and vimeo
+        // <iframe style="width: 500px; height: 281px;" src="//www.youtube.com/embed/TOTIBzyWjLM" frameborder="0" allowfullscreen=""></iframe>
+        // <iframe style="width: 500px; height: 281px;" src="//player.vimeo.com/video/22439234" frameborder="0" allowfullscreen=""></iframe>
+        $content = preg_replace_callback(
             '~
                 &lt;
-                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br))
-                    (\s.*?)?
+                    iframe\s+
+                    style=&quot;\s*
+                        width:\s+[0-9]+px;\s+height:\s+[0-9]+px;
+                    \s*&quot;
+                    \s+
+                    src=&quot;
+                        ([^"><]+?)
+                    &quot;
+                    \s+
+                    frameborder=&quot;0&quot;
+                    \s+
+                    allowfullscreen=&quot;&quot;
+                    \s*
+                &gt;
+                \s*
+                &lt;
+                    /iframe
                 &gt;
             ~iux',
-            '<\1>',
+            array('hubHelper', 'sanitizeHtmlIframe'),
             $content
         );
 
-
         // <img src="...">
-        $content = preg_replace(
+        $content = preg_replace_callback(
             '~
                 &lt;
                     img\s+
@@ -428,7 +508,28 @@ class hubHelper
                     /?
                 &gt;
             ~iux',
-            '<img src="\1">',
+            array('hubHelper', 'sanitizeHtmlImg'),
+            $content
+        );
+
+        // Simple tags: <b>, <i>, <u>, <pre>, <blockquote> and closing counterparts
+        $content = preg_replace(
+            '~
+                &lt;
+                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br))
+                &gt;
+            ~iux',
+            '<\1>',
+            $content
+        );
+        $content = preg_replace(
+            '~
+                &lt;
+                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br))
+                    [^a-z\-\_].*?
+                &gt;
+            ~iux',
+            '<\1>',
             $content
         );
 
@@ -459,7 +560,10 @@ class hubHelper
         // Should not ever happen.
         $content = str_replace(array($attr_start, $attr_end), '', $content);
 
-        return preg_replace('~(?U:\n\s*){0,2}<(/?blockquote)>(?U:\s*\n){0,2}~i', '<\1>', $content);
+        // Remove \n around <blockquote> startting and ending tags
+        $content = preg_replace('~(?U:\n\s*){0,2}<(/?blockquote)>(?U:\s*\n){0,2}~i', '<\1>', $content);
+
+        return $content;
     }
 
     public static function transliterate($str, $strict = true)
@@ -556,9 +660,9 @@ class hubHelper
         unset($empty_contact['id']);
         $empty_contact['email'] = '';
         foreach (array(20, 50, 96) as $size) {
-            $empty_contact['photo_url_'.$size] = wa()->getRootUrl().'wa-content/img/userpic'.$size.'.jpg';
+            $empty_contact['photo_url_'.$size] = wa()->getRootUrl().'wa-content/img/userpic'.$size.'@2x.jpg';
         }
-        $collection = new waContactsCollection('id/'.implode(',', $contact_ids));
+        $collection = new waContactsCollection('id/'.implode(',', $contact_ids), array('photo_url_2x' => true));
         $contacts = $collection->getContacts($fields, 0, count($contact_ids));
 
         if ($contacts) {
@@ -652,11 +756,20 @@ class hubHelper
         return $parsed;
     }
 
-    public static function getGravatarUrl($contact_email, $size = 48, $userpic_url = null)
+    public static function getGravatarUrl($contact_email, $size = 96, $userpic_url = null)
     {
         // When user has a non-default userpic, don't bother
         if ($userpic_url && strpos($userpic_url, '/wa-content/img/') === false) {
             return $userpic_url;
+        }
+
+        // Make sure email is a string
+        if (!is_string($contact_email)) {
+            if (!empty($contact_email['value'])) {
+                $contact_email = $contact_email['value'];
+            } else {
+                $contact_email = null;
+            }
         }
 
         static $app_settings_model = null;
@@ -669,14 +782,14 @@ class hubHelper
             if ($userpic_url) {
                 return $userpic_url;
             } else {
-                return wa()->getConfig()->getRootUrl().'wa-content/img/userpic96.jpg';
+                return wa()->getConfig()->getRootUrl().'wa-content/img/userpic'.$size.'@2x.jpg';
             }
         }
 
         // Default gravatar pic
         $default = $app_settings_model->get('hub', 'gravatar_default', 'retro');
         if ($default == 'custom') {
-            $default = urlencode(wa()->getConfig()->getRootUrl(true).'wa-content/img/userpic96.jpg');
+            $default = urlencode(wa()->getConfig()->getRootUrl(true).'wa-content/img/userpic'.$size.'@2x.jpg');
         }
 
         return '//www.gravatar.com/avatar/'.md5($contact_email).'?s='.($size * 2).'&d='.$default;

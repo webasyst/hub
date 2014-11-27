@@ -30,7 +30,7 @@ class hubBackendAction extends waViewAction
         $app_settings_model = new waAppSettingsModel();
         if ($app_settings_model->get('hub', 'welcome')) {
             if (waRequest::get('skipwelcome')) {
-                $app_settings_model->del('shop', 'welcome');
+                $app_settings_model->del('hub', 'welcome');
             } else {
                 $this->redirect(wa()->getConfig()->getBackendUrl(true).'hub/?action=welcome');
             }

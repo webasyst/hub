@@ -39,11 +39,11 @@
         {$wa_app_static_url}js/sidebar.js
     {/wa_js}
 
-    <script type="text/javascript" src="{$wa_url}wa-content/js/ace/ace.js"></script>
-    <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/redactor/redactor.css">
-    <script src="{$wa_url}wa-content/js/redactor/redactor.min.js"></script>
-    {if substr($wa->locale(), 0, 2)!='en'}<script src="{$wa_url}wa-content/js/redactor/{substr($wa->locale(), 0, 2)}.js"></script>{/if}
-    <script src="{$wa_url}wa-content/js/jquery-wa/editor.js?v{$wa->version()}"></script>
+    <script type="text/javascript" src="{$wa_url}wa-content/js/ace/ace.js?v{$wa->version(true)}"></script>
+    <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/redactor/redactor.css?v{$wa->version(true)}">
+    <script src="{$wa_url}wa-content/js/redactor/redactor.min.js?v{$wa->version(true)}"></script>
+    {if substr($wa->locale(), 0, 2)!='en'}<script src="{$wa_url}wa-content/js/redactor/{substr($wa->locale(), 0, 2)}.js?v{$wa->version(true)}"></script>{/if}
+    <script src="{$wa_url}wa-content/js/jquery-wa/editor.js?v{$wa->version(true)}"></script>
     {$wa->js()}
 </head>
 <body>
@@ -53,8 +53,8 @@
             <div class="sidebar left200px top-padded">
                 {include file="./include.sidebar.html" inline}
             </div>
-            <div class="content left200px" id="c-core">
-                <div class="block not-padded c-core-content" id="content">
+            <div class="content left200px">
+                <div class="block not-padded" id="content">
                     <div class="block">
                         <h1 class="wa-page-heading">[`Loading...`]</h1>
                     </div>

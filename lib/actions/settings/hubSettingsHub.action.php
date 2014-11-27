@@ -23,5 +23,6 @@ class hubSettingsHubAction extends hubSettingsAction
         $frontend_urls = hubHelper::getUrls(intval($hub_id));
 
         $this->view->assign('routes', $frontend_urls);
+        $this->view->assign('domains', wa()->getRouting()->getDomains());
     }
 }

@@ -23,7 +23,14 @@
     </div>
 </div>
 <script>
-    document.title = '{"[`comments`]"|cat:" — ":{$wa->accountName()}}';
+    $.wa.locale = $.extend($.wa.locale||{}, {
+        'Loading...': "[`Loading...`]",
+        'Following': "[`Following`]",
+        "Mark as solution":"[`Mark as solution`]",
+        "Unmark solution":"[`Unmark solution`]"
+    });
+    document.title = "{_w('comments')|escape:js} — {$wa->accountName()|escape:js}";
+
     $.comments.init({
         statuses: {
             deleted: '{hubCommentModel::STATUS_DELETED}',

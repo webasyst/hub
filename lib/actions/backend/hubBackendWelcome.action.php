@@ -6,6 +6,7 @@ class hubBackendWelcomeAction extends waViewAction
      * @var array
      */
     private $types;
+    private $hub_params = array();
     private $translate = array();
 
     private function loadConfig()
@@ -26,9 +27,12 @@ class hubBackendWelcomeAction extends waViewAction
             $this->types = ifset($data['topic_types'], array());
             foreach ($this->types as &$type) {
                 $type['name'] = ifempty($this->translate[$type['name']], $type['name']);
+                $type['category_name'] = ifempty($this->translate[$type['category_name']], $type['category_name']);
                 $type['description'] = ifempty($this->translate[$type['description']], $type['description']);
                 unset($type);
             }
+
+            $this->hub_params = ifset($data['hub_params'], array());
         }
     }
 
@@ -124,17 +128,19 @@ class hubBackendWelcomeAction extends waViewAction
             array(
                 'name'   => wa()->accountName(),
                 'status' => 1,
+
             )
         );
 
-        $hub_params = array();
-
         $hub_types_model = new hubHubTypesModel();
-        $hub_types_model->setTypes($hub_id, $map);
+        $all_types = array_keys($type_model->getAll($type_model->getTableId()));
+        $hub_types_model->setTypes($hub_id, $all_types);
 
-        $hub_params_model = new hubHubParamsModel();
-        foreach ($hub_params as $name => $value) {
-            $hub_params_model->insert(compact('hub_id', 'name', 'value'), 1);
+        if ($this->hub_params) {
+            $hub_params_model = new hubHubParamsModel();
+            foreach ($this->hub_params as $name => $value) {
+                $hub_params_model->insert(compact('hub_id', 'name', 'value'), 1);
+            }
         }
 
         //Filter by topic type для каждого созданного типа
@@ -143,7 +149,7 @@ class hubBackendWelcomeAction extends waViewAction
             $category_model->add(
                 array(
                     'glyph'          => $this->types[$type_id]['glyph'],
-                    'name'           => $this->types[$type_id]['name'],
+                    'name'           => $this->types[$type_id]['category_name'],
                     'type'           => hubCategoryModel::TYPE_DYNAMIC,
                     'conditions'     => sprintf('type_id=%d', $id),
                     'hub_id'         => $hub_id,
@@ -152,6 +158,20 @@ class hubBackendWelcomeAction extends waViewAction
                 )
             );
         }
+
+        $staff_model = new hubStaffModel();
+
+        $staff_member = array(
+            'contact_id'  => $this->getUserId(),
+            'name'        => $this->getUser()->getName(),
+            'hub_id'      => $hub_id,
+            'sort'        => 0,
+            'badge'       => _w('support'),
+            'badge_color' => '#ffffcc',
+        );
+        $staff_model->insert($staff_member, 1);
+
+
         return $hub_id;
     }
 }

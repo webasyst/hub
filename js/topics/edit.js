@@ -202,7 +202,7 @@
                             var t = response.data.topic;
                             var li = $('#draft-' + t.id);
                             if (!li.length) {
-                                li = $('<li id="draft-' + t.id +'" data-contact-id="' + t.contact_id + '">' +
+                                li = $('<li id="draft-' + t.id +'" class="selected" data-contact-id="' + t.contact_id + '">' +
                                     '<a href="#/topic/edit/' + t.id + '/">' +
                                     '<i class="icon16 userpic20" style="background-image: url(\' '  + response.data.contact.photo + ' \')"></i><span class="title">'  + t.title + '</span>' +
                                     '<br><span class="hint">' + t.datetime + '</span></a></li>');
@@ -239,7 +239,7 @@
 
             // Turn the button yellow when something's changed by keyboard event
             that.form.on('change keypress', function(e) {
-                if (e.charCode && that.button.hasClass('green') && !$(e.target).hasClass('ignore-dirty')) {
+                if ((e.type == 'change' || e.charCode) && that.button.hasClass('green') && !$(e.target).hasClass('ignore-dirty')) {
                     that.button.removeClass('green').addClass('yellow');
                 }
             });
@@ -492,7 +492,7 @@
             }
 
             function createSelectElement(hub_id, category_id) {
-                var options = [$.parseHTML('<option value=""></option>')];
+                var options = [$($.parseHTML('<option value=""></option>'))];
                 $.each($.topics_edit.options.categories[hub_id], function(i, c) {
                     options.push($($.parseHTML('<option value="'+c.id+'"'+(category_id == c.id ? ' selected' : '')+'></option>')).text(c.name));
                 });
@@ -591,6 +591,11 @@
                     return submitIfCtrlS(event);
                 });
             })();
+
+            // Make sure sticky bottom buttons behave correctly when user switches between editors
+            $('#topic-editor').closest('.h-topic-editor').find('.html,.wysiwyg').click(function() {
+                setTimeout(function() { $(window).scroll(); }, 0);
+            });
 
             function submitIfCtrlS(event) {
                 if ($.hub.helper.isCtrlS(event)) {

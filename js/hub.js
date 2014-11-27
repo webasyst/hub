@@ -55,7 +55,7 @@
             hash = $.hub.helper.cleanHash(hash);
             if ($.hub.currentHash !== hash) {
                 $.hub.currentHash = hash;
-                window.location.hash = hash;
+                $.wa.setHash(hash);
             }
         },
 
@@ -110,7 +110,7 @@
             $(window).trigger(e);
             if (e.isDefaultPrevented()) {
                 $.hub.currentHash = old_hash;
-                window.location.hash = old_hash;
+                $.wa.setHash(old_hash);
                 return false;
             }
 
@@ -173,7 +173,6 @@
             $('#wa-app > .sidebar li a[href="#/"]').parent().addClass('selected');
             order = this.getOrder('default', order);
             this.load('?module=topics' + (order ? '&sort=' + order : ''), function () {
-                selectActiveTab('', order);
             });
         },
 
@@ -297,7 +296,6 @@
                 hub_id = '&hub_id=' + hub_id;
             }
             this.load('?module=topics' + order + hub_id + '&hash=contact/' + encodeURIComponent(contact_id), function () {
-                selectActiveTab('');
                 $('.h-header .h-sort').remove();
             });
         },
@@ -325,7 +323,9 @@
                     } catch (e) {
                     }
                 }
-            })
+
+                $(window).trigger($.Event('wa_loaded'));
+            });
         },
 
         typeAction: function (id, order) {
@@ -350,7 +350,6 @@
             var self = this;
             hub_id = parseInt(hub_id);
             this.load('?module=settings&action=category&hub_id=' + hub_id, function () {
-                selectActiveTab('category/add/' + hub_id);
                 self.streamSettingsHandler(null, null, 'category');
             });
         },
@@ -363,9 +362,6 @@
         categoryAction: function (id, order, callback) {
             var self = this;
             this.load('?module=topics&hash=category/' + id + (order ? '&sort=' + order : ''), function () {
-
-
-                selectActiveTab('category/' + id, order);
                 if (callback && (typeof callback == 'function')) {
                     callback();
                 }
@@ -378,51 +374,12 @@
                     return false;
                 });
 
-                var featured_topics = $("ul.h-topics.featured");
-                featured_topics.sortable({
-                    update: function (event, ui) {
-                        var li = $(ui.item);
-                        var next = li.next();
-                        $.post('?module=topics&action=move', {
-                            id: li.data('id'),
-                            before_id: next.length ? next.data('id') : null,
-                            category_id: id
-                        });
-                    }
-                });
-
-                $('ul.h-topics').on('click', 'a.topic-featured', function () {
-                    var that = $(this);
-                    var featured = $(this).find('i').hasClass('star');
-                    var topic_li = $(this).closest('li');
-                    var topic_id = topic_li.data('id');
-                    $.post('?module=topics&action=setFeatured', {
-                        id: topic_id,
-                        category_id: id,
-                        featured: featured ? 0 : 1
-                    }, function (response) {
-                        if (featured) {
-                            that.find('i').removeClass('star').addClass('star-empty');
-                            featured_topics.find('li[data-id=' + topic_id + ']').remove();
-                        } else {
-                            that.find('i').addClass('star').removeClass('star-empty');
-                            featured_topics.append('<li data-id=' + topic_id + '>' +
-                                '<i class="icon16 star" title="Featured topic"></i>' +
-                                '<a href="#/topic/' + topic_id + '/" class="bold">' + topic_li.find('a:first').text() + '</a>' +
-                                '<span class="status"></span></li>'
-                            );
-                        }
-                    }, 'json');
-                    return false;
-                });
-
             });
         },
 
         filterAddAction: function () {
             var self = this;
             this.load('?module=settings&action=filter', function () {
-                selectActiveTab('filter/add');
                 self.streamSettingsHandler(null, null, 'filter');
             });
         },
@@ -431,7 +388,6 @@
             var self = this;
             order = this.getOrder('filter' + id, order);
             this.load('?module=topics&hash=filter/' + id + (order ? '&sort=' + order : ''), function () {
-                selectActiveTab('filter/' + id, order);
 
                 if (callback && (typeof callback == 'function')) {
                     callback();
@@ -451,13 +407,11 @@
 
         tagAction: function (id, order) {
             this.load('?module=topics&hash=tag/' + id + (order ? '&sort=' + order : ''), function () {
-                selectActiveTab('tag/' + id, order);
             });
         },
 
         searchAction: function (q) {
             this.load('?module=topics&hash=search/' + encodeURIComponent(q), function () {
-                selectActiveTab('');
             });
         },
 
@@ -764,14 +718,29 @@
                 }
 
                 this.$topics_ul = $('ul.h-topics');
+
+                this.initBulkActions();
+                this.initFollowLinks();
+
+                // Show-hide new comments when user clicks comment counter
+                this.$topics_ul.on('click', '.toggle-comments', function () {
+                    $(this).closest('li').find('.h-comments').slideToggle();
+                });
+
+                // Close 'saved' message when user clicks on a close button
+                $('.h-saved .h-close-saved').on('click', function() {
+                    $(this).closest('.h-saved').slideUp();
+                    return false;
+                });
+            },
+
+            initBulkActions: function() {
+                /** @var {$.hub.topics} self */
+                var self = this;
                 this.$bulk_menu = $('ul.js-bulk-menu:first');
                 this.$sort_menu = $('ul.js-sort-menu:first');
-                /**
-                 *
-                 * @var {$.hub.topics} self
-                 */
-                var self = this;
 
+                // Switch to Bulk mode when user clicks on "Select" link
                 this.$bulk_menu.find('a:first').click(function () {
                     if ($(this).is(':visible')) {
                         self.$topics_ul.addClass('h-bulk-mode');
@@ -782,6 +751,8 @@
 
                     return false;
                 });
+
+                // Switch back to normal mode when user clicks on "cancel" link
                 this.$bulk_menu.find('a:last').click(function () {
                     if ($(this).is(':visible')) {
                         self.$topics_ul.removeClass('h-bulk-mode');
@@ -791,6 +762,7 @@
                     return false;
                 });
 
+                // Actions with selected topics: select, delete, move
                 this.$bulk_menu.find('a.js-bulk-action').click(function () {
                     var $link = $(this);
                     if (self.bulkCount()) {
@@ -805,6 +777,58 @@
                     }
                     return false;
                 });
+
+                // Update number of selected topics when checkbox status change
+                this.$topics_ul.on('change', ':input.js-bulk-mode', function () {
+                    self.bulkCount();
+                });
+
+                // Shift+click on a checkbox selects all between this one and previous one clicked
+                var $last_li_checked = null;
+                var $last_li_unchecked = null;
+                this.$topics_ul.on('click', ':input.js-bulk-mode', function (e) {
+
+                    var $checkbox = $(this);
+                    var $li = $checkbox.closest('.h-topic');
+                    if ($checkbox.prop('checked')) {
+                        if (e.shiftKey && $last_li_checked) {
+                            setCheckedBetween($last_li_checked, $li, true);
+                        }
+                        $last_li_checked = $li;
+                        $last_li_unchecked = null;
+                    } else {
+                        if (e.shiftKey && $last_li_unchecked) {
+                            setCheckedBetween($last_li_unchecked, $li, false);
+                        }
+                        $last_li_checked = null;
+                        $last_li_unchecked = $li;
+                    }
+
+                    self.bulkCount();
+                });
+
+                function setCheckedBetween($from, $to, status) {
+                    if (!$from || !$to || !$from[0] || !$to[0] || $from.is($to[0])) {
+                        return;
+                    }
+
+                    var is_between = false;
+                    $to.parent().children().each(function(i, el) {
+                        if (!is_between) {
+                            if ($from.is(el) || $to.is(el)) {
+                                is_between = true;
+                            }
+                        } else {
+                            if ($from.is(el) || $to.is(el)) {
+                                return false;
+                            }
+                            $(el).find('input:checkbox.js-bulk-mode').prop('checked', status);
+                        }
+                    });
+                }
+            },
+
+            initFollowLinks: function() {
 
                 // Follow/unfollow when user clicks a star
                 this.$topics_ul.on('click', '.h-follow', function () {
@@ -841,13 +865,26 @@
                     return false;
                 });
 
-                // Show-hide new comments when user clicks comment counter
-                this.$topics_ul.on('click', '.toggle-comments', function () {
-                    $(this).closest('li').find('.h-comments').slideToggle();
-                });
+            },
 
-                this.$topics_ul.on('change', ':input.js-bulk-mode', function () {
-                    self.bulkCount();
+            // not called from init(), called directly from Topics.html
+            initManualDragAndDrop: function(category_id) {
+                this.$topics_ul.sortable({
+                    axis: 'y',
+                    items: '> li',
+                    distance: 5,
+                    //containment: 'parent',
+                    tolerance: 'pointer',
+                    handle: '.sort,h3 a,i.h-glyph32',
+                    update: function (e, ui) {
+                        var topic_id = ui.item.data('id');
+                        var before_id = ui.item.next('li').data('id');
+                        $.post('?module=topics&action=move', { id: topic_id, before_id: before_id, category_id: category_id }, null, 'json').always(function(r, status) {
+                            if (status != 'success' || r.status !== 'ok') {
+                                console && console.log(status, r.errors || r);
+                            }
+                        });
+                    }
                 });
             },
             bulkCount: function () {
@@ -1118,6 +1155,12 @@
                     return '';
                 }
 
+                try {
+                    // Fixes behaviour of Safari and possibly other browsers
+                    hash = decodeURIComponent(hash);
+                } catch (e) {
+                }
+
                 return hash;
             },
 
@@ -1146,11 +1189,5 @@
         }
 
     };
-
-    function selectActiveTab(hash, order) {
-        var tabs = $('#content .tabs');
-        tabs.find('.selected').removeClass('selected');
-        tabs.find('a[href="#/' + (hash ? hash + '/' : '') + (order ? order + '/' : '') + '"]').parent().addClass('selected');
-    }
 
 })(jQuery);

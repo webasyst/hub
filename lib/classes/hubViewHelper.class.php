@@ -12,7 +12,7 @@ class hubViewHelper extends waAppViewHelper
         $hub_id = waRequest::param('hub_id');
         $comment_model = new hubCommentModel();
         return $comment_model->getList(
-            '*,is_updated,contact,vote,topic,parent',
+            '*,is_updated,contact,vote,topic,parent,my_vote',
             array(
                 'offset' => 0,
                 'limit'  => $limit,
@@ -54,13 +54,15 @@ class hubViewHelper extends waAppViewHelper
         $hub_id = waRequest::param('hub_id');
 
         $staff_model = new hubStaffModel();
-        return $staff_model->getStaff($hub_id);
+        $contact_ids = $staff_model->select('contact_id')->where('hub_id = '.(int)$hub_id)->fetchAll(null, true);
+        return hubHelper::getAuthor($contact_ids);
     }
 
     /**
+     * @param bool $priority_topics
      * @return array
      */
-    public function categories()
+    public function categories($priority_topics = false)
     {
         $hub_id = waRequest::param('hub_id');
 
@@ -75,6 +77,24 @@ class hubViewHelper extends waAppViewHelper
                 $c['logo_url'] = $logo_url.$c['id'].'/'.$c['logo'];
             }
             unset($c);
+        }
+        if ($priority_topics) {
+            $topic_categories_model = new hubTopicCategoriesModel();
+            $priority_topics = $topic_categories_model->getPriorityTopicIds(array_keys($cats));
+
+            $tc = new hubTopicsCollection('search/priority=1');
+            $topics = $tc->getTopics('*,url,author');
+            foreach ($cats as &$c) {
+                $c['priority_topics'] = array();
+                if (isset($priority_topics[$c['id']])) {
+                    foreach ($priority_topics[$c['id']] as $topic_id) {
+                        if (isset($topics[$topic_id])) {
+                            $c['priority_topics'][$topic_id] = $topics[$topic_id];
+                        }
+                    }
+                }
+                unset($c);
+            }
         }
         return $cats;
     }

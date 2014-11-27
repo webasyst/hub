@@ -234,7 +234,7 @@ msgstr "или"
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:55
 msgid "skip this setup"
-msgstr "пропустите эту настройку"
+msgstr "пропустить автоматическую настройку"
 
 #: /wa-apps/hub/templates/actions/comments/Comments.html:19
 msgid "Show more comments"
@@ -343,7 +343,7 @@ msgstr "Общие настройки"
 
 #: /wa-apps/hub/templates/actions/settings/Settings.html:21
 msgid "App icon counter"
-msgstr "Счетчик для иконки приложения"
+msgstr "Счетчик на иконке"
 
 #: /wa-apps/hub/templates/actions/settings/Settings.html:27
 msgid "New topics published by other users"
@@ -586,16 +586,16 @@ msgstr "Кому виден"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:61
 msgid "Only me"
-msgstr "только мне"
+msgstr "Только мне"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:63
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:72
 msgid "Everybody"
-msgstr "всем пользователям"
+msgstr "Всем пользователям"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:70
 msgid "Limit visibility only to the selected user groups"
-msgstr "Разрешить видимость только для указанных групп пользователей"
+msgstr "Только этой группе пользователей"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:84
 msgid "Filter conditions"
@@ -614,7 +614,7 @@ msgstr "Все"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:107
 msgid "Unanswered only"
-msgstr "Только неотвеченные"
+msgstr "Только без ответа"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:108
 msgid "Answered only"
@@ -647,7 +647,7 @@ msgstr "Публичность"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:38
 msgid "Private"
-msgstr "Приватный"
+msgstr "Закрытый"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:40
 msgid "Topics are visible to backend users only."
@@ -655,7 +655,7 @@ msgstr "Темы видны только пользователям бекенд
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:47
 msgid "Public"
-msgstr "Публичный"
+msgstr "Открытый"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:51
 msgid "Topics are published on the website:"
@@ -676,19 +676,19 @@ msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:70
 msgid "Kudos"
-msgstr "Рейтинг"
+msgstr "Рейтинг авторов"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:74
 msgid "Enable kudos in this hub"
-msgstr "Включить подсчет рейтинга для авторов этого хаба"
+msgstr "Включить подсчет рейтинга авторов для этого хаба"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:76
 msgid ""
 "Kudos are user ratings calculated based on user activity in discussions and "
 "community."
 msgstr ""
-"Рейтинг пользователя вычисляется на основании его активности в обсуждениях и "
-"в сообществе."
+"Рейтинг автора вычисляется на основании его активности в обсуждениях и в "
+"сообществе."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:92
 msgid "Topic popularity index"
@@ -1029,7 +1029,7 @@ msgstr "без названия"
 #: /wa-apps/hub/templates/actions/topics/Topics.html:176
 #: /wa-apps/hub/themes/default/list-topics.html:41
 msgid "by %s"
-msgstr "автор %s"
+msgstr "%s"
 
 #: /wa-apps/hub/templates/actions/topics/Topics.html:212
 #: /wa-apps/hub/themes/default/authors.html:10
@@ -1100,7 +1100,7 @@ msgstr "Мета-данные для этой теме не заданы."
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:35
 msgid "Edit meta"
-msgstr "изменить"
+msgstr "Редактировать"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:90
 msgid "Topic title"
@@ -1108,7 +1108,7 @@ msgstr "Название темы"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:93
 msgid "Public URL"
-msgstr "URL на сайте"
+msgstr "Ссылка"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:100
 #: /wa-apps/hub/themes/default/comment.html:57
@@ -1208,7 +1208,7 @@ msgstr "Редактировать тему"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:97
 msgid "Private hub topic"
-msgstr "Тема приватного хаба"
+msgstr "Тема закрытого хаба"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:123
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:254
@@ -1247,7 +1247,7 @@ msgstr "убрать отметку правильного ответа"
 #: /wa-apps/hub/themes/_webasystcom/tag.html:32
 #: /wa-apps/hub/themes/default/tag.html:18
 msgid "Unanswered"
-msgstr "Неотвеченные"
+msgstr "Без ответа"
 
 #: /wa-apps/hub/lib/actions/categories/hubCategoriesMove.controller.php:13
 msgid "Error when move"
@@ -1372,7 +1372,7 @@ msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:42
 msgid "Question & Answers"
-msgstr "Вопросы и ответы"
+msgstr "Вопрос и ответы"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:43
 msgid ""
@@ -1416,7 +1416,7 @@ msgstr "Исправлено"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:94
 msgid "Rejected"
-msgstr "Отказано"
+msgstr "Не принято"
 
 #: /wa-apps/hub/lib/config/hubRightConfig.class.php:39
 msgid "No access"
@@ -1693,9 +1693,9 @@ msgstr "Начните с <a href=\"%s\">создания новой темы</a
 #: /wa-apps/hub/themes/default/main.html:26
 msgid "%d kudo"
 msgid_plural "%d kudos"
-msgstr[0] "%d кудо"
-msgstr[1] "%d кудо"
-msgstr[2] "%d кудо"
+msgstr[0] "Рейтинг: %d"
+msgstr[1] "Рейтинг: %d"
+msgstr[2] "Рейтинг: %d"
 
 #: /wa-apps/hub/themes/default/topic.custom.html:47
 #: /wa-apps/hub/themes/default/topic.feedback.html:46
@@ -1737,8 +1737,8 @@ msgstr "Новые комментарии будут отправлены вам
 #: /wa-apps/hub/themes/default/topic.feedback.html:80
 #: /wa-apps/hub/themes/default/topic.page.html:115
 #: /wa-apps/hub/themes/default/topic.question.html:94
-msgid "You are following this topic!"
-msgstr "Вы подписаны за эту тему!"
+msgid "You are following this topic"
+msgstr "Вы подписаны за эту тему"
 
 #: /wa-apps/hub/themes/default/topic.feedback.html:81
 #: /wa-apps/hub/themes/default/topic.page.html:116
@@ -1860,3 +1860,108 @@ msgstr ""
 #: /wa-apps/hub/lib/config/site.php:15
 msgid "Homepage default topic sort order"
 msgstr "Порядок сортировки тем на главной странице"
+
+#: /wa-apps/hub/templates/actions/settings/Settings.html:11
+msgid "Settings successfully updated"
+msgstr "Настройки успешно обновлены"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:79
+msgid "Topics"
+msgstr "Темы"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:79
+msgid "+1 vote for user’s topic gives +%s kudos"
+msgstr "+1 голос за тему автора дает ему +%s к рейтингу"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:82
+msgid "+1 vote for user’s answer gives +%s kudos"
+msgstr "+1 голос за ответ автора дает ему +%s к рейтингу"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:85
+msgid "+1 vote for user’s comment gives +%s kudos"
+msgstr "+1 голос за комментарий автора дает ему +%s к рейтингу"
+
+#: /wa-apps/hub/templates/actions/settings/Settings.html:18
+msgid "My personal settings"
+msgstr "Мои личные настройки"
+
+#: /wa-apps/hub/templates/actions/settings/Settings.html:30
+msgid "New comments on topics I follow"
+msgstr "Новые комментарии к темам, на которые я подписан"
+
+#: /wa-apps/hub/themes/default/authors.html:16
+msgid "%d topics, %d answers, and %d comments"
+msgstr "%d тем, %d ответов и %d комментариев"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:59
+msgid ""
+"This hub is not visible on your sites now, because there were no routing "
+"rules added for Hub app with this particular hub. To make this hub visible "
+"on your site, create a route using the form below or using <a href=\"%s"
+"\">Site app</a> routing settings."
+msgstr ""
+"Этот хаб не виден на сайте, потому что для него не заданы правила "
+"маршрутизации. Чтобы опубликовать хаб на сайте, добавьте правило "
+"маршрутизации с помощью формы ниже или в разделе «<a href=\"%s\">Структура</"
+"a>» в приложении «Сайт»."
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:73
+msgid "Specify the public URL for this new hub on your site:"
+msgstr "Введите адрес для этого хаба на сайте:"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsHub.html:77
+msgid "Do not publish this hub on the site just yet"
+msgstr "Пока не публиковать этот хаб на сайте"
+
+#: /wa-apps/hub/templates/actions/settings/types/page.html:16
+msgid "Frontend posting"
+msgstr "Публикация во фронтенде"
+
+#: /wa-apps/hub/templates/actions/settings/types/page.html:21
+msgid "Topics of this type can be added by frontend users"
+msgstr "Пользователи фронтенда могут публиковать темы этого типа"
+
+#: /wa-apps/hub/lib/actions/backend/hubBackendWelcome.action.php:170
+msgid "support"
+msgstr "поддержка"
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:415
+msgid "[Incorrect video embed]"
+msgstr "[Неподдерживаемый формат видео]"
+
+#: /wa-apps/hub/lib/config/logs.php:3
+msgid "published a topic"
+msgstr "опубликовал тему"
+
+#: /wa-apps/hub/lib/config/logs.php:4
+msgid "unpublished a topic"
+msgstr "отменил публикацию темы"
+
+#: /wa-apps/hub/lib/config/logs.php:5
+msgid "modified a published topic"
+msgstr "отредактировал опубликованную тему"
+
+#: /wa-apps/hub/lib/config/logs.php:6
+msgid "added a comment"
+msgstr "добавил комментарий"
+
+#: /wa-apps/hub/lib/config/logs.php:7
+msgid "modified a comment"
+msgstr "изменил комментарий"
+
+#: /wa-apps/hub/lib/config/logs.php:8
+msgid "deleted a comment"
+msgstr "удалил комментарий"
+
+#: /wa-apps/hub/lib/config/logs.php:9
+msgid "restored a comment"
+msgstr "восстановил комментарий"
+
+#: /wa-apps/hub/themes/_webasystcom1/banner.html:4
+#: /wa-apps/hub/themes/default/banner.html:4
+msgid "Find the answer"
+msgstr "Найти ответ"
+
+#: /wa-apps/hub/themes/default/author.html:2
+msgid "All authors"
+msgstr "Все авторы"

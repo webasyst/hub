@@ -8,7 +8,7 @@
             <div class="block">
                 <h6>[`Priority`]</h6>
                 <ul id="ul-priority" class="menu-v">
-                    <li{if $topic.priority == 1} class="selected"{/if}><a data-value="1" href="javascript:void(0)"><i class="icon16 status-red-tiny"></i>[`High`]</a></li>
+                    <li{if $topic.priority == 1} class="selected"{/if}><a data-value="1" href="javascript:void(0)"><i class="icon16 exclamation-red"></i>[`High`]</a></li>
                     <li{if $topic.priority != 1 && $topic.priority != -1} class="selected"{/if}><a data-value="0" href="javascript:void(0)"><i class="icon16 status-gray-tiny"></i>[`None`]</a></li>
                     <li{if $topic.priority == -1} class="selected"{/if}><a data-value="-1" href="javascript:void(0)"><i class="icon16 status-blue-tiny"></i>[`Low`]</a></li>
                 </ul>
@@ -32,7 +32,7 @@
                 <h6>[`Meta`]</h6>
                 <span class="hint no-parameters">[`No meta parameters are defined for this topic.`]</span>
                 <span class="small parameters"></span>
-                <a id="edit-meta-link" class="small inline-link" href="javascript:void(0)"><b>[`Edit meta`]</b></a>
+                <a id="edit-meta-link" class="small" href="javascript:void(0)">[`Edit meta`]</a>
 
                 <input type="hidden" name="topic[meta_title]" value="{$topic.meta_title|escape}">
                 <input type="hidden" name="topic[meta_keywords]" value="{$topic.meta_keywords|escape}">
@@ -51,6 +51,8 @@
     <div class="content right200px">
         <div class="h-stream h-{$hubs[$hub_id].hub_color}">
             <div class="h-header">
+            
+                {if $topic.id}<a href="#/topic/{$topic.id}/" class="back" style="top: 0;">&larr; [`Back`]</a>{/if}
 
                 <!-- topic type -->
                 <ul class="h-topic-type" style="display:none;">
@@ -64,7 +66,7 @@
                 <input id="topic-type" type="hidden" name="topic[type_id]" value="{$topic.type_id}">
 
                 <!-- hub -->
-                <ul class="menu-h dropdown">
+                <ul class="menu-h dropdown h-topic-hub">
                     <li>[`Hub`]:</li>
                     <li class="h-topic-hub-dropdown">
                         <a id="topic-hub" class="inline-link" href="javascript:void(0)">
@@ -89,8 +91,8 @@
 
                     <input type="text" id="h-topic-title" name="topic[title]" class="h-title" value="{$topic.title|escape}" placeholder="[`Topic title`]">
 
-                    <p class="hint hidden" id="public-url-editor" style="line-height:27px;">
-                        [`Public URL`]:
+                    <p class="small hidden" id="public-url-editor" style="line-height:27px;">
+                        <span class="gray">[`Public URL`]:</span>
 
                         {strip}
                             <span class="not-editable-url">

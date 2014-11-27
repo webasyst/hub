@@ -8,7 +8,7 @@
 
         <li class="selected">
             <a href="#/"><i class="icon16 blogs"></i>[`All topics`]
-                <span class="count">{$count_topics.all}</span>
+                <span class="count">{$count_topics.all|max:0}</span>
                 <strong class="small highlighted">{if $count_topics.new.all > 0}+{$count_topics.new.all}{/if}</strong>
             </a>
 
@@ -17,7 +17,7 @@
                 {foreach $hubs as $h}
                     <li>
                         <a href="#/hub/{$h.id}/"{if !$h.urls && $h.status} style="color: #aaa;"{/if}>
-                            <span class="count">{$h.topics_count}</span>
+                            <span class="count">{$h.topics_count|max:0}</span>
                             {$h.name|default:'[`(no name)`]'|escape}
                             {if !empty($count_topics.new[$h.id])}
                                 <strong class="small highlighted">+{$count_topics.new[$h.id]}</strong>
@@ -33,13 +33,13 @@
 
         <li>
             <a href="#/following/"><i class="icon16 star"></i>[`Favorites`]
-                <span id="following-count" class="count">{$following_count}</span>
+                <span id="following-count" class="count">{$following_count|max:0}</span>
                 <strong class="small highlighted">{if !empty($following_comments_count)}+{$following_comments_count}{/if}</strong>
             </a>
         </li>
         <li>
             <a href="#/comments/"><i class="icon16 comments"></i>[`Comments`]
-                <span class="count">{$count_comments.all}</span>
+                <span class="count">{$count_comments.all|max:0}</span>
                 {if $count_comments.new}
                 <strong class="small highlighted">+{$count_comments.new}</strong>
                 {/if}
@@ -47,7 +47,7 @@
         </li>
         <li class="bottom-padded">
             <a href="#/authors/"><i class="icon16 contact"></i>[`Authors`]
-                <span class="count">{$authors_count}</span>
+                <span class="count">{$authors_count|max:0}</span>
             </a>
         </li>
     </ul>
@@ -55,8 +55,7 @@
     <ul id="h-sidebar-filters-list" class="menu-v with-icons">
         {foreach $filters as $filter_id => $filter}
             <li id="filter-{$filter_id}" data-filter-id="{$filter_id}">
-                <a href="#/filter/{$filter_id}/"{* if $filter.contact_id == -1} style="color: #aaa;"{/if *}>{hubHelper::getIcon($filter.icon)}
-                    <span class="name">{$filter.name|default:'[`(no name)`]'|escape}</span>
+                <a href="#/filter/{$filter_id}/"{* if $filter.contact_id == -1} style="color: #aaa;"{/if *}>{hubHelper::getIcon($filter.icon)}<span class="name">{$filter.name|default:'[`(no name)`]'|escape}</span>
                 </a>
             </li>
         {/foreach}
@@ -124,7 +123,7 @@
                             {hubHelper::getIcon('folder')}
                         {/if}
                         <span class="name">{$c.name|default:'[`(no name)`]'|escape}</span>
-                        <span class="count">{$c.topics_count}</span>
+                        <span class="count">{$c.topics_count|max:0}</span>
                     </a>
                 </li>
                 <li class="drag-newposition"></li>

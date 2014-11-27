@@ -11,10 +11,7 @@ class hubTopicsAction extends waViewAction
         }
         $c = new hubTopicsCollection($hash, $options);
 
-        $order = waRequest::get('sort', '');
-        if (!$order && $hash == 'following') {
-            $order = 'updated';
-        }
+        $order = waRequest::get('sort', '', 'string');
 
         if (waRequest::get('_')) {
             unset($_GET['_']);
@@ -31,7 +28,7 @@ class hubTopicsAction extends waViewAction
         $this->view->assign('page', $page);
         $offset = ($page - 1) * $limit;
 
-        $topics = $c->getTopics('*,contact,tags,hub_color', $offset, $limit);
+        $topics = $c->getTopics('*,contact,tags,hub_color,follow', $offset, $limit);
         $count = $c->count();
         $this->view->assign('loaded_count', $offset + count($topics));
         $this->view->assign('topics_count', $count);
@@ -43,20 +40,6 @@ class hubTopicsAction extends waViewAction
         }
         $this->view->assign('pages_count', $pages_count);
 
-        if ($topics) {
-            $following_model = new hubFollowingModel();
-            $rows = $following_model->getByField(
-                array(
-                    'contact_id' => $this->getUser()->getId(),
-                    'topic_id'   => array_keys($topics)
-                ),
-                true
-            );
-            foreach ($rows as $row) {
-                $topics[$row['topic_id']]['follow'] = 1;
-            }
-        }
-
         // Fetch new comments from DB
         if ($topics) {
 
@@ -67,7 +50,7 @@ class hubTopicsAction extends waViewAction
 
             $comment_model = new hubCommentModel();
             $comments = $comment_model->getList(
-                '*,is_updated,contact,vote,parent,can_delete',
+                '*,is_updated,contact,vote,parent,can_delete,my_vote',
                 array(
                     'check_rights' => false,
                     'order'        => 'datetime DESC',
@@ -84,7 +67,7 @@ class hubTopicsAction extends waViewAction
                 $topics[$cm['topic_id']]['new_comments'][$cm['id']] = $cm;
             }
 
-            $this->view->assign('current_author', hubCommentModel::getAuthorInfo(wa()->getUser()->getId()));
+            $this->view->assign('current_author', hubHelper::getAuthor($this->getUserId()));
         }
 
         $m = new hubTopicModel();
@@ -100,6 +83,9 @@ class hubTopicsAction extends waViewAction
             $category = $c->getInfo();
             if (!$order && $category['sorting']) {
                 $order = $category['sorting'];
+            }
+            if (!$order) {
+                $order = 'manual';
             }
             $hub_context = $category['hub'] = hubHelper::getHub($category['hub_id']);
             $this->view->assign('category', $category);
@@ -121,10 +107,18 @@ class hubTopicsAction extends waViewAction
             $hub_context = $hub;
         }
 
+        if (!$order) {
+            $order = 'updated';
+        }
+
+        $is_admin = wa()->getUser()->isAdmin('hub');
+        $hub_full_access = false;
+
         if (!$hub_context && !empty($options['hub_id'])) {
             $hub_context = hubHelper::getHub($options['hub_id']);
         }
         if ($hub_context) {
+            $hub_full_access = $is_admin || wa()->getUser()->getRights('hub.'.$hub_context['id']);
             $hub_context['urls'] = array();
             $hub_color = ifset($hub_context['params']['color']);
             foreach(hubHelper::getUrls($hub_context['id']) as $r) {
@@ -142,6 +136,7 @@ class hubTopicsAction extends waViewAction
 
         $this->view->assign('types', hubHelper::getTypes());
 
-        $this->view->assign('is_admin', wa()->getUser()->isAdmin('hub'));
+        $this->view->assign('is_admin', $is_admin);
+        $this->view->assign('hub_full_access', $hub_full_access);
     }
 }

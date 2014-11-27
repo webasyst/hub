@@ -29,7 +29,10 @@ class hubSettingsAction extends waViewAction
 
     public function execute()
     {
-        $settings = array();
+        $settings = array(
+            'email_following' => !!$this->getUser()->getSettings('hub', 'email_following'),
+            'type_items_count' => array(),
+        );
         foreach (explode(',', $this->getUser()->getSettings('hub', 'type_items_count')) as $v) {
             $settings['type_items_count'][$v] = true;
         }
@@ -45,6 +48,7 @@ class hubSettingsAction extends waViewAction
             $this->view->assign('saved', 1);
         }
 
+        $this->view->assign('is_admin', wa()->getUser()->isAdmin('hub'));
         $this->view->assign('settings', $settings);
         $this->view->assign('global_settings', $global_settings);
     }
@@ -52,21 +56,26 @@ class hubSettingsAction extends waViewAction
     protected function save(&$settings, &$global_settings)
     {
         // Save user settings
-        $settings['type_items_count'] = waRequest::post('type_items_count', array());
+        $settings['type_items_count'] = waRequest::post('type_items_count', array(), 'array');
         $user = wa()->getUser();
         $user->setSettings('hub', 'type_items_count', implode(',', $settings['type_items_count']));
         $settings['type_items_count'] = array_fill_keys($settings['type_items_count'], true);
 
+        $settings['email_following'] = !!waRequest::request('email_following');
+        $user->setSettings('hub', 'email_following', $settings['email_following']);
+
         // Save global settings
-        $defaults = array(
-            'gravatar'         => 0,
-            'gravatar_default' => 'retro',
-        );
-        $app_settings_model = new waAppSettingsModel();
-        $global_settings = waRequest::post('global_settings', array(), 'array') + $global_settings + $defaults;
-        $global_settings = array_intersect_key($global_settings, $defaults);
-        foreach ($global_settings as $k => $v) {
-            $app_settings_model->set('hub', $k, $v);
+        if (wa()->getUser()->isAdmin('hub')) {
+            $defaults = array(
+                'gravatar'         => 0,
+                'gravatar_default' => 'retro',
+            );
+            $app_settings_model = new waAppSettingsModel();
+            $global_settings = waRequest::post('global_settings', array(), 'array') + $global_settings + $defaults;
+            $global_settings = array_intersect_key($global_settings, $defaults);
+            foreach ($global_settings as $k => $v) {
+                $app_settings_model->set('hub', $k, $v);
+            }
         }
 
     }

@@ -33,7 +33,11 @@
         </ul>
         {if $type != 'search'}
         <ul class="menu-h h-sort js-sort-menu">
-
+            {if !empty($category.id) && empty($category.type)}
+                <li{if $order == 'manual'} class="selected"{/if}>
+                    <a href="#/{if $hash}{$hash}/{/if}manual/">[`Manual`] <!-- hub_topic_categories.sort DESC --> </a>
+                </li>
+            {/if}
             <li class="{if !$order || $order == 'recent'} selected{/if}">
                 <a href="#/{if $hash}{$hash}/{/if}recent/">[`Newest`] <!-- create_datetime --> </a>
             </li>
@@ -63,11 +67,11 @@
 
             {if $type == 'category'}
                 {if $is_admin}
-                    <a href="#" class="list-title-suffix stream-edit inline-link" data-category-id="{ifset($category.id)}"><i class="icon16 settings"></i><b><i>[`Category settings`]</i></b></a>
+                    <a href="#" class="list-title-suffix stream-edit inline-link" data-category-id="{ifset($category.id)}"><i class="icon16 settings"></i><span><b><i>[`Category settings`]</i></b></span></a>
                 {/if}
             {elseif $type == 'filter'}
                 {if $is_admin || (-$filter.contact_id == $wa->userId())}
-                    <a href="#" class="list-title-suffix stream-edit inline-link" data-filter-id="{ifset($filter.id)}"><i class="icon16 funnel"></i><b><i>[`Customize filter`]</i></b></a>
+                    <a href="#" class="list-title-suffix stream-edit inline-link" data-filter-id="{ifset($filter.id)}"><i class="icon16 funnel"></i><span><b><i>[`Customize filter`]</i></b></span></a>
                 {/if}
             {elseif $type == 'tag'}
                 <i class="icon16 tags list-title-suffix"></i>
@@ -76,7 +80,7 @@
                     <i class="icon16 lock-bw list-title-suffix"></i>
                 {/if}
                 {if $is_admin}
-                    <a href="#/settings/hub/{ifset($hub.id)}/" class="gray list-title-suffix inline-link"><i class="icon16 settings"></i>[`Hub settings`]</a>
+                    <a href="#/settings/hub/{ifset($hub.id)}/" class="list-title-suffix inline-link"><i class="icon16 settings"></i><span>[`Hub settings`]</span></a>
                 {/if}
             {/if}
 
@@ -109,12 +113,9 @@
 
     <div id="h-content">
 
-
         <div id="h-stream-settings" class="block double-padded" style="display: none;">
-            filter settings here: both new & edit
-            ...move SettingsFilter.html here
+            <!-- category/filter settings -->
         </div>
-
 
         {if !empty($topics)}
             <ul class="h-topics">
@@ -134,7 +135,7 @@
 
                         <input type="checkbox" class="js-bulk-mode" value="{$t.id}">
 
-                        {if 000}
+                        {if $order == 'manual' && !empty($hub_full_access)}
                             <i class="icon16 sort"></i>
                         {/if}
 
@@ -160,13 +161,13 @@
 
                         <a href="#/topic/{$t.id}/" class="{if !empty($t.is_updated) && !empty($t.new_comments)}bold{/if}">
                             {if $t.priority}
-                                <i class="icon16 status-{if $t.priority == 1}red{else}blue{/if}" title="{if $t.priority == 1}[`High priority`]{else}[`Low priority`]{/if}"></i>
+                                <i class="icon16 {if $t.priority == 1}exclamation-red{else}status-blue-tiny{/if}" title="{if $t.priority == 1}[`High priority`]{else}[`Low priority`]{/if}"></i>
                             {/if}
                             {if !empty($t.title)}{$t.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
                         </a>
 
                         {if $t.badge}
-                            <span class="h-badge h-answered h-{$t.badge.id}">{* <i class="icon10 h-badge-icon"></i> *}{$t.badge.name}</span>
+                            <span class="h-badge h-{$t.badge.id}">{$t.badge.name}</span>
                         {/if}
 
                         {if $_topic_type.type == 'forum'}
@@ -242,14 +243,20 @@
         'Loading...': "[`Loading...`]",
         'Following': "[`Following`]",
         'Are you sure?': "[`Are you sure?`]",
-        'Select at least one topic':"[`Select at least one topic`]"
+        'Select at least one topic':"[`Select at least one topic`]",
+        "Mark as solution":"[`Mark as solution`]",
+        "Unmark solution":"[`Unmark solution`]"
     });
-
 
     $.hub.topics.init({
         topics_count:{$topics_count}
     });
     $.hub.initLazyLoad();
+
+    {if $order == 'manual' && !empty($category.id) && !empty($hub_full_access)}
+        // Drag-and-drop for topics in Manual mode
+        $.hub.topics.initManualDragAndDrop({$category.id});
+    {/if}
 
     // Controller for comments
     {if !empty($load_js_for_comments)}
@@ -267,9 +274,4 @@
             });
         });
     {/if}
-
-    $('.h-saved .h-close-saved').on('click', function() {
-        $(this).closest('.h-saved').slideUp();
-        return false;
-    });
 });</script>

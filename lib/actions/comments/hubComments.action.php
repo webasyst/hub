@@ -8,7 +8,7 @@ class hubCommentsAction extends waViewAction
         $comments_per_page = $this->getConfig()->getOption('comments_per_page');
 
         $comment_model = new hubCommentModel();
-        $comments = $comment_model->getList('*,is_updated,contact,vote,topic,parent,can_delete', array(
+        $comments = $comment_model->getList('*,is_updated,contact,vote,topic,parent,can_delete,my_vote', array(
             'offset' => $offset,
             'limit' => $comments_per_page,
             'order' => 'datetime DESC'
@@ -19,7 +19,7 @@ class hubCommentsAction extends waViewAction
             'total_count' => $total_count,
             'count' => count($comments),
             'offset' => $offset,
-            'current_author' => hubCommentModel::getAuthorInfo(wa()->getUser()->getId()),
+            'current_author' => hubHelper::getAuthor($this->getUserId()),
             'sidebar_counters' => array(
                 'new' => $comment_model->countNew(!$offset)
             )

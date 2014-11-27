@@ -37,7 +37,7 @@ class hubFrontendAction extends waViewAction
         }
         $offset = ($page - 1) * $limit;
 
-        $topics = $collection->getTopics('*,url,tags,author,is_updated', $offset, $limit);
+        $topics = $collection->getTopics('*,url,tags,author,is_updated,follow', $offset, $limit);
         $count = $collection->count();
 
         if (!$count) {
@@ -105,7 +105,7 @@ class hubFrontendAction extends waViewAction
         $user['following_count'] = $following_count;
 
         $this->view->assign('following_count', $following_count);
-        $this->view->assign('user', hubHelper::getAuthor($this->getUserId()));
+        $this->view->assign('user', $user);
 
         try {
             $hub_model = new hubHubModel();

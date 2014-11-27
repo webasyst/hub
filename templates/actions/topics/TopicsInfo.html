@@ -63,12 +63,12 @@
                     <div id="h-badge-selector" class="h-badge{if !empty($topic.badge.id)} h-{$topic.badge.id|escape}{/if}">
                         <ul class="menu-h dropdown">
                             <li>
-                                <a href="javascript:void(0)" class="inline-link">{* <i class="icon10 h-badge-icon"></i> *}<b><i>{ifset($topic.badge.name, "[`No badge`]")|escape}</i></b><i class="icon10 darr"></i></a>
+                                <a href="javascript:void(0)" class="inline-link"><b><i>{ifset($topic.badge.name, "[`No badge`]")|escape}</i></b><i class="icon10 darr"></i></a>
                                 <ul class="menu-v">
                                     {foreach $possible_badges as $b}
-                                        <li><a href="javascript:void(0)" data-id="{$b.id|escape}">{$b.name|escape}</a></li>
+                                        <li><a href="javascript:void(0)" data-id="{$b.id|escape}"><i class="icon16 h-badge-color-helper h-{$b.id|escape}"></i>{$b.name|escape}</a></li>
                                     {/foreach}
-                                    <li><a href="javascript:void(0)" style="color: #aaa;" data-id="">[`No badge`]</a></li>
+                                    <li><a href="javascript:void(0)" style="color: #aaa;" data-id=""><i class="icon16 h-badge-color-helper"></i>[`No badge`]</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -115,14 +115,15 @@
             {if !empty($types[$topic.type_id].settings.voting)}
                 <!-- rating -->
                 {if empty($voted)}{$voted = 0}{/if}
-                <strong class="h-rating-box {if $topic.votes_sum > 0}h-positive{else if $topic.votes_sum < 0}h-negative{else}gray{/if}">
-
-                    {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($topic.votes_up),true)}"><span class="upvotes h-positive">{$topic.votes_up}</span> <i class="icon16 hbicns upup{if $voted <= 0}-bw{/if}"></i></a>{/if}
-                    &nbsp;
-<!--                     <span class="total-score">{if $topic.votes_sum > 0}+{/if}{$topic.votes_sum}</span> -->
+                <div class="h-rating-box {if $topic.votes_sum > 0}h-positive{else if $topic.votes_sum < 0}h-negative{else}gray{/if}">
+                
+                    <strong class="h-rating total-score{if $topic.votes_sum > 0} h-positive{elseif $topic.votes_sum < 0} h-negative{/if}">{if $topic.votes_sum > 0}+{/if}{$topic.votes_sum}</strong>
+                
+                    {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($topic.votes_up),true)}"><span class="upvotes h-positive">{$topic.votes_up}</span> <i class="icon16 hbicns upup{if $voted <= 0}-bw{/if}"></i></a>{/if}                    
                     &nbsp;
                     {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="javascript:void(0)" class="h-vote-down" title="{_w('%d vote','%d votes',abs($topic.votes_down),true)}"><span class="downvotes h-negative">{$topic.votes_down}</span> <i class="icon16 hbicns downdown{if $voted >= 0}-bw{/if}"></i></a>{/if}
-                </strong>
+                    
+                </div>
             {/if}
 
             <!-- follow -->

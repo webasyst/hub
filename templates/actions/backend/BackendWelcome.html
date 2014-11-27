@@ -17,8 +17,8 @@
 <div id="wa">
     {$wa->header()}
     <div id="wa-app">
-        <div class="content" id="c-core">
-            <div class="block not-padded c-core-content" id="content">
+        <div class="content">
+            <div class="block not-padded" id="content">
 
                 <div class="block double-padded">
                   <form method="POST" action="?action=welcome">
@@ -38,7 +38,7 @@
                                 <label>
                                     {hubHelper::getGlyph($type.glyph, 16, true)}
                                     <input type="checkbox" name="types[]" value="{$type_id|escape}" checked="checked">
-                                    {$type.name|escape}
+                                    {$type.category_name|escape}
                                     <span class="hint">{$type.description|escape}</span>
                                 </label>
                             </div>

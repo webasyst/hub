@@ -67,9 +67,7 @@ class hubCommentsAddController extends waJsonController
 
         $data['id'] = $id;
 
-        $comment = $this->model->getComment($id, 'contact,vote');
-        $comment['can_delete'] = true;
-        $comment['author'] = hubCommentModel::getAuthorInfo($this->getUser()->getId());
+        $comment = $this->model->getComment($id, 'author,vote,can_delete,my_vote');
         $comment['topic'] = $topic;
         $this->view->assign('comment', $comment);
 
@@ -112,7 +110,7 @@ class hubCommentsAddController extends waJsonController
 
         $following_model = new hubFollowingModel();
         $contact_id = $this->getUser()->getId();
-        foreach ($following_model->getFollowers($comment['topic']['id']) as $c) {
+        foreach ($following_model->getFollowers($comment['topic']['id'], true) as $c) {
             if ($c['id'] == $contact_id || empty($c['email'])) {
                 continue;
             }

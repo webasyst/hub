@@ -11,7 +11,7 @@ class hubFrontendAddAction extends hubFrontendAction
         }
 
         $hub_types_model = new hubHubTypesModel();
-        $types = $hub_types_model->getTypes($this->hub_id);
+        $types = $hub_types_model->getTypes($this->hub_id, true);
         if (!$types) {
             throw new waException('No types');
         }

@@ -48,7 +48,7 @@ class hubFrontendCommentsAddController extends waJsonController
             $comment_count_str = _w('%d comment', '%d comments', $count);
         }
 
-        $comment = $comment_model->getComment($id, 'author,vote,topic,parent', true);
+        $comment = $comment_model->getComment($id, 'author,vote,topic,parent,my_vote', true);
         $comment['editable'] = true;
 
         $topic_type = isset($types[$topic['type_id']]) ? $types[$topic['type_id']] : null;
@@ -62,7 +62,8 @@ class hubFrontendCommentsAddController extends waJsonController
                     'topic'            => $topic,
                     'comment'          => $comment,
                     'comments_allowed' => $topic['badge'] != 'archived' && ifset($topic_type['settings']['commenting'], 1) != 0,
-                    'ajax_append'      => true
+                    'ajax_append'      => true,
+                    'just_added'       => true,
                 ),
                 'file:comment.html'
             ),
@@ -127,7 +128,7 @@ class hubFrontendCommentsAddController extends waJsonController
         $m = new waMailMessage();
 
         $following_model = new hubFollowingModel();
-        foreach ($following_model->getFollowers($comment['topic']['id']) as $c) {
+        foreach ($following_model->getFollowers($comment['topic']['id'], true) as $c) {
             if (empty($c['email'])) {
                 continue;
             }

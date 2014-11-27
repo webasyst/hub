@@ -44,11 +44,28 @@ class hubHubTypesModel extends waModel
      * @param int $hub_id
      * @return array
      */
-    public function getTypes($hub_id)
+    public function getTypes($hub_id, $frontend=false)
     {
-        $sql = 'SELECT t.* FROM ' . $this->table . ' ht JOIN hub_type t ON ht.type_id = t.id
+        $sql = 'SELECT t.*
+                FROM ' . $this->table . ' ht
+                    JOIN hub_type t
+                        ON ht.type_id = t.id
                 WHERE ht.hub_id = i:0';
-        return $this->query($sql, $hub_id)->fetchAll('id');
+        $result = $this->query($sql, $hub_id)->fetchAll('id');
+
+        // 'page' types are not available for frontend users unless allowed in settings
+        if ($frontend) {
+            foreach($result as $id => $t) {
+                if ($t['type'] == 'page') {
+                    $t['settings'] = json_decode(ifempty($t['settings'], '{}'), true);
+                    if (empty($t['settings']['can_create_from_frontend'])) {
+                        unset($result[$id]);
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

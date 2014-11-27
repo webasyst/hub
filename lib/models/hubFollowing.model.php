@@ -4,11 +4,24 @@ class hubFollowingModel extends waModel
 {
     protected $table = 'hub_following';
 
-    public function getFollowers($topic_id)
+    public function getFollowers($topic_id, $for_email = false)
     {
-        $sql = 'SELECT c.*, ce.email FROM '.$this->table.' f JOIN wa_contact c ON f.contact_id = c.id
-        JOIN wa_contact_emails ce ON c.id = ce.contact_id AND sort = 0
-        WHERE f.topic_id = i:0';
+        $settings_join = '';
+        $settings_where = '';
+        if ($for_email) {
+            $settings_join = "JOIN wa_contact_settings AS cs ON c.id=cs.contact_id AND cs.app_id='hub' AND cs.name='email_following'";
+            $settings_where = "AND cs.value='1'";
+        }
+
+        $sql = "SELECT c.*, ce.email
+                FROM {$this->table} f
+                    JOIN wa_contact c
+                        ON f.contact_id = c.id
+                    JOIN wa_contact_emails ce
+                        ON c.id = ce.contact_id AND sort = 0
+                    {$settings_join}
+                WHERE f.topic_id = i:0
+                    {$settings_where}";
 
         $result = $this->query($sql, $topic_id)->fetchAll('id');
 

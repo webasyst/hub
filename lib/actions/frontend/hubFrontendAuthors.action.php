@@ -12,7 +12,7 @@ class hubFrontendAuthorsAction extends hubFrontendAction
         $offset = ($page - 1) * $limit;
 
         $author_model = new hubAuthorModel();
-        $authors = $author_model->getList('*', array(
+        $authors = $author_model->getList('*,badge', array(
             'hub_id' => $this->hub_id,
             'offset' => $offset,
             'limit' => $limit

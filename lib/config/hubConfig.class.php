@@ -27,6 +27,11 @@ class hubConfig extends waAppConfig
         if (wa()->getUser()->getId()) {
             $contact_settings_model = new waContactSettingsModel();
             $last_datetime = (int)$contact_settings_model->getOne(wa()->getUser()->getId(), 'hub', 'hub_last_datetime');
+            if (empty($last_datetime)) {
+                // This is the first time this user opened this app.
+                // Set up default settings for new user.
+                $this->setupFirstLogin();
+            }
         }
         if (empty($last_datetime)) {
             $last_datetime = time();
@@ -65,11 +70,18 @@ class hubConfig extends waAppConfig
             if (!in_array('comments_to_topics', $type)) {
                 $count += $m->countNew();
             } else {
-                $count += $m->countNewToMyTopics();
+                $count += $m->countNewToMyFollowing();
             }
         }
 
         return $count;
+    }
+
+    public function setupFirstLogin()
+    {
+        wa()->getUser()->setSettings('hub', 'hub_last_datetime', time());
+        wa()->getUser()->setSettings('hub', 'type_items_count', 'comments');
+        wa()->getUser()->setSettings('hub', 'email_following', 1);
     }
 
     public function checkRights($module, $action)
@@ -155,7 +167,9 @@ class hubConfig extends waAppConfig
                 foreach ($rights as $name => $lvl) {
                     if (substr($name, 0, 4) == 'hub.' && $lvl >= $level) {
                         $id = (int)substr($name, 4);
-                        $rslt[$id] = $hubs[$id];
+                        if (!empty($hubs[$id])) {
+                            $rslt[$id] = $hubs[$id];
+                        }
                     }
                 }
             }

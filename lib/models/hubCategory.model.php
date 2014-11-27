@@ -10,7 +10,7 @@ class hubCategoryModel extends waModel
 
     public function getByHub($hub_id)
     {
-        return $this->where('hub_id = ?', $hub_id)->order('sort')->fetchAll();
+        return $this->where('hub_id = ?', $hub_id)->order('sort')->fetchAll('id');
     }
 
     /**
@@ -329,7 +329,7 @@ SQL;
      */
     public function checkForNew(&$items)
     {
-        $datetime = wa()->getConfig()->getLastDatetime();
+        $datetime = wa('hub')->getConfig()->getLastDatetime();
         foreach ($items as &$item) {
             $item['update_datetime_ts'] = ifset($item['update_datetime_ts'], strtotime($item['update_datetime']));
             $item['is_updated'] = $item['update_datetime_ts'] > $datetime;

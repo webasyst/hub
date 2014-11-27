@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Saves manual ordering of topics inside static category.
+ */
 class hubTopicsMoveController extends waJsonController
 {
     public function execute()

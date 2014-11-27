@@ -33,7 +33,7 @@
                       </div>
                       <div class="value">
                           <ul class="menu-h js-type-settings-glyphs h-settings-glyph">
-                              <li class="{if ($type.glyph == 'userpic')}selected{/if}"><a href="#" data-glyph="userpic">{hubHelper::getGlyph('userpic', 32, true)}</a></li>
+                              <li class="{if ($type.glyph == 'userpic')}selected{/if}"><a href="#" data-glyph="userpic">{hubHelper::getGlyph('userpic', 32, true,['contact'=>$wa->user()])}</a></li>
                               {foreach hubHelper::getGlyphs() as $glyph}
                                   <li class="{if ($type.glyph == $glyph)}selected{/if}"><a href="#" data-glyph="{$glyph}">{hubHelper::getGlyph($glyph, 32, $type.glyph == $glyph)}</a></li>
                               {/foreach}
@@ -78,11 +78,8 @@
               <div class="field">
                   <div class="value">
                       <input type="submit" class="button green" value="[`Save`]">
+                      <span class="js-hub-type-settings-message"></span>
                   </div>
-                  <div class="value no-shift js-hub-type-settings-message">
-
-                  </div>
-
               </div>
 
             </div>
@@ -247,7 +244,7 @@
                         }
                         return;
                     }
-                    $message.show().html(r.data.message || '<i class="icon16 yes"></>');
+                    $message.show().html( '<i class="icon16 yes"></i>' );
                     if (r.data.hash) {
                         window.location.hash = r.data.hash;
                     } else {
@@ -258,7 +255,7 @@
                         }
                         setTimeout(function () {
                             $message.hide();
-                        }, 5000);
+                        }, 2000);
                     }
                 }
             });

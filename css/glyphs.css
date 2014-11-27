@@ -57,3 +57,5 @@ i.h-glyph16.unknown { background-position: -176px -32px; }
 
 i.h-glyph16.custom { background-size: 16px 16px; filter: grayscale(100%); -webkit-filter: grayscale(100%); background-position: 0 0; }
 i.h-glyph16.custom.selected { filter: grayscale(0%); -webkit-filter: grayscale(0%); }
+
+.h-userpic32 { width: 32px; height: 32px; display: inline-block; background-image: url(/wa-content/img/userpic32.jpg); background-size: 32px 32px; }

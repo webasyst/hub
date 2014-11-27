@@ -30,6 +30,9 @@ class hubFrontendLayout extends waLayout
          */
         $this->view->assign('frontend_footer', wa()->event('frontend_footer'));
 
+        if ($this->getUser()->isAuth() && !$this->view->getVars('user')) {
+            $this->view->assign('user', hubHelper::getAuthor($this->getUserId()));
+        }
 
         $this->setThemeTemplate('index.html');
     }
