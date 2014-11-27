@@ -3,11 +3,11 @@
 {foreach $frontend_homepage as $_}{$_}{/foreach}
 
 <!-- categories -->
-{if $categories = $wa->hub->categories()}
+{if $categories = $wa->hub->categories(true)}
     <ul class="category-list">
         {foreach $categories as $c}
 
-            <li{if $c.is_updated} class="new"{/if}>
+            <li class="{if $c.is_updated} new{/if}{if !empty($c.logo_url)} with-logo{/if}">
                 <span class="count">{$c.update_datetime|wa_datetime:"humandatetime"}</span>
                 {if !empty($c.logo_url)}
                     <a href="{$c.url}" title="{$c.name|escape}"><img class="category-logo" src="{$c.logo_url}" alt="{$c.name|escape}"></a>
@@ -15,7 +15,16 @@
                 <a href="{$c.url}" class="category-name">
                     {$c.name|default:'[`(no name)`]'|escape}
                 </a>
-                <div class="category-description">{$c.description}</div>
+                <div class="category-description">
+                    {$c.description}
+                    {if !empty($c.priority_topics)}
+                        <ul class="featured-topics">
+                        {foreach $c.priority_topics as $_featured}
+                            <li><a href="{$_featured.url|escape}">{$_featured.title|escape}</a></li>
+                        {/foreach}
+                        </ul>
+                    {/if}
+                </div>
             </li>
         {/foreach}
     </ul>

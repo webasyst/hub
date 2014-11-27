@@ -7,7 +7,7 @@
 {* @event frontend_tag.%plugin_id% *}
 {foreach $frontend_tag as $_}{$_}{/foreach}
 
-<ul class="menu-h">
+<ul class="sorting">
     <li{if $sort == 'popular'} class="selected"{/if}>
        <a href="?sort=popular">[`Popular topics`]</a>
     </li>
@@ -17,7 +17,7 @@
     <li{if $sort == 'unanswered'} class="selected"{/if}>
       <a href="?sort=unanswered">[`Unanswered`]</a>
     </li>
-</ul><br><br>
+</ul>
 
 {include file="list-topics.html"}
 

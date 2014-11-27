@@ -1,0 +1,7 @@
+<!-- topic search form -->
+<form method="get" action="{$wa->getUrl('/frontend/search')}" class="search">
+    <div class="search-wrapper">
+        <input type="search" name="query" value="{$wa->request('query')|escape}" placeholder="[`Find the answer`]">
+        <button type="submit"></button>
+    </div>
+</form>

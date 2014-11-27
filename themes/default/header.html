@@ -1,12 +1,6 @@
-<!-- topic search form -->
-<form method="get" action="{$wa->getUrl('/frontend/search')}" class="search">
-    <input type="search" name="query" value="{$wa->request('query')|escape}" placeholder="[s`Search topics`]">
-    <button type="submit"></button>
-</form>
-
 {if $pages = $wa->hub->pages()}
     <!-- info pages -->
-    <ul class="menu-h">
+    <ul class="pages">
         {foreach $pages as $page}
             <li{if strlen($page.url)>1 && $wa->currentUrl()|strstr:$page.url} class="selected"{/if}><a href="{$page.url}">{$page.name}</a></li>
         {/foreach}

@@ -1,66 +1,69 @@
 {*
     FEEDBACK topic type:
-    !!! ?
+    ideas, bug reports, suggestions, thankyous, etc.
 *}
 
-<article class="topic type-feedback" itemscope itemtype="http://schema.org/Question">
+<div itemscope itemtype="http://schema.org/Question">
 
-    <h1 itemprop="name">
-        {$topic.title|escape}
-        <!-- plugin hook: 'frontend_topic.title_suffix' -->
-        {* @event frontend_topic.%plugin_id%.title_suffix *}
-        {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
-        {if $topic.badge}
-            <span class="badge badge-{$topic.badge.id}"><i></i>{$topic.badge.name}</span>
-        {/if}
-    </h1>
+    <article class="topic type-feedback">
 
-    {if !empty($types[$topic.type_id].settings.voting)}
-        <div class="vote qa">
-            {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="#" class="minus"><i class="icon16 down{if $voted >= 0}-bw{else} disabled{/if}"></i></a>{/if}
-            {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="#" class="plus"><i class="icon16 up{if $voted <= 0}-bw{/if}"></i></a>{/if}
-            <strong class="{if $topic.votes_sum > 0}positive{elseif $topic.votes_sum < 0}negative{/if}">{$topic.votes_sum}</strong>
-        </div>
-    {/if}
-
-    <div{if !empty($types[$topic.type_id].settings.voting)} class="meta-ousted"{/if}>
-
-        <div itemprop="articleBody" class="topic-content">
-            {$topic.content}
-        </div>
-
-        <!-- plugin hook: 'frontend_topic.body' -->
-        {* @event frontend_topic.%plugin_id%.body *}
-        {foreach $frontend_topic as $_}{$_.body}{/foreach}
-
-        <div class="credentials">
-            {if !empty($topic.author)}
-                <a href="{$topic.author.url}">
-                    <img src="{$topic.author.photo_url_20}" class="userpic" alt="">
-                </a>
-                <a href="{$topic.author.url}" class="username" itemprop="author">{$topic.author.name|escape}</a>
-                {if !empty($topic.author.badge)}
-                <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
+        <h1 itemprop="name">
+            {$topic.title|escape}
+            <!-- plugin hook: 'frontend_topic.title_suffix' -->
+            {* @event frontend_topic.%plugin_id%.title_suffix *}
+            {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
+            {if $topic.badge}
+                <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
             {/if}
-            {/if}
-        </div>
+        </h1>
 
-        <span class="aux">[`Posted`]: {$topic.create_datetime|wa_date:'humandate'}</span>
-        <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
-
-        <div class="tags">
-            {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
-        </div>
-
-        {if !empty($topic.editable)}
-        <div class="edit-links">
-            <a href="{$topic.edit_url}">[`Edit topic`]</a>
-            <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
-        </div>
+        {if !empty($types[$topic.type_id].settings.voting)}
+            <div class="vote qa">
+                {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="#" class="minus"><i class="icon16 down{if $voted >= 0}-bw{else} disabled{/if}"></i></a>{/if}
+                {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="#" class="plus"><i class="icon16 up{if $voted <= 0}-bw{/if}"></i></a>{/if}
+                <strong class="{if $topic.votes_sum > 0}positive{elseif $topic.votes_sum < 0}negative{/if}" itemprop="upvoteCount">{$topic.votes_sum}</strong>
+            </div>
         {/if}
 
-    </div>
+        <div{if !empty($types[$topic.type_id].settings.voting)} class="meta-ousted"{/if}>
 
+            <div itemprop="text" class="topic-content">
+                {$topic.content}
+            </div>
+
+            <!-- plugin hook: 'frontend_topic.body' -->
+            {* @event frontend_topic.%plugin_id%.body *}
+            {foreach $frontend_topic as $_}{$_.body}{/foreach}
+
+            <span class="aux">[`Posted`]: {$topic.create_datetime|wa_date:'humandate'}</span>
+            <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+
+            <div class="credentials">
+                {if !empty($topic.author)}
+                    <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}">
+                        <img src="{$topic.author.photo_url_20}" class="userpic" alt="">
+                    </a>
+                    <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}" class="username" itemprop="author">{$topic.author.name|escape}</a>
+                    {if !empty($topic.author.badge)}
+                    <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
+                {/if}
+                {/if}
+            </div>
+
+            <div class="tags">
+                {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
+            </div>
+
+            {if !empty($topic.editable)}
+            <div class="edit-links">
+                <a href="{$topic.edit_url}" class="button">[`Edit topic`]</a>
+                <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+            </div>
+            {/if}
+
+        </div>
+
+    </article>
 
     {if !empty($types[$topic.type_id].settings.commenting)}
 
@@ -80,22 +83,13 @@
                         <span class="small">[`New comments will be sent to you by email`]</span>
                     </div>
                     <div class="hide-when-not-following">
-                        <i class="icon16 star"></i>[`You are following this topic!`]
+                        <i class="icon16 star"></i>[`You are following this topic`]
                         <input type="button" class="button gray" value="[`Unfollow`]" id="button-unfollow">
                     </div>
                 </div>
             {/if}
 
             {if !empty($comments)}
-
-                <ul class="menu-h sorting aux">
-                    <li class="selected" data-order="votes">
-                      <a href="#" class="inline-link"><b><i>[`votes`]</i></b></a>
-                    </li>
-                    <li data-order="newest">
-                      <a href="#" class="inline-link"><b><i>[`newest`]</i></b></a>
-                    </li>
-                </ul>
 
                 {$depth=-1}
                 {foreach $comments as $comment}
@@ -147,7 +141,7 @@
             <h4>[`Add comment`]</h4>
             {include file="comment.add.html" inline}
         {else}
-            {if $topic.badge == 'archived'}
+            {if $topic.badge.id == 'archived'}
                 <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
             {else}
                 <p><em>[`Posting new comments is disabled for this topic.`]</em></p>
@@ -156,7 +150,7 @@
 
     {/if}
 
-</article>
+</div>
 
 <script>$(function() {
     var wrapper = $('#topic-and-comments');

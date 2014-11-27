@@ -59,6 +59,11 @@ div.tagsinput div { display:block; float: left; }
 .error-box {border: 2px solid red}
 .error-box .redactor-box {margin-bottom: 0}
 
+ul.auth-type { padding: 0 0 10px !important; list-style: none; }
+ul.auth-type li { padding-right: 10px; display: inline-block; float: left\9; display: inline\9; }
+ul.auth-type li a { padding: 5px 6px; }
+ul.auth-type li a img { margin-right: 5px; top: 4px; position: relative; }
+
 
 /* Topic type badges
 -------------------- */
@@ -69,13 +74,14 @@ div.tagsinput div { display:block; float: left; }
 .badge.badge-pending { background: #eee; color: #777; }
 .badge.badge-accepted { background: #dfd; color: green; }
 .badge.badge-confirmed { background: #ffb; color: brown; }
-.badge.badge-inprogress { background: #dfd; color: green; }
 .badge.badge-rejected { background: #fdd; color: #a00; }
-.badge.badge-complete { background: #dfd; color: green; font-weight: bold; }
-.badge.badge-fixed { background: #dfd; color: green; }
+.badge.badge-complete { background: #ada; color: green; font-weight: bold; }
+.badge.badge-fixed { background: #ada; color: green; }
 .badge.badge-archived { background: #eed; color: #aa7; }
 
-h1 .badge { position: relative; top: -2px; font-size: 0.6em; }
+h1 .badge { position: relative; top: -2px; font-size: 0.6em; border-radius: 16px; padding: 4px 13px 6px !important; }
+h1 .staff { position: relative; top: -2px; font-size: 0.6em; padding: 2px 7px 3px !important; font-weight: normal; }
+h1 .kudos { position: relative; top: -2px; font-size: 0.6em; border-radius: 16px; padding: 4px 13px 6px !important; display: inline; }
 
 
 /* Homepage
@@ -87,41 +93,21 @@ ul.category-list li a.category-name { text-decoration: none; font-size: 1.5em; }
 ul.category-list li.new a.category-name,
 ul.category-list li.new .count { font-weight: bold; }
 ul.category-list li a.category-name:visited { color: #006bd8 !important; }
-ul.category-list li img.category-logo { max-width: 48px; max-height: 48px; float: left; margin-right: 15px; }
-ul.category-list li .category-description { color: #aaa; font-size: 0.9em; margin-right: 100px; }
+ul.category-list li .category-description { color: #aaa; font-size: 0.9em; margin-right: 100px; margin-top: 5px; }
+ul.category-list li .category-description p { margin-bottom: 10px; }
 ul.category-list li .category-description a { color: #aaa; }
 ul.category-list li .count { float: right; color: #aaa; }
+ul.category-list li.with-logo { padding-left: 65px; position: relative; }
+ul.category-list li img.category-logo { max-width: 48px; max-height: 48px; position: absolute; left: -0px; }
+
+ul.category-list li ul.featured-topics { padding-left: 0; }
+ul.category-list li ul.featured-topics li { margin-bottom: 0; }
+ul.category-list li ul.featured-topics li a { color: #03c; }
 
 .topic-stream { padding-top: 10px; }
 .topic-stream h3 { float: left; }
 .topic-stream .sorting { margin-top: 0; }
-
-/* Topic list
-------------- */
-
-ul.sorting { margin-left: 0; margin-bottom: 20px; padding-left: 0; }
-ul.sorting li { padding-right: 5px; list-style: none; display: inline-block; display:block\9; float:left\9; margin: 0; }
-ul.sorting li a { padding: 2px 3px; }
-ul.sorting li.selected a { background: #eee; }
-ul.sorting li.selected a.inline-link b { border: none; }
-ul.sorting.aux { float: right; clear: none; }
-
-i.sort-desc { height: 0; width: 0; border: 4px solid transparent; border-bottom-color: #000; margin-bottom: 0.2em; display: inline-block; display: block\9; float: left\9; }
-i.sort-asc { height: 0; width: 0; border: 4px solid transparent; border-top-color: #000; margin-top: 0.1em; display: inline-block; display: block\9; float: left\9; }
-
-ul.topics { font-size: 1.1em; margin-top: 25px; padding-left: 30px; }
-ul.topics li { list-style: none; position: relative; padding-left: 10px; margin-bottom: 20px; }
-ul.topics li a { text-decoration: none; }
-ul.topics li a.bold:visited { color: #03c; }
-ul.topics li p { margin-bottom: 0; margin-top: 2px; color: #999; font-size: 0.8em; width: 80%; }
-ul.topics li .hint { font-size: 0.8em; }
-ul.topics li .hint.new { color: #000; background: #ffc; }
-ul.topics li .meta { position: absolute; left: -40px; width: 40px; text-align: center; padding-top: 0; }
-ul.topics li .tags a { text-decoration: underline; font-size: 0.85em; padding: 0 !important; }
-ul.topics li .replies { float: right; }
-ul.topics.featured li { margin-bottom: 0; }
-
-.empty-topic-list { color: #aaa; }
+.topic-stream ul.topics { margin-top: 0; }
 
 
 /* Topic page
@@ -138,7 +124,8 @@ ul.topics.featured li { margin-bottom: 0; }
 .credentials .icon16 { margin: 0 3px; }
 .credentials .date { color: #aaa; }
 .credentials .date.aux { float: right; }
-.credentials .solution-box { white-space: nowrap; display: inline; margin-left: 10px; margin-right: 10px; }
+.credentials .button-solution { margin-left: 10px; }
+.credentials .badge-solution { float: right; margin-right: 10px; }
 
 .vote.helpful { float: none; background: #eee; padding: 20px; clear: left; margin-top: 20px; }
 .vote.helpful a { float: none; padding: 2px 5px; font-weight: bold; }
@@ -153,7 +140,7 @@ ul.topics.featured li { margin-bottom: 0; }
 .topic-content h6 { font-family: 'Helvetica Neue', Arial, sans-serif; }
 
 .meta { width: 65px; float: left; text-align: center; padding-top: 5px; }
-.meta .userpic { width: 50px; height: 50px; }
+.meta img.userpic { width: 50px; height: 50px; }
 .meta-ousted { margin-left: 75px; }
 .topic-content img,
 .topic-content iframe,
@@ -162,6 +149,9 @@ ul.topics.featured li { margin-bottom: 0; }
 
 .topic .aux { float: right; color: #aaa; }
 .topic .tags a { padding-right: 0 !important; }
+.topic .actions { float: right; font-size: 0.9em; }
+.topic .actions a { margin-right: 8px; }
+.topic .actions a.aux { float: right; color: #aaa; }
 
 .topic.type-forum .meta-ousted { min-height: 50px; }
 
@@ -171,7 +161,7 @@ ul.topics.featured li { margin-bottom: 0; }
 /* Comments & Answers
 --------------------- */
 
-.comment { padding: 5px; margin: 0 0 10px 0; }
+.comment { padding: 5px 5px 25px; margin: 0 0 10px 0; }
 .comment ul.redactor-toolbar { clear: none; }
 .comment span.hint a { color: #aaa; text-decoration: underline; }
 .comment a.comment-delete { padding: 0 3px; color: #d99; text-decoration: underline; }
@@ -179,28 +169,30 @@ ul.topics.featured li { margin-bottom: 0; }
 .comment .comment-form { padding: 15px 10px 15px 0; margin-top: 0; }
 .comment .comment-form textarea { min-height: 100px; }
 .comment .comment-submit { margin-bottom: 10px; }
-.comment:hover { background: #eee; }
+.comment:hover { background: #f3f3f3; }
 
-.comment.in-reply-to { background: #eee; margin: -8px -8px 10px; padding: 8px 35px 8px 8px; position: relative; }
+.comment.in-reply-to { background: #eee; margin: -3px -3px 10px; padding: 8px; position: relative; }
 .comment.in-reply-to .actions .aux { display: none; }
-.comment.new { background: #ffc; margin: -8px -8px 10px; padding: 8px 35px 8px 8px; }
+.comment.new { background: #ffc; }
 .comment.solution { background: #dfd; }
+.comment.featured-comment { background: #eed; }
 
 .comment-form { padding: 0; margin-top: 20px; }
 .comment-form-fields p { margin: 0 0 10px; }
 .comment-form-fields p a { display: inline !important; }
-.comment-form-fields label { width: 160px; display: block; clear: left; float: left; margin: 0 10px 0 0; color: #aaa; padding-top: 3px; }
+.comment-form-fields label { width: 140px; display: block; clear: left; float: left; margin: 0 10px 0 0; color: #aaa; padding-top: 3px; }
 .comment-form-fields input { width: 20em; }
-.comment-form .comment-redactor { margin-left: 170px; }
+.comment-form .comment-redactor { margin-left: 150px; }
 .comment-form .comment-redactor .redactor-box { margin-bottom: 10px; }
 .comment-form .comment-redactor .redactor-toolbar:after { clear: none; }
 .comment-form .comment-redactor .errormsg { margin-left: 0; margin-bottom: 20px; }
-.comment-form .comment-submit { padding:0 0 0 170px; }
+.comment-form .comment-submit { padding:0 0 0 150px; }
 .comment-form .userpic { width: 20px; height: 20px; float: left; margin-right: 5px; border-radius: 50%; }
 .comment-form ul.menu-h.auth-type li a img { float: left; margin-right: 3px; position: relative; top: 2px; }
 .comment-form ul.menu-h.auth-type { padding-bottom: 20px; }
 
-.forum-reply-form { border-top: 1px solid rgba(0,0,0,0.1); padding-top: 30px; }
+.forum-reply-form { border-top: 1px solid rgba(0,0,0,0.1); }
+.forum-reply-form .comment { padding-top: 30px; }
 .forum-reply-form textarea { width: 100%; margin-bottom: 10px; }
 .forum-reply-form .errormsg { margin-left: 0; margin-bottom: 20px; }
 
@@ -215,41 +207,47 @@ ul.topics.featured li { margin-bottom: 0; }
 .comments .credentials .date { margin: 0 5px; padding-top: 1px; }
 .comments .credentials .userpic { margin-right: 5px; width: 20px; margin-top: 3px; }
 .comments .credentials .userpic.icon16 { min-width: 0; width: 16px; height: 16px; margin: 7px 4px 0; }
-.comments .text { margin: 5px 5px 5px 28px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Helvetica Neue', Arial, sans-serif; }
+.comments .text { margin: 5px 5px 5px 25px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Helvetica Neue', Arial, sans-serif; }
 .comments .text img,
 .comments .text iframe { max-width: 100%; }
-.comments .actions { margin: 0 0 5px 28px; font-size: 0.9em; }
+.comments .actions { margin: 0 0 5px 25px; font-size: 0.9em; }
 .comments .actions a { margin-right: 8px; }
 .comments .actions a.aux { float: right; color: #aaa; }
 .comments textarea { height: 100px; min-height: 100px; width: 75%; margin-top: 0; }
 
 .comments ul li ul { padding-left: 25px; }
-/* .comments .edit-links { display: inline; font-size: 0.8em; } */
+
+/* shrinked comment reply form view */
+.comments ul li ul li .comment.in-reply-to .comment-form-fields label { display: none; }
+.comments ul li ul li .comment.in-reply-to .comment-form .comment-redactor { margin-left: 0; }
+.comments ul li ul li .comment.in-reply-to .comment-form .comment-submit { padding-left: 0; }
 
 .follow { background: #ffc; padding: 20px; margin-bottom: 30px; clear: left; }
 .follow.following .hide-when-following,
 .follow.not-following .hide-when-not-following { display: none; }
+.follow #button-follow { margin-right: 7px; }
+.follow #button-unfollow { margin-left: 7px; }
 
+/* reset default <ul> and <ol> styling for comment content */
 .comments ul li .comment ul,
-.comments ul li .comment ol { padding-left: 25px; }
+.comments ul li .comment ol { padding-left: 25px; margin-left: 0 !important; }
+.comments ul li .comment ul li { list-style: disc; }
+.comments ul li .comment ol li { list-style: decimal; }
 
-.comments.answers .credentials,
+.comments.answers .comment { min-height: 60px; padding: 10px 0; }
 .comments.answers .text,
-.comments.answers .actions { margin-left: 75px; }
-.comments.answers ul li ul { font-size: 0.9em; }
-.comments.answers ul li ul li ul { font-size: 1em; }
-.comments.answers ul li ul .comment.in-reply-to { margin-left: 67px; padding-right: 8px; }
-.comments.answers ul li ul .comment.in-reply-to .credentials,
-.comments.answers ul li ul .comment.in-reply-to .text,
-.comments.answers ul li ul .comment.in-reply-to .actions { margin-left: 0; }
+.comments.answers .actions { margin-left: 70px; }
+.comments.answers ul li ul { margin-left: 35px; font-size: 0.9em; }
+.comments.answers ul li ul li ul { margin-left: 10px; font-size: 1em; }
+.comments.answers ul li ul .comment { padding: 5px; }
+.comments.answers ul li ul .text,
+.comments.answers ul li ul .actions { margin-left: 0px; }
+
+.comments.answers .comment.in-reply-to { margin: 0 0 10px; }
+.comments.answers ul li ul .comment.in-reply-to { margin: -3px -3px 10px; padding: 8px 35px 8px 8px; }
 
 .comments.forum .comment { clear: left; border-top: 1px solid rgba(0,0,0,0.1); padding: 20px 0 30px; margin: 0; min-height: 50px; }
 .comments.forum .text { margin-left: 0; }
-
-ul.auth-type { padding: 0 0 10px !important; list-style: none; }
-ul.auth-type li { padding-right: 10px; display: inline-block; float: left\9; display: inline\9; }
-ul.auth-type li a { padding: 5px 6px; }
-ul.auth-type li a img { margin-right: 5px; top: 4px; position: relative; }
 
 
 /* Vote icons
@@ -283,6 +281,37 @@ ul.auth-type li a img { margin-right: 5px; top: 4px; position: relative; }
 .vote.qa a:hover i.icon16.down-bw { background-position: -112px 0; /* colored version */ }
 
 
+/* Topic list
+------------- */
+
+ul.sorting { margin-left: 0; margin-bottom: 20px; padding-left: 0; }
+ul.sorting li { padding-right: 5px; list-style: none; display: inline-block; display:block\9; float:left\9; margin: 0; }
+ul.sorting li a { padding: 2px 3px; }
+ul.sorting li.selected a { background: #eee; }
+ul.sorting li.selected a.inline-link b { border: none; }
+ul.sorting.aux { float: right; clear: none; }
+
+i.sort-desc { height: 0; width: 0; border: 4px solid transparent; border-bottom-color: #000; margin-bottom: 0.2em; display: inline-block; display: block\9; float: left\9; }
+i.sort-asc { height: 0; width: 0; border: 4px solid transparent; border-top-color: #000; margin-top: 0.1em; display: inline-block; display: block\9; float: left\9; }
+
+ul.topics { font-size: 1.1em; margin-top: 25px; padding-left: 30px; }
+ul.topics li { list-style: none; position: relative; padding-left: 10px; clear: left; }
+ul.topics li a { text-decoration: none; }
+ul.topics li a i.icon16 { margin-top: 0; }
+ul.topics li a.bold:visited { color: #03c; }
+ul.topics li p { margin-bottom: 0; margin-top: 2px; color: #999; font-size: 0.8em; width: 80%; }
+ul.topics li .hint { font-size: 0.8em; }
+ul.topics li .hint.new { color: #000; background: #ffc; }
+ul.topics li .meta { position: absolute; left: -40px; width: 40px; text-align: center; padding-top: 0; }
+ul.topics li .summary { float: left; max-width: 80%; margin-bottom: 20px; min-height: 32px; }
+ul.topics li .replies { float: right; max-width: 20%; }
+/* ul.topics li .tags a { text-decoration: underline; font-size: 0.85em; padding: 0 !important; } */
+ul.topics li .comment { font-size: 0.8em; padding: 10px 13px; margin-top: 8px; line-height: 1.4em; }
+ul.topics li .comment .credentials { margin-top: 10px; margin-bottom: 0; }
+
+.empty-topic-list { color: #aaa; }
+
+
 /* Add/edit topic
 ----------------- */
 
@@ -303,7 +332,28 @@ ul.auth-type li a img { margin-right: 5px; top: 4px; position: relative; }
 html { overflow: auto !important; /* prevents Redactor's default behavior of setting "overflow: hidden;" on $dropdown:hover event */ }
 .topic-form .redactor-toolbar:after { clear: left; }
 .comment .redactor-toolbar:after { clear: none; }
+.comment .redactor-toolbar { top: 0 !important; visibility: visible !important; width: 100% !important; }
 #redactor-modal footer { background: #fff; top: 0; position: statuc; padding: 0; min-height: 0; font-size: 1em; color: #000; }
+
+/* Tags autocomplete */
+
+.ui-widget { font-family: 'Helvetica Neue', Arial, sans-serif !important; }
+.ui-corner-all { border-radius: 0 !important; }
+.ui-widget-content { background: #fff !important; }
+.ui-widget-content a {  }
+
+/* Authors
+---------- */
+
+ul.authors { padding-left: 60px; }
+ul.authors li { position: relative; list-style: none; margin-bottom: 30px; }
+ul.authors li img.userpic { position: absolute; left: -60px; width: 50px; text-align: center; padding-top: 0; }
+ul.authors li .kudos { float: right; }
+
+ul.author-nav { font-size: 1.1em; list-style: outside none none; padding-left: 0; }
+ul.author-nav li { display: inline-block; padding-right: 20px; }
+ul.author-nav li a { padding: 2px 5px; }
+ul.author-nav li.selected a { background: #eed; }
 
 
 /* TABLET only
@@ -322,8 +372,6 @@ html { overflow: auto !important; /* prevents Redactor's default behavior of set
 ============== */
 
 @media screen and (max-width: 760px) {
-
-    .banner .search { width: 100%; }
 
     .comment-form-fields label { width: auto; float: none; }
     .comment-form-fields input { width: 80%; }

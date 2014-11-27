@@ -1,10 +1,9 @@
 {*
     PAGE topic type:
-    articles, guides, how-tos, tutorials, docs and other authored stuff
+    articles, guides, how-tos, tutorials, docs, and other authored topics
 *}
 
 <article class="topic type-page" itemscope itemtype="http://schema.org/Article">
-
 
     {if !empty($topic.editable)}
         <div class="edit-links aux">
@@ -40,10 +39,10 @@
 
     <div class="credentials">
         {if !empty($topic.author)}
-            <a href="{$topic.author.url}">
+            <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}">
                 <img src="{$topic.author.photo_url_20}" class="userpic" alt="{$topic.author.name|escape}">
             </a>
-            <a href="{$topic.author.url}" class="username" itemprop="author">{$topic.author.name|escape}</a>
+            <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}" class="username" itemprop="author">{$topic.author.name|escape}</a>
             {if !empty($topic.author.badge)}
                 <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
             {/if}
@@ -115,7 +114,7 @@
                     <span class="small">[`New comments will be sent to you by email`]</span>
                 </div>
                 <div class="hide-when-not-following">
-                    <i class="icon16 star"></i>[`You are following this topic!`]
+                    <i class="icon16 star"></i>[`You are following this topic`]
                     <input type="button" class="button gray" value="[`Unfollow`]" id="button-unfollow">
                 </div>
             </div>
@@ -173,7 +172,7 @@
         <h4>[`Add comment`]</h4>
         {include file="comment.add.html" inline}
     {else}
-        {if $topic.badge == 'archived'}
+        {if $topic.badge.id == 'archived'}
             <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
         {else}
             <p><em>[`Posting new comments is disabled for this topic.`]</em></p>
@@ -192,7 +191,12 @@
 
         // Show 'Thank you' when user votes "Was this article helpful?" - "Yes".
         wrapper.find('.plus').click(function() {
-            $.post(vote_url, { type: 'topic', id: '{$topic.id}', vote: +1 });
+            $.post(vote_url, {
+                type: 'topic',
+                id: '{$topic.id}',
+                vote: +1,
+                _csrf: $('input[name=_csrf]').val()
+            });
             wrapper.find('.vote-form-no,.vote-form-question').slideUp();
             wrapper.find('.vote-form-yes').slideDown();
             return false;

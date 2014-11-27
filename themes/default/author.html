@@ -1,17 +1,32 @@
+<div class="breadcrumbs" itemprop="breadcrumb">
+    <a href="{$wa_app_url}authors/">[`All authors`]</a> <span class="rarr">&rarr;</span>
+</div>
 
 {if $wa->userId() == $author.contact_id}
 
     <h1>[`My topics`]</h1>
 
-    <ul class="menu-h">
-        <li{if !empty($author_following)} class="selected"{/if}><a href="{$wa_app_url}author/{$wa->user()->getId()}/following/">[`Following`]</a></li>
+    <ul class="author-nav">
         <li{if !empty($author_topics)} class="selected"{/if}><a href="{$wa_app_url}author/{$wa->user()->getId()}/">[`My topics`]</a></li>
+        <li{if !empty($author_following)} class="selected"{/if}><a href="{$wa_app_url}author/{$wa->user()->getId()}/following/">[`Favorites`]</a></li>
     </ul>
 
 {else}
 
-    <h1>{sprintf('[`Topics by %s`]',$author.name)}</h1>
-    <p><img src="{$author.photo_url_96}" class="userpic" alt="{$author.name|escape}"></p>
+    <h1>
+        {$author.name|default:"[`(missing contact)`]"|escape}
+        
+        {if !empty($author.badge)}
+            <span class="staff"{if !empty($author.badge_color)} style="background-color: {$author.badge_color}"{/if}>{$author.badge}</span>
+        {/if}
+        
+        {if !empty($hub.params.kudos) && isset($author.rate)}
+            <span class="kudos{if $author.rate > 0} positive{elseif $author.rate < 0} negative{/if}" title="{_w('%d kudo', '%d kudos', $author.rate)|escape}">{if $author.rate >= 0}+{else}&minus;{/if}{abs($author.rate)}</span>
+        {/if}
+    </h1>
+    <p><img src="{$author.photo_url_96}" class="userpic" alt="{$author.name|escape}" style="width: 96px;"></p>
+    
+    <h3>{sprintf('[`Topics by %s`]',$author.name)}</h3>
 
 {/if}
 

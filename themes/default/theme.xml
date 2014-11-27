@@ -20,6 +20,10 @@
     		<description locale="en_US">App specific header content</description>
     		<description locale="ru_RU">Содержимое «шапки» приложения</description>
     	</file>
+    	<file path="banner.html" custom="0">
+    		<description locale="en_US">App specific banner content</description>
+    		<description locale="ru_RU">Контент в области баннера</description>
+    	</file>
         <file path="main.html" custom="0">
             <description locale="en_US">Main layout and navigation for Hub app content</description>
             <description locale="ru_RU">Основное макет вывода содержимого и навигации в приложении «Хаб»</description>

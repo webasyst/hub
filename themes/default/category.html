@@ -5,11 +5,11 @@
 {foreach $frontend_category as $_}{$_}{/foreach}
 
 {if $category.enable_sorting && $sorting}
-<ul class="sorting">
-    {foreach $sorting as $_k => $_name}
-    <li{if $sort == $_k} class="selected"{/if}><a href="?sort={$_k}">{$_name}</a></li>
-    {/foreach}
-</ul>
+    <ul class="sorting">
+        {foreach $sorting as $_k => $_name}
+            <li{if $sort == $_k} class="selected"{/if}><a href="?sort={$_k}">{$_name}</a></li>
+        {/foreach}
+    </ul>
 {/if}
 
 {include file="list-topics.html"}

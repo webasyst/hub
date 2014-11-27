@@ -18,17 +18,19 @@
 
         <meta itemprop="commentTime" content="{"Y-m-d\TH:i"|date:$comment.datetime_ts}">
         <span class="hint date aux">{$comment.datetime|wa_datetime:"humandatetime"}</span>
-
-        {if !empty($comment.editable)}
-        <div class="edit-links">
-            <a href="#">[`Edit`]</a>
-            <a href="#">[`Delete`]</a>
-        </div>
-        {/if}
+        
     </div>
 
     <!-- comment text -->
     <div itemprop="commentText" class="text">{$comment.text}</div>
+
+    {if !empty($comment.editable)}
+        <div class="actions">
+            <a class="aux comment-delete" href="#" data-url="{$wa->getUrl('hub/frontend/commentsDelete', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}" data-confirm="[`You are about to delete this record. Are you sure?`]">[`delete`]</a>
+            <a class="aux comment-edit inline-link" href="#" data-save-string="[`Save`]" data-url="{$wa->getUrl('hub/frontend/commentsEdit', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}"><b><i>[`edit`]</i></b></a>
+            {$wa->csrf()}
+        </div>
+    {/if}
 
     {* @event frontend_comments.%plugin_id% *}
     {if !empty($comment.plugins)}

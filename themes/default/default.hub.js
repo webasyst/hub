@@ -57,8 +57,9 @@ $(function () {
 
     /** Adds handlers for topic and post voting when user is not authorized to vote. */
     $.hub.initTopicVotesGuest = function (wrapper, login_url) { // {{{
-        wrapper.on('click', 'div.vote.a a,div.vote.c a', function () {
+        wrapper.on('click', 'div.vote a.plus,div.vote a.minus', function () {
             window.location = login_url;
+            return false;
         });
     }; // }}}
 
@@ -70,7 +71,8 @@ $(function () {
             convertDivs: false,
             imageUpload: el.data('upload-url'),
             buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
-                'image', 'table', 'link', '|'],
+                'image', 'video', 'link', '|'],
+            plugins: ['video'],
             uploadImageFields: {
                 _csrf: el.closest('form').find('input[name="_csrf"]').val()
             },
@@ -211,13 +213,63 @@ $(function () {
         return false;
     }); // }}}
 
+    /** Comments ordering: 'popular' or 'newest' */
+    if ($('#comments').length) { (function() { // {{{
+
+        var $comments = $('#comments');
+
+        // Links to order comments by rating or datetime
+        $comments.find('.sorting li').on('click', function () {
+            var self = $(this);
+            var parent = self.parent();
+            var order = $(this).data('order');
+            if (parent.find('.selected').data('order') != order) {
+                parent.find('.selected').removeClass('selected');
+                self.addClass('selected');
+                orderComments($comments.data('topic'), order);
+            }
+            return false;
+        });
+
+        function orderComments(topic_id, order) {
+            $.post(
+                location.href.replace(/\/#\/[^#]*|\/#|\/$/g, '') + '/comments/order/',
+                {topic_id: topic_id, order: order},
+                function (r) {
+                    if (r.status == 'fail') {
+                        console && console.log(r);
+                        return;
+                    }
+                    if (r.status != 'ok') {
+                        console && console.log('Error occured');
+                        return;
+                    }
+                    if (r.data.comment_ids && $.isArray(r.data.comment_ids) && r.data.comment_ids.length) {
+                        var ul = $('ul:not(.sorting):first', $comments);
+                        for (var i = 0, n = r.data.comment_ids.length; i < n; i += 1) {
+                            ul.append($('li[data-id=' + r.data.comment_ids[i] + ']', ul));
+                        }
+                    }
+                },
+                'json'
+            );
+        }
+
+    })(); } // }}}
+
     /** Controller for new comment form */
     if ($('#comment-form').length) { (function() { // {{{
 
+
         var form_wrapper = $('#comment-form');
+        var form_initial_placement = $('<div></div>').insertBefore(form_wrapper);
         var form = form_wrapper.find('form');
+
+        var type_input = $('input[name=type]', form);
+        var add_topic_header = form_wrapper.siblings('h3,h4');
+
         var content = $('#comments');
-        var comment_type = form.find('input[name=type]').val();
+        var comment_type = type_input.val();
         var hotkeys = {
             'alt+enter': {
                 ctrl: false, alt: true, shift: false, key: 13
@@ -237,7 +289,7 @@ $(function () {
             var self = $(this);
             var item = self.closest('li');
             var parent_id = parseInt(item.attr('data-id'), 10) || 0;
-            prepareAddingForm.call(self, parent_id);
+            prepareAddingForm(parent_id, self);
 
             $('.comment').removeClass('in-reply-to');
             item.children('.comment').addClass('in-reply-to');
@@ -255,25 +307,20 @@ $(function () {
                 if (response.status == 'ok') {
                     if (solution) {
                         self.val(self.data('cancel'));
-                        $('<span class="badge badge-answered"><i></i>' + self.data('badge') + '</span>').insertBefore(self);
+                        $('<span class="badge-solution badge badge-answered"><i></i>' + self.data('badge') + '</span>').insertBefore(self);
                     } else {
                         self.val(self.data('solution'));
                         self.prev('.badge').remove();
                     }
+                    self.toggleClass('gray');
+                    self.closest('.comment').toggleClass('solution');
                 }
             }, 'json');
         });
 
-        // Links to order comments by rating or datetime
-        content.find('.sorting li').on('click', function () {
-            var self = $(this);
-            var parent = self.parent();
-            var order = $(this).data('order');
-            if (parent.find('.selected').data('order') != order) {
-                parent.find('.selected').removeClass('selected');
-                self.addClass('selected');
-                orderComments(content.data('topic'), order);
-            }
+        // Move form back to root comment level when user clicks on a special link
+        add_topic_header.on('click', '.back-to-root', function() {
+            prepareAddingForm('');
             return false;
         });
 
@@ -283,33 +330,6 @@ $(function () {
             addComment();
             return false;
         });
-
-        function orderComments(topic_id, order) {
-            $.post(
-                location.href.replace(/\/#\/[^#]*|\/#|\/$/g, '') + '/comments/order/',
-                {topic_id: topic_id, order: order},
-                function (r) {
-                    if (r.status == 'fail') {
-                        if (console) {
-                            console.log(r);
-                        }
-                        return;
-                    }
-                    if (r.status != 'ok') {
-                        if (console) {
-                            console.log('Error occured');
-                        }
-                        return;
-                    }
-                    if (r.data.comment_ids && $.isArray(r.data.comment_ids) && r.data.comment_ids.length) {
-                        var ul = $('ul:not(.sorting):first', content);
-                        for (var i = 0, n = r.data.comment_ids.length; i < n; i += 1) {
-                            ul.append($('li[data-id=' + r.data.comment_ids[i] + ']', ul));
-                        }
-                    }
-                },
-                'json');
-        }
 
         function addComment() {
             $.post(
@@ -350,26 +370,15 @@ $(function () {
                         parent_item.append(ul);
                     }
                     ul.show().append($.parseHTML(html));
-                    parent_item.children('.comment').removeClass('in-reply-to').addClass('new');
+                    parent_item.children('.comment').removeClass('in-reply-to');
 
                     var header = $('.comments-header').show();
                     if (r.data.comment_count_str) {
                         header.text(r.data.comment_count_str);
                     }
                     $('input[name=count]', form).val(r.data.count);
-                    $('input[name=type]', form).val(comment_type);
-                    $('.header-text', form).hide();
-                    if (comment_type == 'answer') {
-                        $('.header-text.add-answer', form).show();
-                    } else {
-                        $('.header-text.add-comment', form).show();
-                    }
-                    $('input[name=parent_id]', form).val(0);
-                    $('textarea', form).val('');
-                    $('textarea', form).redactor('code.set', '');
                     form.find('em.errormsg').remove();
-
-                    //content.append(form_wrapper);
+                    prepareAddingForm('');
                 },
                 'json')
                 .error(function (r) {
@@ -379,13 +388,20 @@ $(function () {
                 });
         }
 
-        function prepareAddingForm(comment_id) {
-            $(this).after(form_wrapper);
-            $('textarea', form).val('');
-            $('input[name=parent_id]', form).val(comment_id);
-            $('input[name=type]', form).val('comment');
-            $('.header-text', form).hide();
-            $('.header-text.add-comment', form).show();
+        function prepareAddingForm(comment_id, place_for_form) {
+            if (comment_id) {
+                place_for_form.after(form_wrapper);
+                $('input[name=parent_id]', form).val(comment_id);
+                type_input.val('comment');
+                add_topic_header.append('<a class="back-to-root" href="#">#</a>');
+            } else {
+                form_initial_placement.after(form_wrapper);
+                $('input[name=parent_id]', form).val(0);
+                type_input.val(comment_type);
+                add_topic_header.children('a.back-to-root').remove();
+            }
+
+            $('textarea', form).val('').redactor('code.set', '');
             form_wrapper.show();
         }
 

@@ -15,7 +15,7 @@
         {* @event frontend_topic.%plugin_id%.title_suffix *}
         {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
         {if $topic.badge}
-            <span class="badge badge-{$topic.badge.id}"><i></i>{$topic.badge.name}</span>
+            <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
         {/if}
     </h1>
 
