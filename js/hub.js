@@ -141,14 +141,7 @@
                     var attr = hash.slice(attrMarker);
                     // call action if it exists
                     if ($.hub[actionName + 'Action']) {
-                        $('#wa-app > .sidebar li.selected').removeClass('selected');
-                        var tmp_a = $('#wa-app > .sidebar li a[href="#/' + hash.join('/') + '/"]');
-                        if (!tmp_a.length && hash.length > 2) {
-                            tmp_a = $('#wa-app > .sidebar li a[href="#/' + hash.slice(0, -1).join('/') + '/"]');
-                        }
-                        if (tmp_a.length) {
-                            tmp_a.parent().addClass('selected');
-                        }
+                        $.sidebar.highlight();
                         $.hub.currentAction = actionName;
                         $.hub.currentActionAttr = attr;
                         $.hub[actionName + 'Action'].apply($.hub, attr);
@@ -302,7 +295,14 @@
 
         load: function (url, callback) {
             var options = this.options;
-            $('#content').load(url, function (result) {
+            var load_protector = $.hub.load_protector = Math.random();
+            $.get(url, { }, function (result) {
+                if (load_protector !== $.hub.load_protector) {
+                    // too late!
+                    return;
+                }
+                $('#content').html(result);
+
                 var h1 = $('#content').find('h1:first');
                 var title;
                 if (h1.length) {
@@ -870,7 +870,7 @@
             // not called from init(), called directly from Topics.html
             initManualDragAndDrop: function(category_id) {
                 this.$topics_ul.sortable({
-                    axis: 'y',
+                    //axis: 'y',
                     items: '> li',
                     distance: 5,
                     //containment: 'parent',
@@ -885,6 +885,29 @@
                             }
                         });
                     }
+                });
+                return;
+
+                // !!!
+                this.$topics_ul.children().draggable({
+                    connectToSortable: this.$topics_ul,
+                    appendTo: "body",
+                    helper: 'clone'/*function() {
+                        //console.log(this, arguments);
+                        return $($.parseHTML('<div style="width:10px;height:10px;background:white;border:2px solid red;border-radius:5px;"></div>'));
+                    }*/
+                });
+                // !!!
+                $('#category-1').droppable({
+                    tolerance: 'pointer',
+                    activeClass: "not-implemented",
+                    hoverClass: "highlighted",
+                    accept: ":not(.ui-sortable-helper)",
+                    drop: function (event, ui) {
+                        console.log(ui);
+                         $(this).find(".placeholder").remove();
+                         //$("<li></li>").text(ui.draggable.text()).appendTo(this);
+                     }
                 });
             },
             bulkCount: function () {

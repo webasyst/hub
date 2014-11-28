@@ -386,33 +386,53 @@ class hubCommentModel extends waNestedSetModel
     public function checkForNew(&$items)
     {
         $datetime = wa('hub')->getConfig()->getLastDatetime();
+        $hub_visited_comments = wa()->getStorage()->get('hub_visited_comments');
         foreach ($items as &$item) {
             $item['datetime_ts'] = ifset($item['datetime_ts'], strtotime($item['datetime']));
-            $item['is_new'] = $item['is_updated'] = $item['datetime_ts'] > $datetime;
+            $item['is_new'] = $item['is_updated'] = empty($hub_visited_comments[$item['id']]) && $item['datetime_ts'] > $datetime;
         }
         unset($item);
     }
 
     public function countNew($recalc = false)
     {
-        $sql = "SELECT COUNT(id) AS cnt
+        $sql = "SELECT id
                 FROM `{$this->table}`
-                WHERE datetime > ?";
-        return $this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime()))->fetchField('cnt');
+                WHERE datetime > ?
+                    AND status='approved'";
+
+        $result = 0;
+        $hub_visited_comments = wa()->getStorage()->get('hub_visited_comments');
+        foreach($this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime())) as $row) {
+            if (empty($hub_visited_comments[$row['id']])) {
+                $result++;
+            }
+        }
+        return $result;
     }
 
     public function countNewToMyFollowing()
     {
-        $sql = "SELECT COUNT(id) AS cnt
+        $sql = "SELECT id
                 FROM `{$this->table}` AS c
                     JOIN hub_following AS f
                         ON f.topic_id=c.topic_id
                 WHERE datetime > ?
-                    AND f.contact_id = ?";
-        return $this->query($sql, array(
+                    AND f.contact_id = ?
+                    AND status='approved'";
+
+        $result = 0;
+        $rows = $this->query($sql, array(
             date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime()),
             wa()->getUser()->getId()
-        ))->fetchField('cnt');
+        ));
+        $hub_visited_comments = wa()->getStorage()->get('hub_visited_comments');
+        foreach($rows as $row) {
+            if (empty($hub_visited_comments[$row['id']])) {
+                $result++;
+            }
+        }
+        return $result;
     }
 
     public function add($data, $parent_id = null, $before_id = null)
@@ -509,7 +529,7 @@ class hubCommentModel extends waNestedSetModel
         }
 
         // Update author stats
-        if (!empty($data['contact_id']) && !empty($data['hub_id'])) {
+        if (!empty($data['contact_id']) && !empty($data['hub_id']) && $data['contact_id'] != wa()->getUser()->getId()) {
             $author_model = new hubAuthorModel();
             $author_model->receiveVote('comment', $data['hub_id'], $data['contact_id'], +1);
             $author_model->updateCounts('comments', $data['hub_id'], $data['contact_id']);

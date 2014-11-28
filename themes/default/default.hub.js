@@ -87,8 +87,10 @@ $(function () {
     $.hub.initAddForm = function (form, autocomplete_url) { // {{{
 
         form.find('input:submit[name="preview"]').click(function () {
+            var $submit = $(this).after('<i class="icon16 loading"></i>').prop('disabled', true);
             var d = form.find('.topic-preview');
             $.post(d.data('url'), {content: form.find('.topic-content').val(), _csrf: form.find('input[name="_csrf"]').val()}, function (response) {
+                $submit.prop('disabled', false).siblings('.loading').remove();
                 d.html(response.data).show();
             }, 'json');
             return false;
@@ -332,10 +334,12 @@ $(function () {
         });
 
         function addComment() {
+            var $submit = form.find(':submit').after('<i class="icon16 loading"></i>').prop('disabled', true);
             $.post(
                 location.href.replace(/\/#\/[^#]*|\/#|\/$/g, '') + '/comments/add/',
                 form.serialize(),
                 function (r) {
+                    $submit.prop('disabled', false).siblings('.loading').remove();
                     if (r.status == 'fail') {
                         if (console) {
                             console.log(r);
@@ -382,6 +386,7 @@ $(function () {
                 },
                 'json')
                 .error(function (r) {
+                    $submit.prop('disabled', false).siblings('.loading').remove();
                     if (console) {
                         console.error(r.responseText ? 'Error occured: ' + r.responseText : 'Error occured.');
                     }
@@ -580,6 +585,7 @@ $(function () {
                             }
                         } else {
                             win.lazyLoad('stop');
+                            $('.lazyloading-load-more').remove();
                         }
 
                         loading.hide();

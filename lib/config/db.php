@@ -163,7 +163,7 @@ return array(
         'votes_count' => array('int', 11, 'null' => 0, 'default' => '0'),
         'votes_sum' => array('int', 11, 'null' => 0, 'default' => '0'),
         'comments_count' => array('int', 11, 'null' => 0, 'default' => '0'),
-        'badge' => array('enum', "'archived','answered','pending','accepted','confirmed','complete','fixed','rejected'"),
+        'badge' => array('enum', "'archived','answered','pending','accepted','confirmed','inprogress','complete','fixed','rejected'"),
         'type_id' => array('int', 11, 'null' => 0, 'default' => '0'),
         'priority' => array('tinyint', 1, 'null' => 0, 'default' => '0'),
         'followers_count' => array('int', 11, 'null' => 0, 'default' => '0'),

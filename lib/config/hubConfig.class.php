@@ -46,6 +46,8 @@ class hubConfig extends waAppConfig
         if (!$prev_session_last_datetime) {
             $prev_session_last_datetime = $last_datetime;
             $storage->set('hub_last_datetime', $prev_session_last_datetime);
+            $storage->set('hub_visited_comments', array());
+            $storage->set('hub_visited_topics', array());
         }
 
         // Once every couple of minutes update last user activity time in DB.
@@ -58,13 +60,12 @@ class hubConfig extends waAppConfig
 
     public function onCount()
     {
+        $storage = wa()->getStorage();
         $type = explode(',', wa()->getUser()->getSettings('hub', 'type_items_count'));
         $type = array_filter(array_map('trim', $type), 'strlen');
         $count = 0;
-        if (in_array('topics', $type)) {
-            $m = new hubTopicModel();
-            $count += $m->countNew();
-        }
+
+        $url = $this->getBackendUrl(true).$this->application.'/';
         if (in_array('comments', $type)) {
             $m = new hubCommentModel();
             if (!in_array('comments_to_topics', $type)) {
@@ -72,9 +73,47 @@ class hubConfig extends waAppConfig
             } else {
                 $count += $m->countNewToMyFollowing();
             }
+
+            if ($count) {
+                $url = $this->getBackendUrl(true).$this->application.'/#/following/updated/';
+            }
         }
 
-        return $count;
+        if (in_array('topics', $type)) {
+            $m = new hubTopicModel();
+            $cnt = $m->countNew();
+            if (!empty($cnt['all'])) {
+                $count += $cnt['all'];
+                $url = $this->getBackendUrl(true).$this->application.'/#/recent/';
+            }
+        }
+
+        if (!$count) {
+            $storage->set('hub_visited_comments', array());
+            $storage->set('hub_visited_topics', array());
+            $storage->set('hub_last_datetime', time());
+            return null;
+        }
+
+        return array(
+            'count' => $count,
+            'url' => $url,
+        );
+    }
+
+    public function markAsRead($topic_ids=array(), $comment_ids=array())
+    {
+        $hub_visited_topics = wa()->getStorage()->get('hub_visited_topics');
+        foreach($topic_ids as $id) {
+            $hub_visited_topics[$id] = $id;
+        }
+        wa()->getStorage()->set('hub_visited_topics', $hub_visited_topics);
+
+        $hub_visited_comments = wa()->getStorage()->get('hub_visited_comments');
+        foreach($comment_ids as $id) {
+            $hub_visited_comments[$id] = $id;
+        }
+        wa()->getStorage()->set('hub_visited_comments', $hub_visited_comments);
     }
 
     public function setupFirstLogin()

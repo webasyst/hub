@@ -73,10 +73,11 @@ ul.auth-type li a img { margin-right: 5px; top: 4px; position: relative; }
 .badge.badge-answered { background: #dfd; color: green; font-weight: bold; }
 .badge.badge-pending { background: #eee; color: #777; }
 .badge.badge-accepted { background: #dfd; color: green; }
-.badge.badge-confirmed { background: #ffb; color: brown; }
+.badge.badge-confirmed { background: #cfc; color: green; }
+.badge.badge-inprogress { background: #cfc; color: green; font-style: italic; }
 .badge.badge-rejected { background: #fdd; color: #a00; }
-.badge.badge-complete { background: #ada; color: green; font-weight: bold; }
-.badge.badge-fixed { background: #ada; color: green; }
+.badge.badge-complete { background: #dfd; color: green; font-weight: bold; }
+.badge.badge-fixed { background: #dfd; color: green; font-weight: bold; }
 .badge.badge-archived { background: #eed; color: #aa7; }
 
 h1 .badge { position: relative; top: -2px; font-size: 0.6em; border-radius: 16px; padding: 4px 13px 6px !important; }
@@ -148,12 +149,15 @@ ul.category-list li ul.featured-topics li a { color: #03c; }
 .topic-preview iframe { max-width: 100%; }
 
 .topic .aux { float: right; color: #aaa; }
+.topic .edit-links a { margin-right: 10px; }
+.topic .edit-links.aux { padding: 10px; }
+.topic .edit-links.aux a { margin-left: 10px; margin-right: 0; }
 .topic .tags a { padding-right: 0 !important; }
 .topic .actions { float: right; font-size: 0.9em; }
 .topic .actions a { margin-right: 8px; }
 .topic .actions a.aux { float: right; color: #aaa; }
 
-.topic.type-forum .meta-ousted { min-height: 50px; }
+.topic.type-forum .meta-ousted { min-height: 70px; }
 
 .hidden { display: none; }
 
@@ -218,6 +222,7 @@ ul.category-list li ul.featured-topics li a { color: #03c; }
 .comments ul li ul { padding-left: 25px; }
 
 /* shrinked comment reply form view */
+
 .comments ul li ul li .comment.in-reply-to .comment-form-fields label { display: none; }
 .comments ul li ul li .comment.in-reply-to .comment-form .comment-redactor { margin-left: 0; }
 .comments ul li ul li .comment.in-reply-to .comment-form .comment-submit { padding-left: 0; }
@@ -229,6 +234,7 @@ ul.category-list li ul.featured-topics li a { color: #03c; }
 .follow #button-unfollow { margin-left: 7px; }
 
 /* reset default <ul> and <ol> styling for comment content */
+
 .comments ul li .comment ul,
 .comments ul li .comment ol { padding-left: 25px; margin-left: 0 !important; }
 .comments ul li .comment ul li { list-style: disc; }

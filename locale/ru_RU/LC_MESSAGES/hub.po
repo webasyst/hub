@@ -772,7 +772,7 @@ msgstr "Цветовое обозначение хаба"
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:12
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:69
 msgid "None"
-msgstr "нет"
+msgstr "Нет"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:193
 msgid ""
@@ -1063,7 +1063,7 @@ msgid "%d new reply"
 msgid_plural "%d new replies"
 msgstr[0] "%d новый ответ"
 msgstr[1] "%d новых ответа"
-msgstr[2] "%d новый ответов"
+msgstr[2] "%d новых ответов"
 
 #: /wa-apps/hub/templates/actions/topics/Topics.html:155
 #: /wa-apps/hub/themes/default/list-topics.html:49
@@ -1965,3 +1965,22 @@ msgstr "Найти ответ"
 #: /wa-apps/hub/themes/default/author.html:2
 msgid "All authors"
 msgstr "Все авторы"
+
+#: /wa-apps/hub/templates/actions/backend/include.sidebar.html:42
+#: /wa-apps/hub/templates/actions/comments/Comments.html:14
+#: /wa-apps/hub/lib/actions/frontend/hubFrontendAuthorReplies.action.php:13
+#: /wa-apps/hub/themes/default/author.html:24
+msgid "Replies"
+msgstr "Ответы"
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:91
+msgid "In progress"
+msgstr "Делается"
+
+#: /wa-apps/hub/themes/default/author.html:24
+msgid "My replies"
+msgstr "Мои ответы"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:172
+msgid "%s topics on top"
+msgstr "%s"

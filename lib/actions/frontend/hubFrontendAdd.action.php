@@ -136,6 +136,12 @@ class hubFrontendAddAction extends hubFrontendAction
                 $tcm = new hubTopicCategoriesModel();
                 $tcm->assign($topic_id, array($data['category_id']), true);
             }
+
+            // Add author to Hub contacts category
+            if (wa()->getUser()->getId()) {
+                wa()->getUser()->addToCategory($this->getAppId());
+            }
+
             return array('id' => $topic_id, 'topic_url' => $url, 'hub_id' => $this->hub_id);
         } elseif (waRequest::request('preview')) {
             return ifset($sanitized_content);

@@ -71,7 +71,7 @@
                 minHeight: 150,
                 paragraphy: false,
                 convertDivs: false,
-                imageUpload: '?module=pages&action=uploadimage&filelink=1',
+                imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
                 buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
                     'image', 'table', 'link', '|'],
                 keydownCallback: function (e) {
@@ -254,11 +254,13 @@
             var sidebar_counter = this.sidebar_counter;
             var form = this.form;
             var that = this;
+            var $submit = form.find(':submit,:button').after('<i class="icon16 loading"></i>').prop('disabled', true);
             form.find('textarea').redactor('code.sync');
             $.post(
                 '?module=comments&action=add',
                 form.serialize(),
                 function (r) {
+                    $submit.prop('disabled', false).siblings('.loading').remove();
                     if (r.status == 'fail') {
                         that.clear(false);
                         that.showErrors(r.errors);
@@ -305,6 +307,7 @@
                 },
             'json')
             .error(function(r) {
+                $submit.prop('disabled', false).siblings('.loading').remove();
                 if (console) {
                     console.log(r.responseText ? 'Error occured: ' + r.responseText : 'Error occured.');
                 }

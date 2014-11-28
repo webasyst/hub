@@ -15,6 +15,8 @@
             this.initCollapsibleSections();
             this.initCategoriesDragAndDrop();
             this.initFiltersDragAndDrop();
+            this.highlight();
+            $(window).trigger($.Event('wa_sidebar_loaded'));
 
             // Reload sidebar every once in a while
             if (!this.reloader) {
@@ -22,6 +24,14 @@
                     $.sidebar.reload();
                 }, 300000);
             }
+        },
+
+        setHub: function(hub_id) {
+            var our_hub_category_list = $('#hub-'+hub_id).closest('.h-hub').removeClass('folded').find('.category-list:first');
+            $('#wa-app > .sidebar .category-list').not(our_hub_category_list).slideUp(200, function() {
+                $(this).closest('.h-hub').addClass('folded');
+            });
+            our_hub_category_list.slideDown(200);
         },
 
         initCategoriesDragAndDrop: function() {
@@ -114,22 +124,23 @@
 
         },
 
+        // Highlight current active link in sidebar
+        highlight: function(hash) {
+            var hash = $.hub.helper.cleanHash(hash);
+            $('#wa-app > .sidebar li.selected').removeClass('selected');
+            var tmp_a = $('#wa-app > .sidebar li a[href="'+hash+'"]');
+            if (!tmp_a.length && hash.length > 2) {
+                tmp_a = $('#wa-app > .sidebar li a[href="' + $.hub.helper.cleanHash(hash.replace(/\/[^\/]+\/$/, '')) + '"]');
+            }
+            if (tmp_a.length) {
+                tmp_a.closest('li').addClass('selected');
+            }
+        },
+
         reload: function() {
             $.post('?sidebar=1', function(r) {
-
                 $.sidebar.sidebar.html(r);
                 $.sidebar.init();
-
-                // Highlight current active link in sidebar
-                var hash = $.hub.helper.cleanHash();
-                $('#wa-app > .sidebar li.selected').removeClass('selected');
-                var tmp_a = $('#wa-app > .sidebar li a[href="'+hash+'"]');
-                if (!tmp_a.length && hash.length > 2) {
-                    tmp_a = $('#wa-app > .sidebar li a[href="#/' + hash.replace(/\/[^\/]+\/$/, '') + '/"]');
-                }
-                if (tmp_a.length) {
-                    tmp_a.parent().addClass('selected');
-                }
             });
         }
 

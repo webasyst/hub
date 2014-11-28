@@ -116,13 +116,13 @@
                 <!-- rating -->
                 {if empty($voted)}{$voted = 0}{/if}
                 <div class="h-rating-box {if $topic.votes_sum > 0}h-positive{else if $topic.votes_sum < 0}h-negative{else}gray{/if}">
-                
+
                     <strong class="h-rating total-score{if $topic.votes_sum > 0} h-positive{elseif $topic.votes_sum < 0} h-negative{/if}">{if $topic.votes_sum > 0}+{/if}{$topic.votes_sum}</strong>
-                
-                    {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($topic.votes_up),true)}"><span class="upvotes h-positive">{$topic.votes_up}</span> <i class="icon16 hbicns upup{if $voted <= 0}-bw{/if}"></i></a>{/if}                    
+
+                    {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($topic.votes_up),true)}"><span class="upvotes h-positive">{$topic.votes_up}</span> <i class="icon16 hbicns upup{if $voted <= 0}-bw{/if}"></i></a>{/if}
                     &nbsp;
                     {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="javascript:void(0)" class="h-vote-down" title="{_w('%d vote','%d votes',abs($topic.votes_down),true)}"><span class="downvotes h-negative">{$topic.votes_down}</span> <i class="icon16 hbicns downdown{if $voted >= 0}-bw{/if}"></i></a>{/if}
-                    
+
                 </div>
             {/if}
 
@@ -148,62 +148,89 @@
 
         </div>
 
-        <div class="h-comments top-padded" id="h-comments">
-
-            {if !empty($comments)}
-
-                <h4 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h4>
-
-                <!-- comments begin -->
-                {$depth=-1}
-                {foreach $comments as $comment}
-                  {if $comment.depth < $depth}
-
-                    {$loop=($depth-$comment.depth)}
-                    {section name="end-comment" loop=$loop}
-                        <ul></ul>
-                        </li>
-                      </ul>
-                    {/section}
-
-                    {$depth=$comment.depth}
-                  {/if}
-
-                  {if $comment.depth == $depth}
-                    </li>
-                    <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}" class="h-comment">
-                  {/if}
-
-                  {if $comment.depth > $depth}
+        {if !empty($topic.type) && ifset($topic.type.type) == 'forum'}
+        
+            {* forum topics offers a plan list of discussions *}
+        
+            <div class="h-plain-discussion">            
+                <div class="h-comments top-padded" id="h-comments">
                     <ul>
-                      <li data-id={$comment.id} data-parent-id="{$comment.parent_id}" class="h-comment">
-                      {$depth=$comment.depth}
-                  {/if}
-
-                    {include file="../comments/include.comment.html" comment=$comment inline}
-
-                {/foreach}
-
-                {section name="end-comment" loop=$depth + 1}
-                      <ul></ul>
-                      </li>
+                        {foreach $comments as $id => $comment}
+                            <li data-id="{$comment.id}" class="h-comment">{include file="../comments/include.comment.html" inline}</li>
+                        {/foreach}
                     </ul>
-                {/section}
-
-                <!-- comments end -->
-            {else}
-                <h4 class="comments-header">[`No comments yet`]</h4>
-                <ul style="display:none"></ul>
-            {/if}
-
-            {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
-                <div id="h-comment-add" style="display:none;">
-                    <div class="hr"></div>
-                    {include '../comments/include.addComment.html' inline}
+                    
+                    {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
+                        <div id="h-comment-add" style="display:none;">
+                            {include '../comments/include.addComment.html' inline}
+                        </div>
+                    {/if}
+                    
                 </div>
-            {/if}
+            </div>
+        
+        {else}
+        
+            {* hierarchical comment tree *}
 
-        </div>
+            <div class="h-comments top-padded" id="h-comments">
+    
+                {if !empty($comments)}
+    
+                    <h4 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h4>
+    
+                    <!-- comments begin -->
+                    {$depth=-1}
+                    {foreach $comments as $comment}
+                      {if $comment.depth < $depth}
+    
+                        {$loop=($depth-$comment.depth)}
+                        {section name="end-comment" loop=$loop}
+                            <ul></ul>
+                            </li>
+                          </ul>
+                        {/section}
+    
+                        {$depth=$comment.depth}
+                      {/if}
+    
+                      {if $comment.depth == $depth}
+                        </li>
+                        <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}" class="h-comment">
+                      {/if}
+    
+                      {if $comment.depth > $depth}
+                        <ul>
+                          <li data-id={$comment.id} data-parent-id="{$comment.parent_id}" class="h-comment">
+                          {$depth=$comment.depth}
+                      {/if}
+    
+                        {include file="../comments/include.comment.html" comment=$comment inline}
+    
+                    {/foreach}
+    
+                    {section name="end-comment" loop=$depth + 1}
+                          <ul></ul>
+                          </li>
+                        </ul>
+                    {/section}
+    
+                    <!-- comments end -->
+                {else}
+                    <h4 class="comments-header">[`No comments yet`]</h4>
+                    <ul style="display:none"></ul>
+                {/if}
+    
+                {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
+                    <div id="h-comment-add" style="display:none;">
+                        <div class="hr"></div>
+                        {include '../comments/include.addComment.html' inline}
+                    </div>
+                {/if}
+    
+            </div>
+        
+        {/if}
 
     </article>
 
@@ -355,6 +382,11 @@
         setTimeout(function() {
             $('.h-saved').slideUp();
         }, 3000);
+    {/if}
+
+
+    {if !empty($hub)}
+        $.sidebar.setHub('{$hub.id}');
     {/if}
 
 });</script>

@@ -6,21 +6,33 @@
 
 <script type="text/javascript" src="{$wa_app_static_url}js/lazy.load.js"></script>
 <script type="text/javascript" src="{$wa_app_static_url}js/comments.js"></script>
-<div class="block double-padded" id="comments-wrapper">
-    <h1>[`Comments`]</h1>
-    <div class="h-comments">
-        <ul>{$smarty.capture.comment_list}</ul>
-        <div id="h-comment-add" style="display:none;">
-            {include './include.addComment.html' inline}
+
+<div class="h-stream h-white" id="comments-wrapper">
+
+    <div class="h-header">
+        <div class="list-title">
+            <h1>[`Replies`]</h1>
         </div>
     </div>
-    <div class="lazyloading-wrapper">
-        <div class="lazyloading-progress-string">{_w('%d comment','%d comments', $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
-        <a href="javascript:void(0);" class="lazyloading-link" {if $count >= $total_count}style="display:none;"{/if}>[`Show more comments`]</a>
-        <span class="lazyloading-progress" style="display:none">
-            <i class="icon16 loading"></i> [`Loading`] <span class="lazyloading-chunk">{_w('%d comment', '%d comments', min($total_count - $count, $count))}...</span>
-        </span>
+    
+    <div class="h-content h-plain-discussion">
+        
+        <div class="h-comments">
+            <ul>{$smarty.capture.comment_list}</ul>
+            <div id="h-comment-add" style="display:none;">
+                {include './include.addComment.html' inline}
+            </div>
+        </div>
+        <div class="lazyloading-wrapper">
+            <div class="lazyloading-progress-string">{_w('%d comment','%d comments', $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
+            <a href="javascript:void(0);" class="lazyloading-link" {if $count >= $total_count}style="display:none;"{/if}>[`Show more comments`]</a>
+            <span class="lazyloading-progress" style="display:none">
+                <i class="icon16 loading"></i> [`Loading`] <span class="lazyloading-chunk">{_w('%d comment', '%d comments', min($total_count - $count, $count))}...</span>
+            </span>
+        </div>
+    
     </div>
+    
 </div>
 <script>
     $.wa.locale = $.extend($.wa.locale||{}, {

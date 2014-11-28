@@ -21,9 +21,33 @@ h1 .h-follow .icon16 { margin-top: 0.7em; }
 
 .not-implemented { border: 1px dotted red !important; }
 
-/* Hubs
-------- */
+/* Hub core
+----------- */
 
+.h-hub { background: #f3f3f3 url("../img/background.png") repeat scroll 0 0; box-shadow: -4px 0 4px -2px rgba(0, 0, 0, 0.1) inset, 0 2px 3px rgba(0, 0, 0, 0.2); margin: 0 -15px 0 10px; }
+.h-hub h5 { font-size: 1.1em; margin-bottom: 0; }
+.h-hub h5 a { display: block; }
+.h-hub h5 i.icon10 { margin-top: 0.3em; margin-left: 0.3em; }
+.h-hub h5 .count { float: right; margin-right: 7px; }
+.h-hub .category-list { padding-bottom: 10px; }
+.h-hub ul.menu-v.with-icons { margin-top: 0; }
+.h-hub ul.menu-v.with-icons li { padding-right: 8px; margin-left: 0; }
+.h-hub ul.menu-v.with-icons li a { padding-right: 24px; padding-left: 30px; }
+.h-hub ul.menu-v.with-icons li a .count { color: rgba(0,0,0,0.4); }
+.h-hub ul.menu-v.with-icons i.icon16 { margin-right: 1px; }
+.h-hub ul.menu-v.with-icons li.selected a { padding-left: 31px; background: rgba(0, 0, 0, 0.08); margin-left: -24px; }
+.h-hub.folded h5 .count { display: none; }
+.h-hub.folded .category-list { display: none; }
+
+.h-stream { position: relative /* shadow */; background: #f3f3f3 url("../img/background.png") repeat scroll 0 0; margin: 15px 25px 70px 15px; box-shadow: 0 2px 11px rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.15); }
+
+.h-white { background-color: #f3f3f3; }
+.h-gray { background-color: #ddd; }
+.h-green { background-color: #d7f4d5; }
+.h-blue { background-color: #bce8f8; }
+.h-purple { background-color: #eedbf1; }
+.h-red { background-color: #f7dada; }
+.h-yellow { background-color: #f4efd0; }
 
 /* Topic badges
 --------------- */
@@ -36,13 +60,15 @@ i.icon16.h-badge-color-helper.h-pending  { background: #eee; color: #777; }
 .h-badge.h-accepted,
 i.icon16.h-badge-color-helper.h-accepted  { background: #cfc; color: green; }
 .h-badge.h-confirmed,
-i.icon16.h-badge-color-helper.h-confirmed { background: #ffb; color: brown; }
+i.icon16.h-badge-color-helper.h-confirmed { background: #cfc; color: green; }
+.h-badge.h-inprogress,
+i.icon16.h-badge-color-helper.h-inprogress { background: #cfc; color: green; font-style: italic; }
 .h-badge.h-rejected,
 i.icon16.h-badge-color-helper.h-rejected  { background: #fdd; color: #a00; }
 .h-badge.h-complete,
-i.icon16.h-badge-color-helper.h-complete  { background: #ada; color: green; font-weight: bold; }
+i.icon16.h-badge-color-helper.h-complete  { background: #dfd; color: green; font-weight: bold; }
 .h-badge.h-fixed,
-i.icon16.h-badge-color-helper.h-fixed  { background: #ada; color: green; }
+i.icon16.h-badge-color-helper.h-fixed  { background: #dfd; color: green; font-weight: bold; }
 .h-badge.h-answered,
 i.icon16.h-badge-color-helper.h-answered  { background: #dfd; color: green; font-weight: bold; }
 .h-badge.h-archived,
@@ -60,22 +86,13 @@ h1 .h-badge { position: relative; top: -3px; }
 /* Topic lists and content
 -------------------------- */
 
-.h-stream { position: relative /* shadow */; background: #f3f3f3 url("../img/background.png") repeat scroll 0 0; margin: 15px 25px 70px 15px; box-shadow: 0 2px 11px rgba(0,0,0,0.2); border: 1px solid #ddd; }
-.h-stream.h-gray { background-color: #ddd; }
-.h-stream.h-green { background-color: #bdecbb; }
-.h-stream.h-blue { background-color: #9bdbf3; }
-.h-stream.h-purple { background-color: #e4cfe8; }
-.h-stream.h-red { background-color: #f0c8c8; }
-.h-stream.h-yellow { background-color: #efe8c0; }
-
 .h-header { box-shadow: 0px -4px 4px -7px rgba(0,0,0,0.1) inset; padding: 10px 15px 3px; border-bottom: 1px solid rgba(0,0,0,0.1); }
 .h-header .h-search-form { float: right; margin-left: 20px; margin-right: 20px; padding: 0; position: relative; }
 .h-header ul.menu-h.h-sort { float: right; }
 
 .h-header .h-stream-title h1 { font-size: 1.7em; }
 .h-header .h-stream-title .list-title { display: inline-block; }
-.h-header .h-stream-title .list-title-suffix { margin-top: 7px; margin-left: 10px; display: inline-block; position: relative;
-    top: -2px; }
+.h-header .h-stream-title .list-title-suffix { margin-top: 7px; margin-left: 10px; display: inline-block; position: relative; top: -2px; }
 
 .h-header h2 { font-weight: normal; color: #333; margin-top: 0.2em; margin-bottom: 0.4em; font-size: 1.3em; }
 .h-header h2 a.back { top: -2px; margin-right: 3px; }
@@ -145,6 +162,7 @@ ul.h-topics.h-bulk-mode .h-comments { display: none; }
 .h-topic-content img,
 .h-topic-content iframe { max-width: 100%; }
 .h-topic-content pre { background: #eee; padding: 20px; white-space: pre-wrap; }
+.h-topic-content hr { clear: none; }
 
 .h-empty-view { color: #aaa; text-align: center; margin: 100px; font-size: 1.1em;}
 
@@ -188,6 +206,7 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 
 .h-fixed-button-bar { bottom: 0; background: white; z-index: 10; box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2); }
 
+#topic-form { overflow: visible; }
 #topic-form.published .hide-when-published,
 #topic-form.draft     .hide-when-draft      { display: none; }
 
@@ -211,15 +230,13 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 #h-comment-add-form { padding-top: 5px; }
 #h-comment-add-form .redactor-box { border: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px; }
 #h-comment-add-form .redactor-box p { color: #000; }
-
 #h-comment-add-form .errormsg { margin-bottom: 20px; }
 
-.h-comments { }
+.h-comments {  }
 .h-comments.top-padded { margin-top: 40px; }
 .h-comments textarea { height: 100px; min-height: 100px; width: 75%; margin-top: 0; }
-
-.h-comments ul { padding-left: 0; }
-.h-comments ul li.h-comment { padding-top: 15px; list-style: none; padding-left: 20px; margin-right: 0; margin-bottom: 10px; }
+.h-comments ul { padding-left: 0; margin-left: -10px; }
+.h-comments ul li.h-comment {  list-style: none;  margin-right: 0; margin-bottom: 10px; }
 .h-topic .h-comments ul li div.h-comment { margin-right: 0; }
 .h-comments ul li.h-comment span.hint a { color: #aaa; text-decoration: underline; }
 .h-comments ul li.h-comment a { text-decoration: none; }
@@ -228,14 +245,16 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 .h-comments ul li.h-comment a.h-comment-reply:hover { color: red !important; }
 .h-comments ul li.h-comment a.h-comment-delete { margin: 0 0 0 5px; padding: 0; color: #d99; text-decoration: underline; }
 .h-comments ul li.h-comment a.h-comment-delete:hover { background: red; color: white !important; }
-
+.h-comments ul li ul { padding-left: 40px; }
+.h-comments ul li #h-comment-add-form .h-comment-author { display: none; }
 .h-comments h4 { margin: 20px 0 0; font-size: 1.3em; }
 .h-comments .h-delete .h-comment-delete { display: none; }
 .h-comments .h-delete .comment-add-parent { display: none; }
 .h-comments .h-deleted .h-comment-text,
 .h-comments .h-deleted .h-comment-author { text-decoration: line-through; color: #aaa; }
 
-.h-comments ul li #h-comment-add-form .h-comment-author { display: none; }
+.h-comment-container { padding: 15px 25px 15px 30px; }
+.h-solution { background: #dfd; }
 
 .h-comment-text { line-height: 1.4em; margin: 0.5em 0; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Helvetica Neue', Arial, sans-serif; }
 .h-comment-text img,
@@ -244,13 +263,26 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 .h-comments ul li.h-comment .h-comment-text ol { padding-left: 25px; }
 .h-comments ul li.h-comment .h-comment-text ul li { list-style: disc; }
 
-.h-solution { background: #dfd; }
+/* plain forum-like discussion lists */
+
+.h-plain-discussion .h-comments ul { margin: 0; }
+.h-plain-discussion .h-comments ul li.h-comment { margin: 0; border-bottom: 1px solid #ddd; background: #fff; }
+.h-plain-discussion .h-comments ul li.h-comment .h-comment-container { padding: 20px 20px 20px 35px; }
+.h-plain-discussion .h-comments ul li.h-comment #h-comment-add-form { padding-top: 10px; }
+.h-plain-discussion .h-comments ul li.h-comment ul li.h-comment { border: none; }
+.h-plain-discussion .h-comments ul li.h-comment ul li.h-comment .h-comment-container { padding: 10px 0 30px 20px; }
+.h-plain-discussion .lazyloading-wrapper { padding: 20px; }
+
+.h-topic .h-plain-discussion { margin: 30px -30px 0; border-top: 1px solid #ddd; }
+.h-topic .h-plain-discussion .h-comments { margin-top: 0; }
+.h-topic .h-plain-discussion .h-comments ul li.h-comment .h-comment-container { padding: 20px 30px 20px 50px; }
+.h-topic #h-comment-add-form { padding-top: 10px; margin: 15px 30px 0 30px; }
 
 /* Authors
 ---------- */
 
 .h-authors th { text-align: center !important; border-bottom: none !important; padding-bottom: 10px !important; }
-.h-authors .h-author-name { min-width: 20%; }
+.h-authors .h-author-name { min-width: 20%; padding-left: 10px; }
 .h-authors .h-author-name img.userpic { width: 50px; float: left; margin-right: 10px; }
 .h-authors .h-stats { text-align: center; }
 .h-authors .h-stats .h-author-kudos { margin: 10px 0; }
@@ -279,7 +311,8 @@ img.h-category-logo { max-width: 150px; }
 .h-ibutton-checkbox ul li .ibutton-container.mini { margin: -1px 0 0 0; }
 .value.h-ibutton-checkbox { margin-top: -5px; }
 
-ul.menu-h.h-settings-colorbox { margin-bottom: 10px; }
+ul.menu-h.h-settings-colorbox { margin-bottom: 15px; margin-top: 5px; }
+ul.menu-h.h-settings-colorbox li { padding: 0; }
 ul.menu-h.h-settings-colorbox li span { padding: 8px 10px; }
 ul.menu-h.h-settings-colorbox li.h-white span,
 i.icon16.color.h-white { background: #fff; border: 1px solid #fff; color: #aaa; padding-left: 0; margin-left: -5px; }

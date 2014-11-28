@@ -9,7 +9,7 @@ class hubTopicsAction extends waViewAction
         if (waRequest::get('hub_id')) {
             $options['hub_id'] = waRequest::get('hub_id');
         }
-        $c = new hubTopicsCollection($hash, $options);
+        $collection = new hubTopicsCollection($hash, $options);
 
         $order = waRequest::get('sort', '', 'string');
 
@@ -28,8 +28,8 @@ class hubTopicsAction extends waViewAction
         $this->view->assign('page', $page);
         $offset = ($page - 1) * $limit;
 
-        $topics = $c->getTopics('*,contact,tags,hub_color,follow', $offset, $limit);
-        $count = $c->count();
+        $topics = $collection->getTopics('*,contact,tags,hub_color,follow', $offset, $limit);
+        $count = $collection->count();
         $this->view->assign('loaded_count', $offset + count($topics));
         $this->view->assign('topics_count', $count);
 
@@ -70,17 +70,31 @@ class hubTopicsAction extends waViewAction
             $this->view->assign('current_author', hubHelper::getAuthor($this->getUserId()));
         }
 
-        $m = new hubTopicModel();
-        $m->checkForNew($topics);
+        $topic_model = new hubTopicModel();
+        $topic_model->checkForNew($topics);
+
+        // Mark comments as read in session
+        $visited_comments = array();
+        foreach($topics as $t) {
+            if (!empty($t['new_comments']) && $t['follow']) {
+                foreach($t['new_comments'] as $c) {
+                    if (!empty($c['is_updated']) || !empty($c['is_new'])) {
+                        $visited_comments[$c['id']] = $c['id'];
+                    }
+                }
+            }
+        }
+        wa('hub')->getConfig()->markAsRead(array(), $visited_comments);
+
         $this->view->assign('topics', $topics);
-        $this->view->assign('type', $c->getType());
-        $this->view->assign('title', $c->getTitle());
+        $this->view->assign('type', $collection->getType());
+        $this->view->assign('title', $collection->getTitle());
         $this->view->assign('hash', $hash);
 
         $hub_color = null;
         $hub_context = null;
-        if ($c->getType() == 'category') {
-            $category = $c->getInfo();
+        if ($collection->getType() == 'category') {
+            $category = $collection->getInfo();
             if (!$order && $category['sorting']) {
                 $order = $category['sorting'];
             }
@@ -89,16 +103,16 @@ class hubTopicsAction extends waViewAction
             }
             $hub_context = $category['hub'] = hubHelper::getHub($category['hub_id']);
             $this->view->assign('category', $category);
-        } elseif ($c->getType() == 'tag') {
-            $tag = $c->getInfo();
+        } elseif ($collection->getType() == 'tag') {
+            $tag = $collection->getInfo();
             $hub_context = $tag['hub'] = hubHelper::getHub($tag['hub_id']);
             $this->view->assign('tag', $tag);
-        } elseif ($c->getType() == 'search') {
-            $this->view->assign('query', is_array($c->getInfo()) ? '' : $c->getInfo());
-        } elseif ($c->getType() == 'filter') {
-            $this->view->assign('filter', $c->getInfo());
-        } elseif ($c->getType() == 'hub') {
-            $hub = $c->getInfo();
+        } elseif ($collection->getType() == 'search') {
+            $this->view->assign('query', is_array($collection->getInfo()) ? '' : $collection->getInfo());
+        } elseif ($collection->getType() == 'filter') {
+            $this->view->assign('filter', $collection->getInfo());
+        } elseif ($collection->getType() == 'hub') {
+            $hub = $collection->getInfo();
             $hub += hubHelper::getHub($hub['id']);
             $this->view->assign('hub', $hub);
             $tag_model = new hubTagModel();

@@ -169,7 +169,7 @@
                                     <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual`]</option>
                                     {foreach $sorts as $s => $s_name}
                                     {if $s != 'unanswered'}
-                                    <option value="{$s}"{if $category.sorting == $s} selected="selected"{/if}>{$s_name} [`topics on top`]</option>
+                                    <option value="{$s}"{if $category.sorting == $s} selected="selected"{/if}>{sprintf('[`%s topics on top`]',$s_name)}</option>
                                     {/if}
                                     {/foreach}
                                 </select>
@@ -237,7 +237,10 @@
     </form>
 
 {if empty($category.id)}
-</div>
+
+            <div class="clear-both"></div>
+
+        </div>
     </div>
 
 </div>

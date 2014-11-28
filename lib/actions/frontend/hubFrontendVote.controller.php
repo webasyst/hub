@@ -42,11 +42,11 @@ class hubFrontendVoteController extends waJsonController
         $vote_model = new hubVoteModel();
         $votes_sum_change = $vote_model->vote($contact_id, $id, $type, $vote);
 
-        if ($votes_sum_change) {
+        if ($votes_sum_change && $record['contact_id'] != $contact_id) {
             $new_voter = abs($votes_sum_change) <= 1;
             $number_of_votes = $votes_sum_change / abs($votes_sum_change);
             $author_model = new hubAuthorModel();
-            $author_model->receiveVote($entity_type, $record['hub_id'], $contact_id, $number_of_votes, $new_voter);
+            $author_model->receiveVote($entity_type, $record['hub_id'], $record['contact_id'], $number_of_votes, $new_voter);
         }
 
         // Renew stats after voting

@@ -26,7 +26,7 @@
             {if count($types) > 1}
             <ul class="menu-h topic-type">
                 {foreach $types as $t}
-                    <li{if $t.id == $type_id} class="selected"{/if}><a href="#" data-type="{$t.id}">{hubHelper::getGlyph($t.glyph)}{$t.name|default:'[`(no name)`]'|escape}</a></li>
+                    <li{if $t.id == $type_id} class="selected"{/if}><a href="#" data-type="{$t.id}">{hubHelper::getGlyph($t.glyph, 16, false, ['contact' => $user])}{$t.name|default:'[`(no name)`]'|escape}</a></li>
                 {/foreach}
             </ul>
             {/if}
@@ -34,7 +34,7 @@
         {/if}
 
         <input type="text" class="topic-title{if !empty($errors.title)} error{/if}" placeholder="[`Your topic title`]" name="data[title]" value="{ifset($data.title)|escape}" />
-        
+
         {if !empty($categories)}
             <div class="topic-category">
                 [`Category`]
@@ -53,7 +53,7 @@
         {if !empty($errors.content)}<div class="error-box">{/if}
         <textarea data-upload-url="{$wa->getUrl('/frontend/uploadImage')}" class="topic-content" name="data[content]">{ifset($data.content)|escape}</textarea>
         {if !empty($errors.content)}</div>{/if}
-        
+
         <div class="topic-tags">
             [`Tags`]
             <input type="text" name="data[tags]" value="{join(',',ifset($data.tags, []))}" id="ti-topic-form" />
@@ -77,7 +77,7 @@
         </div>
         {$wa->csrf()}
     </form>
-    
+
     <script type="text/javascript">
         $(function() {
             $.hub.initAddForm($('#topic-form'), "{$wa->getUrl('hub/frontend/tagAutocomplete')}");

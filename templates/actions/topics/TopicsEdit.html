@@ -18,13 +18,15 @@
             <!-- author -->
             <div class="block">
                 <h6>[`Author`]</h6>
-                <select>
-                    {foreach $users as $u_id => $name}
-                        <option {if $topic['contact_id'] == $u_id}selected="selected"{/if} value="{$u_id}">
-                            {$name|escape}
-                        </option>
-                    {/foreach}
-                </select>
+                {if $access_level >= hubRightConfig::RIGHT_FULL}
+                    <select name="topic[contact_id]">
+                        {foreach $users as $u_id => $name}
+                            <option {if $topic['contact_id'] == $u_id}selected="selected"{/if} value="{$u_id}">
+                                {$name|escape}
+                            </option>
+                        {/foreach}
+                    </select>
+                {/if}
             </div>
 
             <!-- meta -->
@@ -51,7 +53,7 @@
     <div class="content right200px">
         <div class="h-stream h-{$hubs[$hub_id].hub_color}">
             <div class="h-header">
-            
+
                 {if $topic.id}<a href="#/topic/{$topic.id}/" class="back" style="top: 0;">&larr; [`Back`]</a>{/if}
 
                 <!-- topic type -->
@@ -265,6 +267,8 @@
                 </div></div>
 
             </div>
+
+            <div class="h-footer"></div>
 
             <div class="clear-both"></div>
         </div>

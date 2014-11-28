@@ -11,6 +11,7 @@ return array(
     'search/' => 'frontend/search',
     'authors/' => 'frontend/authors',
     'author/<id:\d+>/following/' => 'frontend/authorFollowing',
+    'author/<id:\d+>/replies/' => 'frontend/authorReplies',
     'author/<id:\d+>/' => 'frontend/author',
     'login/' => 'login',
     'forgotpassword/' => 'forgotpassword',

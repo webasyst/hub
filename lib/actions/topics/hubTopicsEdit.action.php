@@ -86,6 +86,7 @@ class hubTopicsEditAction extends waViewAction
                 'types'             => $topic_types,
                 'categories'        => $categories,
                 'hub_type_ids'      => $hub_type_ids,
+                'access_level'      => wa()->getUser()->getRights('hub', 'hub.'.$hub_id),
                 'hub_url_templates' => self::getHubPublicUrlTemplates(),
                 'users'             => $this->getUsers('backend'),
                 'user_id'           => wa()->getUser()->getId(),

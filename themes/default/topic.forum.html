@@ -34,21 +34,21 @@
         <div itemprop="articleBody" class="topic-content">
             {$topic.content}
         </div>
-            
+
         <!-- plugin hook: 'frontend_topic.body' -->
         {* @event frontend_topic.%plugin_id%.body *}
         {foreach $frontend_topic as $_}{$_.body}{/foreach}
 
-        <div class="tags">
-            {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
-        </div>
-
         {if !empty($topic.editable)}
             <div class="actions">
-                <a href="{$topic.edit_url}">[`Edit topic`]</a>
+                <a href="{$topic.edit_url}" class="bold">[`Edit topic`]</a>
                 <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
             </div>
         {/if}
+        
+        <div class="tags">
+            {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
+        </div>
 
     </div>
 
@@ -59,7 +59,7 @@
     <!-- plugin hook: 'frontend_topic.comments' -->
     {* @event frontend_topic.%plugin_id%.comments *}
     {foreach $frontend_topic as $_}{$_.comments}{/foreach}
-    
+
     {if !empty($comments)}
 
         <!-- topic replies -->
@@ -101,7 +101,7 @@
                         <img src="{$user.photo_url_50}" class="userpic" alt="{$wa->user()->get('name')|escape}" title="{$wa->user()->get('name')|escape}">
                     </div>
                     <div class="meta-ousted">
-                        <textarea id="comment-text" name="text" rows="10" cols="45"></textarea>
+                        <textarea id="comment-text" data-upload-url="{$wa->getUrl('/frontend/uploadImage')}" name="text" rows="10" cols="45"></textarea>
                         <input type="submit" class="save" value="[`Add comment`]">
                         <em class="hint">Ctrl+Enter</em>
                         {$wa->csrf()}

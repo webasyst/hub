@@ -78,7 +78,7 @@ class hubBackendAction extends waViewAction
         $topic_model = new hubTopicModel();
         $this->view->assign('count_topics', array(
             'all' => $topic_model->countAll(),
-            'new' => $topic_model->countNew(true)
+            'new' => $topic_model->countNew()
         ));
 
         $this->view->assign('types', hubHelper::getTypes());

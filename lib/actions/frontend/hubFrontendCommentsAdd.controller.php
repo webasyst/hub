@@ -17,6 +17,10 @@ class hubFrontendCommentsAddController extends waJsonController
             throw new waException("Error in adding comment");
         }
 
+        if (wa()->getUser()->getId()) {
+            wa()->getUser()->addToCategory($this->getAppId());
+        }
+
         $count = waRequest::post('count', 0, waRequest::TYPE_INT) + 1;
         $type = waRequest::post('type', 'comment', waRequest::TYPE_STRING_TRIM);
 

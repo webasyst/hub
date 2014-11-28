@@ -274,4 +274,8 @@
             });
         });
     {/if}
+
+    {if !empty($hub_context)}
+        $.sidebar.setHub('{$hub_context.id}');
+    {/if}
 });</script>

@@ -178,10 +178,15 @@
             });
 
             that.form.submit(function () {
+                if (that.button.first().prop('disabled')) {
+                    return false;
+                }
                 $('#topic-editor').waEditor('sync');
                 that.tags_input.save();
                 var notification_sent = !!that.form.find('input[name="users_to_notify"]').val();
+                that.button.prop('disabled', true).parent().append('<i class="icon16 loading"></i>');
                 $.post($(this).attr('action'), $(this).serialize(), function (response) {
+                    that.button.prop('disabled', false).siblings('.loading').remove();
                     if (response.status == 'ok') {
                         that.button.removeClass('yellow').addClass('green');
                         //that.tags_input.hide(); // tags input is never hidden anymore
@@ -571,6 +576,7 @@
 
         initEditor: function() {
             $('#topic-editor').waEditor({
+                imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
                 keydownCallback: function(event) { }, // without this waEditor intercents Ctrl+S event in Redaktor
                 changeCallback: function() {
                     $(window).scroll();

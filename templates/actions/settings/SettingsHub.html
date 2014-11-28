@@ -552,6 +552,7 @@
                         return;
                     }
 
+                    $.sidebar.reload();
                     $form.find('.js-hub-settings-save-remind:first').hide();
                     $message.show().html('<i class="icon16 yes"></i>');
 
@@ -561,7 +562,10 @@
                         setTimeout(function () {
                             $message.hide();
                         }, 2000);
-                    })
+                    });
+                    $(window).one('wa_sidebar_loaded', function() {
+                        $.sidebar.setHub('{$hub.id}');
+                    });
 
                     if (r.data.hash) {
                         window.location.hash = r.data.hash;
@@ -575,5 +579,6 @@
         });
 
         $form.find('input:text:visible:first').focus();
+        $.sidebar.setHub('{$hub.id}');
     });
 </script>

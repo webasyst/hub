@@ -42,7 +42,6 @@ class hubTopicsInfoAction extends waViewAction
             true
         );
 
-
         $comment_model = new hubCommentModel();
 
         $types = hubHelper::getTypes();
@@ -79,6 +78,15 @@ class hubTopicsInfoAction extends waViewAction
         // User voted already?
         $vote_model = new hubVoteModel();
         $voted = $vote_model->getVote(wa()->getUser()->getId(), 'topic', $id);
+
+        // Mark topic and comments as read in session
+        $visited_comments = array();
+        foreach($comments as $c) {
+            if (!empty($c['is_updated']) || !empty($c['is_new'])) {
+                $visited_comments[$c['id']] = $c['id'];
+            }
+        }
+        wa('hub')->getConfig()->markAsRead(array($id), $visited_comments);
 
         $this->view->assign(array(
             'hub'                => $hub,

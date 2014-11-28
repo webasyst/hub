@@ -8,7 +8,7 @@ return array(
     'Collect ideas and suggestions from your customers' => 'Пожелания и предложения пользователей',
     'Bug reports'                                       => 'Баг-репорты',
     'Collect bug reports'                               => 'Сообщения об ошибках и проблемах',
-    'Discussions (forum)'                               => 'Обсуждения (форум)',
+    'Discussions'                                       => 'Обсуждения',
     'Discussions in classic forum threads'              => 'Форум и ветки обсуждений',
     'Article'                                           => 'Статья',
     'Question'                                          => 'Вопрос',

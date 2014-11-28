@@ -2,7 +2,7 @@
  * Sub-template included in comments/Comments.html and topics/Topics.html
  *}
 
-<div class="{if $comment.status == hubCommentModel::STATUS_DELETED}h-deleted{/if}{if $comment.solution} h-solution{/if}" id="h-comment-{$comment.id}">
+<div class="h-comment-container{if $comment.status == hubCommentModel::STATUS_DELETED} h-deleted{/if}{if $comment.solution} h-solution{/if}" id="h-comment-{$comment.id}">
 
     <div class="float-right">
         <strong class="{if $comment.vote > 0}h-positive{else if $comment.vote < 0}h-negative{else}gray{/if} total-score">{if $comment.vote > 0}+{/if}{$comment.vote}</strong>
@@ -57,7 +57,7 @@
         {/if}
     </div>
 
-    {if empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting)}
+    {if (empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting) && $comment.topic.type.type != 'forum')}
         <a href="#" class="h-comment-reply small inline-link"><b><i>[`reply`]</i></b></a>
     {/if}
 </div>

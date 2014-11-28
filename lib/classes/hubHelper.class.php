@@ -87,6 +87,9 @@ class hubHelper
                 'confirmed' => array(
                     'name' => _w('Confirmed'),
                 ),
+                'inprogress' => array(
+                    'name' => _w('In progress'),
+                ),
                 'complete'  => array(
                     'name' => _w('Complete'),
                 ),
@@ -383,7 +386,7 @@ class hubHelper
         }
 
         if (!$url_validator->isValid($url)) {
-            $url = 'http://'.$url;
+            $url = 'http://'.preg_replace('~^([^:]+:)?(//|\\\\\\\\)~', '', $url);
         }
 
         return $url;
@@ -470,6 +473,7 @@ class hubHelper
         // iframes for youtube and vimeo
         // <iframe style="width: 500px; height: 281px;" src="//www.youtube.com/embed/TOTIBzyWjLM" frameborder="0" allowfullscreen=""></iframe>
         // <iframe style="width: 500px; height: 281px;" src="//player.vimeo.com/video/22439234" frameborder="0" allowfullscreen=""></iframe>
+        // <iframe style="width: 500px; height: 281px;" src="//player.vimeo.com/video/110289386" allowfullscreen="" frameborder="0"></iframe>
         $content = preg_replace_callback(
             '~
                 &lt;
@@ -482,9 +486,15 @@ class hubHelper
                         ([^"><]+?)
                     &quot;
                     \s+
-                    frameborder=&quot;0&quot;
-                    \s+
-                    allowfullscreen=&quot;&quot;
+                    (
+                        frameborder=&quot;0&quot;
+                        \s+
+                        allowfullscreen=&quot;&quot;
+                    |
+                        allowfullscreen=&quot;&quot;
+                        \s+
+                        frameborder=&quot;0&quot;
+                    )
                     \s*
                 &gt;
                 \s*

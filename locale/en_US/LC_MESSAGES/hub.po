@@ -1894,3 +1894,22 @@ msgstr ""
 #: /wa-apps/hub/themes/default/author.html:2
 msgid "All authors"
 msgstr ""
+
+#: /wa-apps/hub/templates/actions/backend/include.sidebar.html:42
+#: /wa-apps/hub/templates/actions/comments/Comments.html:14
+#: /wa-apps/hub/lib/actions/frontend/hubFrontendAuthorReplies.action.php:13
+#: /wa-apps/hub/themes/default/author.html:27
+msgid "Replies"
+msgstr ""
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:91
+msgid "In progress"
+msgstr ""
+
+#: /wa-apps/hub/themes/default/author.html:24
+msgid "My replies"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:172
+msgid "%s topics on top"
+msgstr ""

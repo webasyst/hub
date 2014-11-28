@@ -309,7 +309,7 @@ class hubTopicModel extends waModel
             $vote_updated = $vote_model->vote($data['contact_id'], $id, 'topic', +1);
 
             // Update author stats
-            if (!empty($data['hub_id'])) {
+            if (!empty($data['hub_id']) && $data['contact_id'] != wa()->getUser()->getId()) {
                 $author_model = new hubAuthorModel();
                 $vote_updated && $author_model->receiveVote('topic', $data['hub_id'], $data['contact_id'], +1);
                 $author_model->updateCounts('all', $data['hub_id'], $data['contact_id']);
@@ -364,11 +364,12 @@ class hubTopicModel extends waModel
     public function checkForNew(&$items)
     {
         $datetime = wa()->getConfig()->getLastDatetime();
+        $hub_visited_topics = wa()->getStorage()->get('hub_visited_topics');
         foreach ($items as &$item) {
             $item['update_datetime_ts'] = ifset($item['update_datetime_ts'], strtotime($item['update_datetime']));
             $item['create_datetime_ts'] = ifset($item['create_datetime_ts'], strtotime($item['create_datetime']));
-            $item['is_updated'] = $item['update_datetime_ts'] > $datetime;
-            $item['is_new'] = $item['create_datetime_ts'] > $datetime;
+            $item['is_updated'] = empty($hub_visited_topics[$item['id']]) && $item['update_datetime_ts'] > $datetime;
+            $item['is_new'] = empty($hub_visited_topics[$item['id']]) && $item['create_datetime_ts'] > $datetime;
         }
         unset($item);
     }
@@ -387,16 +388,24 @@ class hubTopicModel extends waModel
      * Number of updated topics since last time user logged in.
      * @return array hub_id => number of topics, 'all' => total number of updated topics.
      */
-    public function countNew($recalc = false)
+    public function countNew()
     {
-        $sql = "SELECT hub_id, COUNT(id) AS cnt
+        $sql = "SELECT hub_id, id AS topic_id
                 FROM `{$this->table}`
                 WHERE create_datetime > ?
                     AND status > 0
                 GROUP BY hub_id";
-        $cnt = $this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime()))->fetchAll('hub_id', true);
-        $cnt['all'] = array_sum($cnt);
-        return (int)$cnt;
-    }
 
+        $cnt = array('all' => 0);
+        $hub_visited_topics = wa()->getStorage()->get('hub_visited_topics');
+        foreach($this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime())) as $row) {
+            if (empty($hub_visited_topics[$row['topic_id']])) {
+                $cnt[$row['hub_id']] = ifset($cnt[$row['hub_id']], 0) + 1;
+                $cnt['all']++;
+            }
+        }
+
+        return $cnt;
+    }
 }
+
