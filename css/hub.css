@@ -25,7 +25,7 @@ h1 .h-follow .icon16 { margin-top: 0.7em; }
 ----------- */
 
 .h-hub { background: #f3f3f3 url("../img/background.png") repeat scroll 0 0; box-shadow: -4px 0 4px -2px rgba(0, 0, 0, 0.1) inset, 0 2px 3px rgba(0, 0, 0, 0.2); margin: 0 -15px 0 10px; }
-.h-hub h5 { font-size: 1.1em; margin-bottom: 0; }
+.h-hub h5 { font-weight: bold; margin-bottom: 0; }
 .h-hub h5 a { display: block; }
 .h-hub h5 i.icon10 { margin-top: 0.3em; margin-left: 0.3em; }
 .h-hub h5 .count { float: right; margin-right: 7px; }
@@ -36,6 +36,7 @@ h1 .h-follow .icon16 { margin-top: 0.7em; }
 .h-hub ul.menu-v.with-icons li a .count { color: rgba(0,0,0,0.4); }
 .h-hub ul.menu-v.with-icons i.icon16 { margin-right: 1px; }
 .h-hub ul.menu-v.with-icons li.selected a { padding-left: 31px; background: rgba(0, 0, 0, 0.08); margin-left: -24px; }
+.h-hub.folded h5 { font-weight: normal; }
 .h-hub.folded h5 .count { display: none; }
 .h-hub.folded .category-list { display: none; }
 

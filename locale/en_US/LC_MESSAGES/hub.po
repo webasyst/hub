@@ -1913,3 +1913,15 @@ msgstr ""
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:172
 msgid "%s topics on top"
 msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:189
+msgid "Send a notification about this topic"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:241
+msgid "Publish topic &amp; Send notification"
+msgstr ""
+
+#: /wa-apps/hub/themes/default/author.html:38
+msgid "%s did not post any comments yet."
+msgstr ""

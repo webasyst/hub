@@ -315,7 +315,7 @@ ul.topics li .replies { float: right; max-width: 20%; }
 ul.topics li .comment { font-size: 0.8em; padding: 10px 13px; margin-top: 8px; line-height: 1.4em; }
 ul.topics li .comment .credentials { margin-top: 10px; margin-bottom: 0; }
 
-.empty-topic-list { color: #aaa; }
+.empty-list { color: #aaa; }
 
 
 /* Add/edit topic
@@ -385,6 +385,8 @@ ul.author-nav li.selected a { background: #eed; }
     .comment-form .comment-submit { padding-left: 0; }
     .comment-form .wa-captcha img { margin-bottom: 10px; }
     .comment-form .comment-redactor { margin-left: 0; }
+    
+    .hub-aside-nav { display: none; }
 
 }
 

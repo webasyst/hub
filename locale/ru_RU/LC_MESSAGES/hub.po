@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.6.5\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1134,8 +1134,8 @@ msgid "Edit"
 msgstr "Редактировать"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:185
-msgid "Notify subscribers about this topic"
-msgstr "Уведомлять подписчиков об этой теме"
+msgid "Send a notification about this topic"
+msgstr "Отправить уведомление об этой теме"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:189
 msgid "Publish"
@@ -1162,8 +1162,8 @@ msgid "Cancel and back to editing mode"
 msgstr "Отменить и вернуться к редактированию"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:236
-msgid "Publish and notify subscribers"
-msgstr "Опубликовать и уведомить подписчиков"
+msgid "Publish topic &amp; Send notification"
+msgstr "Опубликовать тему и отправить уведомление"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:251
 msgid "Unpublish this topic?"
@@ -1671,8 +1671,8 @@ msgid ""
 "<a href=\"http://www.webasyst.com/store/app/hub/\">Feedback software</a> by "
 "Webasyst"
 msgstr ""
-"<a href=\"http://www.webasyst.com/store/app/hub/\">Приложение для "
-"организации обратной связи</a> от Webasyst"
+"<a href=\"http://www.webasyst.com/store/app/hub/\">Обратная связь для сайта</"
+"a> — Webasyst Хаб"
 
 #: /wa-apps/hub/themes/default/main.html:49
 msgid "My answers"
@@ -1984,3 +1984,7 @@ msgstr "Мои ответы"
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:172
 msgid "%s topics on top"
 msgstr "%s"
+
+#: /wa-apps/hub/themes/default/author.html:38
+msgid "%s did not post any comments yet."
+msgstr "%s еще не добавил ни одного комментария."

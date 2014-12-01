@@ -186,7 +186,7 @@
 
                             <div class="float-right block half-padded">
                                 <ul class="menu-h">
-                                    <li><a href="javascript:void(0)" class="inline-link notify-subscribers-toggle"><i class="icon16 lightning"></i><b><i>[`Notify subscribers about this topic`]</i></b></a></li>
+                                    <li><a href="javascript:void(0)" class="inline-link notify-subscribers-toggle"><i class="icon16 lightning"></i><b><i>[`Send a notification about this topic`]</i></b></a></li>
                                 </ul>
                             </div>
 
@@ -202,11 +202,11 @@
                              * Buttons for draft mode, selecting subscribers
                              *}
 
-                            <div class="double-padded block" id="subscribers-form-wrapper" style="padding-top:0">
+                            <div class="block not-padded bottom-padded" id="subscribers-form-wrapper" style="padding-top:0">
                                 <div class="fields">
                                     <div class="field">
                                         <div class="name">[`To`]</div>
-                                        <div class="value" style="position:relative;left:-20px;">
+                                        <div class="value" style="position:relative;left:-20px;top:-5px;">
                                             <div class="users-to-notify">{* Updated by JS *}</div>
 
                                             {* Template for user row *}
@@ -229,17 +229,16 @@
                                     </div>
                                 </div>
                                 <div class="clear-left"></div>
+                                
                             </div>
 
                             <div class="float-right block half-padded">
                                 <ul class="menu-h">
-                                    <li><a href="javascript:void(0)" class="inline-link notify-subscribers-toggle"><i class="icon16 lightning"></i><b><i>[`Cancel and back to editing mode`]</i></b></a></li>
+                                    <li><a href="javascript:void(0)" class="inline-link gray notify-subscribers-toggle"><i class="icon16 lightning"></i><b><i>[`Cancel and back to editing mode`]</i></b></a></li>
                                 </ul>
                             </div>
 
-                            <input type="submit" value="[`Publish and notify subscribers`]" class="button green button-form-submit notify-subscribers-submit" />
-
-
+                            <input type="submit" value="[`Publish topic &amp; Send notification`]" class="button green button-form-submit notify-subscribers-submit" />
 
                         </div>
                     </div>
@@ -328,18 +327,21 @@ var wa_app = 'hub';
           cache: true
     }).done(function() {
 
+        var hub_id = "{ifempty($topic.hub_id, 0)|escape:js}";
+        {if empty($topic.id)}
+            hub_id = $('#wa-app > .sidebar .h-hub:not(.folded):first').data('hubId') || hub_id;
+        {/if}
         $.topics_edit.init({
-            topic_id: {ifempty($topic.id, 0)},
-            hub_id: {ifempty($topic.hub_id, 0)},
+            hub_id: hub_id,
+            initial_hub_id: hub_id,
+            topic_id: {ifempty($topic.id, 0)|escape:js},
             hub_url_templates: {json_encode($hub_url_templates)},
 
             types: {json_encode($types)},
             hub_type_ids: {json_encode($hub_type_ids)},
 
             categories: {json_encode($categories)},
-            initial_topic_categories: {json_encode(array_keys($topic.categories))},
-
-            initial_hub_id: {ifempty($topic.hub_id, -1)}
+            initial_topic_categories: {json_encode(array_keys($topic.categories))}
         });
 
         // Confirmation before leaving this page

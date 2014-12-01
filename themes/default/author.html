@@ -32,18 +32,30 @@
 {foreach $frontend_author as $_}{$_}{/foreach}
 
 {if !empty($author_replies)}
-    <div class="comments">
-        <ul class="lazyloading-list">
-            {foreach $comments as $comment}
-                <li>{include file="comment.html" inline}</li>
-            {/foreach}
-        </ul>
-    </div>
-    {if isset($pages_count) && $pages_count > 1}
-        <div class="block lazyloading-paging" data-times="1" data-link-text="[`Load more`]">
-            {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+
+    {if empty($comments)}
+
+        <p class="empty-list">{sprintf('[`%s did not post any comments yet.`]', $author.name|default:"[`Author`]"|escape)}</p>
+    
+    {else}
+
+        <div class="comments">
+            <ul class="lazyloading-list">
+                {foreach $comments as $comment}
+                    <li>{include file="comment.html" inline}</li>
+                {/foreach}
+            </ul>
         </div>
+        {if isset($pages_count) && $pages_count > 1}
+            <div class="block lazyloading-paging" data-times="1" data-link-text="[`Load more`]">
+                {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+            </div>
+        {/if}
+    
     {/if}
+    
 {else}
     {include file="list-topics.html"}
 {/if}
+
+<div class="clear-both"></div>

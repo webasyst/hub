@@ -79,7 +79,7 @@
     <!-- hub -->
     <div class="h-hub{if count($hubs) > 1} folded{/if}{if !empty($h.params.color)} h-{$h.params.color}{/if}" data-hub-id="{$h.id}">
         <div class="block">
-            <h5 class="bold" id="hub-{$h.id}">
+            <h5 id="hub-{$h.id}">
                 {if $is_admin}
                     <span class="count">
                         <a href="#/settings/hub/{$h.id}/"><i class="icon16 settings"></i></a>

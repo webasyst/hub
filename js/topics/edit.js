@@ -56,10 +56,16 @@
             }
 
             // Make button bar sticky
+            var $window = $(window);
             $('#h-topic-button-bar').sticky({
-                fixed_class: 'h-fixed-button-bar'
+                fixed_class: 'h-fixed-button-bar',
+                isStaticVisible: function (e, o) {
+                    return  $window.scrollTop() + $window.height() >= e.element.offset().top + e.element.outerHeight();
+                }
             });
 
+            // Make sure the form is in non-changed state
+            this.button.removeClass('yellow').addClass('green');
         },
 
         initHubSelector: function() {
@@ -80,7 +86,7 @@
 
                 return false;
             });
-
+            hubs_selector.find('a[data-id="'+that.hub_id+'"]').click();
             $("#topic-hub").click(function () {
                 return false;
             });

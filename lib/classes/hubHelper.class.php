@@ -239,12 +239,24 @@ class hubHelper
             'idea',
             'exclamation',
             'discussion',
+            'discussion2',
             'star',
             'solution',
             'question',
             'thumbup',
             'thumbdown',
-            'unknown',
+            'camera',
+            'page',
+            'smile',
+            'unsmile',
+            'help',
+            'beer',
+            'cart',
+            'crown',
+            'trophy',
+            'location',
+            'list',
+            'unknown'
         );
     }
 

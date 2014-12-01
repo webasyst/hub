@@ -9,6 +9,7 @@ class hubConfig extends waAppConfig
         $id = $wa->getUser()->getId();
         if ($id && ($wa->getApp() == 'hub') && ($wa->getEnv() == 'backend')) {
             $this->setCount($this->onCount());
+            $this->maybeArchiveTopics();
         }
     }
 
@@ -226,4 +227,24 @@ class hubConfig extends waAppConfig
         $result[$level] = $rslt;
         return $result[$level];
     }
+
+    public function maybeArchiveTopics()
+    {
+        $app_settings_model = new waAppSettingsModel();
+        $archive_check = $app_settings_model->get('hub', 'archive_check', 0);
+        if (time() - $archive_check < 3600*12) {
+            return;
+        }
+        $app_settings_model->set('hub', 'archive_check', time());
+
+        $m = new waModel();
+        foreach(hubHelper::getTypes() as $type) {
+            if (!empty($type['settings']['auto_archive']) && ifset($type['settings']['auto_archive_days']) > 0) {
+                $update_datetime = time() - $type['settings']['auto_archive_days'] * 3600 * 24;
+                $sql = "UPDATE hub_topic SET badge='archived' WHERE type_id=? AND update_datetime < ?";
+                $m->exec($sql, $type['id'], date('Y-m-d H:i:s', $update_datetime));
+            }
+        }
+    }
 }
+
