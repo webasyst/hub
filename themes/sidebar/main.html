@@ -1,0 +1,77 @@
+<nav class="app-navigation" role="navigation">
+
+    <!-- topic search form -->
+    <form method="get" action="{$wa->getUrl('/frontend/search')}" class="search float-right">
+        <input type="search" name="query" value="{$wa->request('query')|escape}" placeholder="[`Find the answer`]">
+    </form>
+    
+    <ul class="menu-h">
+        {if $wa->user()->isAuth()}
+            <li>
+                <a href="{$wa->getUrl('/frontend/author', ['id' => $user.id])}" class="bold">
+                    <i class="icon16 userpic20" style="background-image: url('{$user.photo_url_20}');"></i>
+                    {$user.name|escape}
+                    {if !empty($hub.params.kudos)}
+                        <strong class="kudos{if $user.rate > 0} positive{elseif $user.rate < 0} negative{/if}" title="{_w('%d kudo', '%d kudos', $user.rate)|escape}">{if $user.rate >= 0}+{else}&minus;{/if}{abs($user.rate)}</strong>
+                    {/if}
+                </a>
+            </li>
+        {else}
+            <li>
+                <li><a href="{$wa->loginUrl()}">[s`Sign in`]</a></li>
+            </li>
+        {/if}
+        <li>
+            <form method="get" action="{$wa->getUrl('/frontend/add')}">
+                {if !empty($category)}
+                    <input type="hidden" name="category" value="{$category.id}">
+                {/if}
+                <input type="submit" class="small" value="[`New topic`]" >
+            </form>
+        </li>    
+    </ul>
+
+</nav>
+
+<div class="container">
+    <div class="content">
+        
+        <!-- plugin hook: 'frontend_header' -->
+        {* @event frontend_header.%plugin_id% *}
+        {foreach $frontend_header as $_}{$_}{/foreach}
+        
+        <div class="page-content" itemscope itemtype="http://schema.org/WebPage">
+        
+            {if empty($topics) && $wa->currentUrl() == $wa_app_url}
+        
+                <div class="welcome">
+                    <h1>[`Welcome to your new hub!`]</h1>
+                    <p>{sprintf('[`Start by <a href="%s">writing a topic</a>.`]', $wa_app_url|cat:'add/')}</p>
+                </div>
+        
+            {else}
+        
+                {if isset($breadcrumbs)}
+                    <div class="breadcrumbs" itemprop="breadcrumb">
+                        <a href="{$wa_app_url}">{$wa->accountName()}</a> <span class="rarr">&rarr;</span>
+                        {if $wa->globals('isMyAccount')}
+                            {$breadcrumbs[0] = null}
+                        {/if}
+                        {foreach $breadcrumbs as $breadcrumb}
+                            {if $breadcrumb}
+                                <a href="{$breadcrumb.url}">{$breadcrumb.name|default:'[`(no name)`]'|escape}</a> <span class="rarr">&rarr;</span>
+                            {/if}
+                        {/foreach}
+                    </div>
+                {/if}
+        
+                {$content}
+        
+            {/if}
+        
+            <div class="clear-both"></div>
+        
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<!-- info pages -->
+{$hub_pages=$wa->hub->pages()}
+{if $hub_pages}
+    <div class="block">
+        {wa_print_tree tree=$hub_pages class="menu-v" attrs = 'id="page-list"' elem ='
+    <a href=":url" title=":title">:name</a>' collapsible_class='collapsible' selected=$wa->param('page_id')}
+    </div>
+{/if}
+
+<!-- hub staff -->
+{$staff = $wa->hub->staff()}
+{if !empty($staff)}
+    <aside class="hub-aside-nav">
+        <ul>
+            {foreach $staff as $s}
+                <li>
+                    <a href="{$wa_app_url}author/{$s.id}/">
+                        <img src="{$s.photo_url_50}" class="userpic" alt="{$s.name|escape}">
+                        {$s.name|escape}
+                        {if !empty($s.badge)}
+                            <span class="staff"{if !empty($s.badge_color)} style="background-color: {$s.badge_color}"{/if}>{$s.badge}</span>
+                        {/if}
+                    </a>
+                </li>
+            {/foreach}
+        </ul>
+    </aside>
+{/if}
+
+<!-- plugin hook: 'frontend_nav' -->
+{* @event frontend_nav.%plugin_id% *}
+{foreach $frontend_nav as $_}{$_}{/foreach}
+
+
+<div class="clear-both"></div>
+
+
+
+

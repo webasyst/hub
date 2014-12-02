@@ -1,0 +1,55 @@
+<!-- plugin hook: 'frontend_homepage' -->
+{* @event frontend_homepage.%plugin_id% *}
+{foreach $frontend_homepage as $_}{$_}{/foreach}
+
+<!-- categories -->
+{if $categories = $wa->hub->categories(true)}
+    <ul class="category-list">
+        {foreach $categories as $c}
+
+            <li class="{if $c.is_updated} new{/if}{if !empty($c.logo_url)} with-logo{/if}">
+                <span class="count">{$c.update_datetime|wa_datetime:"humandatetime"}</span>
+                {if !empty($c.logo_url)}
+                    <a href="{$c.url}" title="{$c.name|escape}"><img class="category-logo" src="{$c.logo_url}" alt="{$c.name|escape}"></a>
+                {/if}
+                <a href="{$c.url}" class="category-name">
+                    {$c.name|default:'[`(no name)`]'|escape}
+                </a>
+                <div class="category-description">
+                    {$c.description}
+                    {if !empty($c.priority_topics)}
+                        <ul class="featured-topics">
+                        {foreach $c.priority_topics as $_featured}
+                            <li><a href="{$_featured.url|escape}">{$_featured.title|escape}</a></li>
+                        {/foreach}
+                        </ul>
+                    {/if}
+                </div>
+            </li>
+        {/foreach}
+    </ul>
+    <hr>
+{/if}
+
+<!-- topic stream -->
+<section class="topic-stream">
+
+    <h3>[`All topics`]</h3>
+    
+    <ul class="sorting aux">
+        <li  {if $sort == 'recent'}class="selected"{/if}>
+           <a href="?sort=recent">[`Newest`]</a>
+        </li>
+        <li {if $sort == 'updated'}class="selected"{/if}>
+           <a href="?sort=updated">[`Updated`]</a>
+        </li>
+        <li {if $sort == 'popular'}class="selected"{/if}>
+           <a href="?sort=popular">[`Popular`]</a>
+        </li>
+    </ul>
+    
+    <div class="clear-left"></div>
+    
+    {include file="list-topics.html"}
+
+</section>
