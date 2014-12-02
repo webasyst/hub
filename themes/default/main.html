@@ -45,10 +45,10 @@
             {if $wa->user()->isAuth()}
             <ul class="menu-v">
                 <li>
-                    <a href="{$wa->getUrl('/frontend/author', ['id' => $user.id])}">[`My topics`]{* <span class="count">{$user.topics_count}</span> *}</a>
+                    <a href="{$wa->getUrl('/frontend/author', ['id' => $user.id])}">[`My topics`]<span class="count">{$user.topics_count}</span></a>
                 </li>
                 <li>
-                    <a href="{$wa->getUrl('/frontend/authorReplies', ['id' => $user.id])}">[`My replies`]</a>
+                    <a href="{$wa->getUrl('/frontend/authorReplies', ['id' => $user.id])}">[`My replies`]<span class="count">{$user.comments_count}</span></a>
                 </li>
                 <li>
                     <a href="{$wa->getUrl('/frontend/authorFollowing', ['id' => $user.id])}">[`Favorites`] <span class="count"><i class="icon16 star"></i>{* $following_count *}</span></a>

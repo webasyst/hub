@@ -20,8 +20,8 @@
 {/if}
 
 <ul class="author-nav">
-    <li{if !empty($author_topics)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/">{if $wa->userId() == $author.contact_id}[`My topics`]{else}[`Topics`]{/if}</a></li>
-    <li{if !empty($author_replies)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/replies/">{if $wa->userId() == $author.contact_id}[`My replies`]{else}[`Replies`]{/if}</a></li>
+    <li{if !empty($author_topics)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/">{if $wa->userId() == $author.contact_id}[`My topics`]{else}[`Topics`]{/if}{if !empty($author.topics_count)} <span class="hint">{$author.topics_count}</span>{/if}</a></li>
+    <li{if !empty($author_replies)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/replies/">{if $wa->userId() == $author.contact_id}[`My replies`]{else}[`Replies`]{/if}{if !empty($author.comments_count)} <span class="hint">{$author.comments_count}</span>{/if}</a></li>
     {if $wa->userId() == $author.contact_id}
         <li{if !empty($author_following)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/following/">[`Favorites`]</a></li>
     {/if}
