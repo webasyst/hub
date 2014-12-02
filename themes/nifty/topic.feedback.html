@@ -1,0 +1,167 @@
+{*
+    FEEDBACK topic type:
+    ideas, bug reports, suggestions, thankyous, etc.
+*}
+
+<div itemscope itemtype="http://schema.org/Question">
+
+    <article class="topic type-feedback">
+
+        <h1 itemprop="name">
+            {$topic.title|escape}
+            <!-- plugin hook: 'frontend_topic.title_suffix' -->
+            {* @event frontend_topic.%plugin_id%.title_suffix *}
+            {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
+            {if $topic.badge}
+                <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
+            {/if}
+        </h1>
+
+        {if !empty($types[$topic.type_id].settings.voting)}
+            <div class="vote qa">
+                {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="#" class="minus"><i class="icon16 down{if $voted >= 0}-bw{else} disabled{/if}"></i></a>{/if}
+                {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="#" class="plus"><i class="icon16 up{if $voted <= 0}-bw{/if}"></i></a>{/if}
+                <strong class="{if $topic.votes_sum > 0}positive{elseif $topic.votes_sum < 0}negative{/if}" itemprop="upvoteCount">{$topic.votes_sum}</strong>
+            </div>
+        {/if}
+
+        <div{if !empty($types[$topic.type_id].settings.voting)} class="meta-ousted"{/if}>
+
+            <div itemprop="text" class="topic-content">
+                {$topic.content}
+            </div>
+
+            <!-- plugin hook: 'frontend_topic.body' -->
+            {* @event frontend_topic.%plugin_id%.body *}
+            {foreach $frontend_topic as $_}{$_.body}{/foreach}
+
+            <span class="aux">[`Posted`]: {$topic.create_datetime|wa_date:'humandate'}</span>
+            <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+
+            <div class="credentials">
+                {if !empty($topic.author)}
+                    <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}">
+                        <img src="{$topic.author.photo_url_20}" class="userpic" alt="">
+                    </a>
+                    <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}" class="username" itemprop="author">{$topic.author.name|escape}</a>
+                    {if !empty($topic.author.badge)}
+                    <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
+                {/if}
+                {/if}
+            </div>
+
+            <div class="tags">
+                {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
+            </div>
+
+            {if !empty($topic.editable)}
+            <div class="edit-links">
+                <a href="{$topic.edit_url}" class="bold">[`Edit topic`]</a>
+                <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+            </div>
+            {/if}
+
+        </div>
+
+    </article>
+
+    {if !empty($types[$topic.type_id].settings.commenting)}
+
+        <section class="comments" id="comments" itemscope itemtype="http://schema.org/UserComments">
+
+            <!-- plugin hook: 'frontend_topic.comments' -->
+            {* @event frontend_topic.%plugin_id%.comments *}
+            {foreach $frontend_topic as $_}{$_.comments}{/foreach}
+
+            <!-- hierarchical comment tree -->
+            <h3 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h3>
+
+            {if $wa->userId()}
+                <div class="follow {if $following}following{else}not-following{/if}">
+                    <div class="hide-when-following">
+                        <input type="button" class="button" value="[`Follow`]" id="button-follow">
+                        <span class="small">[`New comments will be sent to you by email`]</span>
+                    </div>
+                    <div class="hide-when-not-following">
+                        <i class="icon16 star"></i>[`You are following this topic`]
+                        <input type="button" class="button" value="[`Unfollow`]" id="button-unfollow">
+                    </div>
+                </div>
+            {/if}
+
+            {if !empty($comments)}
+
+                {$depth=-1}
+                {foreach $comments as $comment}
+                    {if $comment.depth < $depth}
+
+                        {$loop=($depth-$comment.depth)}
+                        {section name="end-comment" loop=$loop}
+                                <ul></ul>
+                                </li>
+                            </ul>
+                        {/section}
+
+                        {$depth=$comment.depth}
+                    {/if}
+
+                    {if $comment.depth == $depth}
+                        </li>
+                        <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}">
+                    {/if}
+
+                    {if $comment.depth > $depth}
+                        <ul>
+                            <li data-id={$comment.id} data-parent-id="{$comment.parent_id}">
+                            {$depth=$comment.depth}
+                    {/if}
+
+                    {include file="comment.html" comment=$comment inline}
+
+                {/foreach}
+
+                {section name="end-comment" loop=$depth + 1}
+                            <ul></ul>
+                        </li>
+                    </ul>
+                {/section}
+
+            {else}
+
+                <!-- no comments yet -->
+                <h3 class="comments-header" style="display:none"></h3>
+                <ul style="display:none"></ul>
+
+            {/if}
+
+        </section>
+
+        {* Add comment form *}
+        {if $comments_allowed}
+            <h4>[`Add comment`]</h4>
+            {include file="comment.add.html" inline}
+        {else}
+            {if $topic.badge.id == 'archived'}
+                <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
+            {else}
+                <p><em>[`Posting new comments is disabled for this topic.`]</em></p>
+            {/if}
+        {/if}
+
+    {/if}
+
+</div>
+
+<script>$(function() {
+    var wrapper = $('#topic-and-comments');
+    var vote_url = "{$wa->getUrl('/frontend/vote')|escape:js}";
+    var login_url = "{$wa->loginUrl()|escape:js}";
+    var follow_url = "{$wa->getUrl('/frontend/topicFollow')|escape:js}";
+
+    {if $wa->user()->getId()}
+        $.hub.initTopicVotes(wrapper, vote_url, '{$topic.id}');
+        $.hub.initFollowingButton(wrapper, follow_url, '{$topic.id}');
+    {else}
+        $.hub.initTopicVotesGuest(wrapper, login_url);
+    {/if}
+});</script>

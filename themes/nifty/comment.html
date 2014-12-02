@@ -1,0 +1,94 @@
+{if !empty($ajax_append)}<li data-id={$comment.id} data-parent-id="{$comment.parent_id}">{/if}
+
+<div class="comment{if !empty($just_added)} new{/if}{if $comment.solution && !empty($topic)} {if $types[$topic.type_id].type == 'question'}solution{else}featured-comment{/if}{/if}"{if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'}  itemprop="suggestedAnswer{if $comment.solution} acceptedAnswer{/if}" itemscope itemtype="http://schema.org/Answer"{/if}>
+
+    <a class="comment-anchor" name="answer-{$comment.id}"></a>
+
+    {if !empty($topic) && $types[$topic.type_id].type == 'forum'}
+        {include file="comment.forum.html" inline}
+    {else}
+
+        {if !empty($topic)}
+            <!-- vote for comment -->
+            <div class="vote{if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'} qa{/if}">
+                <a href="#" title="-1" class="minus"><i class="icon16 down{if $comment.my_vote >= 0}-bw{/if}"></i></a>
+                <a href="#" title="+1" class="plus"><i class="icon16 up{if $comment.my_vote <= 0}-bw{/if}"></i></a>
+                <strong class="{if $comment.vote > 0}positive{else if $comment.vote < 0}negative{/if}" itemprop="upvoteCount">{$comment.vote}</strong>
+            </div>
+        {/if}
+
+        <!-- author -->
+        <div class="credentials">
+
+            <a name="comment{$comment.id}" href="{$wa->getUrl('/frontend/author', ['id' => $comment.contact_id])}">
+                <img src="{$comment.author.photo_url_20}" class="userpic" title="{$comment.author.name|escape}" alt="{$comment.author.name|escape}">
+                <span class="username">
+                    {if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'}
+                        <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{$comment.author.name|escape}</span></span>
+                    {else}
+                        <span itemprop="creator">{$comment.author.name|escape}</span>
+                    {/if}
+                    {if !empty($comment.author.badge)}
+                        <span class="staff"{if !empty($comment.author.badge_color)} style="background-color: {$comment.author.badge_color}"{/if}>{$comment.author.badge}</span>
+                    {/if}
+                </span>
+            </a>
+
+            <meta itemprop="{if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'}dateCreated{else}commentTime{/if}" content="{date('Y-m-d\TH:i', $comment.datetime_ts)}">
+            <span class="hint date">{$comment.datetime|wa_datetime:humandatetime}</span>
+
+            <a href="#comment{$comment.id}" class="anchor">#</a>
+
+            {if !empty($topic) && $types[$topic.type_id].type == 'question' && !$comment.depth}
+                {* answer to a question *}
+
+                    {if $comment.solution}
+                        <span class="badge-solution badge badge-answered"><i></i>[`Solution`]</span>
+                    {/if}
+                    {if ($topic.contact_id == $wa->userId() || $wa->user()->isAdmin('hub')) && (empty($topic.badge) || $topic.badge.id != 'archived')}
+                        <input data-badge="[`Solution`]" data-solution="[`Mark as solution`]" data-cancel="[`Unmark solution`]" type="button" class="button-solution button small {if $comment.solution}gray{/if}" value="{if $comment.solution}[`Unmark solution`]{else}[`Mark as solution`]{/if}">
+                    {/if}
+
+            {/if}
+
+        </div>
+
+        <!-- comment text -->
+        <div class="text">
+
+            <div itemprop="{if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'}text{else}commentText{/if}">
+                {$comment.text}
+            </div>
+
+            {* @event frontend_comments.%plugin_id% *}
+            {if !empty($comment.plugins)}
+            {foreach $comment.plugins as $_}{$_}{/foreach}
+            {/if}
+
+        </div>
+
+        {if !empty($comment.editable) || !empty($comments_allowed)}
+            <div class="actions">
+
+                {if !empty($comment.editable) && !empty($topic)}
+                    <!-- edit / delete -->
+                    <a class="aux comment-delete" href="#" data-url="{$wa->getUrl('hub/frontend/commentsDelete', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}" data-confirm="[`You are about to delete this record. Are you sure?`]">[`delete`]</a>
+                    <a class="aux comment-edit inline-link" href="#" data-save-string="[`Save`]" data-url="{$wa->getUrl('hub/frontend/commentsEdit', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}"><b><i>[`edit`]</i></b></a>
+                    {$wa->csrf()}
+                {/if}
+
+                {if !empty($comments_allowed)}
+                    <!-- reply -->
+                    <a class="comment-reply inline-link" data-id="{$comment.id}" href="#"><b><i>[`reply`]</i></b></a>
+                {else}
+                    <br>
+                {/if}
+
+            </div>
+        {/if}
+
+    {/if}
+
+</div>
+
+{if !empty($ajax_append)}</li>{/if}

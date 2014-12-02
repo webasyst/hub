@@ -1,0 +1,32 @@
+<!-- info pages -->
+{$hub_pages=$wa->hub->pages()}
+{if $hub_pages}
+    <div class="float-right">
+        {wa_print_tree tree=$hub_pages class="menu-h dropdown" attrs = 'id="page-list"' elem ='
+    <a href=":url" title=":title">:name</a>' collapsible_class='collapsible' selected=$wa->param('page_id')}
+    </div>
+{/if}
+
+<ul class="menu-h">
+{if $wa->user()->isAuth()}
+    <li>
+        <a href="{$wa->getUrl('/frontend/author', ['id' => $user.id])}">[`My topics`]{* <span class="count">{$user.topics_count}</span> *}</a>
+    </li>
+    <li>
+        <a href="{$wa->getUrl('/frontend/authorReplies', ['id' => $user.id])}">[`My replies`]</a>
+    </li>
+    <li>
+        <a href="{$wa->getUrl('/frontend/authorFollowing', ['id' => $user.id])}">[`Favorites`]</a>
+    </li>
+{else}
+    <li>
+        <li><a href="{$wa->loginUrl()}">[s`Sign in`]</a></li>
+    </li>
+{/if}
+</ul>
+
+<div class="clear-both"></div>
+
+
+
+

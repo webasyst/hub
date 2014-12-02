@@ -1,0 +1,23 @@
+<h1>
+    {$tag|escape}
+    <i class="icon16 tags"></i>
+</h1>
+
+<!-- plugin hook: 'frontend_tag' -->
+{* @event frontend_tag.%plugin_id% *}
+{foreach $frontend_tag as $_}{$_}{/foreach}
+
+<ul class="sorting">
+    <li{if $sort == 'popular'} class="selected"{/if}>
+       <a href="?sort=popular">[`Popular topics`]</a>
+    </li>
+    <li{if $sort == 'recent'} class="selected"{/if}>
+       <a href="?sort=recent">[`Most recent`]</a>
+    </li>
+    <li{if $sort == 'unanswered'} class="selected"{/if}>
+      <a href="?sort=unanswered">[`Unanswered`]</a>
+    </li>
+</ul>
+
+{include file="list-topics.html"}
+
