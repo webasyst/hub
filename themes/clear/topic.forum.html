@@ -1,0 +1,125 @@
+{*
+    FORUM THREAD (DISCUSSION):
+    plain list of comments + paging
+*}
+
+<article class="topic type-forum" itemscope itemtype="http://schema.org/Article">
+
+    <!-- forum topic title -->
+    <h1 itemprop="name">
+        {$topic.title|escape}
+        <!-- plugin hook: 'frontend_topic.title_suffix' -->
+        {* @event frontend_topic.%plugin_id%.title_suffix *}
+        {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
+        {if $topic.badge}
+            <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
+        {/if}
+    </h1>
+    <div class="credentials">
+        <p class="date">{$topic.create_datetime|wa_date:'humandate'}</p>
+        <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+    </div>
+
+    <!-- author userpic -->
+    <div class="meta">
+        <img src="{$topic.author.photo_url_50}" class="userpic" alt="{$topic.author.name|escape}" title="{$topic.author.name|escape}">
+        {if !empty($topic.author.badge)}
+            <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
+        {/if}
+    </div>
+
+    <!-- topic content -->
+    <div class="meta-ousted">
+
+        <div itemprop="articleBody" class="topic-content">
+            {$topic.content}
+        </div>
+
+        <!-- plugin hook: 'frontend_topic.body' -->
+        {* @event frontend_topic.%plugin_id%.body *}
+        {foreach $frontend_topic as $_}{$_.body}{/foreach}
+
+        {if !empty($topic.editable)}
+            <div class="actions">
+                <a href="{$topic.edit_url}" class="bold">[`Edit topic`]</a>
+                <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+            </div>
+        {/if}
+        
+        <div class="tags">
+            {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
+        </div>
+
+    </div>
+
+</article>
+
+<section class="comments forum" id="comments" itemscope itemtype="http://schema.org/ItemList">
+
+    <!-- plugin hook: 'frontend_topic.comments' -->
+    {* @event frontend_topic.%plugin_id%.comments *}
+    {foreach $frontend_topic as $_}{$_.comments}{/foreach}
+
+    {if !empty($comments)}
+
+        <!-- topic replies -->
+        <ul class="lazyloading-list">
+        {foreach $comments as $comment}
+            <li>{include file="comment.html" inline}</li>
+        {/foreach}
+        </ul>
+
+        {if isset($pages_count) && $pages_count > 1}
+        <div class="block lazyloading-paging"  data-link-text="[`Load more`]">
+            {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+        </div>
+        {/if}
+    {else}
+
+        <!-- no replies yet -->
+        <ul style="display:none"></ul>
+
+    {/if}
+
+</section>
+
+
+{if $comments_allowed}
+    <section class="forum-reply-form" id="comment-form">
+        <form method="post">
+
+            {if !$wa->userId()}
+                <!-- guest users may not post in the Hub, because voting won't work otherwise -->
+                <div id="user-auth-provider" data-provider="signup">
+                    {sprintf('[`To add a comment please <a href="%s">sign up</a> or <a href="%s">log in</a>`]',$wa->signupUrl(),$wa->loginUrl())}
+                </div>
+                {$wa->authAdapters()}
+            {else}
+                <!-- authorized -->
+                <div class="comment">
+                    <div class="meta">
+                        <img src="{$user.photo_url_50}" class="userpic" alt="{$wa->user()->get('name')|escape}" title="{$wa->user()->get('name')|escape}">
+                    </div>
+                    <div class="meta-ousted">
+                        <textarea id="comment-text" data-upload-url="{$wa->getUrl('/frontend/uploadImage')}" name="text" rows="10" cols="45"></textarea>
+                        <input type="submit" class="save" value="[`Add comment`]">
+                        <em class="hint">Ctrl+Enter</em>
+                        {$wa->csrf()}
+                        <input type="hidden" name="parent_id" value="0">
+                        <input type="hidden" name="topic_id" value="{$topic.id}">
+                        <input type="hidden" name="count" value="{$comments_count}">
+                        <input type="hidden" name="type" value="{if $types[$topic.type_id].type == 'question'}answer{else}comment{/if}">
+                    </div>
+                </div>
+            {/if}
+
+        </form>
+    </section>
+{else}
+    {if $topic.badge.id == 'archived'}
+        <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
+    {else}
+        <p><em>[`Posting new comments is disabled for this topic.`]</em></p>
+    {/if}
+{/if}
+
