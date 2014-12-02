@@ -366,7 +366,7 @@ class hubHelper
     {
         $base_types = self::getBaseTypes();
         $type_model = new hubTypeModel();
-        $types = $type_model->getAll('id');
+        $types = $type_model->getTypes();
         foreach ($types as &$type) {
             $type['settings'] = json_decode(ifset($type['settings'], '{}'), true);
             if (isset($base_types[$type['type']])) {

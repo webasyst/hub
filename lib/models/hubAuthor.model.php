@@ -250,6 +250,9 @@ class hubAuthorModel extends waModel
                 if (!empty($staff[$a['contact_id']])) {
                     $a['badge'] = $staff[$a['contact_id']]['badge'];
                     $a['badge_color'] = $staff[$a['contact_id']]['badge_color'];
+                    if (!empty($staff[$a['contact_id']]['name'])) {
+                        $a['name'] = $staff[$a['contact_id']]['name'];
+                    }
                 } else {
                     $a['badge'] = '';
                     $a['badge_color'] = '';

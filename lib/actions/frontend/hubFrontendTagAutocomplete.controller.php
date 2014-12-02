@@ -18,7 +18,7 @@ class hubFrontendTagAutocompleteController extends waJsonController
             ->fetchAll();
 
         foreach ($tags as &$tag) {
-            $tag['value'] = htmlspecialchars($tag['value']);
+            $tag['label'] = htmlspecialchars($tag['value']);
         }
         unset($tag);
 

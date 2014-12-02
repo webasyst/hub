@@ -120,7 +120,7 @@ class hubConfig extends waAppConfig
     public function setupFirstLogin()
     {
         wa()->getUser()->setSettings('hub', 'hub_last_datetime', time());
-        wa()->getUser()->setSettings('hub', 'type_items_count', 'comments');
+        wa()->getUser()->setSettings('hub', 'type_items_count', 'comments,topics');
         wa()->getUser()->setSettings('hub', 'email_following', 1);
     }
 
@@ -178,7 +178,7 @@ class hubConfig extends waAppConfig
         static $hubs = null;
         if ($hubs === null) {
             $hub_model = new hubHubModel();
-            $hubs = $hub_model->getAll('id');
+            $hubs = $hub_model->getHubs();
             foreach($hubs as &$h) {
                 $h['params'] = array();
             }

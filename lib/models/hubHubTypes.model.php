@@ -50,7 +50,8 @@ class hubHubTypesModel extends waModel
                 FROM ' . $this->table . ' ht
                     JOIN hub_type t
                         ON ht.type_id = t.id
-                WHERE ht.hub_id = i:0';
+                WHERE ht.hub_id = i:0
+                ORDER BY t.sort, t.id';
         $result = $this->query($sql, $hub_id)->fetchAll('id');
 
         // 'page' types are not available for frontend users unless allowed in settings

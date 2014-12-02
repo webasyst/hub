@@ -96,11 +96,22 @@ class hubCommentsAddController extends waJsonController
     {
         $topic = $comment['topic'];
 
-        $topic['url'] = wa()->getRouteUrl(
-            'hub/frontend/topic',
-            array('id' => $topic['id'], 'topic_url' => $topic['url'], 'hub_id' => $topic['hub_id']),
-            true
-        );
+        // Check if hub is open and exists in frontend routing
+        $hub_is_public = false;
+        $hub = hubHelper::getHub($topic['hub_id']);
+        if ($hub && $hub['status'] == 1 && hubHelper::getUrls($topic['hub_id'])) {
+            $hub_is_public = true;
+        }
+
+        if ($hub_is_public) {
+            $topic['url'] = wa()->getRouteUrl(
+                'hub/frontend/topic',
+                array('id' => $topic['id'], 'topic_url' => $topic['url'], 'hub_id' => $topic['hub_id']),
+                true
+            );
+        } else {
+            $topic['url'] = wa('hub')->getConfig()->getRootUrl(true).wa('hub')->getConfig()->getBackendUrl().'/hub/#/topic/'.$topic['id'].'/';
+        }
         if (!$topic['url']) {
             return;
         }

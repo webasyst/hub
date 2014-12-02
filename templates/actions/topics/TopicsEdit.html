@@ -18,15 +18,13 @@
             <!-- author -->
             <div class="block">
                 <h6>[`Author`]</h6>
-                {if $access_level >= hubRightConfig::RIGHT_FULL}
-                    <select name="topic[contact_id]">
-                        {foreach $users as $u_id => $name}
-                            <option {if $topic['contact_id'] == $u_id}selected="selected"{/if} value="{$u_id}">
-                                {$name|escape}
-                            </option>
-                        {/foreach}
-                    </select>
-                {/if}
+                <select name="topic[contact_id]"{if !$can_change_author} disabled{/if}>
+                    {foreach $users as $u_id => $name}
+                        <option value="{$u_id}"{if $topic['contact_id'] == $u_id} selected="selected"{/if}>
+                            {$name|escape}
+                        </option>
+                    {/foreach}
+                </select>
             </div>
 
             <!-- meta -->
@@ -131,7 +129,7 @@
                     <!-- / THIS PART CAN BE CUSTOMIZED/REPLACED BY TOPIC TYPE PLUGINS -->
                     <div class="wa-editor-core-wrapper">
 
-                        <ul class="h-topic-editor-toggle wa-editor-wysiwyg-html-toggle">
+                        <ul class="h-editor-toggle wa-editor-wysiwyg-html-toggle">
                             <li class="selected">
                                 <a href="#" class="wysiwyg">WYSIWYG</a>
                             </li>
@@ -229,7 +227,7 @@
                                     </div>
                                 </div>
                                 <div class="clear-left"></div>
-                                
+
                             </div>
 
                             <div class="float-right block half-padded">
@@ -323,7 +321,7 @@ var wa_app = 'hub';
     // Load JS script, making sure it WILL get cached in non-debug mode
     $.ajax({
           dataType: "script",
-          url: "{$wa_app_static_url}js/topics/edit.js?{$wa->version('hub')}",
+          url: "{$wa_app_static_url}js/topics/edit.js?{$wa->version()}",
           cache: true
     }).done(function() {
 

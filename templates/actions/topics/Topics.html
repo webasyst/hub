@@ -262,7 +262,7 @@
     {if !empty($load_js_for_comments)}
         $.ajax({ // Load JS script, making sure it WILL get cached in non-debug mode
               dataType: "script",
-              url: "{$wa_app_static_url}js/comments.js?{$wa->version('hub')}",
+              url: "{$wa_app_static_url}js/comments.js?{$wa->version()}",
               cache: true
         }).done(function() {
             $.comments.init({

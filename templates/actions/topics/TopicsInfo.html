@@ -149,87 +149,87 @@
         </div>
 
         {if !empty($topic.type) && ifset($topic.type.type) == 'forum'}
-        
+
             {* forum topics offers a plan list of discussions *}
-        
-            <div class="h-plain-discussion">            
+
+            <div class="h-plain-discussion">
                 <div class="h-comments top-padded" id="h-comments">
                     <ul>
                         {foreach $comments as $id => $comment}
                             <li data-id="{$comment.id}" class="h-comment">{include file="../comments/include.comment.html" inline}</li>
                         {/foreach}
                     </ul>
-                    
+
                     {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
                         <div id="h-comment-add" style="display:none;">
                             {include '../comments/include.addComment.html' inline}
                         </div>
                     {/if}
-                    
+
                 </div>
             </div>
-        
+
         {else}
-        
+
             {* hierarchical comment tree *}
 
             <div class="h-comments top-padded" id="h-comments">
-    
+
                 {if !empty($comments)}
-    
+
                     <h4 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h4>
-    
+
                     <!-- comments begin -->
                     {$depth=-1}
                     {foreach $comments as $comment}
                       {if $comment.depth < $depth}
-    
+
                         {$loop=($depth-$comment.depth)}
                         {section name="end-comment" loop=$loop}
                             <ul></ul>
                             </li>
                           </ul>
                         {/section}
-    
+
                         {$depth=$comment.depth}
                       {/if}
-    
+
                       {if $comment.depth == $depth}
                         </li>
                         <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}" class="h-comment">
                       {/if}
-    
+
                       {if $comment.depth > $depth}
                         <ul>
                           <li data-id={$comment.id} data-parent-id="{$comment.parent_id}" class="h-comment">
                           {$depth=$comment.depth}
                       {/if}
-    
+
                         {include file="../comments/include.comment.html" comment=$comment inline}
-    
+
                     {/foreach}
-    
+
                     {section name="end-comment" loop=$depth + 1}
                           <ul></ul>
                           </li>
                         </ul>
                     {/section}
-    
+
                     <!-- comments end -->
                 {else}
                     <h4 class="comments-header">[`No comments yet`]</h4>
                     <ul style="display:none"></ul>
                 {/if}
-    
+
                 {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
                     <div id="h-comment-add" style="display:none;">
                         <div class="hr"></div>
                         {include '../comments/include.addComment.html' inline}
                     </div>
                 {/if}
-    
+
             </div>
-        
+
         {/if}
 
     </article>
@@ -249,7 +249,7 @@
     // Comments
     $.ajax({ // Load JS script, making sure it WILL get cached in non-debug mode
           dataType: "script",
-          url: "{$wa_app_static_url}js/comments.js?{$wa->version('hub')}",
+          url: "{$wa_app_static_url}js/comments.js?{$wa->version()}",
           cache: true
     }).done(function() {
         $.comments.init({

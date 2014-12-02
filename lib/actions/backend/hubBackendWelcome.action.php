@@ -145,11 +145,13 @@ class hubBackendWelcomeAction extends waViewAction
 
         //Filter by topic type для каждого созданного типа
         $category_model = new hubCategoryModel();
+        $map = array_reverse($map, true);
         foreach ($map as $type_id => $id) {
             $category_model->add(
                 array(
                     'glyph'          => $this->types[$type_id]['glyph'],
                     'name'           => $this->types[$type_id]['category_name'],
+                    'url'            => $this->types[$type_id]['category_url'],
                     'type'           => hubCategoryModel::TYPE_DYNAMIC,
                     'conditions'     => sprintf('type_id=%d', $id),
                     'hub_id'         => $hub_id,

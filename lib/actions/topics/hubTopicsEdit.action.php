@@ -78,6 +78,14 @@ class hubTopicsEditAction extends waViewAction
             $hub_type_ids[$row['hub_id']][] = $row['type_id'];
         }
 
+        $users = $this->getUsers('backend');
+        $access_level = wa()->getUser()->getRights('hub', 'hub.'.$hub_id);
+        $can_change_author = $access_level >= hubRightConfig::RIGHT_FULL && !empty($users[$topic['contact_id']]);
+        if (!$can_change_author) {
+            $c = new waContact($topic['contact_id']);
+            $users = array($topic['contact_id'] => $c->getName());
+        }
+
         $this->view->assign(
             array(
                 'topic'             => $topic,
@@ -86,10 +94,10 @@ class hubTopicsEditAction extends waViewAction
                 'types'             => $topic_types,
                 'categories'        => $categories,
                 'hub_type_ids'      => $hub_type_ids,
-                'access_level'      => wa()->getUser()->getRights('hub', 'hub.'.$hub_id),
                 'hub_url_templates' => self::getHubPublicUrlTemplates(),
-                'users'             => $this->getUsers('backend'),
+                'users'             => $users,
                 'user_id'           => wa()->getUser()->getId(),
+                'can_change_author' => $can_change_author,
             )
         );
     }

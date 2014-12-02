@@ -83,6 +83,7 @@ return array(
         'create_datetime' => array('datetime', 'null' => 0),
         'status' => array('tinyint', 1, 'null' => 0, 'default' => '0'),
         'topics_count' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
         ),
@@ -199,6 +200,7 @@ return array(
         'glyph' => array('varchar', 255, 'null' => 0, 'default' => ''),
         'type' => array('varchar', 255, 'null' => 0),
         'settings' => array('text'),
+        'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
         ),

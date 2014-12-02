@@ -583,13 +583,13 @@
         initEditor: function() {
             $('#topic-editor').waEditor({
                 imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
-                keydownCallback: function(event) { }, // without this waEditor intercents Ctrl+S event in Redaktor
+                keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redaktor
                 changeCallback: function() {
                     $(window).scroll();
                 }
             });
 
-            // without this waEditor intercents Ctrl+S event in Ace
+            // without this waEditor intercepts Ctrl+S event in Ace
             ace.edit($('#topic-editor').closest('.h-topic-editor-wrapper').find('> .ace > .ace_editor')[0]).commands.removeCommand('waSave');
 
             // Save on Ctrl+S, or Cmd+S

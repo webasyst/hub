@@ -541,37 +541,42 @@
         $form.submit(function () {
             var $message = $form.find('.js-hub-settings-message');
             $message.show().html('<i class="icon16 loading"></>');
+            var $submit_button = $form.find('input:submit');
+            if ($submit_button.prop('disabled')) {
+                return false;
+            }
+            $submit_button.prop('disabled', true);
             $.ajax({
                 url: $form.attr('action'),
                 dataType: 'json',
                 type: 'post',
-                data: $form.serialize(),
-                success: function (r) {
-                    if (r.status != 'ok') {
-                        console.log('Error saving hub', r); // !!!
-                        return;
-                    }
+                data: $form.serialize()
+            }).always(function(r, msg) {
+                $submit_button.prop('disabled', false);
+                if (msg != 'success' || r.status != 'ok') {
+                    console.log('Error saving hub', r); // !!!
+                    return;
+                }
 
-                    $.sidebar.reload();
-                    $form.find('.js-hub-settings-save-remind:first').hide();
-                    $message.show().html('<i class="icon16 yes"></i>');
+                $.sidebar.reload();
+                $form.find('.js-hub-settings-save-remind:first').hide();
+                $message.show().html('<i class="icon16 yes"></i>');
 
-                    // Reload form and sidebar content, then show success indicator
-                    $(window).one('wa_loaded', function() {
-                        var $message = $('#hub-hub-settings-form .js-hub-settings-message').show().html('<i class="icon16 yes"></i>');
-                        setTimeout(function () {
-                            $message.hide();
-                        }, 2000);
-                    });
-                    $(window).one('wa_sidebar_loaded', function() {
-                        $.sidebar.setHub('{$hub.id}');
-                    });
+                // Reload form and sidebar content, then show success indicator
+                $(window).one('wa_loaded', function() {
+                    var $message = $('#hub-hub-settings-form .js-hub-settings-message').show().html('<i class="icon16 yes"></i>');
+                    setTimeout(function () {
+                        $message.hide();
+                    }, 2000);
+                });
+                $(window).one('wa_sidebar_loaded', function() {
+                    $.sidebar.setHub('{$hub.id}');
+                });
 
-                    if (r.data.hash) {
-                        window.location.hash = r.data.hash;
-                    } else {
-                        $.hub.redispatch();
-                    }
+                if (r.data.hash) {
+                    window.location.hash = r.data.hash;
+                } else {
+                    $.hub.redispatch();
                 }
             });
 

@@ -7,6 +7,7 @@ return array(
             'category_name' => 'Articles', //name for topic category and to display on the welcome screen
             'name'          => 'Article', //name for the topic type
             'description'   => 'Guides, instructions, tutorials',
+            'category_url'  => 'guides',
             'type'          => 'page',
             'settings'      => array(
                 'voting'     => array('+' => '+', '-' => '-'),
@@ -18,6 +19,7 @@ return array(
             'category_name' => 'Questions',
             'name'          => 'Question',
             'description'   => 'Q & A topics',
+            'category_url'  => 'questions',
             'type'          => 'question',
             'settings'      => array(
                 'voting'     => array('+' => '+', '-' => '-'),
@@ -29,18 +31,19 @@ return array(
             'category_name' => 'Ideas',
             'name'          => 'Idea',
             'description'   => 'Collect ideas and suggestions from your customers',
+            'category_url'  => 'ideas',
             'type'          => 'feedback',
             'settings'      => array(
                 'voting'     => array('+' => '+', '-' => '-'),
                 'commenting' => "1",
                 'badges'     =>
                     array(
-                        'archived'  => 'archived',
-                        'pending'   => 'pending',
-                        'confirmed' => 'confirmed',
+                        'archived'   => 'archived',
+                        'pending'    => 'pending',
+                        'confirmed'  => 'confirmed',
                         'inprogress' => 'inprogress',
-                        'complete'  => 'complete',
-                        'rejected'  => 'rejected',
+                        'complete'   => 'complete',
+                        'rejected'   => 'rejected',
                     ),
             ),
         ),
@@ -49,19 +52,20 @@ return array(
             'category_name' => 'Bug reports',
             'name'          => 'Bug report',
             'description'   => 'Collect bug reports',
+            'category_url'  => 'bug-reports',
             'type'          => 'feedback',
             'settings'      => array(
                 'voting'     => array('+' => '+', '-' => '-'),
                 'commenting' => "1",
                 'badges'     =>
                     array(
-                        'archived'  => 'archived',
-                        'pending'   => 'pending',
-                        'confirmed' => 'confirmed',
+                        'archived'   => 'archived',
+                        'pending'    => 'pending',
+                        'confirmed'  => 'confirmed',
                         'inprogress' => 'inprogress',
-                        'complete'  => 'complete',
-                        'fixed'     => 'fixed',
-                        'rejected'  => 'rejected',
+                        'complete'   => 'complete',
+                        'fixed'      => 'fixed',
+                        'rejected'   => 'rejected',
                     ),
             ),
         ),
@@ -70,6 +74,7 @@ return array(
             'category_name' => 'Discussions',
             'name'          => 'Discussion',
             'description'   => 'Discussions in classic forum threads',
+            'category_url'  => 'forum',
             'type'          => 'forum',
             'settings'      => array(),
         ),
