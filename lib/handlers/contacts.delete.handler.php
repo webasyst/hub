@@ -8,7 +8,7 @@ class hubContactsDeleteHandler extends waEventHandler
      */
     public function execute(&$params)
     {
-        $contact_ids = $params;
+        $contact_ids = implode(',', $params);
         $m = new waModel();
         foreach(array(
             array('hub_author', 'contact_id'),
@@ -19,10 +19,8 @@ class hubContactsDeleteHandler extends waEventHandler
             //array('hub_topic', 'contact_id'),         // !!! no index
         ) as $data) {
             list($table, $field) = $data;
-            $sql = "DELETE FROM $table
-                    WHERE $field IN (".implode(',', $contact_ids).")";
+            $sql = 'DELETE FROM ' . $table . ' WHERE ' . $field . ' IN (' . $contact_ids  . ')';
             $m->exec($sql);
         }
     }
 }
-
