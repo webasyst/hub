@@ -1,6 +1,6 @@
 {*
     mixed list of topics:
-    pages, discussions, questions, and feedback topics altogether
+    pages, discussions, questions, and feedback topics all together
 *}
 
 {if empty($topics)}
@@ -21,34 +21,40 @@
         
             <li itemscope itemtype="http://schema.org/{if $_topic_type.type == 'question'}Question{else}Article{/if}">
 
+                {* glyph *}
                 <div class="meta">
                     <a href="{$t.url|escape}">{hubHelper::getGlyph($_topic_type.glyph, 32, $t.is_updated, [ title=>$_topic_type.name,contact=>ifempty($t.author,[]) ] )}</a>
                 </div>
 
                 <div class="summary">
-                    <a href="{$t.url|escape}" itemprop="url" class="big{if !empty($t.is_updated)} bold{/if}">{if $t.follow}<i class="icon16 star" title="[`You are following this topic`]"></i>{/if}<span   itemprop="name">{$t.title|escape}</span></a>
-    
+                
+                    {* rating *}
+                    {if $_topic_type.type != 'forum' && $_topic_type.type != 'page' && !empty($_topic_type.settings.voting)}
+                        <strong class="rating-label {if $t.votes_sum > 0}positive{elseif $t.votes_sum < 0}negative{else}gray{/if}">{if $t.votes_sum > 0}+{/if}{$t.votes_sum}</strong>
+                    {/if}
+                    
+                    {* title *}
+                    <a href="{$t.url|escape}" itemprop="url" class="big{if !empty($t.is_updated)} bold{/if}"><span   itemprop="name">{$t.title|escape}</span>{if $t.follow} <i class="icon16 star" title="[`You are following this topic`]"></i>{/if}</a>
+
+                    {* badge *}    
                     {if !empty($t.badge)}
                         <span class="badge badge-{$t.badge.id}">{$t.badge.name}</span>
                     {/if}
-    
-                    {if $_topic_type.type != 'forum'}
-                        <strong class="rating {if $t.votes_sum > 0}positive{elseif $t.votes_sum < 0}negative{else}gray{/if}">{if $t.votes_sum > 0}+{/if}{$t.votes_sum}</strong>
-                    {/if}
-    
-                    <!-- author -->
-                    {if $_topic_type.type == 'forum' && !empty($t.author)}
-                        <br>
-                        <span class="hint">
+
+                    {* author & datetime *}
+                    <br>
+                    <span class="hint">
+                        {if !empty($t.author)}
                             {sprintf('[`by %s`]', $t.author.name|escape)}
-                        </span>
-                    {else}
-                        <span class="hint">{$t.create_datetime|wa_datetime:"humandatetime"}</span>
-                    {/if}
-    
-                    {if $_topic_type.type != 'forum'}
+                        {/if}
+                        {$t.create_datetime|wa_datetime:"humandatetime"}
+                    </span>
+
+                    {*
                         <p>{strip_tags($t.content)|truncate:128}</p>
-                    {/if}
+                    *}
+                    
+                    {* featured comment / solution *}
                     {if !empty($t.solution)}
                         <div class="comment {if $_topic_type.type == 'question'}solution{else}featured-comment{/if}">
                             {strip_tags($t.solution.text)|truncate:255}
@@ -71,9 +77,11 @@
                     {/if}
                 </div>
                 
-                <div class="replies{if !empty($t.is_updated)} bold{/if}">
-                    <span class="hint">{_w('%d reply', '%d replies', $t.comments_count)}</span>
-                </div>
+                {if $t.comments_count || !empty($_topic_type.settings.commenting) && $_topic_type.settings.commenting == 1}
+                    <div class="replies{if !empty($t.is_updated)} bold{/if}">
+                        <span class="hint">{_w('%d reply', '%d replies', $t.comments_count)}</span>
+                    </div>
+                {/if}
                 
             </li>
         {/foreach}
