@@ -170,7 +170,7 @@
                                 var div = document.createElement('div');
                                 div.innerHTML = html;
                                 var data = $(div);
-                                var children = data.find('.h-comments').children();
+                                var children = data.find('.h-comments ul:first').children();
                                 offset += children.length;
                                 target.append(children);
                                 $('.lazyloading-progress-string').replaceWith(data.find('.lazyloading-progress-string'));

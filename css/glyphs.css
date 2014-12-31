@@ -1,6 +1,56 @@
 /* Topic type glyphs
 -------------------- */
 
+i.h-glyph48 { display: inline-block; background: url('../img/topic-glyphs-48.png') no-repeat; background-size: 1152px 96px; width: 48px; height: 48px; opacity: 0.3; }
+i.h-glyph48.selected { opacity: 1; }
+i.h-glyph48.bug.selected { background-position: -48px 0; }
+i.h-glyph48.idea.selected { background-position: -96px 0; }
+i.h-glyph48.exclamation.selected { background-position: -144px 0; }
+i.h-glyph48.discussion.selected { background-position: -192px 0; }
+i.h-glyph48.discussion2.selected { background-position: -240px 0; }
+i.h-glyph48.star.selected { background-position: -288px 0; }
+i.h-glyph48.solution.selected { background-position: -336px 0; }
+i.h-glyph48.question.selected { background-position: -384px 0; }
+i.h-glyph48.info.selected { background-position: -432px 0; }
+i.h-glyph48.thumbup.selected { background-position: -480px 0; }
+i.h-glyph48.thumbdown.selected { background-position: -528px 0; }
+i.h-glyph48.camera.selected { background-position: -576px 0; }
+i.h-glyph48.page.selected { background-position: -624px 0; }
+i.h-glyph48.smile.selected { background-position: -672px 0; }
+i.h-glyph48.unsmile.selected { background-position: -720px 0; }
+i.h-glyph48.help.selected { background-position: -768px 0; }
+i.h-glyph48.beer.selected { background-position: -816px 0; }
+i.h-glyph48.cart.selected { background-position: -864px 0; }
+i.h-glyph48.crown.selected { background-position: -912px 0; }
+i.h-glyph48.trophy.selected { background-position: -960px 0; }
+i.h-glyph48.location.selected { background-position: -1008px 0; }
+i.h-glyph48.list.selected { background-position: -1056px 0; }
+i.h-glyph48.unknown.selected { background-position: -1104px 0; }
+
+i.h-glyph48.bug { background-position: -48px -48px; }
+i.h-glyph48.idea { background-position: -96px -48px; }
+i.h-glyph48.exclamation { background-position: -144px -48px; }
+i.h-glyph48.discussion { background-position: -192px -48px; }
+i.h-glyph48.discussion2 { background-position: -240px -48px; }
+i.h-glyph48.star { background-position: -288px -48px; }
+i.h-glyph48.solution { background-position: -336px -48px; }
+i.h-glyph48.question { background-position: -384px -48px; }
+i.h-glyph48.info { background-position: -432px -48px; }
+i.h-glyph48.thumbup { background-position: -480px -48px; }
+i.h-glyph48.thumbdown { background-position: -528px -48px; }
+i.h-glyph48.camera { background-position: -576px -48px; }
+i.h-glyph48.page { background-position: -624px -48px; }
+i.h-glyph48.smile { background-position: -672px -48px; }
+i.h-glyph48.unsmile { background-position: -720px -48px; }
+i.h-glyph48.help { background-position: -768px -48px; }
+i.h-glyph48.beer { background-position: -816px -48px; }
+i.h-glyph48.cart { background-position: -864px -48px; }
+i.h-glyph48.crown { background-position: -912px -48px; }
+i.h-glyph48.trophy { background-position: -960px -48px; }
+i.h-glyph48.location { background-position: -1008px -48px; }
+i.h-glyph48.list { background-position: -1056px -48px; }
+i.h-glyph48.unknown { background-position: -1104px -48px; }
+
 i.h-glyph32 { display: inline-block; background: url('../img/topic-glyphs-32.png') no-repeat; background-size: 768px 64px; width: 32px; height: 32px; opacity: 0.3; }
 i.h-glyph32.selected { opacity: 1; }
 i.h-glyph32.bug.selected { background-position: -32px 0; }
@@ -109,3 +159,4 @@ i.h-glyph16.custom { background-size: 16px 16px; filter: grayscale(100%); -webki
 i.h-glyph16.custom.selected { filter: grayscale(0%); -webkit-filter: grayscale(0%); }
 
 .h-userpic32 { width: 32px; height: 32px; display: inline-block; background-image: url(/wa-content/img/userpic32.jpg); background-size: 32px 32px; }
+.h-userpic50 { width: 50px; height: 50px; display: inline-block; background-image: url(/wa-content/img/userpic50.jpg); background-size: 50px 50px; }

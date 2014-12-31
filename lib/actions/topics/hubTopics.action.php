@@ -93,16 +93,22 @@ class hubTopicsAction extends waViewAction
 
         $hub_color = null;
         $hub_context = null;
+        $collection_topic_types = hubHelper::getTypes();
         if ($collection->getType() == 'category') {
             $category = $collection->getInfo();
             if (!$order && $category['sorting']) {
                 $order = $category['sorting'];
             }
             if (!$order) {
-                $order = 'manual';
+                $order = $category['type'] ? 'recent' : 'manual';
             }
             $hub_context = $category['hub'] = hubHelper::getHub($category['hub_id']);
             $this->view->assign('category', $category);
+
+            if (substr($category['conditions'], 0, 8) == 'type_id=') {
+                $collection_topic_types = array();
+            }
+
         } elseif ($collection->getType() == 'tag') {
             $tag = $collection->getInfo();
             $hub_context = $tag['hub'] = hubHelper::getHub($tag['hub_id']);
@@ -110,7 +116,11 @@ class hubTopicsAction extends waViewAction
         } elseif ($collection->getType() == 'search') {
             $this->view->assign('query', is_array($collection->getInfo()) ? '' : $collection->getInfo());
         } elseif ($collection->getType() == 'filter') {
-            $this->view->assign('filter', $collection->getInfo());
+            $filter = $collection->getInfo();
+            $this->view->assign('filter', $filter);
+            if (!empty($filter['conditions']['types'])) {
+                $collection_topic_types = array_intersect_key($collection_topic_types, $filter['conditions']['types']);
+            }
         } elseif ($collection->getType() == 'hub') {
             $hub = $collection->getInfo();
             $hub += hubHelper::getHub($hub['id']);
@@ -132,6 +142,11 @@ class hubTopicsAction extends waViewAction
             $hub_context = hubHelper::getHub($options['hub_id']);
         }
         if ($hub_context) {
+            if ($collection_topic_types) {
+                $hub_types_model = new hubHubTypesModel();
+                $collection_topic_types = array_intersect_key($collection_topic_types, $hub_types_model->getTypes($hub_context['id']));
+            }
+
             $hub_full_access = $is_admin || wa()->getUser()->getRights('hub.'.$hub_context['id']);
             $hub_context['urls'] = array();
             $hub_color = ifset($hub_context['params']['color']);
@@ -140,6 +155,12 @@ class hubTopicsAction extends waViewAction
             }
         }
 
+        // No reason to show topic type filter if there's only one topic type
+        if (count($collection_topic_types) <= 1) {
+            $collection_topic_types = array();
+        }
+
+        $this->view->assign('collection_topic_types', $collection_topic_types);
         $this->view->assign('hub_context', $hub_context);
         $this->view->assign('hub_color', $hub_color);
 

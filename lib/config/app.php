@@ -9,7 +9,7 @@ return array(
         96 => 'img/hub96.png',
     ),
     'vendor'     => 'webasyst',
-    'version'    => '1.0.0',
+    'version'    => '1.0.1',
     'rights'     => true,
     'frontend'   => true,
     'pages'      => true,

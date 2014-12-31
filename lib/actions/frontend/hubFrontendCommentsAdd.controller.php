@@ -30,8 +30,15 @@ class hubFrontendCommentsAddController extends waJsonController
         $types = hubHelper::getTypes();
         if (!empty($types[$topic['type_id']])) {
             $type = $types[$topic['type_id']];
-            if (ifset($type['settings']['commenting'], '1') == 0) {
-                throw new waRightsException('Commenting is disabled for this topic.');
+            $commenting_disabled = ifset($type['settings']['commenting'], 1) == 0;
+            if ($commenting_disabled) {
+                // For questions it means that users can not comment on answers.
+                // For all other topic types it means that users can not comment at all.
+                if (empty($data['parent_id']) && $type['type'] == 'question') {
+                    // its ok
+                } else {
+                    throw new waRightsException('Commenting is disabled for this topic.');
+                }
             }
             if ($type['type'] == 'question') {
                 $count = $comment_model->countByField(

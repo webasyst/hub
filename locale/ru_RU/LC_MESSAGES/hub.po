@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.6.10\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -497,16 +497,11 @@ msgstr ""
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:186
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:205
 msgid "Default view"
-msgstr "Стандартный режим"
+msgstr "Вид"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:169
 msgid "Manual"
 msgstr "Ручной"
-
-#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:172
-#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:191
-msgid "topics on top"
-msgstr "сначала темы"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:178
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:196
@@ -516,15 +511,21 @@ msgstr "разрешить пользователям изменять спос�
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:209
 msgid "Newest topics on top"
-msgstr "По увеличению возраста"
+msgstr "По дате создания"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:210
 msgid "Top rated topics on top"
-msgstr "По убыванию рейтинга"
+msgstr "По рейтингу"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:211
 msgid "Last updated topics on top"
 msgstr "По дате обновления"
+
+msgid "Unanswered topics on top"
+msgstr "Без ответа наверху"
+
+msgid "Manual sort"
+msgstr "Ручная сортировка"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:229
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:152
@@ -873,13 +874,13 @@ msgstr "Голосование"
 #: /wa-apps/hub/templates/actions/settings/types/page.html:7
 #: /wa-apps/hub/templates/actions/settings/types/question.html:7
 msgid "+1: Users can PLUS topics of this type"
-msgstr "+1: Пользователя могут ставить ПЛЮСЫ темам этого типа"
+msgstr "+1: Пользователи могут ставить ПЛЮСЫ темам этого типа"
 
 #: /wa-apps/hub/templates/actions/settings/types/feedback.html:10
 #: /wa-apps/hub/templates/actions/settings/types/page.html:10
 #: /wa-apps/hub/templates/actions/settings/types/question.html:10
 msgid "-1: Users can MINUS topics of this type"
-msgstr "-1: Пользователя могут ставить МИНУСЫ темам этого типа"
+msgstr "-1: Пользователи могут ставить МИНУСЫ темам этого типа"
 
 #: /wa-apps/hub/templates/actions/settings/types/feedback.html:16
 #: /wa-apps/hub/templates/actions/settings/types/page.html:16
@@ -1079,11 +1080,11 @@ msgstr "Приоритет"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:11
 msgid "High"
-msgstr "высокий"
+msgstr "Высокий"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:13
 msgid "Low"
-msgstr "низкий"
+msgstr "Низкий"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:20
 msgid "Author"
@@ -1175,7 +1176,7 @@ msgstr "Отменить публикацию"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:283
 msgid "Title"
-msgstr ""
+msgstr "Заголовок"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:291
 msgid "Meta description"
@@ -1981,6 +1982,9 @@ msgstr "Делается"
 msgid "My replies"
 msgstr "Мои ответы"
 
+msgid "%s’s replies"
+msgstr "Ответы пользователя %s"
+
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:172
 msgid "%s topics on top"
 msgstr "%s"
@@ -1988,3 +1992,63 @@ msgstr "%s"
 #: /wa-apps/hub/themes/default/author.html:38
 msgid "%s did not post any comments yet."
 msgstr "%s еще не добавил ни одного комментария."
+
+msgid "You can not reply to a removed comment."
+msgstr "Нельзя отвечать на удалённый комментарий."
+
+msgid "Delete category logo?"
+msgstr "Удалить логотип категории?"
+
+msgid ""
+"Type selector is disabled since all topics in current view are of the same "
+"type."
+msgstr ""
+"Все топики в этом списке имеют один тип, поэтому фильтр по типам выключен."
+
+msgid "(%s hidden)"
+msgstr "(скрыто %s)"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:118
+msgid "Folder"
+msgstr "Папка"
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:171
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:192
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:213
+msgid "Default sort order"
+msgstr "Порядок сортировки"
+
+#: /wa-apps/hub/templates/actions/topics/Topics.html:134
+msgid ""
+"Manual sort for topics is not available in dynamic topic lists. If you want "
+"to activate the ability to sort topics, create a Folder category first."
+msgstr ""
+"В динамических списках возможность ручной сортировки тем недоступна. Для "
+"ручной сортировки создайте категорию типа «Папка»."
+
+#: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:136
+msgid ""
+"Manual sort for topics is not available in this view because current sort "
+"order is set to <strong>%s</strong>. To activate the ability to sort topics "
+"in this category, set current sort order to “Manual sort”."
+msgstr ""
+"В данном списке возможность ручной сортировки тем недоступна, так как "
+"включен режим автоматической сортировки — <strong>%s</strong>. Для ручной "
+"сортировки тем переключите режим на «Ручной»."
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:12
+msgid "Normal"
+msgstr "Средний"
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:134
+msgid "Visual"
+msgstr "Визуальный редактор"
+
+#: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:234
+msgid "Posting new comments has been restricted for this topic."
+msgstr "Добавление комментариев выключено для этой темы."
+
+#: /wa-apps/hub/themes/default/main.html:118
+msgid "Please complete the initial <a href=\"%s\">setup</a> in app backend."
+msgstr ""
+"Пожалуйста, <a href=\"%s\">завершите настройку</a> приложения в бекенде."

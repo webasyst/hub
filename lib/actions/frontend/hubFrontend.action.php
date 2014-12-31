@@ -21,7 +21,7 @@ class hubFrontendAction extends waViewAction
     {
         $hub_id = waRequest::param('hub_id');
         if (!$hub_id) {
-            throw new waException('No hub', 404);
+            throw new waException('No hub', 500);
         }
     }
 

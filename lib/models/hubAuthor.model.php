@@ -78,13 +78,24 @@ class hubAuthorModel extends waModel
                         {$where_contacts}
                         AND status=1
                     GROUP BY contact_id";
+            $contacts_not_updated = array_fill_keys($contacts, true);
             foreach($this->query($sql, array('hub_id' => $hub_id, 'contacts' => $contacts)) as $row) {
+                unset($contacts_not_updated[$row['contact_id']]);
                 $this->ensureAuthorExists($hub_id, $row['contact_id']);
                 $this->updateByField(array(
                     'contact_id' => $row['contact_id'],
                     'hub_id' => $hub_id,
                 ), array(
                     'topics_count' => $row['topics_count'],
+                ));
+            }
+
+            if ($contacts_not_updated) {
+                $this->updateByField(array(
+                    'contact_id' => array_keys($contacts_not_updated),
+                    'hub_id' => $hub_id,
+                ), array(
+                    'topics_count' => 0,
                 ));
             }
         }
@@ -97,7 +108,9 @@ class hubAuthorModel extends waModel
                         {$where_contacts}
                         AND status='approved'
                     GROUP BY contact_id";
+            $contacts_not_updated = array_fill_keys($contacts, true);
             foreach($this->query($sql, array('hub_id' => $hub_id, 'contacts' => $contacts)) as $row) {
+                unset($contacts_not_updated[$row['contact_id']]);
                 $this->ensureAuthorExists($hub_id, $row['contact_id']);
                 $this->updateByField(array(
                     'contact_id' => $row['contact_id'],
@@ -105,6 +118,16 @@ class hubAuthorModel extends waModel
                 ), array(
                     'comments_count' => $row['comments_count'],
                     'answers_count' => $row['answers_count'],
+                ));
+            }
+
+            if ($contacts_not_updated) {
+                $this->updateByField(array(
+                    'contact_id' => array_keys($contacts_not_updated),
+                    'hub_id' => $hub_id,
+                ), array(
+                    'comments_count' => 0,
+                    'answers_count' => 0,
                 ));
             }
         }

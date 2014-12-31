@@ -97,7 +97,7 @@ class hubFrontendAddAction extends hubFrontendAction
         if (!strlen(trim(strip_tags($data['content'], '<img>')))) {
             $errors['content'] = true;
         }
-        if (!wa_is_int($data['category_id']) || empty($this->categories[$data['category_id']])) {
+        if (!wa_is_int($data['category_id']) || empty($this->categories[$data['category_id']]) || $this->categories[$data['category_id']]['type']) {
             $data['category_id'] = null;
         }
 

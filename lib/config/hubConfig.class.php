@@ -154,7 +154,6 @@ class hubConfig extends waAppConfig
                 return true;
             }
 
-
             // Hub, hub type settings, etc.
             return false;
         }

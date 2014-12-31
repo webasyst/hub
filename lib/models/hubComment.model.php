@@ -547,6 +547,12 @@ class hubCommentModel extends waNestedSetModel
         if (mb_strlen($comment['text']) > 4096) {
             $errors['text'] = _w('Comment length should not exceed 4096 symbols');
         }
+        if (empty($comment['id']) && !empty($comment['parent_id'])) {
+            $parent = $this->getById($comment['parent_id']);
+            if (!$parent || $parent['status'] != 'approved') {
+                $errors['text'] = _w('You can not reply to a removed comment.');
+            }
+        }
         return $errors;
     }
 

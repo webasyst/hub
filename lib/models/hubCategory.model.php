@@ -10,7 +10,7 @@ class hubCategoryModel extends waModel
 
     public function getByHub($hub_id)
     {
-        return $this->where('hub_id = ?', $hub_id)->order('sort')->fetchAll('id');
+        return $this->where('hub_id = ?', $hub_id)->order('sort, id')->fetchAll('id');
     }
 
     /**
@@ -22,9 +22,9 @@ class hubCategoryModel extends waModel
     {
         $hub_id = (int)$hub_id;
         if ($hub_id) {
-            $sql = "SELECT * FROM `{$this->table}` WHERE `hub_id` = {$hub_id} ORDER BY `sort`";
+            $sql = "SELECT * FROM `{$this->table}` WHERE `hub_id` = {$hub_id} ORDER BY `sort`, `id`";
         } else {
-            $sql = "SELECT * FROM `{$this->table}` ORDER BY `hub_id`,`sort`";
+            $sql = "SELECT * FROM `{$this->table}` ORDER BY `hub_id`,`sort`,`id`";
         }
         return $this->query($sql)->fetchAll('id');
     }
@@ -114,10 +114,11 @@ SQL;
         }
 
         $this->exec(
-            "UPDATE ".$this->table." SET sort = sort + 1
+            "UPDATE ".$this->table." SET sort = sort + IF(sort > i:1 OR (sort = i:1 AND id > i:2), 2, 0)
             WHERE hub_id = i:0 AND sort >= i:1",
             $row['hub_id'],
-            $sort
+            $before['sort'],
+            $before_id
         );
         $this->updateById($id, array('sort' => $sort));
         return true;
@@ -227,7 +228,7 @@ SQL;
 
     /**
      * Change update_datetime of all categories given topic belongs to.
-     * Ignores drafts altogether.
+     * Ignores drafts all together.
      * @param $topic array|int
      * @param $count int        +1 or -1. If set, also change topics_count
      * @return mixed

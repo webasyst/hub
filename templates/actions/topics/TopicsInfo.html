@@ -44,66 +44,77 @@
     {/if}
 
     <article class="h-topic">
-
-        {if $can_edit_delete}
-            <div class="float-right block half-padded">
-                <ul class="menu-h">
-                    <li><a href="#/topic/edit/{$topic.id}/"><i class="icon16 edit"></i>[`Edit topic`]</a></li>
-                    <li><a id="delete-topic-link" href="javascript:void(0)"><i class="icon16 delete"></i>[`Delete`]</a></li>
-                </ul>
+        
+        <div class="profile image50px">
+            <div class="image">
+                {hubHelper::getGlyph( $types[$topic.type_id].glyph, 48, false, [ title=>$types[$topic.type_id].name,contact=>ifempty($topic.contact,[]) ] )}
             </div>
-        {/if}
-
-        <h1>
-            {if !empty($topic.title)}{$topic.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
-
-            {if $possible_badges}
+            <div class="details">
+        
                 {if $can_edit_delete}
-                    {* Drop-down badge selector *}
-                    <div id="h-badge-selector" class="h-badge{if !empty($topic.badge.id)} h-{$topic.badge.id|escape}{/if}">
-                        <ul class="menu-h dropdown">
-                            <li>
-                                <a href="javascript:void(0)" class="inline-link"><b><i>{ifset($topic.badge.name, "[`No badge`]")|escape}</i></b><i class="icon10 darr"></i></a>
-                                <ul class="menu-v">
-                                    {foreach $possible_badges as $b}
-                                        <li><a href="javascript:void(0)" data-id="{$b.id|escape}"><i class="icon16 h-badge-color-helper h-{$b.id|escape}"></i>{$b.name|escape}</a></li>
-                                    {/foreach}
-                                    <li><a href="javascript:void(0)" style="color: #aaa;" data-id=""><i class="icon16 h-badge-color-helper"></i>[`No badge`]</a></li>
-                                </ul>
-                            </li>
+                    <div class="float-right block half-padded">
+                        <ul class="menu-h">
+                            <li><a href="#/topic/edit/{$topic.id}/"><i class="icon16 edit"></i>[`Edit topic`]</a></li>
+                            <li><a id="delete-topic-link" href="javascript:void(0)"><i class="icon16 delete"></i>[`Delete`]</a></li>
                         </ul>
                     </div>
-                {elseif !empty($topic.badge.id)}
-                    {* Read-only badge *}
-                    <div class="h-badge h-{$topic.badge.id|escape}">
-                        <ul class="menu-h"><li>
-                            <a href="javascript:void(0)" class="inline-link"><i class="icon10 h-badge-icon"></i><b><i>{ifset($topic.badge.name)|escape}</i></b></a>
-                        </li></ul>
-                    </div>
                 {/if}
-            {/if}
-
-        </h1>
-
-        <p class="h-topic-author">
-
-            {if !empty($topic.contact)}
-                <a href="{$wa_backend_url}contacts/#/contact/{$topic.contact.id}" class="h-author-name"><i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($topic.contact.id, $topic.contact.photo, 20)});"></i>{$topic.contact.name|escape}</a>
-            {/if}
-
-            <span class="gray">
-                {$topic.create_datetime|wa_datetime:"humandatetime"}
-            </span>
-
-            {if !$hub.status}
-                <i class="icon16 lock-bw" title="[`Private hub topic`]"></i>
-            {else}
-                {if $topic_public_url}
-                    <a href="{$topic_public_url}" target="_blank">{$topic_public_url}</a> <i class="icon10 new-window"></i>
-                {/if}
-            {/if}
-
-        </p>
+        
+                <h1>
+                    {if !empty($topic.title)}{$topic.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
+        
+                    {if $possible_badges}
+                        {if $can_edit_delete}
+                            {* Drop-down badge selector *}
+                            <div id="h-badge-selector" class="h-badge{if !empty($topic.badge.id)} h-{$topic.badge.id|escape}{/if}">
+                                <ul class="menu-h dropdown">
+                                    <li>
+                                        <a href="javascript:void(0)" class="inline-link"><b><i>{ifset($topic.badge.name, "[`No badge`]")|escape}</i></b><i class="icon10 darr"></i></a>
+                                        <ul class="menu-v">
+                                            {foreach $possible_badges as $b}
+                                                <li><a href="javascript:void(0)" data-id="{$b.id|escape}"><i class="icon16 h-badge-color-helper h-{$b.id|escape}"></i>{$b.name|escape}</a></li>
+                                            {/foreach}
+                                            <li><a href="javascript:void(0)" style="color: #aaa;" data-id=""><i class="icon16 h-badge-color-helper"></i>[`No badge`]</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        {elseif !empty($topic.badge.id)}
+                            {* Read-only badge *}
+                            <div class="h-badge h-{$topic.badge.id|escape}">
+                                <ul class="menu-h"><li>
+                                    <a href="javascript:void(0)" class="inline-link"><i class="icon10 h-badge-icon"></i><b><i>{ifset($topic.badge.name)|escape}</i></b></a>
+                                </li></ul>
+                            </div>
+                        {/if}
+                    {/if}
+        
+                </h1>
+        
+                <p class="h-topic-author">
+        
+                    {if !empty($topic.contact)}
+                        <a href="{$wa_backend_url}contacts/#/contact/{$topic.contact.id}" class="h-author-name">{* <i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($topic.contact.id, $topic.contact.photo, 20)});"></i> *}{$topic.contact.name|escape}</a>
+                    {/if}
+        
+                    <span class="gray">
+                        {$topic.create_datetime|wa_datetime:"humandatetime"}
+                    </span>
+        
+                    {if !$hub.status}
+                        <i class="icon16 lock-bw" title="[`Private hub topic`]"></i>
+                    {else}
+                        {if $topic_public_url}
+                            <a href="{$topic_public_url}" target="_blank">{$topic_public_url}</a> <i class="icon10 new-window"></i>
+                        {/if}
+                    {/if}
+        
+                </p>
+        
+        
+        
+            </div>
+        </div>
 
         <div class="h-topic-content">
             {$topic.content}
@@ -126,25 +137,26 @@
                 </div>
             {/if}
 
-            <!-- follow -->
-            <a href="#" data-topic="{$topic.id}" title="[`Follow`]" class="h-follow bold{if !empty($follow)} highlighted{/if}"><i class="icon16 star{if empty($follow)}-empty{/if}"></i><span class="following-status">{if !empty($follow)}[`Following`]{else}[`Not following`]{/if}</span></a>
-
-
-            <span class="followers-count hint">{_w("%d follower", "%d followers", count($followers))}</span>
-            {function follower_html f=null}
-                <a href="{$wa_backend_url}contacts/#/contact/{$f.id}" title="{$f.name|escape}"{if $f.id == $wa->user('id')} class="follower-me"{/if}><i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($f.id, $f.photo, 20)});"></i></a>
-            {/function}
-
-            {* Own follower icon *}
-            <span class="{if empty($follow)}hidden {/if}own-follower-icon">{follower_html f=$wa->user()}</span>
-
-            {* All other icons *}
-            {foreach $followers as $f}
-                {if $f.id != $wa->user('id')}
-                    {follower_html f=$f}
-                {/if}
-            {/foreach}
-
+            {if $allow_commenting}
+                <!-- follow -->
+                <a href="#" data-topic="{$topic.id}" title="[`Follow`]" class="h-follow bold{if !empty($follow)} highlighted{/if}"><i class="icon16 star{if empty($follow)}-empty{/if}"></i><span class="following-status">{if !empty($follow)}[`Following`]{else}[`Not following`]{/if}</span></a>
+    
+    
+                <span class="followers-count hint">{_w("%d follower", "%d followers", count($followers))}</span>
+                {function follower_html f=null}
+                    <a href="{$wa_backend_url}contacts/#/contact/{$f.id}" title="{$f.name|escape}"{if $f.id == $wa->user('id')} class="follower-me"{/if}><i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($f.id, $f.photo, 20)});"></i></a>
+                {/function}
+    
+                {* Own follower icon *}
+                <span class="{if empty($follow)}hidden {/if}own-follower-icon">{follower_html f=$wa->user()}</span>
+    
+                {* All other icons *}
+                {foreach $followers as $f}
+                    {if $f.id != $wa->user('id')}
+                        {follower_html f=$f}
+                    {/if}
+                {/foreach}
+            {/if}
 
         </div>
 
@@ -160,7 +172,7 @@
                         {/foreach}
                     </ul>
 
-                    {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
+                    {if $allow_commenting}
                         <div id="h-comment-add" style="display:none;">
                             {include '../comments/include.addComment.html' inline}
                         </div>
@@ -170,14 +182,14 @@
             </div>
 
         {else}
-
+        
             {* hierarchical comment tree *}
 
             <div class="h-comments top-padded" id="h-comments">
 
                 {if !empty($comments)}
 
-                    <h4 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h4>
+                    <h2 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h2>
 
                     <!-- comments begin -->
                     {$depth=-1}
@@ -208,23 +220,29 @@
                         {include file="../comments/include.comment.html" comment=$comment inline}
 
                     {/foreach}
-
                     {section name="end-comment" loop=$depth + 1}
                           <ul></ul>
                           </li>
                         </ul>
                     {/section}
-
                     <!-- comments end -->
-                {else}
+                    
+                {else if $allow_commenting}
+                
                     <h4 class="comments-header">[`No comments yet`]</h4>
                     <ul style="display:none"></ul>
+                
                 {/if}
 
                 {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
                     <div id="h-comment-add" style="display:none;">
                         <div class="hr"></div>
                         {include '../comments/include.addComment.html' inline}
+                    </div>
+                {else}
+                    <div id="h-comment-add" style="display:none;">
+                        <div class="hr"></div>
+                        <p><em>[`Posting new comments has been restricted for this topic.`]</em></p>
                     </div>
                 {/if}
 

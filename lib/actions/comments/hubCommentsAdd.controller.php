@@ -66,6 +66,7 @@ class hubCommentsAddController extends waJsonController
         }
 
         $data['id'] = $id;
+        wa('hub')->getConfig()->markAsRead(array(), array($id));
 
         $comment = $this->model->getComment($id, 'author,vote,can_delete,my_vote');
         $comment['topic'] = $topic;

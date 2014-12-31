@@ -4,16 +4,38 @@ class hubHelper
 {
     protected static $hubs = array();
 
-    public static function getSorting()
+    public static function getSorting($short = false)
     {
-        return array(
-            'recent'     => _w('Newest'),
-            'popular'    => _w('Popular'), // top rated
-            'updated'    => _w('Last updated'),
-            'unanswered' => _w('Unanswered'),
+        $result = array(
+            'recent' => array(
+                'short_name' => _w('Newest'),
+                'name' => _w('Newest topics on top'),
+            ),
+            'popular'    => array(
+                'short_name' => _w('Popular'), // top rated
+                'name' => _w('Top rated topics on top'),
+            ),
+            'updated'    => array(
+                'short_name' => _w('Last updated'),
+                'name' => _w('Last updated topics on top'),
+            ),
+            'unanswered' => array(
+                'short_name' => _w('Unanswered'),
+                'name' => _w('Unanswered topics on top'),
+            ),
             //'followers' => _w('Most followed'),
             //'comments' => _w('Most commented'),
         );
+
+        foreach($result as $id => $s) {
+            if ($short) {
+                $result[$id] = $s['short_name'];
+            } else {
+                $result[$id]['id'] = $id;
+            }
+        }
+
+        return $result;
     }
 
     public static function getBaseTypes()
@@ -287,6 +309,9 @@ class hubHelper
 
             if ($size == 16) {
                 $size = 20;
+            }
+            if ($size == 48) {
+                $size = 50;
             }
             if (!empty($params['contact_id'])) {
                 $contact_id = $params['contact_id'];

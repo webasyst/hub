@@ -13,19 +13,23 @@
             isStaticVisible: defaultIsStaticVisible,
             getClone: defaultGetClone,
             showFixed: function(e) {
-                var css = {
-                    'min-height': e.element.height(),
+                e.element.css({
+                    'min-height': e.element.height()
+                });
+                e.fixed_clone.empty().css({
                     'min-width': e.element.width()
-                };
-                e.element.css(css);
-                e.fixed_clone.empty().css(css).append(e.element.children());
+                }).append(e.element.children());
             },
             hideFixed: function(e) {
                 e.element.css({
-                    'min-height': 0,
-                    'min-width': 0
+                    'min-height': 0
                 });
                 e.fixed_clone.children().appendTo(e.element);
+            },
+            updateFixed: function(e) {
+                e.fixed_clone.css({
+                    'min-width': e.element.width()
+                });
             }
         }, options || {});
 
@@ -89,7 +93,7 @@
     }
 
     function defaultGetClone($e, o) {
-        return $e.clone().addClass(o.fixed_class || 'sticky-fixed').css($.extend(
+        return $e.clone().empty().addClass(o.fixed_class || 'sticky-fixed').css($.extend(
             { position: 'fixed', display: 'none' },
             o.fixed_css || {}
         )).removeAttr('id').insertAfter($e);

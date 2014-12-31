@@ -309,10 +309,12 @@ class hubTopicModel extends waModel
             $vote_updated = $vote_model->vote($data['contact_id'], $id, 'topic', +1);
 
             // Update author stats
-            if (!empty($data['hub_id']) && $data['contact_id'] != wa()->getUser()->getId()) {
+            if (!empty($data['hub_id'])) {
                 $author_model = new hubAuthorModel();
-                $vote_updated && $author_model->receiveVote('topic', $data['hub_id'], $data['contact_id'], +1);
                 $author_model->updateCounts('all', $data['hub_id'], $data['contact_id']);
+                if ($vote_updated && $data['contact_id'] != wa()->getUser()->getId()) {
+                    $author_model->receiveVote('topic', $data['hub_id'], $data['contact_id'], +1);
+                }
             }
         }
 

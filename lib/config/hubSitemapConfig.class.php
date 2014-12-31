@@ -52,9 +52,11 @@ class hubSitemapConfig extends waSitemapConfig
                 }
 
                 // Tags
-                foreach ($tm->getAll() as $t) {
-                    $url = str_replace('%TAG%', $t['name'], $route['_url_template_tag']);
-                    $this->addUrl($url, $time_now, self::CHANGE_HOURLY, 0.1);
+                foreach ($tm->getByField('hub_id', $hub_id, 'id') as $t) {
+                    if ($t['count'] > 0) {
+                        $url = str_replace('%TAG%', $t['name'], $route['_url_template_tag']);
+                        $this->addUrl($url, $time_now, self::CHANGE_HOURLY, 0.1);
+                    }
                 }
 
             }

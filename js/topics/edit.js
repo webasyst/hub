@@ -47,14 +47,6 @@
             this.initTypeSelector();
             this.initHubSelector();
 
-            // Auto-fill url field when user modifies draft title
-            if (!this.options.topic_id) {
-                this.title_input = titleInput({
-                    src: 'h-topic-title',
-                    dst: 'h-topic-url-input'
-                });
-            }
-
             // Make button bar sticky
             var $window = $(window);
             $('#h-topic-button-bar').sticky({
@@ -79,7 +71,6 @@
                 $("#topic-hub input").val(self.data('id'));
                 $("#topic-hub b i").text(self.text());
 
-                that.tags_input.clear();
                 that.hub_id = self.data('id');
 
                 hubs_selector.trigger('change');
@@ -412,10 +403,19 @@
                 }
                 wrapper.removeClass('hidden');
             } else {
+                // Auto-fill url field when user modifies draft title
+                $.topics_edit.title_input = titleInput({
+                    src: 'h-topic-title',
+                    dst: 'h-topic-url-input'
+                });
+
                 // For new topics the editor is not visible until user starts to enter the topic title
                 topic_url_input.one('change', function() {
                     wrapper.slideDown().removeClass('.hidden');
                     enableEditMode();
+                });
+                topic_url_input.one('keyup', function() {
+                    $.topics_edit.title_input.stop();
                 });
             }
 
@@ -581,10 +581,15 @@
         },
 
         initEditor: function() {
+
+            var that = this;
+
             $('#topic-editor').waEditor({
+                lang: this.options.lang,
                 imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
-                keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redaktor
+                keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redactor
                 changeCallback: function() {
+                    that.form.change();
                     $(window).scroll();
                 }
             });
@@ -593,7 +598,6 @@
             ace.edit($('#topic-editor').closest('.h-topic-editor-wrapper').find('> .ace > .ace_editor')[0]).commands.removeCommand('waSave');
 
             // Save on Ctrl+S, or Cmd+S
-            var that = this;
             (function() {
                 var h;
                 $(document).on('keydown', h = function(event) {
@@ -669,6 +673,7 @@
         var instance = {
             options: {},
             init: function() {
+
                 this.options = options;
                 var target_id = options.target;
                 var tags = $('#' + target_id);

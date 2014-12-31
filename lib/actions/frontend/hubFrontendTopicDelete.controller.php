@@ -4,18 +4,29 @@ class hubFrontendTopicDeleteController extends waJsonController
 {
     public function execute()
     {
-        if (waRequest::method() == 'post') {
-            $id = waRequest::param('id');
-            $topic_model = new hubTopicModel();
-            $topic = $topic_model->getById($id);
+        $id = waRequest::param('id');
+        $topic_model = new hubTopicModel();
+        $topic = $topic_model->getById($id);
+        if (!$topic) {
+            throw new waException(_w('Topic not found'), 404);
+        }
 
-            if (!$topic || $topic['contact_id'] != $this->getUserId() ||
-                (time() - strtotime($topic['create_datetime']) > 15 * 60)
+        if (!wa()->getUser()->isAdmin('hub')) {
+            if ($topic['contact_id'] != $this->getUserId() ||
+                (time() - strtotime($topic['create_datetime']) > 120 * 60)
             ) {
-
-                wa_dump(!$topic, $topic['contact_id'] != $this->getUserId(), time() - strtotime($topic['create_datetime']) > 15 * 60); // !!!
                 throw new waRightsException(_ws('Access denied'));
             }
+        }
+
+        if (waRequest::method() != 'post') {
+            $this->redirect(
+                wa()->getRouteUrl('/frontend/topic', array(
+                    'topic_url' => $topic['url'],
+                    'id' => $topic['id'],
+                ))
+            );
+        } else {
 
             // get main category
             $topic_categories_model = new hubTopicCategoriesModel();
@@ -33,13 +44,13 @@ class hubFrontendTopicDeleteController extends waJsonController
             if ($category_id) {
                 $category_model = new hubCategoryModel();
                 $category = $category_model->getById($category_id);
-                $url = wa()->getRouteUrl('/frontend/category', array('category_url' => $category['url'], 'hub_id' => $topic['hub_id']));
+                $url = wa()->getRouteUrl('hub/frontend/category', array('category_url' => $category['url'], 'hub_id' => $topic['hub_id']));
             } else {
-                $url = wa()->getRouteUrl('/frontend', array('hub_id' => $topic['hub_id']));
+                $url = wa()->getRouteUrl('hub/frontend', array('hub_id' => $topic['hub_id']));
             }
             $this->response = $url;
-        } else {
-            throw new waRightsException(_ws('Access denied'));
+
         }
     }
 }
+

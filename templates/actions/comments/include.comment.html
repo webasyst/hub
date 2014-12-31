@@ -17,9 +17,9 @@
     {/capture}
 
     {if $comment.contact_id != 0}
-        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="bold h-comment-author{if !empty($comment['is_updated'])} highlighted{/if}">{$smarty.capture.commentor_name}</a>
+        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="bold h-comment-author">{$smarty.capture.commentor_name}</a>
     {else}
-        <span class="h-comment-author{if !empty($comment['is_updated'])} highlighted{/if}">{$smarty.capture.commentor_name}</span>
+        <span class="h-comment-author">{$smarty.capture.commentor_name}</span>
     {/if}
 
     {if !empty($comment.topic)}
@@ -35,7 +35,7 @@
         <a href="#" class="small h-comment-restore" {if $comment.status == hubCommentModel::STATUS_PUBLISHED}style="display: none;"{/if}>[`restore`]</a>
     {/if}
 
-    {if (!empty($topic) && !empty($topic.type) && $topic.type.type == hubTopicModel::TYPE_QUESTION) && !$comment.depth}{strip}
+    {if $comment.status != hubCommentModel::STATUS_DELETED && (!empty($topic) && !empty($topic.type) && $topic.type.type == hubTopicModel::TYPE_QUESTION) && !$comment.depth}{strip}
         <a href="#" class="small h-comment-solution h-solution {if !$comment.solution}bold{else}{/if}"
                data-solution="{if $comment.solution}1{/if}">
             {if !$comment.solution}[`Mark as solution`]{else}[`Unmark solution`]{/if}
@@ -57,7 +57,7 @@
         {/if}
     </div>
 
-    {if (empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting) && $comment.topic.type.type != 'forum')}
+    {if $comment.status != hubCommentModel::STATUS_DELETED && (empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting) && $comment.topic.type.type != 'forum')}
         <a href="#" class="h-comment-reply small inline-link"><b><i>[`reply`]</i></b></a>
     {/if}
 </div>

@@ -9,7 +9,7 @@
                 <h6>[`Priority`]</h6>
                 <ul id="ul-priority" class="menu-v">
                     <li{if $topic.priority == 1} class="selected"{/if}><a data-value="1" href="javascript:void(0)"><i class="icon16 exclamation-red"></i>[`High`]</a></li>
-                    <li{if $topic.priority != 1 && $topic.priority != -1} class="selected"{/if}><a data-value="0" href="javascript:void(0)"><i class="icon16 status-gray-tiny"></i>[`None`]</a></li>
+                    <li{if $topic.priority != 1 && $topic.priority != -1} class="selected"{/if}><a data-value="0" href="javascript:void(0)"><i class="icon16 status-gray-tiny"></i>[`Normal`]</a></li>
                     <li{if $topic.priority == -1} class="selected"{/if}><a data-value="-1" href="javascript:void(0)"><i class="icon16 status-blue-tiny"></i>[`Low`]</a></li>
                 </ul>
                 <input id="input-priority" name="topic[priority]" type="hidden" value="{$topic.priority}">
@@ -54,17 +54,6 @@
 
                 {if $topic.id}<a href="#/topic/{$topic.id}/" class="back" style="top: 0;">&larr; [`Back`]</a>{/if}
 
-                <!-- topic type -->
-                <ul class="h-topic-type" style="display:none;">
-                    {* Some, or even all, of these <li>s get hidden by JS depending on selected hub *}
-                    {foreach $types as $type_id => $type}
-                        <li{if $topic.type_id == $type_id} class="selected"{/if}>
-                            <a data-type="{$type.id}" href="javascript:void(0)">{hubHelper::getGlyph($type.glyph)}{$type.name|default:'[`(no name)`]'|escape}</a>
-                        </li>
-                    {/foreach}
-                </ul>
-                <input id="topic-type" type="hidden" name="topic[type_id]" value="{$topic.type_id}">
-
                 <!-- hub -->
                 <ul class="menu-h dropdown h-topic-hub">
                     <li>[`Hub`]:</li>
@@ -83,6 +72,17 @@
                         </ul>
                     </li>
                 </ul>
+
+                <!-- topic type -->
+                <ul class="h-topic-type" style="display:none;">
+                    {* Some, or even all, of these <li>s get hidden by JS depending on selected hub *}
+                    {foreach $types as $type_id => $type}
+                        <li{if $topic.type_id == $type_id} class="selected"{/if}>
+                            <a data-type="{$type.id}" href="javascript:void(0)">{hubHelper::getGlyph($type.glyph)}{$type.name|default:'[`(no name)`]'|escape}</a>
+                        </li>
+                    {/foreach}
+                </ul>
+                <input id="topic-type" type="hidden" name="topic[type_id]" value="{$topic.type_id}">
 
             </div>
 
@@ -131,7 +131,7 @@
 
                         <ul class="h-editor-toggle wa-editor-wysiwyg-html-toggle">
                             <li class="selected">
-                                <a href="#" class="wysiwyg">WYSIWYG</a>
+                                <a href="#" class="wysiwyg">[`Visual`]</a>
                             </li>
                             <li>
                                 <a href="#" class="html">HTML</a>
@@ -330,6 +330,7 @@ var wa_app = 'hub';
             hub_id = $('#wa-app > .sidebar .h-hub:not(.folded):first').data('hubId') || hub_id;
         {/if}
         $.topics_edit.init({
+            lang: {json_encode(substr($wa->locale(), 0, 2))},
             hub_id: hub_id,
             initial_hub_id: hub_id,
             topic_id: {ifempty($topic.id, 0)|escape:js},

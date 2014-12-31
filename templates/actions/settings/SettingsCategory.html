@@ -77,16 +77,22 @@
                                 [`Logo`]
                             </div>
                             <div class="value">
-                                {if !empty($category.logo)}<img class="h-category-logo" src="{$logo_base_url}{$category.logo}"><br><br>{/if}
+                                {if !empty($category.logo)}
+                                    <img class="h-category-logo" src="{$logo_base_url}{$category.logo}"><br><br>
+                                {/if}
 
                                 <input type="file" name="category_logo">
+                                {if !empty($category.logo)}
+                                    <br><a href="javascript:void(0)" id="delete-category-logo-link" title="[`Delete category logo?`]">[`Delete`]</a>
+                                {/if}
+
                                 <div class="block">
-                                <div class="progressbar small blue" style="display: none;">
-                                    <div class="progressbar-outer">
-                                        <div class="progressbar-inner" id="h-category-logo-progressbar" style="width: 0%;">
+                                    <div class="progressbar small blue" style="display: none;">
+                                        <div class="progressbar-outer">
+                                            <div class="progressbar-inner" id="h-category-logo-progressbar" style="width: 0%;">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 </div>
                                 <p class="errormsg" style="display: none;"><em>[`Only PNG and JPEG images are allowed`]</em></p>
                                 <p class="hint">[`Category logo will be published on the hub frontend homepage. Logo size depend on design theme you are using. Most design themes will scale the logo down to about 50px wide.`]</p>
@@ -109,7 +115,7 @@
                                     {if empty($category.id)}
                                     <input type="radio" name="category[type]" value="0" {if $category.type==hubCategoryModel::TYPE_STATIC} checked="checked"{/if}>
                                     {/if}
-                                    <strong>[`Category`]</strong>
+                                    <strong>[`Folder`]</strong>
                                     <i class="icon16 folder"></i>
                                 </label>
                                 <p class="hint">[`You’ll be able to manually add new topics and move existing topics into this category.`]</p>
@@ -162,15 +168,15 @@
                         {if $hub.status}
                         <div class="field js-related-view" data-related="0">
                             <div class="name">
-                                [`Default view`]
+                                [`Default sort order`]
                             </div>
-                            <div class="value">
+                            <div class="value no-shift">
                                 <select name="category[sorting]">
-                                    <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual`]</option>
-                                    {foreach $sorts as $s => $s_name}
-                                    {if $s != 'unanswered'}
-                                    <option value="{$s}"{if $category.sorting == $s} selected="selected"{/if}>{sprintf('[`%s topics on top`]',$s_name)}</option>
-                                    {/if}
+                                    <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual sort`]</option>
+                                    {foreach $sorts as $s}
+                                        {if $s.id != 'unanswered'}
+                                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
+                                        {/if}
                                     {/foreach}
                                 </select>
                                 <label>
@@ -183,12 +189,14 @@
                         {foreach $base_types as $t_id => $t}
                         <div class="field js-related-view" data-related="type:{$t_id}">
                             <div class="name">
-                                [`Default view`]
+                                [`Default sort order`]
                             </div>
                             <div class="value">
                                 <select name="category[sorting]">
                                     {foreach ifset($t.sorting,array()) as $s}
-                                    <option value="{$s}"{if ifset($category.sorting) == $s} selected="selected"{/if}>{$sorts[$s]} [`topics on top`]</option>
+                                        <option value="{$s}"{if ifset($category.sorting) == $s} selected="selected"{/if}>
+                                            {$sorts[$s].name|escape}
+                                        </option>
                                     {/foreach}
                                 </select>
                                 <label>
@@ -202,13 +210,15 @@
 
                         <div class="field js-related-view" data-related="tag_id">
                             <div class="name">
-                                [`Default view`]
+                                [`Default sort order`]
                             </div>
                             <div class="value">
                                 <select name="category[sorting]">
-                                    <option selected="selected">[`Newest topics on top`]</option>
-                                    <option>[`Top rated topics on top`]</option>
-                                    <option>[`Last updated topics on top`]</option>
+                                    {foreach $sorts as $s}
+                                        {if $s.id != 'unanswered'}
+                                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
+                                        {/if}
+                                    {/foreach}
                                 </select>
                                 <label>
                                     <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
@@ -310,7 +320,6 @@
         var $type =  $form.find(':input[name="category\\[type\\]"]');
         var $type_conditions =$form.find(':input[name="category\\[conditions\\]\\[type_id\\]"]');
 
-
         var showViewSettings = function(selector){
             $form.find('div.js-related-view').each(function(index,el){
                 var $field = $(el);
@@ -366,33 +375,47 @@
         }).change();
 
         {if empty($category.id)}
-        var src_input = $('#h-category-name');
-        var dst_input = $('#h-category-url');
-        var timer_id = null;
-        src_input.bind('keydown.category_create', function() {
-            if (timer_id) {
-                clearTimeout(timer_id);
-            }
-            timer_id = setTimeout(function() {
-                $.get('?action=transliterate', {
-                    str: src_input.val()
-                }, function(r) {
-                    if (r.status == 'ok') {
-                        dst_input.val(r.data);
-                    }
-                }, 'json');
-            }, 500);
-        });
+            // Transliterate name to url
+            var src_input = $('#h-category-name');
+            var dst_input = $('#h-category-url');
+            var timer_id = null;
+            src_input.bind('keydown.category_create', function() {
+                if (timer_id) {
+                    clearTimeout(timer_id);
+                }
+                timer_id = setTimeout(function() {
+                    $.get('?action=transliterate', {
+                        str: src_input.val()
+                    }, function(r) {
+                        if (r.status == 'ok') {
+                            dst_input.val(r.data);
+                        }
+                    }, 'json');
+                }, 500);
+            });
+            dst_input.bind('keydown.category_create', function() {
+                if (timer_id) {
+                    clearTimeout(timer_id);
+                }
+                timer_id = null;
+                src_input.unbind('keydown.category_create');
+                dst_input.unbind('keydown.category_create');
+            });
+        {else}
+            // Category logo deletion link
+            $('#delete-category-logo-link').click(function() {
+                var $a = $(this);
+                if (!confirm($a.attr('title'))) {
+                    return false;
+                }
 
-        dst_input.bind('keydown.category_create', function() {
-            if (timer_id) {
-                clearTimeout(timer_id);
-            }
-            timer_id = null;
-            src_input.unbind('keydown.category_create');
-            dst_input.unbind('keydown.category_create');
-        });
+                $a.closest('.field').find('.h-category-logo').remove();
+                $a.remove();
+
+                $.post($form.attr('action'), { id: {$category.id}, delete_logo: 1 });
+            });
         {/if}
+
         $('input[name=type]', $form).click(function() {
             if ($(this).val() == '0') {
                 $('#s-dynamic-field-group').hide();

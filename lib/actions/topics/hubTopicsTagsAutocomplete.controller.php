@@ -30,6 +30,12 @@ class hubTopicsTagsAutocompleteController extends waController
                 'count' => $count,
             );
         }
+        usort($tags, array('hubTopicsTagsAutocompleteController', 'sortCmp'));
         echo json_encode(array_values($tags));
+    }
+
+    public static function sortCmp($a, $b)
+    {
+        return $b['count'] - $a['count'];
     }
 }

@@ -122,6 +122,9 @@ class hubFrontendTopicAction extends hubFrontendAction
             $topic['editable'] = false;
         }
 
+        $category_model = new hubCategoryModel();
+        $categories = $category_model->getByTopic($topic);
+
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']] : null;
         $comments_allowed = $topic['badge']['id'] != 'archived' && ifset($this->types[$topic['type_id']]['settings']['commenting'], 1) != 0;
         $this->view->assign(array(
@@ -131,9 +134,10 @@ class hubFrontendTopicAction extends hubFrontendAction
             'comments' => $comments,
             'following' => $following,
             'topic_type' => $topic_type,
+            'categories' => $categories,
             'comments_count' => count($comments),
             'comments_allowed' => $comments_allowed,
-            'breadcrumbs' => $this->getBreadcrumbs($id),
+            'breadcrumbs' => $this->getBreadcrumbs($topic, $categories),
         ));
 
         /**
@@ -149,14 +153,17 @@ class hubFrontendTopicAction extends hubFrontendAction
         $this->setThemeTemplate('topic.html');
     }
 
-    public function getBreadcrumbs($topic_id)
+    public function getBreadcrumbs($topic, $categories)
     {
-        $topic_categories_model = new hubTopicCategoriesModel();
-        $category_id = $topic_categories_model->select('category_id')->
-                where('topic_id = i:topic_id', array('topic_id' => $topic_id))->
-                order('sort')->
-                limit(1)->
-                fetchField();
-        return hubHelper::getBreadcrumbs($category_id, true);
+        if (!$categories) {
+            return array();
+        }
+        $c = reset($categories);
+        return array(
+            array(
+                'url'  => wa()->getRouteUrl('/frontend/category', array('category_url' => $c['url'])),
+                'name' => $c['name']
+            )
+        );
     }
 }

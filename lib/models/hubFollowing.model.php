@@ -25,6 +25,12 @@ class hubFollowingModel extends waModel
 
         $result = $this->query($sql, $topic_id)->fetchAll('id');
 
+        // Format contact names
+        foreach($result as &$c) {
+            $c['name'] = waContactNameField::formatName($c);
+        }
+        unset($c);
+
         // Own record always comes first
         $me = ifempty($result[wa()->getUser()->getId()]);
         unset($result[wa()->getUser()->getId()]);

@@ -29,6 +29,24 @@ class hubCommentsChangeStatusController extends waJsonController
                     ) {
                         $comment_model->changeStatus($comment_id, $status);
                     }
+
+                    // When deleting a solution, remove badges from comment and topic
+                    if ($comment['solution'] && $status == hubCommentModel::STATUS_DELETED) {
+                        $comment_model->updateById($comment_id, array(
+                            'solution' => 0,
+                        ));
+                        if ($topic['badge'] == 'answered') {
+                            $other_solutions_exist = $comment_model->countByField(array(
+                                'topic_id' => $topic['id'],
+                                'solution' => 1,
+                            ));
+                            if (!$other_solutions_exist) {
+                                $topic_model->updateById($topic['id'], array(
+                                    'badge' => null,
+                                ));
+                            }
+                        }
+                    }
                 }
             }
         }

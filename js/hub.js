@@ -185,7 +185,7 @@
                 return;
             }
 
-            var times = parseInt(paging.data('times'), 10);
+            var times = parseInt(paging.data('times') || '10', 10);
             var link_text = paging.data('linkText') || 'Load more';
 
             // check need to initialize lazy-loading
@@ -220,6 +220,7 @@
                         }
 
                         var list = $('#h-content .h-topics');
+                        $('.loading-wrapper').show();
                         $.get(url, function (html) {
                             var tmp = $('<div></div>').html(html);
                             list.append(tmp.find('#h-content .h-topics').children());
@@ -251,8 +252,12 @@
                                 }
                             } else {
                                 win.lazyLoad('stop');
+                                $('.lazyloading-load-more').remove();
                             }
                             tmp.remove();
+
+                            list.trigger('lazyload_append');
+                            $('.loading-wrapper').hide();
                         });
                     }
                 });
@@ -496,7 +501,7 @@
          * @param {jQuery=} $link
          */
         streamSettingsSaveHandler: function (r, $settings, $form, id, type, $link) {
-            $form.find(':submit').attr('disabled', null);
+            $form.find(':submit').prop('disabled', false);
             if (r.status == 'ok') {
                 $settings.slideUp();
                 if ($link) {
@@ -515,7 +520,6 @@
                             break;
                     }
 
-
                     if (id) {
                         $('.h-saved').slideDown();
                         var callback = function () {
@@ -529,6 +533,9 @@
                                 if (data.type > 0) {
                                     //reload stream for dynamic category
                                     $.hub.categoryAction(id, null, callback);
+                                } else {
+                                    $('#list-title-text').text(r.data.name);
+                                    document.title = r.data.name + ' — ' + $.hub.options.accountName;
                                 }
                                 break;
                             case 'filter':
@@ -721,6 +728,7 @@
 
                 this.initBulkActions();
                 this.initFollowLinks();
+                this.initTopicTypesFilter();
 
                 // Show-hide new comments when user clicks comment counter
                 this.$topics_ul.on('click', '.toggle-comments', function () {
@@ -743,7 +751,7 @@
                 // Switch to Bulk mode when user clicks on "Select" link
                 this.$bulk_menu.find('a:first').click(function () {
                     if ($(this).is(':visible')) {
-                        self.$topics_ul.addClass('h-bulk-mode');
+                        self.$topics_ul.addClass('h-bulk-mode').closest('.h-stream').removeClass('h-mode-normal').addClass('h-mode-bulk');
                     }
                     self.$sort_menu.hide();
                     self.$bulk_menu.find('li').toggle();
@@ -755,7 +763,7 @@
                 // Switch back to normal mode when user clicks on "cancel" link
                 this.$bulk_menu.find('a:last').click(function () {
                     if ($(this).is(':visible')) {
-                        self.$topics_ul.removeClass('h-bulk-mode');
+                        self.$topics_ul.removeClass('h-bulk-mode').closest('.h-stream').addClass('h-mode-normal').removeClass('h-mode-bulk');;
                     }
                     self.$sort_menu.show();
                     self.$bulk_menu.find('li').toggle();
@@ -778,9 +786,14 @@
                     return false;
                 });
 
-                // Update number of selected topics when checkbox status change
+                // Update number of selected topics when checkbox status changes
                 this.$topics_ul.on('change', ':input.js-bulk-mode', function () {
                     self.bulkCount();
+                    if (this.checked) {
+                        $(this).closest('li').addClass('selected').find('h3').addClass('bold');
+                    } else {
+                        $(this).closest('li').removeClass('selected').find('h3').removeClass('bold');
+                    }
                 });
 
                 // Shift+click on a checkbox selects all between this one and previous one clicked
@@ -807,6 +820,17 @@
                     self.bulkCount();
                 });
 
+                // Button to hide a note why topics sorting is not available in dynamic lists
+                if ($.storage.get('sort-handler-unavailable-notice-hidden')) {
+                    $('.sort-handler-unavailable-notice').remove();
+                } else {
+                    $('.sort-handler-unavailable-notice .h-close').click(function() {
+                        $(this).closest('.sort-handler-unavailable-notice').remove();
+                        $.storage.set('sort-handler-unavailable-notice-hidden', true);
+                        return false;
+                    });
+                }
+
                 function setCheckedBetween($from, $to, status) {
                     if (!$from || !$to || !$from[0] || !$to[0] || $from.is($to[0])) {
                         return;
@@ -822,7 +846,7 @@
                             if ($from.is(el) || $to.is(el)) {
                                 return false;
                             }
-                            $(el).find('input:checkbox.js-bulk-mode').prop('checked', status);
+                            $(el).find('input:checkbox.js-bulk-mode').prop('checked', status).change();
                         }
                     });
                 }
@@ -865,6 +889,70 @@
                     return false;
                 });
 
+            },
+
+            initTopicTypesFilter: function() {
+
+                var $ul = $('#h-content .h-topics');
+                var $sort_menu = $('.h-sort.js-sort-menu');
+                var $checkboxes = $sort_menu.find('.h-filter-by-type :checkbox');
+
+                // Trigger when user changes checkbox status in filter settings
+                $sort_menu.find('.h-filter-by-type').on('change', ':checkbox', function() {
+                    updateTopicVisibility();
+                    updateMenuHeader();
+                });
+
+                // Trigger when lazyloading updates the list
+                $ul.on('lazyload_append', function() {
+                    updateTopicVisibility();
+                });
+
+                // Update visibility of topics in list
+                function updateTopicVisibility() {
+                    var types_disabled = {};
+                    $checkboxes.map(function() {
+                        if (this.checked) {
+                            return 1;
+                        } else {
+                            types_disabled[this.value] = 1;
+                        }
+                    }).length || (types_disabled = {});
+
+                    var lis_to_hide = [];
+                    var lis_to_show = [];
+                    $ul.children().each(function() {
+                        var type_id = $(this).data('type-id');
+                        if (types_disabled[type_id]) {
+                            lis_to_hide.push(this);
+                        } else {
+                            lis_to_show.push(this);
+                        }
+                    });
+
+                    if (lis_to_hide.length) {
+                        $(lis_to_hide).css('opacity', 0.7).slideUp(function() {
+                            $(lis_to_hide).css('opacity', '');
+                            $(window).scroll();
+                        });
+                        $('.h-footer .place-for-hidden-label').show().children('span').text(lis_to_hide.length);
+                        $ul.closest('.h-stream').addClass('h-js-filtered').removeClass('h-not-js-filtered');
+                    } else {
+                        $('.h-footer .place-for-hidden-label').hide().children('span').text('0');
+                        $ul.closest('.h-stream').addClass('h-not-js-filtered').removeClass('h-js-filtered');
+                    }
+                    lis_to_show.length && $(lis_to_show).slideDown(function() {
+                        $(window).scroll(); // triggers lazy loading if needed
+                    });
+                };
+
+                function updateMenuHeader() {
+                    var label = $checkboxes.map(function() {
+                        return (this.checked || null) && $.trim($(this).closest('label').text());
+                    }).get().join(', ');
+                    label = $.trim($sort_menu.find('ul li.selected a').text()) + (label ? (': ' + label) : '');
+                    $sort_menu.find('> li > a i').text(label);
+                }
             },
 
             // not called from init(), called directly from Topics.html

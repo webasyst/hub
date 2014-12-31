@@ -1925,3 +1925,53 @@ msgstr ""
 #: /wa-apps/hub/themes/default/author.html:38
 msgid "%s did not post any comments yet."
 msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:86
+msgid "Delete category logo?"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:118
+msgid "Folder"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:171
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:192
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:213
+msgid "Default sort order"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:175
+msgid "Manual sort"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/Topics.html:60
+msgid "Type selector is disabled since all topics in current view are of the same type."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/Topics.html:134
+msgid "Manual sort for topics is not available in dynamic topic lists. If you want to activate the ability to sort topics, create a Folder category first."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:12
+msgid "Normal"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:134
+msgid "Visual"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:234
+msgid "Posting new comments has been restricted for this topic."
+msgstr ""
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:24
+msgid "Unanswered topics on top"
+msgstr ""
+
+#: /wa-apps/hub/lib/models/hubComment.model.php:553
+msgid "You can not reply to a removed comment."
+msgstr ""
+
+#: /wa-apps/hub/themes/default/main.html:118
+msgid "Please complete the initial <a href=\"%s\">setup</a> in app backend."
+msgstr ""

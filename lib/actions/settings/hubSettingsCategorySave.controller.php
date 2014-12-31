@@ -2,8 +2,12 @@
 
 class hubSettingsCategorySaveController extends waJsonController
 {
+    protected $category_model = null;
+
     public function execute()
     {
+        $this->category_model = new hubCategoryModel();
+
         $id = (int)waRequest::request('id');
         if (!$id) {
             $hub_id = (int)waRequest::request('hub_id');
@@ -14,74 +18,73 @@ class hubSettingsCategorySaveController extends waJsonController
                 throw new waException(_w('Hub is not found', 404));
             }
 
+        } else if (waRequest::request('delete_logo')) {
+            $this->deleteLogo($id);
         } else {
             $id = $this->save($this->getData(), $id);
         }
 
         if ($id) {
-            $category_model = new hubCategoryModel();
-            $this->response = $category_model->getById($id);
-            $c = &$this->response;
+            $this->response = $this->category_model->getById($id);
+            $this->response['glyph_html'] = $this->getGlyphHtml($this->response);
+        }
+    }
 
-            if ($c['type']) {
-                $c['glyph_html'] = hubHelper::getIcon('funnel');
-                if (strpos($c['conditions'], 'tag_id=') === 0) {
-                    $c['glyph_html'] = hubHelper::getIcon('tags');
-                } else {
-                    if ($type_id = intval(str_replace('type_id=', '', $c['conditions']))) {
-                        $types = hubHelper::getTypes();
-                        if (!empty($types[$type_id])) {
-                            $c['glyph_html'] = hubHelper::getGlyph($types[$type_id]['glyph']);
-                        }
+    private function getGlyphHtml($c)
+    {
+        if ($c['type']) {
+            $result = hubHelper::getIcon('funnel');
+            if (strpos($c['conditions'], 'tag_id=') === 0) {
+                $result = hubHelper::getIcon('tags');
+            } else {
+                if ($type_id = intval(str_replace('type_id=', '', $c['conditions']))) {
+                    $types = hubHelper::getTypes();
+                    if (!empty($types[$type_id])) {
+                        $result = hubHelper::getGlyph($types[$type_id]['glyph']);
                     }
                 }
-            } else {
-                $c['glyph_html'] = hubHelper::getIcon('folder');
             }
-            unset($c);
-
+        } else {
+            $result = hubHelper::getIcon('folder');
         }
+        return $result;
     }
 
     private function save($data, $id, $hub_id = null)
     {
-        $model = new hubCategoryModel();
         $new = false;
         if (!$id) {
             $data['hub_id'] = $hub_id;
             if ($this->getUser()->getRights($this->getApp(), 'hub.'.$data['hub_id']) < hubRightConfig::RIGHT_FULL) {
                 throw new waRightsException('Access denied');
             }
-            $id = $model->add($data);
+            $id = $this->category_model->add($data);
             $new = true;
-        } elseif ($category = $model->getById($id)) {
+        } elseif ($category = $this->category_model->getById($id)) {
             if ($this->getUser()->getRights($this->getApp(), 'hub.'.$category['hub_id']) < hubRightConfig::RIGHT_FULL) {
                 throw new waRightsException('Access denied');
             }
-            $model->update($id, $data, $this->errors);
+            $this->category_model->update($id, $data, $this->errors);
         } else {
             throw new waException('Category not found', 404);
         }
         try {
-            $this->saveLogo($model, $id);
+            $this->saveLogo($id);
         } catch (Exception $ex) {
             if (!$new) {
                 $this->errors['category_logo'] = $ex->getMessage();
             }
         }
 
-
         return $id;
-
     }
 
     /**
-     * @param hubCategoryModel $model
      * @param $id
      * @throws Exception
      * @throws waException
      */
-    private function saveLogo($model, $id)
+    private function saveLogo($id)
     {
         if (($file = waRequest::file('category_logo')) && ($file->uploaded())) {
             if (!preg_match('@^(jpe?g|png)$@ui', $e = $file->extension)) {
@@ -100,14 +103,29 @@ class hubSettingsCategorySaveController extends waJsonController
                 }
                 $logo .= '.'.$image->getExt();
                 $file->moveTo($logo_path, $logo);
-                $model->updateById($id, compact('logo'));
+                $this->category_model->updateById($id, compact('logo'));
             }
         }
+    }
+
+    private function deleteLogo($id)
+    {
+        $category = $this->category_model->getById($id);
+        if (!$category || !$category['logo']) {
+            return;
+        }
+
+        $logo_path = wa()->getDataPath(sprintf('categories/%d/%s', $id, $category['logo']), true, $this->getAppId());
+        is_writable($logo_path) && waFiles::delete($logo_path);
+        $this->category_model->updateById($id, array(
+            'logo' => '',
+        ));
     }
 
     private function getData()
     {
         $data = waRequest::post('category', array(), 'array');
+        $data['url'] = trim(ifset($data['url'], ''), "/ \t\r\n");
         $data['type'] = intval(!!ifset($data['type'], 0));
         $data += array(
             'enable_sorting' => 0,

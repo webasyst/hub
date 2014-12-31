@@ -4,11 +4,8 @@ class hubFrontendTagAction extends hubFrontendAction
 {
     public function execute()
     {
-        $hub_id = waRequest::param('hub_id');
-        if (!$hub_id) {
-            throw new waException('No hub', 500);
-        }
-
+        // Make sure hub and tag are set in request params
+        $hub_id = $this->getHubId();
         $tag = waRequest::param('tag');
         if (!$tag) {
             throw new waException('Tag not found', 404);
@@ -29,14 +26,13 @@ class hubFrontendTagAction extends hubFrontendAction
         $c = new hubTopicsCollection('tag/'.$tag);
         $this->setCollection($c);
 
-        if (!$c->getInfo()) {
-            throw new waException(_ws('Page not found', 404));
-        } else {
-            $tag_info = $c->getInfo();
-            $tag = $tag_info['name'];
+        // When tag is not found, show an empty list page, not 404
+        $tag_info = $c->getInfo();
+        if (!$tag_info) {
+            $tag_model = new hubTagModel();
+            $tag_info = $tag_model->getEmptyRow();
+            $tag_info['name'] = $tag;
         }
-
-        $this->getResponse()->setTitle($tag);
 
         /**
          * @event frontend_tag
@@ -44,8 +40,10 @@ class hubFrontendTagAction extends hubFrontendAction
          */
         $this->view->assign('frontend_tag', wa()->event('frontend_tag', $tag_info));
 
-        $this->view->assign('tag', $tag);
+        $this->getResponse()->setTitle($tag_info['name']);
+        $this->view->assign('tag', $tag_info['name']);
         $this->view->assign('sort', $order);
         $this->setThemeTemplate('tag.html');
     }
 }
+

@@ -14,9 +14,9 @@
             <h1>[`Replies`]</h1>
         </div>
     </div>
-    
+
     <div class="h-content h-plain-discussion">
-        
+
         <div class="h-comments">
             <ul>{$smarty.capture.comment_list}</ul>
             <div id="h-comment-add" style="display:none;">
@@ -24,15 +24,15 @@
             </div>
         </div>
         <div class="lazyloading-wrapper">
-            <div class="lazyloading-progress-string">{_w('%d comment','%d comments', $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
+            <div class="lazyloading-progress-string">{_w('%d comment','%d comments', $offset + $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
             <a href="javascript:void(0);" class="lazyloading-link" {if $count >= $total_count}style="display:none;"{/if}>[`Show more comments`]</a>
             <span class="lazyloading-progress" style="display:none">
                 <i class="icon16 loading"></i> [`Loading`] <span class="lazyloading-chunk">{_w('%d comment', '%d comments', min($total_count - $count, $count))}...</span>
             </span>
         </div>
-    
+
     </div>
-    
+
 </div>
 <script>
     $.wa.locale = $.extend($.wa.locale||{}, {

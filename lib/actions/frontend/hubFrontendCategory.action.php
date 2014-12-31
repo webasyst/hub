@@ -10,7 +10,7 @@ class hubFrontendCategoryAction extends hubFrontendAction
             throw new waException(_w('Category not found'), 404);
         }
 
-        $sorting = hubHelper::getSorting();
+        $sorting = hubHelper::getSorting(true);
         // Ordering
         $order = waRequest::request('sort', '', 'string_trim');
         if (!$order && $category['sorting']) {

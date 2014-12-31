@@ -3,7 +3,7 @@
  * See hubTopicsSaveController.
  *
  *}
-{sprintf('[`Hi %s,`]', $contact.name)}
+{sprintf('[`Hi %s,`]', "{if empty($contact.firstname)}{$contact.name}{else}{$contact.firstname}{/if}")}
 <br><br>
 {sprintf_wp('%s posted a new topic <a href="%s"><strong>%s</strong></a> and invites you to take a look:', htmlspecialchars($sender.name), $wa->url(1)|cat:substr($wa_app_url, 1):'#/topic/':$topic.id:'/', $topic.title|escape)}
 <br><br>

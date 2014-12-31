@@ -10,8 +10,7 @@ class hubFrontendAuthorRepliesAction extends hubFrontendAction
         $author['name'] = htmlspecialchars($author['name']);
         $author['contact_id'] = $id;
 
-        wa()->getResponse()->setTitle(_w('Replies'));
-
+        wa()->getResponse()->setTitle(sprintf_wp('%s’s replies', $author['name']));
 
         $page = waRequest::get('page', 1, 'int');
         $page >= 1 || $page = 1;

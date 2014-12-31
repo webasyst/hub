@@ -682,29 +682,13 @@ class hubTopicsCollection
                 $this->setHash(implode('/', $hash));
             } else {
                 $alias = $this->addJoin('hub_topic_categories', null, ':table.category_id = '.(int)$category['id']);
+            }
 
-            }
             $this->filtered = $filtered;
-            if (!waRequest::get('sort')) {
-                switch ($category['sorting']) {
-                    case 'manual':
-                        $this->order_by = $alias.'.sort DESC';
-                    case 'recent':
-                        $this->order_by = 't.create_datetime DESC';
-                        break;
-                    case 'popular':
-                        $this->order_by = 't.votes_sum DESC';
-                        break;
-                    case 'unanswered':
-                        $this->order_by = 't.votes_sum DESC';
-                        $this->where[] = "(t.badge != 'answered' OR t.badge IS NULL)";
-                        break;
-                    case 'updated':
-                        $this->order_by = 't.update_datetime DESC';
-                        break;
-                }
-            }
+
+            // proper order_by will be set in ->prepare()
             $this->order_by = 't.priority DESC, '.$this->order_by;
+            $this->options['sort'] = waRequest::get('sort', $category['sorting'], 'string');
 
             $this->info = $category;
             if ($auto_title) {
