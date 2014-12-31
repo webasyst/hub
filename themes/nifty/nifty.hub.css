@@ -24,6 +24,10 @@ html.my .page-content { margin-right: 0; }
 .positive { color: green; }
 .negative { color: brown; }
 
+.rating-label { color: gray; background: #eee; border-radius: 3px; font-size: 0.9em; padding: 2px 3px; }
+.rating-label.positive { color: green; background: #dfd; }
+.rating-label.negative { color: brown; background: #fdd; }
+
 .userpic,
 .userpic20 { border-radius: 50%; }
 .breadcrumbs,
@@ -211,6 +215,7 @@ ul.category-list li ul.featured-topics li a { color: #03c; }
 .forum-reply-form .errormsg { margin-left: 0; margin-bottom: 20px; }
 
 .pageless-wrapper { font-style: italic; }
+.back-to-root { margin-left: 5px; }
 
 .comments { margin: 30px 0px 0 0; }
 .comments h3 { margin: 0 0 20px; float: left; }
@@ -264,6 +269,9 @@ ul.category-list li ul.featured-topics li a { color: #03c; }
 
 .comments.forum .comment { clear: left; border-top: 1px solid rgba(0,0,0,0.1); padding: 20px 0 30px; margin: 0; min-height: 50px; }
 .comments.forum .text { margin-left: 0; }
+
+.comments ul li .comment .wa-auth-adapters ul { padding-left: 0; margin-top: 5px; }
+.comments ul li .comment .wa-auth-adapters ul li { list-style: none; clear: none; }
 
 
 /* Icons
