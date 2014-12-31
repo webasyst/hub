@@ -105,21 +105,25 @@ $(function () {
             $(this).parent().addClass('selected');
             var type_id = $(this).data('type');
             $('input[name="data[type_id]"]').val(type_id);
-            if (select_category.find('option[data-type]').length && select_category.find('option:selected').data('type') != type_id) {
-                if (select_category_v) {
-                    select_category_v.remove();
-                }
+
+            // if at least one dynamic category (by topic type) exists,
+            // show only categories applicable for selected type_id.
+            if (select_category.find('option[data-type]').length) {
+                var prev_selected_category = (select_category_v || select_category).val();
+                select_category_v && select_category_v.remove();
                 select_category_v = select_category.clone();
-                select_category_v.removeAttr('disabled');
                 select_category_v.find('option[data-type]').each(function () {
-                    if ($(this).data('type') != type_id) {
-                        $(this).remove();
-                    } else {
-                        select_category_v.val($(this).attr('value'));
+                    var $option = $(this);
+                    if ($option.data('type') != type_id) {
+                        if ($option.attr('value') == prev_selected_category) {
+                            prev_selected_category = null;
+                        }
+                        $option.remove();
                     }
                 });
-                select_category.attr('disabled', 'disabled').hide();
-                select_category_v.insertAfter(select_category).show();
+                select_category.prop('disabled', true).hide();
+                prev_selected_category && select_category_v.val(prev_selected_category);
+                select_category_v.prop('disabled', false).insertAfter(select_category).show();
             }
             return false;
         });
@@ -206,7 +210,8 @@ $(function () {
     $('#topic-and-comments article .edit-links .delete').click(function() { // {{{
         var $a = $(this);
         if (confirm($a.data('confirm'))) {
-            $.post($a.attr('href'), '', null, 'json').always(function(r, status) {
+            var csrf = $('input[name=_csrf]:first').val();
+            $.post($a.attr('href'), { _csrf: csrf }, null, 'json').always(function(r, status) {
                 if (status == 'success' && r.status == 'ok') {
                     window.location = r.data;
                 }
@@ -394,6 +399,7 @@ $(function () {
         }
 
         function prepareAddingForm(comment_id, place_for_form) {
+            add_topic_header.children('a.back-to-root').remove();
             if (comment_id) {
                 place_for_form.after(form_wrapper);
                 $('input[name=parent_id]', form).val(comment_id);
@@ -403,7 +409,6 @@ $(function () {
                 form_initial_placement.after(form_wrapper);
                 $('input[name=parent_id]', form).val(0);
                 type_input.val(comment_type);
-                add_topic_header.children('a.back-to-root').remove();
             }
 
             $('textarea', form).val('').redactor('code.set', '');

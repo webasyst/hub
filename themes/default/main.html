@@ -109,20 +109,39 @@
 
     {if empty($topics) && $wa->currentUrl() == $wa_app_url}
 
-        <div class="welcome">
-            <h1>[`Welcome to your new hub!`]</h1>
-            <p>{sprintf('[`Start by <a href="%s">writing a topic</a>.`]', $wa_app_url|cat:'add/')}</p>
-        </div>
+        {if $wa->setting('welcome')}
+            {*
+             * User went to frontend before completing the 'welcome' setup in backend.
+             *}
+            <div class="welcome">
+                <h1>[`Welcome to your new hub!`]</h1>
+                <p>{sprintf('[`Please complete the initial <a href="%s">setup</a> in app backend.`]', $wa_backend_url|cat:'hub/?action=welcome')}</p>
+            </div>
+
+            {* Disable navigation since all links show 404 until the initial setup is done. *}
+            <script>(function() { "use strict";
+                $('.maincontent a:not(.welcome a), :input').click(false);
+            })();</script>
+
+        {elseif waRequest::param('hub_id')}
+            {*
+             * This is a new empty hub.
+             *}
+            <div class="welcome">
+                <h1>[`Welcome to your new hub!`]</h1>
+                <p>{sprintf('[`Start by <a href="%s">writing a topic</a>.`]', $wa_app_url|cat:'add/')}</p>
+            </div>
+        {else}
+            {*
+             * There is no 'hub_id' parameter in this settlement's routing setup. Something's badly wrong.
+             *}
+        {/if}
 
     {else}
 
-        {*
-        
-            If you'd want classic breadcrumbs display here, uncomment the following block.
-            By default we don't display breadcrumbs because of Hub app's non-hierarchical nature.
-        
         {if isset($breadcrumbs)}
             <div class="breadcrumbs" itemprop="breadcrumb">
+                <a href="{$wa_app_url}">[`All topics`]</a> <span class="rarr">&rarr;</span>
                 {if $wa->globals('isMyAccount')}
                     {$breadcrumbs[0] = null}
                 {/if}
@@ -133,8 +152,6 @@
                 {/foreach}
             </div>
         {/if}
-        
-        *}
 
         {$content}
 
