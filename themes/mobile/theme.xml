@@ -1,29 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE theme PUBLIC "wa-app-theme" "http://www.webasyst.com/wa-content/xml/wa-app-theme.dtd">
-<theme id="nifty" vendor="webasyst" app="hub" parent_theme_id="site:nifty" version="1.0.2">
-    <name locale="ru_RU">Nifty</name>
-    <name locale="en_US">Nifty</name>
+<theme id="mobile" vendor="webasyst" app="hub" parent_theme_id="site:mobile" version="1.0.0">
+    <name locale="ru_RU">Mobile</name>
+    <name locale="en_US">Mobile</name>
     <files>
-        <file path="index.html" custom="0" parent="1">
-        </file>
-        <file path="nifty.css" custom="0" parent="1">
-        </file>
-        <file path="nifty.hub.css" custom="0">
-        </file>
-        <file path="nifty.hub.js" custom="0">
-        </file> 
-        <file path="head.html" custom="0">
-            <description locale="en_US">Hub app's &lt;head&gt; instructions</description>
-            <description locale="ru_RU">Блок &lt;head&gt; приложения «Хаб»</description>
-        </file>
-        <file path="content.html" custom="0">
-            <description locale="en_US">Main layout and navigation for Hub app content</description>
-            <description locale="ru_RU">Основное макет вывода содержимого и навигации в приложении «Хаб»</description>
-        </file>
-    	<file path="footer.html">
-            <description locale="en_US">App specific footer content</description>
-            <description locale="ru_RU">Содержимое футера приложения</description>
-        </file>
         <file path="add.html">
             <description locale="en_US">Add/edit topic form</description>
             <description locale="ru_RU">Форма создания и редактирования топика</description>
@@ -52,6 +32,15 @@
             <description locale="en_US">Comment to a topic</description>
             <description locale="ru_RU">Комментарий к топику</description>
         </file>
+
+        <file path="head.html" custom="0">
+            <description locale="en_US">Hub app's &lt;head&gt; instructions</description>
+            <description locale="ru_RU">Блок &lt;head&gt; приложения «Хаб»</description>
+        </file>
+        <file path="header.html" custom="0">
+    		<description locale="en_US">App specific header content</description>
+    		<description locale="ru_RU">Содержимое «шапки» приложения</description>
+    	</file>
         <file path="home.html">
             <description locale="en_US">Hub homepage</description>
             <description locale="ru_RU">Главная страница хаба</description>
@@ -60,33 +49,34 @@
             <description locale="en_US">Mixed list of all topics</description>
             <description locale="ru_RU">Список всех топиков</description>
         </file>
-        <file path="search.html" custom="0">
-            <description locale="en_US">Wrapper for topic search</description>
-            <description locale="ru_RU">Обертка для страницы поиска топиков</description>
-        </file>
-        <file path="page.html" custom="0">
-            <description locale="en_US">Static page content</description>
-            <description locale="ru_RU">Содержимое информационной страницы</description>
+        <file path="main.html" custom="0">
+            <description locale="en_US">Main layout and navigation for Hub app content</description>
+            <description locale="ru_RU">Основное макет вывода содержимого и навигации в приложении «Хаб»</description>
         </file>
         <file path="my.nav.html">
             <description locale="en_US">Customer account navigation menu</description>
             <description locale="ru_RU">Меню навигации в личном кабинете покупателя</description>
         </file>
+        <file path="page.html" custom="0">
+            <description locale="en_US">Static page content</description>
+            <description locale="ru_RU">Содержимое информационной страницы</description>
+        </file>
+        <file path="search.html" custom="0">
+            <description locale="en_US">Wrapper for topic search</description>
+            <description locale="ru_RU">Обертка для страницы поиска топиков</description>
+        </file>
         <file path="tag.html">
             <description locale="en_US">Wrapper for topic filtering by tag</description>
             <description locale="ru_RU">Обертка для страницы поиска топиков по тегу</description>
         </file>
+
         <file path="topic.html">
             <description locale="en_US">Wrapper for topic page</description>
             <description locale="ru_RU">Обертка для страницы топика</description>
         </file>
-        <file path="topic.page.html">
-            <description locale="en_US">Page topic type</description>
-            <description locale="ru_RU">Топик «Страница»</description>
-        </file>
-        <file path="topic.question.html">
-            <description locale="en_US">Question &amp; Answers topic type</description>
-            <description locale="ru_RU">Топик «Вопрос и ответы»</description>
+        <file path="topic.custom.html">
+            <description locale="en_US">Custom topic type</description>
+            <description locale="ru_RU">Произвольный тип топика</description>
         </file>
         <file path="topic.feedback.html">
             <description locale="en_US">Feedback topic type (+/-)</description>
@@ -96,24 +86,49 @@
             <description locale="en_US">Forum topic type</description>
             <description locale="ru_RU">Топик «Обсуждение»</description>
         </file>
-        <file path="topic.custom.html">
-            <description locale="en_US">Custom topic type</description>
-            <description locale="ru_RU">Произвольный тип топика</description>
+        <file path="topic.page.html">
+            <description locale="en_US">Page topic type</description>
+            <description locale="ru_RU">Топик «Страница»</description>
         </file>
-        <file path="searchform.html" custom="0">
-            <description locale="en_US">Topic search form</description>
-            <description locale="ru_RU">Форма поиска тем</description>
+        <file path="topic.question.html">
+            <description locale="en_US">Question &amp; Answers topic type</description>
+            <description locale="ru_RU">Топик «Вопрос и ответы»</description>
         </file>
-        <file path="login.html" parent="1">
-        </file>    
-        <file path="signup.html" parent="1">
+
+        <file path="mobile.hub.css" custom="0">
+        </file>
+        <file path="mobile.hub.js" custom="0">
+        </file>
+
+        <file path="error.html" parent="1">
         </file>
         <file path="forgotpassword.html" parent="1">
         </file>
+        <file path="index.html" parent="1">
+        </file>
+        <file path="layout-head.html" parent="1">
+        </file>
+        <file path="layout-header.html" parent="1">
+        </file>
+        <file path="layout-menu.html" parent="1">
+        </file>
+        <file path="login.html" parent="1">
+        </file>
+        <file path="signup.html" parent="1">
+        </file>
         <file path="my.profile.html" parent="1">
         </file>
-        <file path="error.html" parent="1">
+        <file path="mobile.css" parent="1">
         </file>
-        
+        <file path="mobile.js" parent="1">
+        </file>
     </files>
+    <about locale="en_US">
+<![CDATA[
+]]>
+    </about>
+    <about locale="ru_RU">
+<![CDATA[
+]]>
+    </about>
 </theme>

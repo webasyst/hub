@@ -12,25 +12,31 @@
         {* @event frontend_topic.%plugin_id%.title_suffix *}
         {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
         {if $topic.badge}
-            <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
+        <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
         {/if}
     </h1>
-    <div class="credentials">
-        <p class="date">{$topic.create_datetime|wa_date:'humandate'}</p>
-        <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+
+    <div class="left-column">
+        <!-- author userpic -->
+        <div class="meta">
+            <img src="{$topic.author.photo_url_50}" class="userpic" alt="{$topic.author.name|escape}" title="{$topic.author.name|escape}">
+            {if !empty($topic.author.badge)}
+            <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
+            {/if}
+        </div>
     </div>
 
-    <!-- author userpic -->
-    <div class="meta">
-        <img src="{$topic.author.photo_url_50}" class="userpic" alt="{$topic.author.name|escape}" title="{$topic.author.name|escape}">
-        {if !empty($topic.author.badge)}
-            <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
-        {/if}
+    <div class="right-column">
+        <div class="credentials">
+            <p class="date">{$topic.create_datetime|wa_date:'humandate'}</p>
+            <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+        </div>
     </div>
+
+    <div class="cl"></div>
 
     <!-- topic content -->
     <div class="meta-ousted">
-
         <div itemprop="articleBody" class="topic-content">
             {$topic.content}
         </div>
@@ -45,11 +51,10 @@
                 <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
             </div>
         {/if}
-        
+
         <div class="tags">
             {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
         </div>
-
     </div>
 
 </article>
@@ -97,13 +102,21 @@
             {else}
                 <!-- authorized -->
                 <div class="comment">
-                    <div class="meta">
-                        <img src="{$user.photo_url_50}" class="userpic" alt="{$wa->user()->get('name')|escape}" title="{$wa->user()->get('name')|escape}">
+                    {*
+                    <div class="left-column">
+                        <div class="meta">
+                            <img src="{$user.photo_url_50}" class="userpic" alt="{$wa->user()->get('name')|escape}" title="{$wa->user()->get('name')|escape}">
+                        </div>
                     </div>
+                    <div class="right-column">
+
+                    </div>
+                    <div class="cl"></div>
+                    *}
+
                     <div class="meta-ousted">
                         <textarea id="comment-text" data-upload-url="{$wa->getUrl('/frontend/uploadImage')}" name="text" rows="10" cols="45"></textarea>
                         <input type="submit" class="save" value="[`Add comment`]">
-                        <em class="hint">Ctrl+Enter</em>
                         {$wa->csrf()}
                         <input type="hidden" name="parent_id" value="0">
                         <input type="hidden" name="topic_id" value="{$topic.id}">

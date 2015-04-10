@@ -1,0 +1,56 @@
+<!-- plugin hook: 'frontend_homepage' -->
+{* @event frontend_homepage.%plugin_id% *}
+{foreach $frontend_homepage as $_}{$_}{/foreach}
+
+<!-- categories -->
+{if $categories = $wa->hub->categories(true)}
+    <div class="category-list">
+        {foreach $categories as $c}
+            <div class="list-item {if $c.is_updated}new{/if}">
+
+                {if !empty($c.logo_url)}
+                    <div class="image-column">
+                        <a href="{$c.url}" title="{$c.name|escape}"><img class="category-logo" src="{$c.logo_url}" alt="{$c.name|escape}"></a>
+                    </div>
+                {/if}
+
+                <div class="desc-column">
+                    <div class="category-name">
+                        <a href="{$c.url}">
+                            {$c.name|default:'[`(no name)`]'|escape}
+                        </a>
+                    </div>
+                    <div class="count">{$c.update_datetime|wa_datetime:"humandatetime"}</div>
+                    <div class="category-description">
+                        {$c.description}
+                        {if !empty($c.priority_topics)}
+                        <ul class="featured-topics">
+                            {foreach $c.priority_topics as $_featured}
+                            <li><a href="{$_featured.url|escape}">{$_featured.title|escape}</a></li>
+                            {/foreach}
+                        </ul>
+                        {/if}
+                    </div>
+                </div>
+
+            </div>
+        {/foreach}
+    </div>
+{/if}
+
+<!-- topic stream -->
+<section class="topic-list-wrapper topic-stream">
+    <h3>[`All topics`]</h3>
+    <div class="sorting-wrapper">
+        <div class="sort-item {if $sort == 'recent'}selected{/if}">
+           <a href="?sort=recent">[`Newest`]</a>
+        </div>
+        <div class="sort-item {if $sort == 'updated'}selected{/if}">
+           <a href="?sort=updated">[`Updated`]</a>
+        </div>
+        <div class="sort-item {if $sort == 'popular'}selected{/if}">
+           <a href="?sort=popular">[`Popular`]</a>
+        </div>
+    </div>
+    {include file="list-topics.html"}
+</section>

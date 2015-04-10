@@ -15,8 +15,6 @@
 .page-nav .nav-sidebar { width: 250px; float: right; padding: 0; }
 .page-nav .nav-sidebar .search { margin: 16px; }
 .page-nav .nav-sidebar .search input { margin-bottom: 0; }
-.page-nav .nav-hotties { margin-left: 0; border-left: none; }
-.page-nav .nav-hotties ul.menu-h li { padding-right: 0; }
 .page-content { margin-right: 250px; margin-left: 0; border-left: none; box-shadow: 3px 0 8px -8px rgba(0, 0, 0, 0.7); }
 html.my .page-content { margin-right: 0; }
 

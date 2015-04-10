@@ -1,0 +1,17 @@
+<div class="category-page-wrapper">
+    <h1>{$category.name|escape}</h1>
+
+    <!-- plugin hook: 'frontend_category' -->
+    {* @event frontend_category.%plugin_id% *}
+    {foreach $frontend_category as $_}{$_}{/foreach}
+
+    {if $category.enable_sorting && $sorting}
+        <div class="sorting-wrapper sorting">
+            {foreach $sorting as $_k => $_name}
+                <div class="sort-item {if $sort == $_k}selected{/if}"><a href="?sort={$_k}">{$_name}</a></div>
+            {/foreach}
+        </div>
+    {/if}
+
+    {include file="list-topics.html"}
+</div>
