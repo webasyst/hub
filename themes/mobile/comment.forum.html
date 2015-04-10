@@ -1,0 +1,44 @@
+<div class="left-column">
+    <div class="meta">
+        <a href="{$comment.author.url|default:'#comment':$comment.id}">
+            <img src="{$comment.author.photo_url_50}" class="userpic" alt="{$comment.author.name|escape}" title="{$comment.author.name|escape}">
+        </a>
+    </div>
+</div>
+
+<div class="right-column">
+    <!-- author -->
+    <div class="credentials">
+        <a class="username" href="{$comment.author.url|default:'#comment':$comment.id}">
+            <span itemprop="creator">{$comment.author.name|escape}</span>
+            {if !empty($comment.author.badge)}
+            <span class="staff"{if !empty($comment.author.badge_color)} style="background-color: {$comment.author.badge_color}"{/if}>{$comment.author.badge}</span>
+            {/if}
+        </a>
+    </div>
+</div>
+
+<div class="cl"></div>
+
+<div class="meta-ousted">
+    <!-- comment text -->
+    <div itemprop="commentText" class="text">{$comment.text}</div>
+
+    <div class="date">
+        {$comment.datetime|wa_datetime:"humandatetime"}
+        <meta itemprop="commentTime" content="{"Y-m-d\TH:i"|date:$comment.datetime_ts}">
+    </div>
+
+    {if !empty($comment.editable)}
+        <div class="actions">
+            <a class="aux comment-delete" href="#" data-url="{$wa->getUrl('hub/frontend/commentsDelete', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}" data-confirm="[`You are about to delete this record. Are you sure?`]">[`delete`]</a>
+            <a class="aux comment-edit inline-link" href="#" data-save-string="[`Save`]" data-url="{$wa->getUrl('hub/frontend/commentsEdit', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}"><b><i>[`edit`]</i></b></a>
+            {$wa->csrf()}
+        </div>
+    {/if}
+
+    {* @event frontend_comments.%plugin_id% *}
+    {if !empty($comment.plugins)}
+    {foreach $comment.plugins as $_}{$_}{/foreach}
+    {/if}
+</div>

@@ -1,0 +1,21 @@
+<!-- plugin hook: 'frontend_tag' -->
+{* @event frontend_tag.%plugin_id% *}
+{foreach $frontend_tag as $_}{$_}{/foreach}
+
+<!-- topic stream -->
+<section class="topic-list-wrapper">
+    <h1>{$tag|escape}</h1>
+    <div class="sorting-wrapper sorting">
+        <div class="sort-item {if $sort == 'popular'}selected{/if}">
+            <a href="?sort=popular">[`Popular topics`]</a>
+        </div>
+        <div class="sort-item {if $sort == 'recent'}selected{/if}">
+            <a href="?sort=recent">[`Most recent`]</a>
+        </div>
+        <div class="sort-item {if $sort == 'unanswered'}selected{/if}">
+            <a href="?sort=unanswered">[`Unanswered`]</a>
+        </div>
+    </div>
+    {include file="list-topics.html"}
+</section>
+

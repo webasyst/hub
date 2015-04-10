@@ -1,0 +1,16 @@
+{*
+ * Search results.
+ * frontend/search action
+ *
+ * Probably it's kinda stupid to have a template that only includes another template.
+ * But what if we waht to put something on a search page, but not everywhere else...
+ *}
+
+<h1>{$title|escape}</h1>
+
+<!-- plugin hook: 'frontend_search' -->
+{* @event frontend_search.%plugin_id% *}
+{foreach $frontend_search as $_}{$_}{/foreach}
+
+{include file="list-topics.html"}
+

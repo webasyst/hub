@@ -1,0 +1,246 @@
+{*
+    PAGE topic type:
+    articles, guides, how-tos, tutorials, docs, and other authored topics
+*}
+
+<article class="topic type-page" itemscope itemtype="http://schema.org/Article">
+
+    {if !empty($topic.editable)}
+        <div class="edit-links aux">
+            <a href="{$topic.edit_url}" class="bold">[`Edit topic`]</a>
+            <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+        </div>
+    {/if}
+
+    <h1 itemprop="name">
+        {$topic.title|escape}
+        <!-- plugin hook: 'frontend_topic.title_suffix' -->
+        {* @event frontend_topic.%plugin_id%.title_suffix *}
+        {foreach $frontend_topic as $_}{$_.title_suffix}{/foreach}
+        {if $topic.badge}
+            <span class="badge badge-{$topic.badge.id}">{$topic.badge.name}</span>
+        {/if}
+    </h1>
+
+    <div itemprop="articleBody" class="topic-content">
+        {$topic.content}
+    </div>
+
+    <!-- plugin hook: 'frontend_topic.body' -->
+    {* @event frontend_topic.%plugin_id%.body *}
+    {foreach $frontend_topic as $_}{$_.body}{/foreach}
+
+    {if $topic.update_datetime|wa_date != $topic.create_datetime|wa_date}
+        <span class="aux">[`Last update`]: {$topic.update_datetime|wa_date:'humandate'}</span>
+        <meta itemprop="dateModified" content="{$topic.update_datetime|date_format:'Y-m-d\TH:i'}">
+    {else}
+        <span class="aux">[`Posted`]: {$topic.create_datetime|wa_date:'humandate'}</span>
+    {/if}
+
+    <div class="credentials">
+        {if !empty($topic.author)}
+            <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}">
+                <img src="{$topic.author.photo_url_20}" class="userpic" alt="{$topic.author.name|escape}">
+            </a>
+            <a href="{$wa->getUrl('/frontend/author', ['id' => $topic.author.id])}" class="username" itemprop="author">{$topic.author.name|escape}</a>
+            {if !empty($topic.author.badge)}
+                <span class="staff"{if !empty($topic.author.badge_color)} style="background-color: {$topic.author.badge_color}"{/if}>{$topic.author.badge}</span>
+            {/if}
+        {/if}
+        <meta itemprop="datePublished" content="{$topic.create_datetime|date_format:'Y-m-d\TH:i'}">
+
+        {*
+            <a href="ADD_YOUR_GOOGLE_PLUS_PROFILE_URL_HERE" rel="author"><i class="icon16 google"></i></a>
+        *}
+
+    </div>
+
+    <div class="tags">
+        {foreach $tags as $tag}{if !$tag@first}, {/if}<a href="{$tag.url}">{$tag.name|escape}</a>{/foreach}
+    </div>
+
+    {if !empty($types[$topic.type_id].settings.voting)}
+    <div class="vote helpful">
+
+        <div class="vote-form-question">
+            [`Was this article helpful?`]
+            {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="#" title="+1" class="plus">[`Yes`]</a>{/if}
+            {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="#" title="-1" class="minus">[`No`]</a>{/if}
+        </div>
+
+        {if !$wa->user()->isAuth()}
+            <div class="hidden vote-form-yes vote-form-no">
+                <div id="user-auth-provider" data-provider="signup">
+                    {sprintf('[`To add a comment please <a href="%s">sign up</a> or <a href="%s">login</a>`]',$wa->signupUrl(),$wa->loginUrl())}
+                </div>
+                {$wa->authAdapters()}
+            </div>
+        {else}
+            <div class="hidden vote-form-yes">
+                [`Thank you for your feedback!`]
+            </div>
+            <div class="hidden vote-form-no">
+                <div>
+                    [`In just few words, tell us what you did not like about this article?`]<br>
+                    <textarea placeholder=""></textarea>
+                </div>
+                <input type="submit" class="save" value="[`Send`]">
+            </div>
+            <div class="hidden vote-form-no-sent">
+                [`Thank you for your feedback!`]
+            </div>
+        {/if}
+    </div>
+    {/if}
+
+</article>
+
+{if !empty($types[$topic.type_id].settings.commenting)}
+
+    <section class="comments" id="comments" itemscope itemtype="http://schema.org/UserComments">
+
+        <!-- plugin hook: 'frontend_topic.comments' -->
+        {* @event frontend_topic.%plugin_id%.comments *}
+        {foreach $frontend_topic as $_}{$_.comments}{/foreach}
+
+        <!-- hierarchical comment tree -->
+        <h3 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h3>
+
+        {if $wa->userId()}
+            <div class="follow {if $following}following{else}not-following{/if}">
+                <div class="hide-when-following">
+                    <input type="button" class="button" value="[`Follow`]" id="button-follow">
+                    <span class="small">[`New comments will be sent to you by email`]</span>
+                </div>
+                <div class="hide-when-not-following">
+                    <i class="icon16 star"></i>[`You are following this topic`]
+                    <input type="button" class="button gray" value="[`Unfollow`]" id="button-unfollow">
+                </div>
+            </div>
+        {/if}
+
+        {if !empty($comments)}
+
+            {$depth=-1}
+            {foreach $comments as $comment}
+                {if $comment.depth < $depth}
+
+                    {$loop=($depth-$comment.depth)}
+                    {section name="end-comment" loop=$loop}
+                            <ul></ul>
+                            </li>
+                        </ul>
+                    {/section}
+
+                    {$depth=$comment.depth}
+                {/if}
+
+                {if $comment.depth == $depth}
+                    </li>
+                    <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}">
+                {/if}
+
+                {if $comment.depth > $depth}
+                    <ul>
+                        <li data-id={$comment.id} data-parent-id="{$comment.parent_id}">
+                        {$depth=$comment.depth}
+                {/if}
+
+                {include file="comment.html" comment=$comment inline}
+
+            {/foreach}
+
+            {section name="end-comment" loop=$depth + 1}
+                        <ul></ul>
+                    </li>
+                </ul>
+            {/section}
+
+        {else}
+
+            <!-- no comments yet -->
+            <h3 class="comments-header" style="display:none"></h3>
+            <ul style="display:none"></ul>
+
+        {/if}
+
+    </section>
+
+    <div class="add-comment-wrapper">
+        {* Add comment form *}
+        {if $comments_allowed}
+            <h4>[`Add comment`]</h4>
+            {include file="comment.add.html" inline}
+        {else}
+            {if $topic.badge.id == 'archived'}
+                <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
+            {else}
+                <p><em>[`Posting new comments is disabled for this topic.`]</em></p>
+            {/if}
+        {/if}
+    </div>
+
+{/if}
+
+<script>$(function() {
+    var wrapper = $('#topic-and-comments .vote.helpful');
+    var vote_url = "{$wa->getUrl('/frontend/vote')|escape:js}";
+    var login_url = "{$wa->loginUrl()|escape:js}";
+    var follow_url = "{$wa->getUrl('/frontend/topicFollow')|escape:js}";
+
+    {if $wa->user()->getId()}
+
+        // Show 'Thank you' when user votes "Was this article helpful?" - "Yes".
+        wrapper.find('.plus').click(function() {
+            $.post(vote_url, {
+                type: 'topic',
+                id: '{$topic.id}',
+                vote: +1,
+                _csrf: $('input[name=_csrf]').val()
+            });
+            wrapper.find('.vote-form-no,.vote-form-question').slideUp();
+            wrapper.find('.vote-form-yes').slideDown();
+            return false;
+        });
+
+        // Show a comment form when user votes "Was this article helpful?" - "No".
+        wrapper.find('.minus').click(function() {
+            wrapper.find('.vote-form-yes').slideUp();
+            wrapper.find('.vote-form-no').slideDown();
+            return false;
+        });
+
+        // Send a vote when user clicks a Send button in negative vote form.
+        wrapper.find('.vote-form-no input:submit').click(function() {
+            var vote_form_no = wrapper.find('.vote-form-no');
+            $.post(vote_url, {
+                type: 'topic',
+                id: '{$topic.id}',
+                vote: -1,
+                comment: vote_form_no.find('textarea').val(),
+                _csrf: $('input[name=_csrf]').val()
+            });
+            wrapper.find('.vote-form-no-sent').slideDown();
+            wrapper.find('.vote-form-question').slideUp();
+            vote_form_no.slideUp();
+        });
+
+        // Init voting for comments
+        $.hub.initTopicVotes($('#comments'), vote_url, '{$topic.id}');
+        $.hub.initFollowingButton($('#topic-and-comments'), follow_url, '{$topic.id}');
+
+    {else}
+
+        // Show login form when user clicks one of "Was this article helpful?" links.
+        wrapper.find('.plus,.minus').click(function() {
+            wrapper.find('.vote-form-question').slideUp();
+            wrapper.find('.vote-form-yes').slideDown();
+            return false;
+        });
+
+        // Init voting for comments
+        $.hub.initTopicVotesGuest($('#comments'), login_url);
+
+    {/if}
+
+});</script>
