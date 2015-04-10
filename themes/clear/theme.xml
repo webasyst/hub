@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE theme PUBLIC "wa-app-theme" "http://www.webasyst.com/wa-content/xml/wa-app-theme.dtd">
-<theme id="clear" vendor="webasyst" app="hub" parent_theme_id="site:clear" version="1.0.1">
+<theme id="clear" vendor="webasyst" app="hub" parent_theme_id="site:clear" version="1.0.2">
     <name locale="ru_RU">Clear</name>
     <name locale="en_US">Clear</name>
     <files>
