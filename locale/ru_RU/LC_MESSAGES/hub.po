@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1672,7 +1672,7 @@ msgid ""
 "<a href=\"http://www.webasyst.com/store/app/hub/\">Feedback software</a> by "
 "Webasyst"
 msgstr ""
-"<a href=\"http://www.webasyst.com/store/app/hub/\">Обратная связь для сайта</"
+"<a href=\"http://www.webasyst.ru/store/app/hub/\">Сервис поддержки клиентов</"
 "a> — Webasyst Хаб"
 
 #: /wa-apps/hub/themes/default/main.html:49

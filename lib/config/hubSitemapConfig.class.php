@@ -7,6 +7,8 @@ class hubSitemapConfig extends waSitemapConfig
         $cm = new hubCategoryModel();
         $tm = new hubTagModel();
 
+        $real_domain = $this->routing->getDomain(null, true, false);
+
         // List of all hubs with their routes
         $time_now = date('Y-m-d H:i:s');
         $hubs = wa('hub')->getConfig()->getAvailableHubs();
@@ -20,10 +22,13 @@ class hubSitemapConfig extends waSitemapConfig
             }
 
             $this->routing->setRoute($route);
-            $this->addUrl($this->routing->getUrl("hub/frontend", array(), true), $time_now, self::CHANGE_HOURLY, 0.5);
-            $route['_url_template_topic'] = $this->routing->getUrl('hub/frontend/topic', array('id' => '%ID%', 'topic_url' => '%URL%'), true);
-            $route['_url_template_category'] = $this->routing->getUrl('hub/frontend/category', array('category_url' => '%URL%'), true);
-            $route['_url_template_tag'] = $this->routing->getUrl('hub/frontend/tag', array('tag' => '%TAG%'), true);
+            $this->addUrl($this->routing->getUrl("hub/frontend", array(), true, $real_domain), $time_now, self::CHANGE_HOURLY, 0.5);
+            $route['_url_template_topic'] = $this->routing->getUrl('hub/frontend/topic',
+                array('id' => '%ID%', 'topic_url' => '%URL%'), true, $real_domain);
+            $route['_url_template_category'] = $this->routing->getUrl('hub/frontend/category',
+                array('category_url' => '%URL%'), true, $real_domain);
+            $route['_url_template_tag'] = $this->routing->getUrl('hub/frontend/tag', array('tag' => '%TAG%'), true,
+                $real_domain);
             $hubs[$hub_id]['routes'][] = $route;
         }
 

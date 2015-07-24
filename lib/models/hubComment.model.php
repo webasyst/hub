@@ -498,7 +498,7 @@ class hubCommentModel extends waNestedSetModel
         // Write to wa_log
         class_exists('waLogModel') || wa('webasyst');
         $log_model = new waLogModel();
-        $log_model->add('comment_add');
+        $log_model->add('comment_add', $id);
 
         // topic.comments_count contains number of top-level approved comments for the topic
         $update = array(
@@ -587,7 +587,7 @@ class hubCommentModel extends waNestedSetModel
         // Write to wa_log
         class_exists('waLogModel') || wa('webasyst');
         $log_model = new waLogModel();
-        $log_model->add($status == self::STATUS_DELETED ? 'comment_delete' : 'comment_restore');
+        $log_model->add($status == self::STATUS_DELETED ? 'comment_delete' : 'comment_restore', $comment_id);
 
         // Update stats in hub_author
         $author_model = new hubAuthorModel();

@@ -76,7 +76,7 @@ class hubTopicsCollection
                 $this->where['status'] = 't.status = 1';
             }
 
-            if (wa()->getEnv() == 'frontend') {
+            if ((wa()->getEnv() == 'frontend') && empty($this->options['search_all'])) {
                 $hub = hubHelper::getHub();
                 if ($hub['status']) {
                     $this->where[] = 't.hub_id = ' . (int)waRequest::param('hub_id');
@@ -334,16 +334,18 @@ class hubTopicsCollection
         $defaults = array_fill_keys($this->other_fields, null);
 
         if (!empty($other_fields['url'])) {
-            $topic = reset($data);
-
-            $topic_url = wa()->getRouteUrl('hub/frontend/topic', array(
-                'id' => '%ID%',
-                'topic_url' => '%URL%',
-                'hub_id' => $topic['hub_id']
-            ));
-
+            $topic_urls = array();
+            foreach ($data as $t) {
+                if (!isset($topic_urls[$t['hub_id']])) {
+                    $topic_urls[$t['hub_id']] = wa()->getRouteUrl('hub/frontend/topic', array(
+                        'id' => '%ID%',
+                        'topic_url' => '%URL%',
+                        'hub_id' => $t['hub_id']
+                    ));
+                }
+            }
             foreach ($data as &$t) {
-                $t['url'] = str_replace(array('%ID%', '%URL%'), array($t['id'], $t['url']), $topic_url);
+                $t['url'] = str_replace(array('%ID%', '%URL%'), array($t['id'], $t['url']), $topic_urls[$t['hub_id']]);
             }
             unset($t);
         }
