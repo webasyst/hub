@@ -9,7 +9,7 @@
         <li>
             <a href="{$a.url}">
                 <img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_url)}" class="userpic" alt="{$a.name|escape}">
-                {$a.name|default:"[`(missing contact)`]"|escape}
+                {$a.name|default:"[`%username%`]"|escape}
             </a>
             
             {if !empty($a.badge)}
