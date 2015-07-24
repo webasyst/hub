@@ -91,6 +91,8 @@
             {if !$wa->userId()}
                 <!-- guest users may not post in the Hub, because voting won't work otherwise -->
                 <div id="user-auth-provider" data-provider="signup">
+                    <br>
+                    <h4>[`Add reply`]</h4>
                     {sprintf('[`To add a comment please <a href="%s">sign up</a> or <a href="%s">log in</a>`]',$wa->signupUrl(),$wa->loginUrl())}
                 </div>
                 {$wa->authAdapters()}

@@ -44,14 +44,6 @@
                                 <input type="text" name="category[name]" class="large long s-full-width-input" value="{$category.name|default:''|escape}" id="h-category-name" placeholder="[`Category name`]">
                             </div>
                         </div>
-                        <div class="field">
-                            <div class="name">
-                                [`Category summary`]
-                            </div>
-                            <div class="value">
-                                <textarea name="category[description]">{$category.description|escape}</textarea>
-                            </div>
-                        </div>
                         {if $hub.status}
                         <div class="field">
                             <div class="name">
@@ -69,7 +61,16 @@
                                 </p>
                             </div>
                         </div>
-
+                        {/if}
+                        
+                        <div class="field">
+                            <div class="name">
+                                [`Category summary`]
+                            </div>
+                            <div class="value">
+                                <textarea name="category[description]">{$category.description|escape}</textarea>
+                            </div>
+                        </div>
 
                         {if $hub.status}
                         <div class="field">
@@ -98,7 +99,7 @@
                                 <p class="hint">[`Category logo will be published on the hub frontend homepage. Logo size depend on design theme you are using. Most design themes will scale the logo down to about 50px wide.`]</p>
                             </div>
                         </div>
-                        {/if}
+                        
                         {/if}
                     </div>
 
@@ -281,7 +282,7 @@
                             </li>
 
                             <li>
-                                {assign var="move_topics_text" value='[`Move all topics asigned to this category (%d)`]'|sprintf:$category.topics_count}
+                                {assign var="move_topics_text" value='[`Move all %d topics to`]'|sprintf:$category.topics_count}
                                 <label><input name="delete" type="radio" value="move">
                                     {$move_topics_text}
                                 </label>

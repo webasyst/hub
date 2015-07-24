@@ -36,7 +36,7 @@ class hubFrontendCommentsEditController extends waJsonController
         // Write to wa_log
         class_exists('waLogModel') || wa('webasyst');
         $log_model = new waLogModel();
-        $log_model->add('comment_edit');
+        $log_model->add('comment_edit', $this->comment_id);
     }
 }
 

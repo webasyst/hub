@@ -6,6 +6,9 @@ class hubContactsMergeHandler extends waEventHandler
     {
         $master_id = $params['id'];
         $merge_ids = $params['contacts'];
+        if (!$master_id || !$merge_ids) {
+            return null;
+        }
 
         $m = new waModel();
 

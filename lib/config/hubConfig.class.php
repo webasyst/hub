@@ -245,5 +245,31 @@ class hubConfig extends waAppConfig
             }
         }
     }
+
+    public function explainLogs($logs)
+    {
+        $logs = parent::explainLogs($logs);
+        $topic_ids = array();
+        foreach ($logs as $l_id => $l) {
+            if (in_array($l['action'], array('topic_publish', 'topic_unpublish', 'topic_edit')) && $l['params']) {
+                $topic_ids[] = $l['params'];
+            }
+        }
+        if ($topic_ids) {
+            $topic_model = new hubTopicModel();
+            $topics = $topic_model->getById($topic_ids);
+        }
+        $app_url = wa()->getConfig()->getBackendUrl(true).$l['app_id'].'/';
+        foreach ($logs as $l_id => $l) {
+            if (in_array($l['action'], array('topic_publish', 'topic_unpublish', 'topic_edit'))) {
+                if (isset($topics[$l['params']])) {
+                    $t = $topics[$l['params']];
+                    $url = $app_url.'#/topic/'.$l['params'].'/';
+                    $logs[$l_id]['params_html'] = '<div class="activity-target"><a href="'.$url.'">'.htmlspecialchars($t['title']).'</a></div>';
+                }
+            }
+        }
+        return $logs;
+    }
 }
 

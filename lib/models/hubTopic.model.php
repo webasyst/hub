@@ -213,7 +213,7 @@ class hubTopicModel extends waModel
             // Modification of published topic
             class_exists('waLogModel') || wa('webasyst');
             $log_model = new waLogModel();
-            $log_model->add('topic_edit');
+            $log_model->add('topic_edit', $id);
         }
     }
 
@@ -331,7 +331,7 @@ class hubTopicModel extends waModel
         // Write to wa_log
         class_exists('waLogModel') || wa('webasyst');
         $log_model = new waLogModel();
-        $log_model->add('topic_publish');
+        $log_model->add('topic_publish', $id);
     }
 
     protected function updateStatsWhenUnpublished($id, $data)
@@ -355,7 +355,7 @@ class hubTopicModel extends waModel
         // Write to wa_log
         class_exists('waLogModel') || wa('webasyst');
         $log_model = new waLogModel();
-        $log_model->add('topic_unpublish');
+        $log_model->add('topic_unpublish', $id);
     }
 
     /**

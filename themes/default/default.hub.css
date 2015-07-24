@@ -1,22 +1,16 @@
 /*
- * Webasyst Default 2.0 theme family
+ * Webasyst Default 3.0 theme family
  *
  * Hub app CSS
  * (requires linking base default.css file from the Site app)
  *
  * @link http://www.webasyst.com/
  * @author Webasyst LLC
- * @copyright 2014 Webasyst LLC
+ * @copyright 2015 Webasyst LLC
  * @package Webasyst
  *
  * ... extends base Site app's default.css
  */
-
-.page-nav .nav-sidebar { width: 250px; float: right; padding: 0; }
-.page-nav .nav-sidebar .search { margin: 16px; }
-.page-nav .nav-sidebar .search input { margin-bottom: 0; }
-.page-content { margin-right: 250px; margin-left: 0; border-left: none; box-shadow: 3px 0 8px -8px rgba(0, 0, 0, 0.7); }
-html.my .page-content { margin-right: 0; }
 
 .rating { color: gray; }
 .positive { color: green; }
@@ -34,7 +28,7 @@ html.my .page-content { margin-right: 0; }
 .kudos.negative i.icon16 { background-position: -19px -67px; }
 .kudos.small i.icon16 { margin-top: 0.3em; }
 
-.userbox { padding: 20px; background: #eed; margin-bottom: 0; text-align: center; }
+.userbox { padding: 20px; margin-bottom: 0; text-align: center; }
 .userbox ul { list-style: none; padding-left: 0; margin-bottom: 0; margin-top: 0; }
 .userbox ul li { margin: 12px 0; }
 .userbox ul li a { text-decoration: none; }
@@ -44,9 +38,9 @@ html.my .page-content { margin-right: 0; }
 .userbox input[type="submit"] { font-size: 1.2em; }
 
 .hub-aside-nav { padding: 10px; }
-.hub-aside-nav h5 { color: #aaa; margin: 10px 10px 20px; }
-.hub-aside-nav ul { padding-left: 0; font-size: 0.9em; }
-.hub-aside-nav ul li { list-style: none; margin: 0 10px 20px; line-height: 1.3em; word-break: break-all; }
+.hub-aside-nav h5 { color: #aaa; margin: 10px 0px 20px; }
+.hub-aside-nav ul { padding-left: 0; }
+.hub-aside-nav ul li { list-style: none; margin: 0 0 20px; line-height: 1.3em; word-break: break-all; }
 .hub-aside-nav ul li a { text-decoration: none; }
 .hub-aside-nav ul img.userpic { width: 32px; height: 32px; float: left; margin-right: 10px; }
 

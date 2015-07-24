@@ -249,7 +249,7 @@ class hubAuthorModel extends waModel
         $total_count = (int) $this->query('SELECT FOUND_ROWS()')->fetchField();
 
         // Data from wa_contact
-        $contact_fields = 'id,name,photo,email,photo_url_50,photo_url_32,photo_url_20';
+        $contact_fields = 'id,name,firstname,middlename,lastname,photo,email,photo_url_50,photo_url_32,photo_url_20';
         $empty_contact = array_fill_keys(explode(',', $contact_fields), '');
         $collection = new waContactsCollection('id/'.implode(',', array_keys($result)), array('photo_url_2x' => true));
         $contacts = $collection->getContacts($contact_fields, 0, count($result));
@@ -258,6 +258,9 @@ class hubAuthorModel extends waModel
                 $c['photo_url_20'] = hubHelper::getGravatarUrl($c['email'][0], 20, $c['photo_url_20']);
                 $c['photo_url_32'] = hubHelper::getGravatarUrl($c['email'][0], 32, $c['photo_url_32']);
                 $c['photo_url_50'] = hubHelper::getGravatarUrl($c['email'][0], 50, $c['photo_url_50']);
+            }
+            if ($c['firstname'] || $c['middlename'] || $c['lastname']) {
+                $c['name'] = waContactNameField::formatName($c);
             }
         }
         unset($c);

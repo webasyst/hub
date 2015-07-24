@@ -7,7 +7,7 @@
     <h1>[`My topics`]</h1>
 {else}
     <h1>
-        {$author.name|default:"[`(missing contact)`]"|escape}
+        {$author.name|default:"[`%username%`]"|escape}
 
         {if !empty($author.badge)}
             <span class="staff"{if !empty($author.badge_color)} style="background-color: {$author.badge_color}"{/if}>{$author.badge}</span>
