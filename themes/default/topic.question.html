@@ -145,12 +145,12 @@
     </section>
 
     <div class="clear-left"></div>
+    <hr>
 
     {* Add comment form *}
     {if $topic.badge.id == 'archived'}
         <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
     {else}
-        <hr>
         <h4>[`Add answer`]</h4>
         {include file="comment.add.html" inline}
     {/if}
