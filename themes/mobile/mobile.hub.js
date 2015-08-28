@@ -1,211 +1,226 @@
-$(function () {
+$.hub = $.hub || {};
 
-    $.hub = $.hub || {};
+/** Adds handlers for topic and post votes on topic page */
+$.hub.initTopicVotes = function (wrapper, vote_url, topic_id) { // {{{
 
-    /** Adds handlers for topic and post votes on topic page */
-    $.hub.initTopicVotes = function (wrapper, vote_url, topic_id) { // {{{
-
-        wrapper.on('click', 'div.vote a', function () {
-            var i = $(this).find('i');
-            if (i.hasClass('disabled')) {
-                return false;
-            }
-
-            var div_vote = i.closest('div.vote');
-            var id = topic_id, type = 'topic';
-            var li = i.closest('li');
-            if (li.data('id')) {
-                id = li.data('id');
-                type = 'comment';
-            }
-
-            var vote = (i.hasClass('up') || i.hasClass('up-bw')) ? 1 : -1;
-
-            var csrf = $('input[name=_csrf]:first').val();
-            $.post(vote_url, { id: id, type: type, vote: vote, _csrf: csrf }, undefined, 'json').always(function (r, text_status, xhr) {
-                if (text_status == 'success' && r && r.data && r.data.hasOwnProperty('votes_sum')) {
-                    var strong = div_vote.find('strong').text(r.data.votes_sum);
-                    if (r.data.votes_sum - 0 > 0) {
-                        strong.attr('class', 'positive');
-                    } else if (r.data.votes_sum - 0 < 0) {
-                        strong.attr('class', 'negative');
-                    } else {
-                        strong.removeAttr('class');
-                    }
-                } else {
-                    // Unable to vote for some reason: e.g. session died.
-                    // !!!
-                }
-            });
-
-            // Deal with pesky arrows -_-'
-            var div_vote_big = div_vote.hasClass('a');
-            class_up = 'up';
-            class_down = 'down';
-            class_up_bw = 'up-bw';
-            class_down_bw = 'down-bw';
-            i.removeClass(class_up_bw).removeClass(class_down_bw).addClass('disabled');
-            i.addClass(vote > 0 ? class_up : class_down);
-            var opposite_i = div_vote.find(vote > 0 ? 'i.down' : 'i.up');
-            opposite_i.removeClass('disabled').removeClass(class_up).removeClass(class_down);
-            opposite_i.addClass(vote < 0 ? class_up_bw : class_down_bw);
-
+    wrapper.on('click', 'div.vote a', function () {
+        var i = $(this).find('i');
+        if (i.hasClass('disabled')) {
             return false;
-        });
+        }
 
-    }; // }}}
+        var div_vote = i.closest('div.vote');
+        var id = topic_id, type = 'topic';
+        var li = i.closest('li');
+        if (li.data('id')) {
+            id = li.data('id');
+            type = 'comment';
+        }
 
-    /** Adds handlers for topic and post voting when user is not authorized to vote. */
-    $.hub.initTopicVotesGuest = function (wrapper, login_url) { // {{{
-        wrapper.on('click', 'div.vote a.plus,div.vote a.minus', function () {
-            window.location = login_url;
-            return false;
-        });
-    }; // }}}
-
-    $.hub.initEditor = function (el, options) { // {{{
-        options = $.extend({
-            minHeight: 300,
-            buttonSource: false,
-            paragraphy: false,
-            convertDivs: false,
-            imageUpload: el.data('upload-url'),
-            buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
-                'image', 'video', 'link', '|'],
-            plugins: ['video'],
-            uploadImageFields: {
-                _csrf: el.closest('form').find('input[name="_csrf"]').val()
-            },
-            imageUploadErrorCallback: function(json) {
-                alert(json.error);
-            }
-        }, options || {});
-        el.redactor(options);
-    }; // }}}
-
-    /** Controller for topic creation form. */
-    $.hub.initAddForm = function (form, autocomplete_url) { // {{{
-
-        form.find('input:submit[name="preview"]').click(function () {
-            var $submit = $(this).after('<i class="icon16 loading"></i>').prop('disabled', true);
-            var d = form.find('.topic-preview');
-            $.post(d.data('url'), {content: form.find('.topic-content').val(), _csrf: form.find('input[name="_csrf"]').val()}, function (response) {
-                $submit.prop('disabled', false).siblings('.loading').remove();
-                d.html(response.data).show();
-            }, 'json');
-            return false;
-        });
-
-        this.initEditor(form.find('textarea.topic-content'));
-
-        var select_category = $('.topic-category select:first');
-        var select_category_v;
-        $('.topic-type').on('click', 'a', function () {
-            $('.topic-type li.selected').removeClass('selected');
-            $(this).parent().addClass('selected');
-            var type_id = $(this).data('type');
-            $('input[name="data[type_id]"]').val(type_id);
-
-            // if at least one dynamic category (by topic type) exists,
-            // show only categories applicable for selected type_id.
-            if (select_category.find('option[data-type]').length) {
-                var prev_selected_category = (select_category_v || select_category).val();
-                select_category_v && select_category_v.remove();
-                select_category_v = select_category.clone();
-                select_category_v.find('option[data-type]').each(function () {
-                    var $option = $(this);
-                    if ($option.data('type') != type_id) {
-                        if ($option.attr('value') == prev_selected_category) {
-                            prev_selected_category = null;
-                        }
-                        $option.remove();
-                    }
-                });
-                select_category.prop('disabled', true).hide();
-                prev_selected_category && select_category_v.val(prev_selected_category);
-                select_category_v.prop('disabled', false).insertAfter(select_category).show();
-            }
-            return false;
-        });
-
-        $('.topic-type .selected a').click();
-
-        var ti_widget;
-        var tags_input = form.find('[name="data[tags]"]');
-        tags_input.tagsInput({
-            autocomplete_url: '',
-            autocomplete: {
-                source: function (request, response) {
-                    $.getJSON(autocomplete_url + "?term=" + request.term, function (data) {
-                        response(data.data);
-                    });
-                }
-            },
-            defaultText: "",
-            height: '30px',
-            width: (tags_input.parent().width() - 6) + 'px',
-            onChange: function () {
-                if (!ti_widget) {
-                    return;
-                }
-                tags_input.val(
-                    ti_widget.removeClass('error').find('.tag > span').map(
-                        function () {
-                            return $.trim($(this).text());
-                        }
-                    ).toArray().join(',')
-                );
-                tags_input.siblings('.errormsg').remove();
-            }
-        });
-
-        ti_widget = tags_input.siblings('.tagsinput');
-        var fake_input = ti_widget.find('input').css('min-width', '150px');
-        fake_input.blur(function () {
-            tags_input.addTag(fake_input.val(), {unique: true});
-        });
-
-        // Click on a popular tag adds it into the tag list
-        form.find('.popular-tags').on('click', 'a', function () {
-            var tag = $.trim($(this).text());
-            if (!tags_input.tagExist(tag)) {
-                tags_input.addTag(tag, {unique: true});
-                fake_input.removeClass('not_valid');
-            }
-            return false;
-        });
-
-        $('#ask-examples-link').click(function () {
-            $('#ask-examples').slideToggle(200);
-            return false;
-        });
-
-    }; // }}}
-
-    /** Controller for follow/unfollow buttons */
-    $.hub.initFollowingButton = function (wrapper, follow_url, topic_id) { // {{{
+        var vote = (i.hasClass('up') || i.hasClass('up-bw')) ? 1 : -1;
 
         var csrf = $('input[name=_csrf]:first').val();
-        var $button_follow = $('#button-follow');
-        var $button_unfollow = $('#button-unfollow');
-        var $wrapper = $button_follow.closest('.follow');
-
-        $button_follow.click(function() {
-            $button_follow.parent().append('<i class="icon16 loading"></i>');
-            $.post(follow_url, { topic_id: topic_id, follow: 1, _csrf: csrf }, function() {
-                $wrapper.addClass('following').removeClass('not-following').find('.loading').remove();
-            });
+        $.post(vote_url, { id: id, type: type, vote: vote, _csrf: csrf }, undefined, 'json').always(function (r, text_status, xhr) {
+            if (text_status == 'success' && r && r.data && r.data.hasOwnProperty('votes_sum')) {
+                var strong = div_vote.find('strong').text(r.data.votes_sum);
+                if (r.data.votes_sum - 0 > 0) {
+                    strong.attr('class', 'positive');
+                } else if (r.data.votes_sum - 0 < 0) {
+                    strong.attr('class', 'negative');
+                } else {
+                    strong.removeAttr('class');
+                }
+            } else {
+                // Unable to vote for some reason: e.g. session died.
+                // !!!
+            }
         });
 
-        $button_unfollow.click(function() {
-            $button_unfollow.parent().append('<i class="icon16 loading"></i>');
-            $.post(follow_url, { topic_id: topic_id, follow: 0, _csrf: csrf }, function() {
-                $wrapper.addClass('not-following').removeClass('following').find('.loading').remove();
+        // Deal with pesky arrows -_-'
+        var div_vote_big = div_vote.hasClass('a');
+        class_up = 'up';
+        class_down = 'down';
+        class_up_bw = 'up-bw';
+        class_down_bw = 'down-bw';
+        i.removeClass(class_up_bw).removeClass(class_down_bw).addClass('disabled');
+        i.addClass(vote > 0 ? class_up : class_down);
+        var opposite_i = div_vote.find(vote > 0 ? 'i.down' : 'i.up');
+        opposite_i.removeClass('disabled').removeClass(class_up).removeClass(class_down);
+        opposite_i.addClass(vote < 0 ? class_up_bw : class_down_bw);
+
+        return false;
+    });
+
+}; // }}}
+
+/** Adds handlers for topic and post voting when user is not authorized to vote. */
+$.hub.initTopicVotesGuest = function (wrapper, login_url) { // {{{
+    wrapper.on('click', 'div.vote a.plus,div.vote a.minus', function () {
+        window.location = login_url;
+        return false;
+    });
+}; // }}}
+
+$.hub.initEditor = function (el, options) { // {{{
+    options = $.extend({
+        minHeight: 300,
+        buttonSource: false,
+        paragraphy: false,
+        convertDivs: false,
+        imageUpload: el.data('upload-url'),
+        buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
+            'image', 'video', 'link', '|', 'codeblock', 'blockquote'],
+        plugins: ['video', 'codeblock', 'blockquote'],
+        uploadImageFields: {
+            _csrf: el.closest('form').find('input[name="_csrf"]').val()
+        },
+        imageUploadErrorCallback: function(json) {
+            alert(json.error);
+        }
+    }, options || {});
+
+    if (!options.lang) {
+        for (var lang in $.Redactor.opts.langs) {
+            if (lang != 'en') {
+                options.lang = lang;
+                break;
+            }
+        }
+    }
+
+    el.redactor(options);
+}; // }}}
+
+/** Controller for topic creation form. */
+$.hub.initAddForm = function (form, autocomplete_url) { // {{{
+
+    form.find('input:submit[name="preview"]').click(function () {
+        var $submit = $(this).after('<i class="icon16 loading"></i>').prop('disabled', true);
+        var d = form.find('.topic-preview');
+        $.post(d.data('url'), {content: form.find('.topic-content').val(), _csrf: form.find('input[name="_csrf"]').val()}, function (response) {
+            $submit.prop('disabled', false).siblings('.loading').remove();
+            d.html(response.data).show();
+        }, 'json');
+        return false;
+    });
+
+    this.initEditor(form.find('textarea.topic-content'));
+
+    var select_category = $('.topic-category select:first');
+    var select_category_v;
+    $('.topic-type').on('click', 'a', function () {
+        $('.topic-type li.selected').removeClass('selected');
+        $(this).parent().addClass('selected');
+        var type_id = $(this).data('type');
+        $('input[name="data[type_id]"]').val(type_id);
+
+        // if at least one dynamic category (by topic type) exists,
+        // show only categories applicable for selected type_id.
+        if (select_category.find('option[data-type]').length) {
+            var prev_selected_category = (select_category_v || select_category).val();
+            select_category_v && select_category_v.remove();
+            select_category_v = select_category.clone();
+            select_category_v.find('option[data-type]').each(function () {
+                var $option = $(this);
+                if ($option.data('type') != type_id) {
+                    if ($option.attr('value') == prev_selected_category) {
+                        prev_selected_category = null;
+                    }
+                    $option.remove();
+                }
             });
+            select_category.prop('disabled', true).hide();
+            prev_selected_category && select_category_v.val(prev_selected_category);
+            select_category_v.prop('disabled', false).insertAfter(select_category).show();
+        }
+        return false;
+    });
+
+    $('.topic-type .selected a').click();
+
+    var ti_widget;
+    var tags_input = form.find('[name="data[tags]"]');
+    tags_input.tagsInput({
+        autocomplete_url: '',
+        autocomplete: {
+            source: function (request, response) {
+                $.getJSON(autocomplete_url + "?term=" + request.term, function (data) {
+                    response(data.data);
+                });
+            }
+        },
+        defaultText: "",
+        height: '30px',
+        width: (tags_input.parent().width() - 6) + 'px',
+        onChange: function () {
+            if (!ti_widget) {
+                return;
+            }
+            tags_input.val(
+                ti_widget.removeClass('error').find('.tag > span').map(
+                    function () {
+                        return $.trim($(this).text());
+                    }
+                ).toArray().join(',')
+            );
+            tags_input.siblings('.errormsg').remove();
+        }
+    });
+
+    ti_widget = tags_input.siblings('.tagsinput');
+    var fake_input = ti_widget.find('input').css('min-width', '150px');
+    fake_input.blur(function () {
+        tags_input.addTag(fake_input.val(), {unique: true});
+    });
+
+    // Click on a popular tag adds it into the tag list
+    form.find('.popular-tags').on('click', 'a', function () {
+        var tag = $.trim($(this).text());
+        if (!tags_input.tagExist(tag)) {
+            tags_input.addTag(tag, {unique: true});
+            fake_input.removeClass('not_valid');
+        }
+        return false;
+    });
+
+    $('#ask-examples-link').click(function () {
+        $('#ask-examples').slideToggle(200);
+        return false;
+    });
+
+}; // }}}
+
+/** Controller for follow/unfollow buttons */
+$.hub.initFollowingButton = function (wrapper, follow_url, topic_id) { // {{{
+
+    var csrf = $('input[name=_csrf]:first').val();
+    var $button_follow = $('#button-follow');
+    var $button_unfollow = $('#button-unfollow');
+    var $wrapper = $button_follow.closest('.follow');
+
+    $button_follow.click(function() {
+        $button_follow.parent().append('<i class="icon16 loading"></i>');
+        $.post(follow_url, { topic_id: topic_id, follow: 1, _csrf: csrf }, function() {
+            $wrapper.addClass('following').removeClass('not-following').find('.loading').remove();
         });
+    });
 
-    }; // }}}
+    $button_unfollow.click(function() {
+        $button_unfollow.parent().append('<i class="icon16 loading"></i>');
+        $.post(follow_url, { topic_id: topic_id, follow: 0, _csrf: csrf }, function() {
+            $wrapper.addClass('not-following').removeClass('following').find('.loading').remove();
+        });
+    });
 
+}; // }}}
+
+/** Localization helper */
+$.hub.locale = $.hub.locale || {};
+$.hub.$_ = window.$_ = function(p1) { // {{{
+    return $.hub.locale[p1] || p1;
+}; // }}}
+
+$(function () {
     /** Handler for topic deletion link */
     $('#topic-and-comments article .edit-links .delete').click(function() { // {{{
         var $a = $(this);
