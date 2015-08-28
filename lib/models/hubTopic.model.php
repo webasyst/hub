@@ -186,6 +186,10 @@ class hubTopicModel extends waModel
             }
         }
 
+        if (isset($data['create_datetime']) && empty($data['create_datetime'])) {
+            unset($data['create_datetime']);
+        }
+
         $data['update_datetime'] = date('Y-m-d H:i:s');
         $this->updateById($id, $data);
 
@@ -365,7 +369,7 @@ class hubTopicModel extends waModel
      */
     public function checkForNew(&$items)
     {
-        $datetime = wa()->getConfig()->getLastDatetime();
+        $datetime = wa('hub')->getConfig()->getLastDatetime();
         $hub_visited_topics = wa()->getStorage()->get('hub_visited_topics');
         foreach ($items as &$item) {
             $item['update_datetime_ts'] = ifset($item['update_datetime_ts'], strtotime($item['update_datetime']));

@@ -57,6 +57,15 @@ class hubFrontendAddAction extends hubFrontendAction
                 'tags'        => array_filter(array_map('trim', explode(',', waRequest::get('tags', '', 'string')))),
                 'category_id' => waRequest::get('category', 0, 'int'),
             );
+
+            // If the category provided is a dynamic category filtered by topic type,
+            // preselect the topic type in the editor.
+            if (!empty($this->categories[$data['category_id']]['type_id'])) {
+                $data['type_id'] = $this->categories[$data['category_id']]['type_id'];
+                if (!empty($types[$data['type_id']])) {
+                    $this->view->assign('type_id', $data['type_id']);
+                }
+            }
         }
 
         $this->view->assign('categories', $this->categories);

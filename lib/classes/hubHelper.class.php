@@ -56,7 +56,7 @@ class hubHelper
             ),
             'forum'    => array(
                 'name'        => _w('Forum thread (discussion)'),
-                'description' => _w('A bug report is attached to a specific product version, and has a status'),
+                'description' => _w('Classic forum thread with plain comment list sorted chronologically.'),
                 'sorting'     => array(
                     'updated',
                 ),
@@ -704,7 +704,7 @@ class hubHelper
         $contact_ids = (array)$contact_id;
         $contact_model = new waContactModel();
         $empty_contact = $contact_model->getEmptyRow();
-        unset($empty_contact['id']);
+        $empty_contact['id'] = null;
         $empty_contact['email'] = '';
         foreach (array(20, 50, 96) as $size) {
             $empty_contact['photo_url_'.$size] = wa()->getRootUrl().'wa-content/img/userpic'.$size.'@2x.jpg';

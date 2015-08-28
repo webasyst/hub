@@ -287,7 +287,7 @@ class hubCommentModel extends waNestedSetModel
 
         if (!empty($fields['can_delete'])) {
             $contact_id = wa()->getUser()->getId();
-            $hubs = wa()->getConfig()->getAvailableHubs(hubRightConfig::RIGHT_FULL);
+            $hubs = wa('hub')->getConfig()->getAvailableHubs(hubRightConfig::RIGHT_FULL);
             foreach ($data as &$item) {
                 $hub_id = ifset($item['hub_id']);
                 if (!$hub_id && isset($item['parent'])) {
@@ -417,7 +417,7 @@ class hubCommentModel extends waNestedSetModel
                 FROM `{$this->table}` AS c
                     JOIN hub_following AS f
                         ON f.topic_id=c.topic_id
-                WHERE datetime > ?
+                WHERE c.datetime > ?
                     AND f.contact_id = ?
                     AND status='approved'";
 
@@ -500,22 +500,13 @@ class hubCommentModel extends waNestedSetModel
         $log_model = new waLogModel();
         $log_model->add('comment_add', $id);
 
-        // topic.comments_count contains number of top-level approved comments for the topic
         $update = array(
             'update_datetime' => date('Y-m-d H:i:s'),
+            'comments_count'  => $this->countByField(array(
+                'status'    => self::STATUS_PUBLISHED,
+                'topic_id'  => $data['topic_id'],
+            )),
         );
-        $topic_model->updateById($data['topic_id'], $update);
-        if (empty($parent_id)) {
-            $update += array(
-                'comments_count'  => $this->countByField(
-                    array(
-                        'topic_id'  => $data['topic_id'],
-                        'status'    => self::STATUS_PUBLISHED,
-                        'parent_id' => 0,
-                    )
-                ),
-            );
-        }
         $topic_model->updateById($data['topic_id'], $update);
         $topic = $update + $topic;
 
@@ -543,9 +534,6 @@ class hubCommentModel extends waNestedSetModel
         $errors = array();
         if (empty($comment['text'])) {
             $errors['text'] = _w('Comment text can not be left blank');
-        }
-        if (mb_strlen($comment['text']) > 4096) {
-            $errors['text'] = _w('Comment length should not exceed 4096 symbols');
         }
         if (empty($comment['id']) && !empty($comment['parent_id'])) {
             $parent = $this->getById($comment['parent_id']);
@@ -594,21 +582,13 @@ class hubCommentModel extends waNestedSetModel
         $author_model->updateCounts('comments', $comment['hub_id'], $comment['contact_id']);
 
         // Update stats in hub_topic
-        if (!$comment['parent_id']) {
-            $topic_model = new hubTopicModel();
-            $topic_model->updateById(
-                $comment['topic_id'],
-                array(
-                    'comments_count' => $this->countByField(
-                        array(
-                            'topic_id'  => $comment['topic_id'],
-                            'status'    => self::STATUS_PUBLISHED,
-                            'parent_id' => 0,
-                        )
-                    ),
-                )
-            );
-        }
+        $topic_model = new hubTopicModel();
+        $topic_model->updateById($comment['topic_id'], array(
+            'comments_count' => $this->countByField(array(
+                'status'    => self::STATUS_PUBLISHED,
+                'topic_id'  => $comment['topic_id'],
+            ))
+        ));
 
         return true;
     }

@@ -46,6 +46,7 @@
             this.initSubscribersNotification();
             this.initTypeSelector();
             this.initHubSelector();
+            this.initDateEditor();
 
             // Make button bar sticky
             var $window = $(window);
@@ -580,11 +581,39 @@
 
         },
 
+        initDateEditor: function() {
+            $('#edit-datetime-link').click(function() {
+                var $wrapper = $(this).closest('.block');
+                $wrapper.find('.non-editable-view').hide();
+
+                $inputs = $wrapper.find('.editable-view').show().find(':input').prop('disabled', false);
+                $input_hidden = $inputs.filter('[type="hidden"]');
+                $inputs.filter('.date').datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    gotoCurrent: true,
+                    constrainInput: false,
+                    altField: $input_hidden,
+                    altFormat: '@'
+                }).datepicker('hide').on('keyup change', function() {
+                    if (this.value == '') {
+                        $input_hidden.val('');
+                    }
+                });
+            });
+        },
+
         initEditor: function() {
 
             var that = this;
 
             $('#topic-editor').waEditor({
+                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br'.split('|'),
+                buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
+                    'outdent', 'indent', 'image', 'video', 'table', 'link', 'alignment', '|',
+                    'horizontalrule', '|', 'codeblock', 'blockquote'],
+                plugins: ['fontcolor', 'fontsize', 'fontfamily', 'table', 'video', 'codeblock', 'blockquote'],
+
                 lang: this.options.lang,
                 imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
                 keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redactor

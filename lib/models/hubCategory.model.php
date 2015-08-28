@@ -60,8 +60,7 @@ class hubCategoryModel extends waModel
             $data['url'] = $this->suggestUniqueUrl($data['url'], $data['hub_id'], null);
         }
         if (empty($data['sort'])) {
-            $this->exec("UPDATE ".$this->table." SET sort = sort + 1 WHERE hub_id = i:0", $data['hub_id']);
-            $data['sort'] = 0;
+            $data['sort'] = 1 + $this->query("SELECT MAX(sort) FROM {$this->table} WHERE hub_id=?", (int)$data['hub_id'])->fetchField();
         }
 
         if ($data['type'] == self::TYPE_DYNAMIC) {
@@ -104,20 +103,22 @@ SQL;
     {
         $row = $this->getById($id);
         if (!$row) {
-            return;
+            return false;
         }
 
-        if ($before_id && $before = $this->getById($before_id)) {
+        if ($before_id && ( $before = $this->getById($before_id))) {
             $sort = $before['sort'] + 1;
         } else {
             $sort = 0;
         }
 
         $this->exec(
-            "UPDATE ".$this->table." SET sort = sort + IF(sort > i:1 OR (sort = i:1 AND id > i:2), 2, 0)
-            WHERE hub_id = i:0 AND sort >= i:1",
-            $row['hub_id'],
-            $before['sort'],
+            "UPDATE ".$this->table."
+             SET sort = sort + IF(sort > i:1 OR (sort = i:1 AND id > i:2), 2, 0)
+             WHERE hub_id = i:0
+                AND sort >= i:1",
+            (int)$row['hub_id'],
+            $sort,
             $before_id
         );
         $this->updateById($id, array('sort' => $sort));

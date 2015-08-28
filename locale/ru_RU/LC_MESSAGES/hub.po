@@ -8,12 +8,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n"
-"%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 1.7.6\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -127,6 +126,9 @@ msgstr "Новая тема"
 msgid "All topics"
 msgstr "Все темы"
 
+msgid "All comments"
+msgstr "Все комментарии"
+
 #: /wa-apps/hub/templates/actions/backend/Backend.html:90
 #: /wa-apps/hub/templates/actions/topics/Topics.html:157
 #: /wa-apps/hub/templates/actions/topics/Topics.html:244
@@ -188,15 +190,8 @@ msgid "Welcome to your new Hub!"
 msgstr "Добро пожаловать в ваш новый Хаб!"
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:25
-msgid ""
-"Hub is an app for organizing your knowledge base. Store your articles, "
-"answer questions, collect customer feedback and bug reports, discuss various "
-"topics — all in one place. A perfect self-help tool for your your customers."
-msgstr ""
-"«Хаб» — это приложение для организации базы знаний. Публикуйте статьи, "
-"отвечайте на вопросы, собирайте комментарии клиентов и сообщения об ошибках, "
-"обсуждайте любые темы — все в едином пространстве. Отличное средство "
-"взаимопомощи для вас и ваших клиентов."
+msgid "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your your customers."
+msgstr "«Хаб» — это приложение для организации базы знаний. Публикуйте статьи, отвечайте на вопросы, собирайте комментарии клиентов и сообщения об ошибках, обсуждайте любые темы — все в едином пространстве. Отличное средство взаимопомощи для вас и ваших клиентов."
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:30
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:96
@@ -205,11 +200,8 @@ msgid "Topic types"
 msgstr "Типы тем"
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:32
-msgid ""
-"Select what kind of information you would like to mix and manage in your "
-"knowledge hub:"
-msgstr ""
-"Укажите, какого рода информацией вы хотите управлять в своей базе знаний:"
+msgid "Select what kind of information you would like to mix and manage in your knowledge hub:"
+msgstr "Укажите, какого рода информацией вы хотите управлять в своей базе знаний:"
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:46
 msgid "You will be able to customize this list later also."
@@ -382,11 +374,8 @@ msgid "Use default userpic"
 msgstr "Использовать стандартное изображение"
 
 #: /wa-apps/hub/templates/actions/settings/Settings.html:75
-msgid ""
-"(mystery-man) a simple, cartoon-style silhouetted outline of a person (does "
-"not vary by email hash)"
-msgstr ""
-"простая фигурка человека на сером фоне (одинаковая для всех пользователей)"
+msgid "(mystery-man) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)"
+msgstr "простая фигурка человека на сером фоне (одинаковая для всех пользователей)"
 
 #: /wa-apps/hub/templates/actions/settings/Settings.html:76
 msgid "a geometric pattern based on an email hash"
@@ -443,14 +432,8 @@ msgid "Only PNG and JPEG images are allowed"
 msgstr "Допускаются только изображения в форматах PNG и JPEG"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:92
-msgid ""
-"Category logo will be published on the hub frontend homepage. Logo size "
-"depend on design theme you are using. Most design themes will scale the logo "
-"down to about 50px wide."
-msgstr ""
-"Логотип категории будет показан на главной странице хаба на сайте. Размер "
-"логотипа зависит от используемой темы дизайна. В большинстве тем логотип "
-"будет уменьшен до 50 пикселей по ширине."
+msgid "Category logo will be published on the hub frontend homepage. Logo size depend on design theme you are using. Most design themes will scale the logo down to about 50px wide."
+msgstr "Логотип категории будет показан на главной странице хаба на сайте. Размер логотипа зависит от используемой темы дизайна. В большинстве тем логотип будет уменьшен до 50 пикселей по ширине."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:102
 msgid "Category type"
@@ -464,34 +447,27 @@ msgid "Category"
 msgstr "Категория"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:115
-msgid ""
-"You’ll be able to manually add new topics and move existing topics into this "
-"category."
-msgstr ""
-"Вы сможете добавлять новые темы и переносить уже существующие темы в эту "
-"категорию."
+msgid "You’ll be able to manually add new topics and move existing topics into this category."
+msgstr "Вы сможете добавлять новые темы и переносить уже существующие темы в эту категорию."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:125
 msgid "Filter by topic type"
 msgstr "Фильтровать по типу тем"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:135
-msgid ""
-"This category will be automatically filled with topics of the selected type. "
-"Topic sort order will be defined by topic type kind."
-msgstr ""
-"Эта категория будет автоматически заполняться темами выбранного типа. "
-"Порядок сортировки тем определяется их типом."
+msgid "This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind."
+msgstr "Эта категория будет автоматически заполняться темами выбранного типа. Порядок сортировки тем определяется их типом."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:147
 msgid "Filter by tags"
 msgstr "Фильтровать по тегам"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:151
-msgid ""
-"This category will be automatically filled with topics with selected tags."
-msgstr ""
-"Эта категория будет автоматически заполняться темами с указанными тегами."
+msgid "This category will be automatically filled with topics with selected tags."
+msgstr "Эта категория будет автоматически заполняться темами с указанными тегами."
+
+msgid "This option is not available because this hub does not have any tags yet."
+msgstr "Этот вариант недоступен, потому что в хабе пока нет ни одного тега."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:165
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:186
@@ -541,9 +517,7 @@ msgstr "Не удалять темы"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:265
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:285
-msgid ""
-"All topics will remain in the hub stream, and only the category will be "
-"deleted"
+msgid "All topics will remain in the hub stream, and only the category will be deleted"
 msgstr "Все темы останутся в потоке хаба; будет удалена только категория."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:271
@@ -664,16 +638,8 @@ msgstr "Темы видны на сайте:"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:59
 #: /wa-apps/hub/templates/actions/topics/Topics.html:101
-msgid ""
-"This hub is not visible on your sites now, because there were no routing "
-"rules added for Hub app with this particular hub. To make this hub visible "
-"on your site, <a href=\"%s\">create a route</a> for Hub app and this hub in "
-"your Site app routing settings."
-msgstr ""
-"Этот хаб не виден на сайте, потому что для него не заданы правила "
-"маршрутизации. Чтобы опубликовать хаб на сайте, <a href=\"%s\">добавьте "
-"правило маршрутизации</a> для приложения «Хаб» и выберите данный хаб в "
-"свойствах этого правила."
+msgid "This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, <a href=\"%s\">create a route</a> for Hub app and this hub in your Site app routing settings."
+msgstr "Этот хаб не виден на сайте, потому что для него не заданы правила маршрутизации. Чтобы опубликовать хаб на сайте, <a href=\"%s\">добавьте правило маршрутизации</a> для приложения «Хаб» и выберите данный хаб в свойствах этого правила."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:70
 msgid "Kudos"
@@ -684,12 +650,8 @@ msgid "Enable kudos in this hub"
 msgstr "Включить подсчет рейтинга авторов для этого хаба"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:76
-msgid ""
-"Kudos are user ratings calculated based on user activity in discussions and "
-"community."
-msgstr ""
-"Рейтинг автора вычисляется на основании его активности в обсуждениях и в "
-"сообществе."
+msgid "Kudos are user ratings calculated based on user activity in discussions and community."
+msgstr "Рейтинг автора вычисляется на основании его активности в обсуждениях и в сообществе."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:92
 msgid "Topic popularity index"
@@ -716,24 +678,16 @@ msgid "Age (newest topics are most popular)"
 msgstr "Возраст (новые темы наиболее популярны)"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:110
-msgid ""
-"Popularity index is a combined hidden topic parameter used for sorting "
-"topics in categories and search results."
-msgstr ""
-"Индекс популярности — это скрытый параметр темы, используемый для сортировки "
-"тем в категориях и результатах поиска."
+msgid "Popularity index is a combined hidden topic parameter used for sorting topics in categories and search results."
+msgstr "Индекс популярности — это скрытый параметр темы, используемый для сортировки тем в категориях и результатах поиска."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:118
 msgid "Staff"
 msgstr "Сотрудники"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:121
-msgid ""
-"List key users who participate in hub frontend discussions so their topics "
-"are marked with special badges."
-msgstr ""
-"Укажите пользователей, которые будут участвовать в обсуждениях; их темы "
-"будут снабжены специальными метками."
+msgid "List key users who participate in hub frontend discussions so their topics are marked with special badges."
+msgstr "Укажите пользователей, которые будут участвовать в обсуждениях; их темы будут снабжены специальными метками."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:127
 msgid "User name"
@@ -756,12 +710,8 @@ msgid "Access rights"
 msgstr "Права доступа"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:176
-msgid ""
-"Access to this hub will be restricted to backend users only. Use Contacts "
-"app to customize user access rights to this hub."
-msgstr ""
-"Доступ к этому хабу будет предоставлен только пользователям бекенда. "
-"Измененить уровень прав доступа можно в приложении «Контакты»."
+msgid "Access to this hub will be restricted to backend users only. Use Contacts app to customize user access rights to this hub."
+msgstr "Доступ к этому хабу будет предоставлен только пользователям бекенда. Измененить уровень прав доступа можно в приложении «Контакты»."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:184
 msgid "Hub color marker"
@@ -776,12 +726,8 @@ msgid "None"
 msgstr "Нет"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:193
-msgid ""
-"Backend only. All topics of this hub will be marked with the selected color. "
-"Recommended if you have multiple hubs."
-msgstr ""
-"Только для бекенда. Все темы этого хаба будут отмечены выбранным цветом. "
-"Удобно, когда у вас несколько хабов."
+msgid "Backend only. All topics of this hub will be marked with the selected color. Recommended if you have multiple hubs."
+msgstr "Только для бекенда. Все темы этого хаба будут отмечены выбранным цветом. Удобно, когда у вас несколько хабов."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:200
 msgid "Allowed topic types"
@@ -796,11 +742,8 @@ msgid "Selected only"
 msgstr "Только выбранные"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:246
-msgid ""
-"The <strong>%d topics</strong> at hub %s. What should be done with these "
-"topics?"
-msgstr ""
-"<strong>%d тем</strong> хаба %s. Что необходимо сделать с этими темами?"
+msgid "The <strong>%d topics</strong> at hub %s. What should be done with these topics?"
+msgstr "<strong>%d тем</strong> хаба %s. Что необходимо сделать с этими темами?"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:250
 msgid "Move topics to another topics hub"
@@ -836,21 +779,15 @@ msgstr "другой символ"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:45
 msgid "Or enter glyph image URL (image will be scaled to 32x32 px image)"
-msgstr ""
-"Либо введите URL изображения символа (указанное изображение будет уменьшено "
-"до 32x32 пикселей)"
+msgstr "Либо введите URL изображения символа (указанное изображение будет уменьшено до 32x32 пикселей)"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:53
 msgid "Functionality"
 msgstr "Функциональность"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:107
-msgid ""
-"There are <strong>%d topics</strong> with %s type. By deleting this topic "
-"type you should either change type for all these topics or delete them."
-msgstr ""
-"Есть <strong>%d тем</strong> типа %s. Для удаления этого типа необходимо "
-"либо изменить тип этих тем, либо удалить их."
+msgid "There are <strong>%d topics</strong> with %s type. By deleting this topic type you should either change type for all these topics or delete them."
+msgstr "Есть <strong>%d тем</strong> типа %s. Для удаления этого типа необходимо либо изменить тип этих тем, либо удалить их."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:110
 msgid "Change type of these topics to"
@@ -919,8 +856,7 @@ msgstr "Автоматически архивировать топики чер�
 
 #: /wa-apps/hub/templates/actions/settings/types/forum.html:17
 msgid "Archived topics are available for viewing only and cannot be commented."
-msgstr ""
-"Архивные темы доступны только для просмотра, но не для комментирования."
+msgstr "Архивные темы доступны только для просмотра, но не для комментирования."
 
 #: /wa-apps/hub/templates/actions/settings/types/forum.html:27
 #: /wa-apps/hub/templates/actions/settings/types/question.html:33
@@ -1228,9 +1164,7 @@ msgstr[1] "%d подписчика"
 msgstr[2] "%d подписчиков"
 
 #: /wa-apps/hub/templates/mail/Suggestion.html:13
-msgid ""
-"In just few words, tell us which question you had that this article did not "
-"answer?"
+msgid "In just few words, tell us which question you had that this article did not answer?"
 msgstr "Опишите вкратце, на какой ваш вопрос эта тема не дала ответ."
 
 #: /wa-apps/hub/js/comments.js:233
@@ -1308,11 +1242,8 @@ msgstr[1] "%s подписчика"
 msgstr[2] "%s подписчиков"
 
 #: /wa-apps/hub/lib/actions/frontend/hubFrontendUploadImage.controller.php:13
-msgid ""
-"File could not be saved due to insufficient write permissions for the %s "
-"folder."
-msgstr ""
-"Не удалось сохранить файл из-за недостаточных прав доступа к директории %s."
+msgid "File could not be saved due to insufficient write permissions for the %s folder."
+msgstr "Не удалось сохранить файл из-за недостаточных прав доступа к директории %s."
 
 #: /wa-apps/hub/lib/actions/frontend/hubFrontendUploadImage.controller.php:45
 #: /wa-apps/hub/lib/actions/frontend/hubFrontendUploadImage.controller.php:50
@@ -1352,12 +1283,8 @@ msgid "Page"
 msgstr "Страница"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:25
-msgid ""
-"Articles, guides, how-tos, tutorials and other materials that should be "
-"considered as static informational pages authored by a particular user."
-msgstr ""
-"Статьи, руководства, инструкции и другие информационные материалы, для "
-"которых важно сохранить авторство конкретного пользователя."
+msgid "Articles, guides, how-tos, tutorials and other materials that should be considered as static informational pages authored by a particular user."
+msgstr "Статьи, руководства, инструкции и другие информационные материалы, для которых важно сохранить авторство конкретного пользователя."
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:35
 msgid "Forum thread (discussion)"
@@ -1365,20 +1292,15 @@ msgstr "Тема форума (обсуждение)"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:36
 #: /wa-apps/hub/lib/updates/dev/1411473875.php:19
-msgid ""
-"A bug report is attached to a specific product version, and has a status"
-msgstr ""
-"Сообщение об ошибке относится к конкретной версии продукта и имеет некоторый "
-"статус"
+msgid "A bug report is attached to a specific product version, and has a status"
+msgstr "Сообщение об ошибке относится к конкретной версии продукта и имеет некоторый статус"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:42
 msgid "Question & Answers"
 msgstr "Вопрос и ответы"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:43
-msgid ""
-"Questions & Answers. The right topic type for getting user questions "
-"answered."
+msgid "Questions & Answers. The right topic type for getting user questions answered."
 msgstr "Вопросы и ответы. Удобный тип тем для ответа на вопросы пользователей."
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:52
@@ -1387,8 +1309,7 @@ msgstr "Обратная связь (+/-)"
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:53
 msgid "Ideas, bug reports, thank-yous and other feedback."
-msgstr ""
-"Новые идеи, отчеты об ошибках, выражения благодарности и другие сообщения."
+msgstr "Новые идеи, отчеты об ошибках, выражения благодарности и другие сообщения."
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:61
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:62
@@ -1451,10 +1372,6 @@ msgstr "META description главной страницы"
 msgid "Url is in use"
 msgstr "URL используется"
 
-#: /wa-apps/hub/lib/models/hubComment.model.php:541
-msgid "Comment length should not exceed 4096 symbols"
-msgstr "Размер комментария не может превышать 4096 символов."
-
 #: /wa-apps/hub/lib/updates/dev/1411473875.php:8
 msgid "Article"
 msgstr "Статья"
@@ -1496,12 +1413,8 @@ msgid "Your question title"
 msgstr "Тема вашего вопроса"
 
 #: /wa-apps/hub/themes/_webasystcom/ask.form.html:76
-msgid ""
-"Basic HTML is allowed: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;a&gt;, &lt;"
-"pre&gt;, &lt;img&gt;, &lt;blockquote&gt;"
-msgstr ""
-"Допускается использование следующих HTML-тегов: &lt;b&gt;, &lt;i&gt;, &lt;"
-"u&gt;, &lt;a&gt;, &lt;pre&gt;, &lt;img&gt;, &lt;blockquote&gt;"
+msgid "Basic HTML is allowed: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;a&gt;, &lt;pre&gt;, &lt;img&gt;, &lt;blockquote&gt;"
+msgstr "Допускается использование следующих HTML-тегов: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;a&gt;, &lt;pre&gt;, &lt;img&gt;, &lt;blockquote&gt;"
 
 #: /wa-apps/hub/themes/_webasystcom/ask.form.html:90
 msgid "No category"
@@ -1560,12 +1473,8 @@ msgstr "Добавить ответ"
 #: /wa-apps/hub/themes/_webasystcom/comment_add.html:36
 #: /wa-apps/hub/themes/default/comment.add.html:14
 #: /wa-apps/hub/themes/default/topic.page.html:74
-msgid ""
-"To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">login</"
-"a>"
-msgstr ""
-"Чтобы добавить комментарий, <a href=\"%s\">зарегистрируйтесь</a> или <a href="
-"\"%s\">войдите</a>"
+msgid "To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">login</a>"
+msgstr "Чтобы добавить комментарий, <a href=\"%s\">зарегистрируйтесь</a> или <a href=\"%s\">войдите</a>"
 
 #: /wa-apps/hub/themes/_webasystcom/comment_add.html:54
 #: /wa-apps/hub/themes/default/comment.add.html:24
@@ -1634,12 +1543,8 @@ msgid "asked %s"
 msgstr "добавлен %s"
 
 #: /wa-apps/hub/themes/default/add.html:5
-msgid ""
-"To add new topic please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</"
-"a>"
-msgstr ""
-"Чтобы добавить новую тему, <a href=\"%s\">зарегистрируйтесь</a> или <a href="
-"\"%s\">войдите</a>"
+msgid "To add new topic please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</a>"
+msgstr "Чтобы добавить новую тему, <a href=\"%s\">зарегистрируйтесь</a> или <a href=\"%s\">войдите</a>"
 
 #: /wa-apps/hub/themes/default/add.html:33
 msgid "Your topic title"
@@ -1668,12 +1573,8 @@ msgid "You are about to delete this record. Are you sure?"
 msgstr "Вы собираетесь удалить эту запись. Продолжить?"
 
 #: /wa-apps/hub/themes/default/footer.html:6
-msgid ""
-"<a href=\"http://www.webasyst.com/store/app/hub/\">Feedback software</a> by "
-"Webasyst"
-msgstr ""
-"<a href=\"http://www.webasyst.ru/store/app/hub/\">Сервис поддержки клиентов</"
-"a> — Webasyst Хаб"
+msgid "<a href=\"http://www.webasyst.com/store/app/hub/\">Feedback software</a> by Webasyst"
+msgstr "<a href=\"http://www.webasyst.ru/store/app/hub/\">Сервис поддержки клиентов</a> — Webasyst Хаб"
 
 #: /wa-apps/hub/themes/default/main.html:49
 msgid "My answers"
@@ -1748,12 +1649,8 @@ msgid "Unfollow"
 msgstr "Отписаться"
 
 #: /wa-apps/hub/themes/default/topic.forum.html:94
-msgid ""
-"To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</"
-"a>"
-msgstr ""
-"Чтобы добавить комментарий, <a href=\"%s\">зарегистрируйтесь</a> или <a href="
-"\"%s\">войдите</a>"
+msgid "To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</a>"
+msgstr "Чтобы добавить комментарий, <a href=\"%s\">зарегистрируйтесь</a> или <a href=\"%s\">войдите</a>"
 
 #: /wa-apps/hub/themes/default/topic.page.html:66
 msgid "Was this article helpful?"
@@ -1813,12 +1710,8 @@ msgid "Hi %s,"
 msgstr "Привет, %s."
 
 #: /wa-apps/hub/templates/mail/Following.html:9
-msgid ""
-"%s posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you "
-"are following:"
-msgstr ""
-"%s опубликовал новый комментарий к топику «<a href=\"%s\"><strong>%s</"
-"strong></a>», на который вы подписаны:"
+msgid "%s posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you are following:"
+msgstr "%s опубликовал новый комментарий к топику «<a href=\"%s\"><strong>%s</strong></a>», на который вы подписаны:"
 
 #: /wa-apps/hub/templates/mail/Suggestion.html:8
 msgid "Hi,"
@@ -1838,25 +1731,16 @@ msgid "popular"
 msgstr "популярные"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:246
-msgid ""
-"There are <strong>%d topics</strong> in this hub right now. By deleting this "
-"hub you can either move topics to another hub or delete them entirely."
-msgstr ""
-"В этом хабе содержится <strong>%d темы</strong>. Чтобы удалить этот хаб, "
-"необходимо либо удалить все содержащиеся в нем темы, либо перенести их в "
-"другой хаб."
+msgid "There are <strong>%d topics</strong> in this hub right now. By deleting this hub you can either move topics to another hub or delete them entirely."
+msgstr "В этом хабе содержится <strong>%d темы</strong>. Чтобы удалить этот хаб, необходимо либо удалить все содержащиеся в нем темы, либо перенести их в другой хаб."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:250
 msgid "Move topics to another hub"
 msgstr "Перенести топики в другой хаб"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:264
-msgid ""
-"This hub does not contain any topics, so you can safely delete it. No topics "
-"will be affected."
-msgstr ""
-"Этот хаб не содержит ни одной темы, и поэтому при его удалении ни одна тема "
-"не пострадает. Не волнуйтесь."
+msgid "This hub does not contain any topics, so you can safely delete it. No topics will be affected."
+msgstr "Этот хаб не содержит ни одной темы, и поэтому при его удалении ни одна тема не пострадает. Не волнуйтесь."
 
 #: /wa-apps/hub/lib/config/site.php:15
 msgid "Homepage default topic sort order"
@@ -1895,16 +1779,8 @@ msgid "%d topics, %d answers, and %d comments"
 msgstr "%d тем, %d ответов и %d комментариев"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:59
-msgid ""
-"This hub is not visible on your sites now, because there were no routing "
-"rules added for Hub app with this particular hub. To make this hub visible "
-"on your site, create a route using the form below or using <a href=\"%s"
-"\">Site app</a> routing settings."
-msgstr ""
-"Этот хаб не виден на сайте, потому что для него не заданы правила "
-"маршрутизации. Чтобы опубликовать хаб на сайте, добавьте правило "
-"маршрутизации с помощью формы ниже или в разделе «<a href=\"%s\">Структура</"
-"a>» в приложении «Сайт»."
+msgid "This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, create a route using the form below or using <a href=\"%s\">Site app</a> routing settings."
+msgstr "Этот хаб не виден на сайте, потому что для него не заданы правила маршрутизации. Чтобы опубликовать хаб на сайте, добавьте правило маршрутизации с помощью формы ниже или в разделе «<a href=\"%s\">Структура</a>» в приложении «Сайт»."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:73
 msgid "Specify the public URL for this new hub on your site:"
@@ -1999,11 +1875,8 @@ msgstr "Нельзя отвечать на удалённый комментар
 msgid "Delete category logo?"
 msgstr "Удалить логотип категории?"
 
-msgid ""
-"Type selector is disabled since all topics in current view are of the same "
-"type."
-msgstr ""
-"Все топики в этом списке имеют один тип, поэтому фильтр по типам выключен."
+msgid "Type selector is disabled since all topics in current view are of the same type."
+msgstr "Все топики в этом списке имеют один тип, поэтому фильтр по типам выключен."
 
 msgid "(%s hidden)"
 msgstr "(скрыто %s)"
@@ -2019,22 +1892,12 @@ msgid "Default sort order"
 msgstr "Порядок сортировки"
 
 #: /wa-apps/hub/templates/actions/topics/Topics.html:134
-msgid ""
-"Manual sort for topics is not available in dynamic topic lists. If you want "
-"to activate the ability to sort topics, create a Folder category first."
-msgstr ""
-"В динамических списках возможность ручной сортировки тем недоступна. Для "
-"ручной сортировки создайте категорию типа «Папка»."
+msgid "Manual sort for topics is not available in dynamic topic lists. If you want to activate the ability to sort topics, create a Folder category first."
+msgstr "В динамических списках возможность ручной сортировки тем недоступна. Для ручной сортировки создайте категорию типа «Папка»."
 
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:136
-msgid ""
-"Manual sort for topics is not available in this view because current sort "
-"order is set to <strong>%s</strong>. To activate the ability to sort topics "
-"in this category, set current sort order to “Manual sort”."
-msgstr ""
-"В данном списке возможность ручной сортировки тем недоступна, так как "
-"включен режим автоматической сортировки — <strong>%s</strong>. Для ручной "
-"сортировки тем переключите режим на «Ручной»."
+msgid "Manual sort for topics is not available in this view because current sort order is set to <strong>%s</strong>. To activate the ability to sort topics in this category, set current sort order to “Manual sort”."
+msgstr "В данном списке возможность ручной сортировки тем недоступна, так как включен режим автоматической сортировки — <strong>%s</strong>. Для ручной сортировки тем переключите режим на «Ручной»."
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:12
 msgid "Normal"
@@ -2044,11 +1907,45 @@ msgstr "Средний"
 msgid "Visual"
 msgstr "Визуальный редактор"
 
+msgid "Insert code block"
+msgstr "Вставить блок кода"
+
+msgid "Insert quote"
+msgstr "Вставить цитату"
+
+msgid "Insert"
+msgstr "Вставить"
+
 #: /wa-apps/hub/templates/actions/topics/TopicsInfo.html:234
 msgid "Posting new comments has been restricted for this topic."
 msgstr "Добавление комментариев выключено для этой темы."
 
 #: /wa-apps/hub/themes/default/main.html:118
 msgid "Please complete the initial <a href=\"%s\">setup</a> in app backend."
+msgstr "Пожалуйста, <a href=\"%s\">завершите настройку</a> приложения в бекенде."
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:285
+msgid "Move all %d topics to"
+msgstr "Перенести все темы (%d) в"
+
+#: /wa-apps/hub/themes/default/author.html:9
+#: /wa-apps/hub/themes/default/authors.html:8
+msgid "%username%"
 msgstr ""
-"Пожалуйста, <a href=\"%s\">завершите настройку</a> приложения в бекенде."
+
+#: /wa-apps/hub/themes/default/topic.forum.html:95
+msgid "Add reply"
+msgstr "Добавить ответ"
+
+msgid "Published"
+msgstr "Опубликовано"
+
+msgid "Stuff as set up in hub settings."
+msgstr "Сотрудники, указанные в настройках хаба."
+
+msgid "Categories of given hub. When $priority_topics is <em>true</em>, list of high-priority topics is returned for each category."
+msgstr "Категории указанного хаба. Если $priority_topics &mdash; true, для каждой категории загружается список высокоприоритетных тем."
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:59
+msgid "Classic forum thread with plain comment list sorted chronologically."
+msgstr "Классический вид обсуждения на форуме: топик и список комментариев в хронологическом порядке."

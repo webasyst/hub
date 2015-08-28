@@ -69,11 +69,7 @@ class hubConfig extends waAppConfig
         $url = $this->getBackendUrl(true).$this->application.'/';
         if (in_array('comments', $type)) {
             $m = new hubCommentModel();
-            if (!in_array('comments_to_topics', $type)) {
-                $count += $m->countNew();
-            } else {
-                $count += $m->countNewToMyFollowing();
-            }
+            $count += $m->countNewToMyFollowing();
 
             if ($count) {
                 $url = $this->getBackendUrl(true).$this->application.'/#/following/updated/';
@@ -87,13 +83,6 @@ class hubConfig extends waAppConfig
                 $count += $cnt['all'];
                 $url = $this->getBackendUrl(true).$this->application.'/#/recent/';
             }
-        }
-
-        if (!$count) {
-            $storage->set('hub_visited_comments', array());
-            $storage->set('hub_visited_topics', array());
-            $storage->set('hub_last_datetime', time());
-            return null;
         }
 
         return array(
@@ -139,7 +128,7 @@ class hubConfig extends waAppConfig
         if ($module == 'design') {
             return !!wa()->getUser()->getRights('design');
         }
-        if ($module == 'pages') {
+        if ($module == 'pages' && $action != 'uploadimage') {
             return !!wa()->getUser()->getRights('pages');
         }
 
@@ -249,24 +238,49 @@ class hubConfig extends waAppConfig
     public function explainLogs($logs)
     {
         $logs = parent::explainLogs($logs);
+        $app_url = wa()->getConfig()->getBackendUrl(true).$this->getApplication().'/';
+
         $topic_ids = array();
+        $comment_ids = array();
         foreach ($logs as $l_id => $l) {
             if (in_array($l['action'], array('topic_publish', 'topic_unpublish', 'topic_edit')) && $l['params']) {
-                $topic_ids[] = $l['params'];
+                $topic_ids[$l['params']] = 1;
+            } else if (in_array($l['action'], array('comment_add', 'comment_edit', 'comment_delete', 'comment_restore')) && $l['params']) {
+                $comment_ids[$l['params']] = 1;
+            }
+        }
+        if ($comment_ids) {
+            $comment_model = new hubCommentModel();
+            $comments = $comment_model->getById(array_keys($comment_ids));
+            foreach($comments as $c) {
+                $topic_ids[$c['topic_id']] = 1;
             }
         }
         if ($topic_ids) {
             $topic_model = new hubTopicModel();
-            $topics = $topic_model->getById($topic_ids);
+            $topics = $topic_model->getById(array_keys($topic_ids));
         }
-        $app_url = wa()->getConfig()->getBackendUrl(true).$l['app_id'].'/';
         foreach ($logs as $l_id => $l) {
+            $c = $t = null;
             if (in_array($l['action'], array('topic_publish', 'topic_unpublish', 'topic_edit'))) {
                 if (isset($topics[$l['params']])) {
                     $t = $topics[$l['params']];
-                    $url = $app_url.'#/topic/'.$l['params'].'/';
-                    $logs[$l_id]['params_html'] = '<div class="activity-target"><a href="'.$url.'">'.htmlspecialchars($t['title']).'</a></div>';
                 }
+            } else if (in_array($l['action'], array('comment_add', 'comment_edit', 'comment_delete', 'comment_restore'))) {
+                if (isset($comments[$l['params']])) {
+                    $c = $comments[$l['params']];
+                    if (isset($topics[$c['topic_id']])) {
+                        $t = $topics[$c['topic_id']];
+                    }
+                }
+            }
+            $logs[$l_id]['params_html'] = '';
+            if ($t) {
+                $url = $app_url.'#/topic/'.$l['params'].'/';
+                $logs[$l_id]['params_html'] .= '<div class="activity-target"><a href="'.$url.'">'.htmlspecialchars($t['title']).'</a></div>';
+            }
+            if (!empty($c)) {
+                $logs[$l_id]['params_html'] .= '<div class="activity-body"><p'.(empty($c['status']) ? ' class="strike gray"' : '').'>'.nl2br(htmlspecialchars(mb_substr(strip_tags($c['text']), 0, 512))).'</p></div>';
             }
         }
         return $logs;

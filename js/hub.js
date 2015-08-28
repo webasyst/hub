@@ -378,7 +378,6 @@
                     });
                     return false;
                 });
-
             });
         },
 
@@ -453,8 +452,8 @@
             this.load('?module=settings&action=filter&id=' + id);
         },
 
-        commentsAction: function () {
-            this.load('?module=comments');
+        commentsAction: function (params) {
+            this.load('?module=comments'+(params ? '&'+params : ''));
         },
 
         pagesAction: function (id) {
@@ -569,13 +568,10 @@
                 if (r.status == 'ok') {
                     switch (type) {
                         case 'category':
-                            var $c = $.sidebar.sidebar.find('#category-' + id);
-                            $c.next().remove();
-                            $c.remove();
+                            $.sidebar.sidebar.find('#category-' + id).remove();
                             break;
                         case 'filter':
-                            var $f = $.sidebar.sidebar.find('a[href="\\#/filter/' + id + '/"]').parents('li');
-                            $f.remove();
+                            $.sidebar.sidebar.find('a[href="\\#/filter/' + id + '/"]').closest('li').remove();
                             break;
                     }
                     location.hash = '#/';
@@ -648,6 +644,7 @@
                     //error: errorHandler,
                     data: formData,
                     cache: false,
+                    dataType: 'html',
                     contentType: false,
                     processData: false
                 });
@@ -712,11 +709,14 @@
         },
 
         topics: {
+            last_hash: '',
             $topics_ul: null,
             $bulk_menu: null,
             $sort_menu: null,
 
             init: function (params) {
+                this.last_hash = window.location.hash;
+
                 if (params && (typeof params.topics_count != 'undefined')) {
                     var $counter = $('#wa-app > .sidebar li.selected:first .count:first');
                     if ($counter.length) {
@@ -754,7 +754,7 @@
                         self.$topics_ul.addClass('h-bulk-mode').closest('.h-stream').removeClass('h-mode-normal').addClass('h-mode-bulk');
                     }
                     self.$sort_menu.hide();
-                    self.$bulk_menu.find('li').toggle();
+                    self.$bulk_menu.children('li').toggle();
                     self.bulkCount();
 
                     return false;
@@ -766,7 +766,7 @@
                         self.$topics_ul.removeClass('h-bulk-mode').closest('.h-stream').addClass('h-mode-normal').removeClass('h-mode-bulk');;
                     }
                     self.$sort_menu.show();
-                    self.$bulk_menu.find('li').toggle();
+                    self.$bulk_menu.children('li').toggle();
                     return false;
                 });
 
@@ -846,7 +846,7 @@
                             if ($from.is(el) || $to.is(el)) {
                                 return false;
                             }
-                            $(el).find('input:checkbox.js-bulk-mode').prop('checked', status).change();
+                            $(el).find('input:checkbox.js-bulk-mode:visible').prop('checked', status).change();
                         }
                     });
                 }
@@ -1039,6 +1039,15 @@
                     }
                 });
             },
+            bulkPriorityAction: function ($link) {
+                var priority = $link.data('priority');
+                var ids = this.$topics_ul.find(':input.js-bulk-mode:checked').map(function () {
+                    return this.value;
+                }).get();
+                $.post('?module=topics&action=bulkPriority', { priority: priority, topic_ids: ids }, function() {
+                    $.hub.redispatch();
+                });
+            },
             bulkMoveAction: function ($link) {
                 var params = '&hub_id=' + $link.data('hub') + '&category_id=' + $link.data('category');
                 var $dialog = $('#h-bulk-topics-move');
@@ -1147,25 +1156,15 @@
                 //update sidebar text & icons
                 var $c = $.sidebar.sidebar.find('#category-' + id);
                 if ($c.length) {
-                    $c.find('.count').text(data.topics_count);
                     $c.find('.name').text(data.name);
+                    $c.find('.count').text(data.topics_count);
                     $c.find('.js-glyph').replaceWith(data.glyph_html);
                     $('h1.list-title .title').text(data.name);
                 } else {
-                    var html = '<li class="drag-newposition"></li>' +
-                        '<li class="dr" id="category-' + data.id + '">' +
-                        '<span class="count">' + data.topics_count + '</span>' +
-                        '<a href="#/category/' + data.id + '/">' +
-                        data.glyph_html +
-                        '<span class="name">name placeholder' +
-                        '</span><span class="count"><i class="icon10 add h-new-category" data-category-id="' + data.id + '"></i></span>' +
-                        '</a>' +
-                        '</li>';
-                    $c = $(html);
-                    $('div.h-hub[data-hub-id="' + data.hub_id + '"] .category-list > ul:first').prepend($c);
-                    $c.find('.name').text(data.name);
+                    $.sidebar.reload(function() {
+                        $.sidebar.setHub(data.hub_id);
+                    });
                 }
-
             },
 
             /**

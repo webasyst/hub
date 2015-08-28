@@ -23,6 +23,7 @@ class hubFrontendAction extends waViewAction
         if (!$hub_id) {
             throw new waException('No hub', 500);
         }
+        return $hub_id;
     }
 
     protected function setCollection(hubTopicsCollection $collection)
@@ -56,6 +57,11 @@ class hubFrontendAction extends waViewAction
 
     public function execute()
     {
+        // Do not show home page unless URL is /
+        if (wa()->getRouting()->getCurrentUrl()) {
+            throw new waException('Page not found', 404);
+        }
+
         $cookie_key = 'hub_home_sort';
         $sort = waRequest::request('sort', '', 'string_trim');
         if (!$sort) {
@@ -100,7 +106,7 @@ class hubFrontendAction extends waViewAction
         $following_count = 0;
         if ($this->getUserId()) {
             $hub_following_model = new hubFollowingModel();
-            $following_count = $hub_following_model->countByField('contact_id', $this->getUserId());
+            $following_count = $hub_following_model->countTopics($this->getUserId(), $this->hub_id);
         }
         $user['following_count'] = $following_count;
 

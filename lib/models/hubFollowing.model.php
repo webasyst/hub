@@ -68,4 +68,22 @@ class hubFollowingModel extends waModel
             date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime()),
         ))->fetchField('cnt');
     }
+
+    public function countTopics($contact_id, $hub_id)
+    {
+        if (!$hub_id || !$contact_id) {
+            return 0;
+        }
+
+        $sql = "SELECT count(*)
+                FROM hub_following AS f
+                    JOIN hub_topic AS t
+                        ON t.id=f.topic_id
+                WHERE f.contact_id=?
+                    AND t.hub_id IN (?)";
+        return (int) $this->query($sql, array(
+            (int) $contact_id,
+            (array) $hub_id)
+        )->fetchField();
+    }
 }

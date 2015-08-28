@@ -99,7 +99,7 @@ h1 .h-badge { position: relative; top: -3px; }
 .h-header ul.menu-h.h-sort ul.menu-v li.h-filter-by-type { border-top: 1px solid #ccc; }
 .h-header ul.menu-h.h-sort ul.menu-v li.h-filter-by-type label { display: block; padding: 3px 0; margin-left: -3px; }
 .h-header ul.menu-h.h-sort ul.menu-v li.h-filter-by-type:hover { background: transparent; }
-
+.h-header ul.menu-h.h-sort .menu-h.dropdown ul.menu-v li { padding-left: 24px; }
 
 .h-header .h-stream-title h1 { font-size: 1.7em; margin-top: -2px; }
 .h-header .h-stream-title .list-title { display: inline-block; }

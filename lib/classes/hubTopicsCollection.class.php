@@ -838,20 +838,34 @@ class hubTopicsCollection
 
     protected function tagPrepare($id, $auto_title = true)
     {
-        $tag_model = new hubTagModel();
         $tag = false;
+        $ids = array();
+        $tag_model = new hubTagModel();
         if (is_numeric($id)) {
+            $id = (int)$id;
             $tag = $tag_model->getById($id);
+            $ids = array($id);
         }
         if (!$tag) {
-            $tag = $tag_model->getByName($id, waRequest::param('hub_id'));
-            if ($tag) {
-                $id = $tag['id'];
+            $name = $id;
+            $hub_id = waRequest::param('hub_id');
+            if (empty($this->options['search_all']) && $hub_id) {
+                $tag = $tag_model->getByName($name, waRequest::param('hub_id'));
+                if ($tag) {
+                    $ids = array($tag['id']);
+                }
+            } else {
+                $tags = $tag_model->getByField(array(
+                    'name' => $name,
+                ), 'id');
+                $ids = array_keys($tags);
+                $tag = reset($tags);
             }
         }
+
         if ($tag) {
             $this->info = $tag;
-            $this->addJoin('hub_topic_tags', null, ':table.tag_id = '.(int)$id);
+            $this->addJoin('hub_topic_tags', null, ':table.tag_id IN ('.join(',', $ids).')');
             if ($auto_title) {
                 $this->addTitle($tag['name']);
             }

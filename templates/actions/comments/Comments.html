@@ -44,13 +44,14 @@
     document.title = "{_w('comments')|escape:js} — {$wa->accountName()|escape:js}";
 
     $.comments.init({
+        lang: {json_encode(substr($wa->locale(), 0, 2))},
         statuses: {
             deleted: '{hubCommentModel::STATUS_DELETED}',
                  published: '{hubCommentModel::STATUS_PUBLISHED}'
         },
         lazy_loading: {
             auto: true,
-            total_count: {$total_count},
+            total_count: {ifempty($total_count, 0)},
             count: {$count}
         },
         container: '#comments-wrapper'

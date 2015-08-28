@@ -4,12 +4,11 @@ class hubCategoriesMoveController  extends waJsonController
 {
     public function execute()
     {
-        $id = (int) waRequest::post('id');
-        $before_id = (int) waRequest::post('before_id');
+        $id = waRequest::post('id', 0, 'int');
+        $before_id = waRequest::post('before_id', 0, 'int');
 
         $model = new hubCategoryModel();
-        
-        if (!$model->move($id, $before_id)) {
+        if (!$id || !$model->move($id, $before_id)) {
             $this->errors = array(_w('Error when move'));
         }
     }

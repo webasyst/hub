@@ -20,6 +20,12 @@ table.zebra.wa-tr-hover tr:hover td { background: #ffffe5!important; cursor: poi
 {/foreach}
 </table>
 
+<p>
+    <a href="{$wa_backend_url}hub/#/contact/{$contact_id}/0/">[`All topics`] ({$total_topics})</a>
+    <br>
+    <a href="{$wa_backend_url}hub/#/comments/contact_id={$contact_id}/">[`All comments`] ({$total_comments})</a>
+</p>
+
 <script>setTimeout(function() {
     /** Initialize <td>s of a table to be clickable (middle-click friendly) */
     var initTableLinks = function(tds, getUrl) {
