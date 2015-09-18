@@ -127,7 +127,7 @@
                         if (i < 2) {
                             if (i === 0) {
                                 actionName = h;
-                            } else if ((h == 'add') || ((parseInt(h, 10) != h) && (h.indexOf('=') == -1) && (actionName != 'search') && (actionName != 'following'))) {
+                            } else if ((h == 'add') || ((parseInt(h, 10) != h) && (h.indexOf('=') == -1) && (actionName != 'search') && (actionName != 'following') && (actionName != 'plugins'))) {
                                 actionName += h.substr(0, 1).toUpperCase() + h.substr(1);
                             } else {
                                 attrMarker = i;
@@ -167,6 +167,14 @@
             order = this.getOrder('default', order);
             this.load('?module=topics' + (order ? '&sort=' + order : ''), function () {
             });
+        },
+
+        pluginsAction: function (params) {
+            if ($('#wa-plugins-container').length) {
+                $.plugins.dispatch(params);
+            } else {
+                this.load('?module=plugins');
+            }
         },
 
         getOrder: function (key, order) {

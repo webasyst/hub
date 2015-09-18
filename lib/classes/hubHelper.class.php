@@ -559,21 +559,13 @@ class hubHelper
             $content
         );
 
-        // Simple tags: <b>, <i>, <u>, <pre>, <blockquote> and closing counterparts
+        // Simple tags: <b>, <i>, <u>, <pre>, <blockquote> and closing counterparts.
+        // All attributes are removed.
         $content = preg_replace(
             '~
                 &lt;
-                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br))
-                &gt;
-            ~iux',
-            '<\1>',
-            $content
-        );
-        $content = preg_replace(
-            '~
-                &lt;
-                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br))
-                    [^a-z\-\_].*?
+                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th))
+                    ((?!&gt;)[^a-z\-\_]((?!&gt;).)+)?
                 &gt;
             ~iux',
             '<\1>',

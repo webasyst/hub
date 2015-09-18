@@ -276,7 +276,7 @@ class hubConfig extends waAppConfig
             }
             $logs[$l_id]['params_html'] = '';
             if ($t) {
-                $url = $app_url.'#/topic/'.$l['params'].'/';
+                $url = $app_url.'#/topic/'.$t['id'].'/';
                 $logs[$l_id]['params_html'] .= '<div class="activity-target"><a href="'.$url.'">'.htmlspecialchars($t['title']).'</a></div>';
             }
             if (!empty($c)) {

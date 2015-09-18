@@ -145,6 +145,10 @@
             <li><a href="#/design/"><i class="icon16 design"></i>[`Design`]</a></li>
         {/if}
 
+        {if $wa->userRights('plugins')}
+            <li><a href="#/plugins/"><i class="icon16 plugins"></i>[s`Plugins`]</a></li>
+        {/if}
+
         <li class="top-padded"><a href="#/settings/"><i class="icon16 settings"></i>[`Settings`]</a></li>
         {*<li class="not-implemented"><a href="?module=plugins"><i class="icon16 plugins"></i>[`Plugins`]</a></li>*}
     </ul>

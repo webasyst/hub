@@ -608,7 +608,7 @@
             var that = this;
 
             $('#topic-editor').waEditor({
-                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br'.split('|'),
+                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th|h1|h2|h3|h4|h5|h6'.split('|'),
                 buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
                     'outdent', 'indent', 'image', 'video', 'table', 'link', 'alignment', '|',
                     'horizontalrule', '|', 'codeblock', 'blockquote'],
