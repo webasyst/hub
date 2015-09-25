@@ -7,11 +7,17 @@ class hubCommentsAction extends waViewAction
         $offset = waRequest::get('offset', 0, waRequest::TYPE_INT);
         $comments_per_page = $this->getConfig()->getOption('comments_per_page');
 
+        $where = array();
+        if ( ( $contact_id = waRequest::request('contact_id', 0, 'int'))) {
+            $where['contact_id'] = waRequest::request('contact_id', 0, 'int');
+        }
+
         $comment_model = new hubCommentModel();
         $comments = $comment_model->getList('*,is_updated,contact,vote,topic,parent,can_delete,my_vote', array(
             'offset' => $offset,
             'limit' => $comments_per_page,
-            'order' => 'datetime DESC'
+            'order' => 'datetime DESC',
+            'where' => $where,
         ), $total_count);
 
         // Mark comments as read in session

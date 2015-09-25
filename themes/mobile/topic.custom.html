@@ -42,7 +42,7 @@
                 <a href="{$topic.author.url}">
                     <img src="{$topic.author.photo_url_20}" class="userpic" alt="">
                 </a>
-                <a href="{$topic.author.url}" class="username" itemprop="author">{$topic.author.name}</a>
+                <a href="{$topic.author.url}" class="username" itemprop="author">{$topic.author.name|escape}</a>
             {/if}
         </div>
 
@@ -105,7 +105,7 @@
 
                 {if $comment.depth > $depth}
                     <ul>
-                        <li data-id={$comment.id} data-parent-id="{$comment.parent_id}">
+                        <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}">
                         {$depth=$comment.depth}
                 {/if}
 

@@ -137,10 +137,13 @@
             }
         },
 
-        reload: function() {
+        reload: function(callback) {
+            var current_hub_id = $('.h-hub:not(.folded)').data('hub-id');
             $.post('?sidebar=1', function(r) {
                 $.sidebar.sidebar.html(r);
                 $.sidebar.init();
+                current_hub_id && $.sidebar.setHub(current_hub_id);
+                callback && callback();
             });
         }
 

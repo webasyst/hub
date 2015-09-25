@@ -19,13 +19,14 @@ class hubFrontendAuthorRepliesAction extends hubFrontendAction
         $offset = ($page - 1) * $limit;
 
         $comment_model = new hubCommentModel();
-        $comments = $comment_model->getList('*,author,vote,my_vote', array(
+        $comments = $comment_model->getList('*,author,vote,my_vote,topic', array(
             'offset' => $offset,
             'limit' => $limit,
             'order' => 'id DESC',
             'where' => array(
                 'contact_id' => $id,
-                'status' => hubCommentModel::STATUS_PUBLISHED
+                'status' => hubCommentModel::STATUS_PUBLISHED,
+                'hub_id' => waRequest::param('hub_id'),
             )
         ), $count);
 

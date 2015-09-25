@@ -71,9 +71,12 @@
                 minHeight: 150,
                 paragraphy: false,
                 convertDivs: false,
+                lang: this.options.lang,
                 imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
-                buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
-                    'image', 'table', 'link', '|'],
+                plugins: ['codeblock', 'blockquote'],
+                buttons: ['bold', 'italic', 'underline', 'deleted', '|', 'unorderedlist', 'orderedlist',
+                    'image', 'table', 'link', '|', 'codeblock', 'blockquote', '|'],
+                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br'.split('|'),
                 keydownCallback: function (e) {
                     if (e.keyCode == 13 && e.ctrlKey) {
                         //return addComment(); // Ctrl+Enter disabled

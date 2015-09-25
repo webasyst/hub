@@ -28,7 +28,7 @@
 .kudos.negative i.icon16 { background-position: -19px -67px; }
 .kudos.small i.icon16 { margin-top: 0.3em; }
 
-.userbox { padding: 20px; margin-bottom: 0; text-align: center; }
+.userbox { padding: 20px; margin-bottom: 0; text-align: center; margin-bottom: 20px; }
 .userbox ul { list-style: none; padding-left: 0; margin-bottom: 0; margin-top: 0; }
 .userbox ul li { margin: 12px 0; }
 .userbox ul li a { text-decoration: none; }
@@ -378,6 +378,8 @@ ul.author-nav li.selected a { background: #eed; }
 
 @media screen and (max-width: 760px) {
 
+    .sidebar { padding: 0 15px !important; }
+    
     .comment-form-fields label { width: auto; float: none; }
     .comment-form-fields input { width: 80%; }
     .comment-form textarea { width: 90%; }
@@ -386,6 +388,10 @@ ul.author-nav li.selected a { background: #eed; }
     .comment-form .comment-redactor { margin-left: 0; }
     
     .hub-aside-nav { display: none; }
+    
+    ul.category-list li .category-description { margin-right: 0; }
+    ul.topics li .summary { max-width: 100%; margin-bottom: 0; }
+    ul.topics li .replies { margin-bottom: 20px; float: none; font-weight: bold; }
 
 }
 

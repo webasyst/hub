@@ -27,6 +27,21 @@
                 </select>
             </div>
 
+            {if $topic.id && $topic.status > 0}
+                <div class="block">
+                    <h6>[`Published`]</h6>
+                    <div class="non-editable-view">
+                        <div>{$topic.create_datetime|wa_date:humandatetime}</div>
+                        <a href="javascript:void(0)" id="edit-datetime-link" class="inline-link small no-wrap"><i class="icon10 edit"></i><b><i>[`Edit`]</i></b></a>
+                    </div>
+                    <div class="hidden editable-view">
+                        <input type="text" class="short date" value="{$topic.create_datetime|wa_date:date|escape}" disabled>
+                        <input type="text" class="short time" name="topic[create_time]" value="{$topic.create_datetime|wa_date:time|escape}" disabled>
+                        <input type="hidden" name="topic[create_date]" value="{strtotime($topic.create_datetime)}" disabled>
+                    </div>
+                </div>
+            {/if}
+
             <!-- meta -->
             <div id="meta-editor" class="block">
                 <h6>[`Meta`]</h6>
@@ -37,6 +52,7 @@
                 <input type="hidden" name="topic[meta_title]" value="{$topic.meta_title|escape}">
                 <input type="hidden" name="topic[meta_keywords]" value="{$topic.meta_keywords|escape}">
                 <input type="hidden" name="topic[meta_description]" value="{$topic.meta_description|escape}">
+                <input type="hidden" name="params_string" value="{$params_string|escape}">
             </div>
 
             {if $topic.id}
@@ -51,11 +67,9 @@
     <div class="content right200px">
         <div class="h-stream h-{$hubs[$hub_id].hub_color}">
             <div class="h-header">
-
-                {if $topic.id}<a href="#/topic/{$topic.id}/" class="back" style="top: 0;">&larr; [`Back`]</a>{/if}
-
                 <!-- hub -->
                 <ul class="menu-h dropdown h-topic-hub">
+                    <li>{if $topic.id}<a href="#/topic/{$topic.id}/" class="back" style="top: 0;">&larr; [`Back`]</a>{/if}</li>
                     <li>[`Hub`]:</li>
                     <li class="h-topic-hub-dropdown">
                         <a id="topic-hub" class="inline-link" href="javascript:void(0)">
@@ -161,17 +175,6 @@
                     <!-- / THIS PART CAN BE CUSTOMIZED/REPLACED BY TOPIC TYPE PLUGINS -->
 
                 </div>
-
-{* !!! *}
-<style>
-#topic-form .editing .hide-when-editing,
-#topic-form .selecting-subscribers .hide-when-selecting-subscribers
-    { display: none; }
-.users-to-notify .h-notify-user { margin: 10px 0; }
-.users-to-notify .h-notify-user .close { cursor: pointer; margin-left: 1em; }
-#subscribers-form-wrapper input { width: 300px; }
-</style>
-
 
                 <div class="block double-padded" id="h-topic-button-bar"><div class="editing">
 
@@ -298,6 +301,10 @@
                 <div class="name">[`Meta keywords`]</div>
                 <div class="value"><textarea name="keywords"></textarea></div>
             </div>
+            <div class="field top-padded">
+                <div class="name">[`Custom parameters`]</div>
+                <div class="value"><textarea name="params"></textarea></div>
+            </div>
         </div>
     </div>
     <div class="dialog-buttons">
@@ -325,6 +332,16 @@ var wa_app = 'hub';
           cache: true
     }).done(function() {
 
+        {if empty($topic.id)}
+            var initial_topic_categories = [];
+            var m = $.hub.topics.last_hash.match(/^#\/category\/(\d+)/);
+            if (m) {
+                initial_topic_categories = [m[1]];
+            }
+        {else}
+            var initial_topic_categories = {json_encode(array_keys($topic.categories))};
+        {/if}
+
         var hub_id = "{ifempty($topic.hub_id, 0)|escape:js}";
         {if empty($topic.id)}
             hub_id = $('#wa-app > .sidebar .h-hub:not(.folded):first').data('hubId') || hub_id;
@@ -340,7 +357,7 @@ var wa_app = 'hub';
             hub_type_ids: {json_encode($hub_type_ids)},
 
             categories: {json_encode($categories)},
-            initial_topic_categories: {json_encode(array_keys($topic.categories))}
+            initial_topic_categories: initial_topic_categories
         });
 
         // Confirmation before leaving this page

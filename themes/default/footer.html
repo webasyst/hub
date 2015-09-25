@@ -1,8 +1,7 @@
+{* HINT: for the rest of footer links, please see index.html <!-- FOOTER --> section *}
+
 <!-- plugin hook: 'frontend_footer' -->
 {* @event frontend_footer.%plugin_id% *}
 {foreach $frontend_footer as $_}{$_}{/foreach}
 
-<div class="poweredby" role="complementary">
-    <span class="dots" title="Webasyst"></span>
-    [`<a href="http://www.webasyst.com/store/app/hub/">Feedback software</a> by Webasyst`]
-</div>
+{include file="`$wa_parent_theme_path`/footer.html" inline}

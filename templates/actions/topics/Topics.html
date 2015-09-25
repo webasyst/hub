@@ -6,13 +6,26 @@
             <li>
                 <a href="#"><i class="icon16 hamburger"></i></a>
             </li>
-            {if !empty($category.id)||!empty($hub.id)}
-                <li style="display: none;">
-                    <a href="#" class="js-bulk-action" data-action="move" data-category="{if !empty($category.id)}{$category.id}{/if}" data-hub="{if !empty($hub.id)}{$hub.id}{elseif !empty($category.hub_id)}{$category.hub_id}{/if}"><i class="icon16 move"></i>[`Move`]<span class="indicator js-count">0</span></a>
-                </li>
-            {/if}
+            <li style="display: none;">
+                <a href="#" class="js-bulk-action" data-action="move" data-category="{if !empty($category.id)}{$category.id}{/if}" data-hub="{if !empty($hub.id)}{$hub.id}{elseif !empty($category.hub_id)}{$category.hub_id}{/if}"><i class="icon16 move"></i>[`Move`]<span class="indicator js-count">0</span></a>
+            </li>
             <li style="display: none;">
                 <a href="#" class="js-bulk-action" data-action="delete" data-confirm="[`Selected topics will be permanently deleted. Are you sure?`]"><i class="icon16 delete"></i>[`Delete`]<span class="indicator js-count">0</span></a>
+            </li>
+            <li style="display: none;">
+                <ul class="menu-h dropdown">
+                    <li>
+                        <a href="javascript:void(0)">
+                            [`Priority`]
+                            <span class="indicator js-count">0</span>
+                        </a>
+                        <ul class="menu-v with-icons">
+                            <li><a href="#" class="js-bulk-action" data-action="priority" data-priority="1"><i class="icon16 exclamation-red"></i>[`High`]</a></li>
+                            <li><a href="#" class="js-bulk-action" data-action="priority" data-priority="0"><i class="icon16 status-gray-tiny"></i>[`Normal`]</a></li>
+                            <li><a href="#" class="js-bulk-action" data-action="priority" data-priority="-1"><i class="icon16 status-blue-tiny"></i>[`Low`]</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </li>
             <li style="display: none;">
                 <a href="#" class="gray inline-link"><b><i>[`Cancel`]</i></b></a>
@@ -142,16 +155,15 @@
             <ul class="h-topics">
             {foreach $topics as $t}
 
-                <li data-id="{$t.id}" data-type-id="{$t.type_id}" class="h-topic{if empty($hubs[$t.hub_id].status)} h-private{/if} {if !empty($t.follow)}h-followed{else}h-not-followed{/if} {if $t.hub_color != 'white'}h-color-marker h-{$t.hub_color}{/if}">
-                    {$_r = $t.votes_up - $t.votes_down}
+                {$_r = $t.votes_up - $t.votes_down}
+                {if !empty($types[$t.type_id])}
+                    {$_topic_type = array_merge($types[$t.type_id], ['exists' => 1])}
+                {else}
+                    {* corrupted/missing topic type? fallback to 'custom' *}
+                    {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom', 'name'=> _w('Unknown topic type'), 'exists' => 0]}
+                {/if}
 
-                    {if !empty($types[$t.type_id])}
-                        {$_topic_type = $types[$t.type_id]}
-                    {else}
-                        {* corrupted/missing topic type? fallback to 'custom' *}
-                        {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom','name'=> _w('Unknown topic type')]}
-                    {/if}
-
+                <li data-id="{$t.id}" data-type-id="{$t.type_id}" class="h-topic{if empty($hubs[$t.hub_id].status)} h-private{/if} {if !empty($t.follow)}h-followed{else}h-not-followed{/if}{if $t.hub_color != 'white'} h-color-marker h-{$t.hub_color}{/if}{if !$_topic_type.exists} unknown-topic-type{/if}">
                     {* sort handle *}
                     {if $order == 'manual' && !empty($hub_full_access)}
                         <div class="h-sort-handle hide-when-filtered">
@@ -305,6 +317,7 @@
               cache: true
         }).done(function() {
             $.comments.init({
+                lang: {json_encode(substr($wa->locale(), 0, 2))},
                 statuses: {
                     deleted: '{hubCommentModel::STATUS_DELETED}',
                     published: '{hubCommentModel::STATUS_PUBLISHED}'

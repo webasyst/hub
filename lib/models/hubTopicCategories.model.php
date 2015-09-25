@@ -98,9 +98,14 @@ class hubTopicCategoriesModel extends waModel
         if (!$category_ids) {
             return array();
         }
-        $sql = 'SELECT tc.category_id, tc.topic_id FROM '.$this->table.' tc JOIN hub_topic t ON tc.topic_id = t.id
-                WHERE t.status = 1 AND t.priority = 1 AND tc.category_id IN (i:ids)
-                ORDER BY t.id DESC';
+        $sql = 'SELECT tc.category_id, tc.topic_id
+                    FROM '.$this->table.' tc
+                        JOIN hub_topic t
+                            ON tc.topic_id = t.id
+                WHERE t.status = 1
+                    AND t.priority = 1
+                    AND tc.category_id IN (i:ids)
+                ORDER BY tc.sort DESC, t.id DESC';
         $result = array();
         $q = $this->query($sql, array('ids' => $category_ids));
         foreach ($q as $row) {

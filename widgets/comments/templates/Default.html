@@ -1,0 +1,76 @@
+<style>
+    {include file="../css/comments.css" inline}
+</style>
+
+<div class="block h-comments-widget">
+
+    {if empty($comments)}
+
+        <h5 class="align-center hint h-no-comments">[`There are no replies in your hub yet.`]</h5>
+
+    {else}
+
+        <h6 class="heading">[`Latest replies`]</h6>
+
+
+        {foreach $comments as $comment}
+            {$_author_uri = "javascript:void(0);"}
+            {if !empty($comment.site)}
+                {$_author_uri = $comment.site|escape}
+            {/if}
+
+            {* UserPic *}
+            {$_author_image = "{$wa_url}wa-content/img/userpic50.jpg"}
+            {if !empty($comment.author.photo_url_50)}
+                {$_author_image = $comment.author.photo_url_50}
+            {/if}
+
+            <div class="h-comment {if $comment.status == hubCommentModel::STATUS_DELETED}h-deleted{/if}">
+
+                <header class="h-header">
+                    <div class="left-column">
+                        <a class="h-author-image" href="{$_author_uri}"><img class="userpic" src="{$_author_image}" alt=""></a>
+                    </div>
+                    <div class="main-column">
+                        {* Name *}
+                        {if $comment.author}
+                            <span class="h-author-name bold">
+                                <a href="{$_author_uri}">{$comment.author.name|escape}</a>
+                            </span>
+                        {/if}
+                        {* Date *}
+                        {*{if !empty($comment['is_updated'])}highlighted{/if}*}
+                        <span class="h-comment-date hint">{$comment.datetime|wa_datetime:"humandatetime"}, {$comment.ip}</span>
+                    </div>
+                </header>
+
+                <div class="h-comment-text">
+                    {if $comment.status == hubCommentModel::STATUS_DELETED}
+                        <em class="gray strike">[`comment deleted`]</em>
+                    {else}
+                        {$comment.text}
+                    {/if}
+                </div>
+
+                {if !empty($comment.parent)}
+                    <p class="h-comment-subtext hint">[`in reply to`] {strip_tags($comment.parent.text)|truncate:100}</p>
+                {/if}
+
+                {if !empty($comment.topic)}
+                    <p class="h-comment-subtext hint">
+                        [`on topic`] <a href="{$wa_backend_url}hub/#/topic/{$comment.topic.id}/">{$comment.topic.title|default:"[`(no name)`]"|escape}</a>
+                    </p>
+                {/if}
+            </div>
+        {/foreach}
+
+        <div class="h-link-to-all-posts">
+            <div class="block">
+                <a href="{$wa_backend_url}hub/#/comments/">
+                    [`View all comments`]
+                </a>
+            </div>
+        </div>
+
+    {/if}
+</div>

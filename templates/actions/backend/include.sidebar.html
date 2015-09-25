@@ -138,11 +138,15 @@
 
 <div class="block">
     <ul class="menu-v with-icons">
-        {if $wa->userRights('hub', 'pages')}
+        {if $wa->userRights('pages')}
             <li><a href="#/pages/"><i class="icon16 notebook"></i>[`Pages`]</a></li>
         {/if}
-        {if $wa->userRights('hub', 'design')}
+        {if $wa->userRights('design')}
             <li><a href="#/design/"><i class="icon16 design"></i>[`Design`]</a></li>
+        {/if}
+
+        {if $wa->userRights('plugins')}
+            <li><a href="#/plugins/"><i class="icon16 plugins"></i>[s`Plugins`]</a></li>
         {/if}
 
         <li class="top-padded"><a href="#/settings/"><i class="icon16 settings"></i>[`Settings`]</a></li>

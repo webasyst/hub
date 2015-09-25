@@ -99,7 +99,7 @@ h1 .h-badge { position: relative; top: -3px; }
 .h-header ul.menu-h.h-sort ul.menu-v li.h-filter-by-type { border-top: 1px solid #ccc; }
 .h-header ul.menu-h.h-sort ul.menu-v li.h-filter-by-type label { display: block; padding: 3px 0; margin-left: -3px; }
 .h-header ul.menu-h.h-sort ul.menu-v li.h-filter-by-type:hover { background: transparent; }
-
+.h-header ul.menu-h.h-sort .menu-h.dropdown ul.menu-v li { padding-left: 24px; }
 
 .h-header .h-stream-title h1 { font-size: 1.7em; margin-top: -2px; }
 .h-header .h-stream-title .list-title { display: inline-block; }
@@ -235,6 +235,13 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 #topic-form { overflow: visible; }
 #topic-form.published .hide-when-published,
 #topic-form.draft     .hide-when-draft      { display: none; }
+
+#topic-form .editing .hide-when-editing,
+#topic-form .selecting-subscribers .hide-when-selecting-subscribers
+    { display: none; }
+.users-to-notify .h-notify-user { margin: 10px 0; }
+.users-to-notify .h-notify-user .close { cursor: pointer; margin-left: 1em; }
+#subscribers-form-wrapper input { width: 300px; }
 
 /* Fix for editor toolbar to be below wa-dialogs. */
 #wa-app .redactor-toolbar { z-index: 1 !important; }

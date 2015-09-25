@@ -251,19 +251,7 @@ class hubAuthorModel extends waModel
         // Data from wa_contact
         $contact_fields = 'id,name,firstname,middlename,lastname,photo,email,photo_url_50,photo_url_32,photo_url_20';
         $empty_contact = array_fill_keys(explode(',', $contact_fields), '');
-        $collection = new waContactsCollection('id/'.implode(',', array_keys($result)), array('photo_url_2x' => true));
-        $contacts = $collection->getContacts($contact_fields, 0, count($result));
-        foreach($contacts as &$c) {
-            if ($c['email']) {
-                $c['photo_url_20'] = hubHelper::getGravatarUrl($c['email'][0], 20, $c['photo_url_20']);
-                $c['photo_url_32'] = hubHelper::getGravatarUrl($c['email'][0], 32, $c['photo_url_32']);
-                $c['photo_url_50'] = hubHelper::getGravatarUrl($c['email'][0], 50, $c['photo_url_50']);
-            }
-            if ($c['firstname'] || $c['middlename'] || $c['lastname']) {
-                $c['name'] = waContactNameField::formatName($c);
-            }
-        }
-        unset($c);
+        $contacts = hubHelper::getAuthor(array_keys($result));
 
         // Data from hub_staff
         if (!empty($options['hub_id']) && !empty($fields['badge'])) {

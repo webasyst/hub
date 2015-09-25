@@ -96,7 +96,7 @@ class hubTopicsInfoAction extends waViewAction
             'allow_commenting'   => !$topic['type'] || empty($topic['type']['settings']) || !empty($topic['type']['settings']['commenting']),
             'topic_public_url'   => $topic_public_url,
             'possible_badges'    => $possible_badges,
-            'comments_count'     => $comment_model->count($topic['id']),
+            'comments_count'     => $topic['comments_count'],
             'current_author'     => hubHelper::getAuthor($this->getUserId()),
             'notifications_sent' => waRequest::request('notifications_sent'),
             'can_edit_delete'    => ($topic['contact_id'] == wa()->getUser()->getId() && $access_level >= hubRightConfig::RIGHT_READ_WRITE)

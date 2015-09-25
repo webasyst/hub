@@ -1410,10 +1410,6 @@ msgstr "Homepage META description"
 msgid "Url is in use"
 msgstr "URL is in use"
 
-#: /wa-apps/hub/lib/models/hubComment.model.php:541
-msgid "Comment length should not exceed 4096 symbols"
-msgstr "Comment length should not exceed 4096 characters."
-
 #: /wa-apps/hub/lib/updates/dev/1411473875.php:8
 msgid "Article"
 msgstr ""
@@ -1974,4 +1970,50 @@ msgstr ""
 
 #: /wa-apps/hub/themes/default/main.html:118
 msgid "Please complete the initial <a href=\"%s\">setup</a> in app backend."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:285
+msgid "Move all %d topics to"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/Topics.html:264
+msgid "(%s hidden)"
+msgid_plural "<span></span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /wa-apps/hub/themes/default/author.html:9
+#: /wa-apps/hub/themes/default/authors.html:8
+msgid "%username%"
+msgstr ""
+
+#: /wa-apps/hub/themes/default/topic.forum.html:95
+msgid "Add reply"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/backend/Backend.html:72
+#: /wa-apps/hub/themes/default/head.html:13
+msgid "Insert code block"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/backend/Backend.html:73
+#: /wa-apps/hub/themes/default/head.html:14
+msgid "Insert quote"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/backend/Backend.html:74
+#: /wa-apps/hub/themes/default/head.html:15
+msgid "Insert"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:158
+msgid "This option is not available because this hub does not have any tags yet."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:32
+msgid "Published"
+msgstr ""
+
+#: /wa-apps/hub/lib/classes/hubHelper.class.php:59
+msgid "Classic forum thread with plain comment list sorted chronologically."
 msgstr ""

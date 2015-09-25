@@ -43,6 +43,7 @@ class hubSitemapConfig extends waSitemapConfig
                 $sql = "SELECT t.id, t.url, t.votes_count, t.votes_sum, t.comments_count, t.update_datetime
                         FROM hub_topic AS t
                         WHERE t.hub_id=?
+                            AND t.status>0
                         GROUP BY t.id";
                 foreach ($hm->query($sql, $hub_id) as $t) {
                     $url = str_replace(array('%ID%', '%URL%'), array($t['id'], $t['url']), $route['_url_template_topic']);

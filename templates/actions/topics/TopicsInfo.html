@@ -44,13 +44,14 @@
     {/if}
 
     <article class="h-topic">
-        
+
         <div class="profile image50px">
-            <div class="image">
-                {hubHelper::getGlyph( $types[$topic.type_id].glyph, 48, false, [ title=>$types[$topic.type_id].name,contact=>ifempty($topic.contact,[]) ] )}
-            </div>
+            <div class="image">{strip}
+                {$topic_type = ifempty($types[$topic.type_id], [ 'glyph' => 'unknown', 'name' => '' ])}
+                {hubHelper::getGlyph($topic_type.glyph, 48, false, [ title=>$topic_type.name,contact=>ifempty($topic.contact,[]) ] )}
+            {/strip}</div>
             <div class="details">
-        
+
                 {if $can_edit_delete}
                     <div class="float-right block half-padded">
                         <ul class="menu-h">
@@ -59,10 +60,10 @@
                         </ul>
                     </div>
                 {/if}
-        
+
                 <h1>
                     {if !empty($topic.title)}{$topic.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
-        
+
                     {if $possible_badges}
                         {if $can_edit_delete}
                             {* Drop-down badge selector *}
@@ -88,19 +89,19 @@
                             </div>
                         {/if}
                     {/if}
-        
+
                 </h1>
-        
+
                 <p class="h-topic-author">
-        
+
                     {if !empty($topic.contact)}
                         <a href="{$wa_backend_url}contacts/#/contact/{$topic.contact.id}" class="h-author-name">{* <i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($topic.contact.id, $topic.contact.photo, 20)});"></i> *}{$topic.contact.name|escape}</a>
                     {/if}
-        
+
                     <span class="gray">
                         {$topic.create_datetime|wa_datetime:"humandatetime"}
                     </span>
-        
+
                     {if !$hub.status}
                         <i class="icon16 lock-bw" title="[`Private hub topic`]"></i>
                     {else}
@@ -108,11 +109,11 @@
                             <a href="{$topic_public_url}" target="_blank">{$topic_public_url}</a> <i class="icon10 new-window"></i>
                         {/if}
                     {/if}
-        
+
                 </p>
-        
-        
-        
+
+
+
             </div>
         </div>
 
@@ -140,16 +141,16 @@
             {if $allow_commenting}
                 <!-- follow -->
                 <a href="#" data-topic="{$topic.id}" title="[`Follow`]" class="h-follow bold{if !empty($follow)} highlighted{/if}"><i class="icon16 star{if empty($follow)}-empty{/if}"></i><span class="following-status">{if !empty($follow)}[`Following`]{else}[`Not following`]{/if}</span></a>
-    
-    
+
+
                 <span class="followers-count hint">{_w("%d follower", "%d followers", count($followers))}</span>
                 {function follower_html f=null}
                     <a href="{$wa_backend_url}contacts/#/contact/{$f.id}" title="{$f.name|escape}"{if $f.id == $wa->user('id')} class="follower-me"{/if}><i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($f.id, $f.photo, 20)});"></i></a>
                 {/function}
-    
+
                 {* Own follower icon *}
                 <span class="{if empty($follow)}hidden {/if}own-follower-icon">{follower_html f=$wa->user()}</span>
-    
+
                 {* All other icons *}
                 {foreach $followers as $f}
                     {if $f.id != $wa->user('id')}
@@ -182,7 +183,7 @@
             </div>
 
         {else}
-        
+
             {* hierarchical comment tree *}
 
             <div class="h-comments top-padded" id="h-comments">
@@ -226,12 +227,12 @@
                         </ul>
                     {/section}
                     <!-- comments end -->
-                    
+
                 {else if $allow_commenting}
-                
+
                     <h4 class="comments-header">[`No comments yet`]</h4>
                     <ul style="display:none"></ul>
-                
+
                 {/if}
 
                 {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
@@ -271,6 +272,7 @@
           cache: true
     }).done(function() {
         $.comments.init({
+            lang: {json_encode(substr($wa->locale(), 0, 2))},
             statuses: {
                 deleted: '{hubCommentModel::STATUS_DELETED}',
                 published: '{hubCommentModel::STATUS_PUBLISHED}'

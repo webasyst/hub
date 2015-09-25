@@ -33,15 +33,16 @@ class hubTagModel extends waModel
 
     public function getCloud($hub_id, $limit = 100)
     {
-        $sql = "SELECT id, name, COUNT(*) as count FROM ".$this->table." t
-        JOIN hub_topic_tags tt ON t.id = tt.tag_id
-        WHERE t.hub_id = i:0
-        GROUP BY t.id
-        ORDER BY count DESC";
+        $sql = "SELECT id, name, COUNT(*) as count
+                FROM ".$this->table." t
+                    JOIN hub_topic_tags tt ON t.id = tt.tag_id
+                WHERE t.hub_id = i:0
+                GROUP BY t.id
+                ORDER BY count DESC";
         if ($limit) {
             $sql .= ' LIMIT '.(int)$limit;
         }
-        $tags = $this->query($sql, $hub_id)->fetchAll();
+        $tags = $this->query($sql, (int)$hub_id)->fetchAll();
         if (!empty($tags)) {
             $first = current($tags);
             $max_count = $min_count = $first['count'];
@@ -77,7 +78,7 @@ class hubTagModel extends waModel
             $hub_id = array_map('intval', (array)$hub_id);
             $ext_cond = "IN(".implode(',', $hub_id).")";
         }
-        $select = "`{$this->table}` t 
+        $select = "`{$this->table}` t
             LEFT JOIN (
                 SELECT tag_id, count(tag_id) cnt FROM `hub_topic_tags` GROUP BY tag_id
             ) tt

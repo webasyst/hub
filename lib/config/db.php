@@ -187,6 +187,15 @@ return array(
             'PRIMARY' => array('topic_id', 'category_id'),
         ),
     ),
+    'hub_topic_params' => array(
+        'topic_id' => array('int', 11, 'null' => 0),
+        'name' => array('varchar', 64, 'null' => 0),
+        'value' => array('varchar', 255, 'null' => 0),
+        ':keys' => array(
+            'PRIMARY' => array('topic_id', 'name'),
+            'name' => 'name',
+        ),
+    ),
     'hub_topic_tags' => array(
         'topic_id' => array('int', 11, 'null' => 0),
         'tag_id' => array('int', 11, 'null' => 0),

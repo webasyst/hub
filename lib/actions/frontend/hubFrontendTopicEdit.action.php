@@ -28,9 +28,21 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
             throw new waException(_w('Topic not found'), 404);
         }
 
+        // Topic params
+        $topic_params_model = new hubTopicParamsModel();
+        $this->topic['params'] = $topic_params_model->getByTopic($this->topic_id);
+
+        // Topic tags
+        $topic_tags_model = new hubTopicTagsModel();
+        $rows = $topic_tags_model->getTags($this->topic_id);
+        $this->topic['tags'] = array();
+        foreach ($rows as $row) {
+            $this->topic['tags'][$row['id']] = $row['name'];
+        }
+
         // Process POST
         $errors = array();
-        if (($data = waRequest::post('data'))) {
+        if ( ( $data = waRequest::post('data'))) {
             $result = $this->save($data, $errors);
             if ($result && is_array($result)) {
                 $this->redirect(wa()->getRouteUrl('hub/frontend/topic', $result));
@@ -39,12 +51,6 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
             }
             $data['id'] = $this->topic_id;
         } else {
-            $topic_tags_model = new hubTopicTagsModel();
-            $rows = $topic_tags_model->getTags($this->topic_id);
-            $this->topic['tags'] = array();
-            foreach ($rows as $row) {
-                $this->topic['tags'][$row['id']] = $row['name'];
-            }
             $data = $this->topic;
         }
 
@@ -69,6 +75,22 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
         if (!is_array($data['tags'])) {
             $data['tags'] = array_filter(array_map('trim', explode(',', $data['tags'])));
         }
+        if (!isset($data['params']) || !is_array($data['params'])) {
+            // Do not change params unless actual data came
+            $data['params'] = null;
+        } else {
+            // Params starting with underscore can not be modified via frontend editor
+            foreach($data['params'] as $k => $v) {
+                if (!$k || $k{0} == '_' || strpos($k, '=') !== false) {
+                    unset($data['params'][$k]);
+                }
+            }
+            foreach($this->topic['params'] as $k => $v) {
+                if ($k && $k{0} == '_') {
+                    $data['params'][$k] = $v;
+                }
+            }
+        }
         $data['title'] = (string) $data['title'];
         if (!strlen($data['title'])) {
             $errors['title'] = true;
@@ -84,6 +106,7 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
             $tm = new hubTopicModel();
             $tm->update($this->topic_id, array(
                 'content' => ifset($sanitized_content),
+                'params' => $data['params'],
                 'title' => $data['title'],
                 'tags' => $data['tags'],
             ));

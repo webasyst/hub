@@ -43,7 +43,7 @@
         <div class="comments">
             <ul class="lazyloading-list">
                 {foreach $comments as $comment}
-                    <li>{include file="comment.html" inline}</li>
+                    <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}">{include file="comment.html" inline}</li>
                 {/foreach}
             </ul>
         </div>

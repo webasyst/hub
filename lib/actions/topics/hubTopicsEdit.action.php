@@ -19,7 +19,19 @@ class hubTopicsEditAction extends waViewAction
             $topic['tags'] = $this->getTags($topic);
             $topic['categories'] = $this->getCategories($id);
             $hub_id = $topic['hub_id'];
+
+            $topic_params_model = new hubTopicParamsModel();
+            $params = $topic_params_model->getByTopic($id);
+            $params_string = array();
+            foreach($params as $k => $v) {
+                if ($k && $k{0} != '_' && strpos($k, '=') === false) {
+                    $params_string[] = "{$k}={$v}";
+                }
+            }
+            $params_string = join("\n", $params_string);
+
         } else {
+
             $hub_id = waRequest::get('hub_id');
             if (!$hub_id && $hubs) {
                 $hub_id = key($hubs);
@@ -35,6 +47,8 @@ class hubTopicsEditAction extends waViewAction
                     'categories' => array(),
                     'status'     => 0
                 ) + $topic_model->getEmptyRow();
+
+            $params_string = '';
         }
 
         // Check access rights
@@ -82,8 +96,12 @@ class hubTopicsEditAction extends waViewAction
         $access_level = wa()->getUser()->getRights('hub', 'hub.'.$hub_id);
         $can_change_author = $access_level >= hubRightConfig::RIGHT_FULL && !empty($users[$topic['contact_id']]);
         if (!$can_change_author) {
-            $c = new waContact($topic['contact_id']);
-            $users = array($topic['contact_id'] => $c->getName());
+            try {
+                $c = new waContact($topic['contact_id']);
+                $users = array($topic['contact_id'] => $c->getName());
+            } catch(waException $e) {
+                $users = array($topic['contact_id'] => 'contact_id '.$topic['contact_id']);
+            }
         }
 
         $this->view->assign(
@@ -98,6 +116,7 @@ class hubTopicsEditAction extends waViewAction
                 'users'             => $users,
                 'user_id'           => wa()->getUser()->getId(),
                 'can_change_author' => $can_change_author,
+                'params_string'     => $params_string,
             )
         );
     }

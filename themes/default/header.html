@@ -9,7 +9,10 @@
 <!-- info pages -->
 <ul class="pages">
     <li><a href="{$wa_app_url}">[`All topics`]</a></li>
-    {foreach $wa->hub->pages() as $page}
-        <li{if strlen($page.url)>1 && $wa->currentUrl()|strstr:$page.url} class="selected"{/if}><a href="{$page.url}">{$page.name}</a></li>
-    {/foreach}
+    {if $theme_settings.header_links != 'hub-pages'}
+        {* display static page list in case it was not yet displayed in the core index.html layout template *}
+        {foreach $wa->hub->pages() as $page}
+            <li{if strlen($page.url)>1 && $wa->currentUrl()|strstr:$page.url} class="selected"{/if}><a href="{$page.url}">{$page.name}</a></li>
+        {/foreach}
+    {/if}
 </ul>

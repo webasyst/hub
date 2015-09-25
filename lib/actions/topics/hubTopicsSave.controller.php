@@ -49,8 +49,21 @@ class hubTopicsSaveController extends waJsonController
             }
 
             $this->response['add'] = 1;
-
         }
+
+        $params = array();
+        $params_string = waRequest::request('params_string', '', 'string_trim');
+        if ($params_string) {
+            foreach(explode("\n", $params_string) as $pair) {
+                @list($k, $v) = explode('=', $pair, 2);
+                $v = trim(ifempty($v, ''));
+                if ($k && $v) {
+                    $params[$k] = $v;
+                }
+            }
+        }
+        $topic_params_model = new hubTopicParamsModel();
+        $topic_params_model->assign($id, $params);
 
         $topic = $topic_model->getById($id);
 
@@ -109,7 +122,32 @@ class hubTopicsSaveController extends waJsonController
             $data['categories'] = $this->toArray($data['categories']);
         }
         $data['status'] = waRequest::post('draft') ? 0 : 1;
+
+        $ts = time();
+        if (!empty($data['create_date']) && (int)$data['create_date']) {
+            $ts = round($data['create_date'] / 1000);
+            if (!empty($data['create_time'])) {
+                @list($h, $m) = explode(':', $data['create_time'], 2);
+                $ts += (int)$h * 3600 + (int)$m * 60;
+            }
+            $ts = self::convertToServerTime($ts);
+        }
+        $data['create_datetime'] = date('Y-m-d H:i:s', $ts);
+        unset($data['create_date'], $data['create_time']);
+
         return $data;
+    }
+
+    public static function convertToServerTime($timestamp)
+    {
+        $timezone = wa()->getUser()->getTimezone();
+        $default_timezone = waDateTime::getDefaultTimeZone();
+        if ($timezone && $timezone != $default_timezone) {
+            $date_time = new DateTime(date('Y-m-d H:i:s', $timestamp), new DateTimeZone($timezone));
+            $date_time->setTimezone(new DateTimeZone($default_timezone));
+            $timestamp = (int) $date_time->format('U');
+        }
+        return $timestamp;
     }
 
     public function toArray($string)
