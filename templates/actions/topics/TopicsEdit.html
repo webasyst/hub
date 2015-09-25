@@ -52,6 +52,7 @@
                 <input type="hidden" name="topic[meta_title]" value="{$topic.meta_title|escape}">
                 <input type="hidden" name="topic[meta_keywords]" value="{$topic.meta_keywords|escape}">
                 <input type="hidden" name="topic[meta_description]" value="{$topic.meta_description|escape}">
+                <input type="hidden" name="params_string" value="{$params_string|escape}">
             </div>
 
             {if $topic.id}
@@ -174,17 +175,6 @@
                     <!-- / THIS PART CAN BE CUSTOMIZED/REPLACED BY TOPIC TYPE PLUGINS -->
 
                 </div>
-
-{* !!! *}
-<style>
-#topic-form .editing .hide-when-editing,
-#topic-form .selecting-subscribers .hide-when-selecting-subscribers
-    { display: none; }
-.users-to-notify .h-notify-user { margin: 10px 0; }
-.users-to-notify .h-notify-user .close { cursor: pointer; margin-left: 1em; }
-#subscribers-form-wrapper input { width: 300px; }
-</style>
-
 
                 <div class="block double-padded" id="h-topic-button-bar"><div class="editing">
 
@@ -310,6 +300,10 @@
             <div class="field">
                 <div class="name">[`Meta keywords`]</div>
                 <div class="value"><textarea name="keywords"></textarea></div>
+            </div>
+            <div class="field top-padded">
+                <div class="name">[`Custom parameters`]</div>
+                <div class="value"><textarea name="params"></textarea></div>
             </div>
         </div>
     </div>

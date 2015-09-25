@@ -19,7 +19,19 @@ class hubTopicsEditAction extends waViewAction
             $topic['tags'] = $this->getTags($topic);
             $topic['categories'] = $this->getCategories($id);
             $hub_id = $topic['hub_id'];
+
+            $topic_params_model = new hubTopicParamsModel();
+            $params = $topic_params_model->getByTopic($id);
+            $params_string = array();
+            foreach($params as $k => $v) {
+                if ($k && $k{0} != '_' && strpos($k, '=') === false) {
+                    $params_string[] = "{$k}={$v}";
+                }
+            }
+            $params_string = join("\n", $params_string);
+
         } else {
+
             $hub_id = waRequest::get('hub_id');
             if (!$hub_id && $hubs) {
                 $hub_id = key($hubs);
@@ -35,6 +47,8 @@ class hubTopicsEditAction extends waViewAction
                     'categories' => array(),
                     'status'     => 0
                 ) + $topic_model->getEmptyRow();
+
+            $params_string = '';
         }
 
         // Check access rights
@@ -102,6 +116,7 @@ class hubTopicsEditAction extends waViewAction
                 'users'             => $users,
                 'user_id'           => wa()->getUser()->getId(),
                 'can_change_author' => $can_change_author,
+                'params_string'     => $params_string,
             )
         );
     }

@@ -38,7 +38,7 @@ class hubFrontendAction extends waViewAction
         }
         $offset = ($page - 1) * $limit;
 
-        $topics = $collection->getTopics('*,url,tags,author,is_updated,follow', $offset, $limit);
+        $topics = $collection->getTopics('*,url,tags,author,is_updated,follow,params', $offset, $limit);
         $count = $collection->count();
 
         if (!$count) {

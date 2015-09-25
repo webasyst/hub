@@ -287,12 +287,14 @@
             var input_topic = wrapper.find('input[name="topic[meta_title]"]');
             var input_keywords = wrapper.find('input[name="topic[meta_keywords]"]');
             var input_description = wrapper.find('input[name="topic[meta_description]"]');
+            var input_params = wrapper.find('input[name="params_string"]');
             var edit_link = $('#edit-meta-link');
 
             var dialog = $('#meta-dialog');
             var dialog_topic = dialog.find('input[name="title"]');
             var dialog_keywords = dialog.find('textarea[name="keywords"]');
             var dialog_description = dialog.find('textarea[name="description"]');
+            var dialog_params = dialog.find('textarea[name="params"]');
 
             inputs2sidebar();
 
@@ -303,18 +305,23 @@
             // Update sidebar according to data in hidden inputs
             function inputs2sidebar() {
                 var html = [];
-                $.each([[input_topic, dialog_topic], [input_keywords, dialog_keywords], [input_description, dialog_description]], function(i, inputs) {
-                    var input = inputs[0];
-                    if (input.val()) {
-                        // Human-readable field name is taken from dialog HTML
-                        var dialog_input = inputs[1];
-                        var clone = dialog_input.closest('.field').children('.name').clone();
-                        clone.find('.hint').remove();
-                        var fld_name = $.trim(clone.text());
-                        var value_escaped = clone.text(input.val()).html();
-                        html.push('<span class="pair"><span class="gray">'+fld_name+':</span> <span class="val">'+value_escaped+'</span></span><br>');
+                $.each([[input_topic, dialog_topic],
+                        [input_keywords, dialog_keywords],
+                        [input_description, dialog_description],
+                        [input_params, dialog_params]],
+                    function(i, inputs) {
+                        var input = inputs[0];
+                        if (input.val()) {
+                            // Human-readable field name is taken from dialog HTML
+                            var dialog_input = inputs[1];
+                            var clone = dialog_input.closest('.field').children('.name').clone();
+                            clone.find('.hint').remove();
+                            var fld_name = $.trim(clone.text());
+                            var value_escaped = clone.text(input.val()).html().replace(new RegExp("\n", 'g'), "<br>\n");
+                            html.push('<span class="pair"><span class="gray">'+fld_name+':</span> <span class="val">'+value_escaped+'</span></span><br>');
+                        }
                     }
-                });
+                );
                 if (html.length) {
                     wrapper.find('.parameters').html(html.join("\n")).show();
                     wrapper.find('.no-parameters').hide();
@@ -329,6 +336,7 @@
                 input_topic.val(dialog_topic.val()).change();
                 input_keywords.val(dialog_keywords.val()).change();
                 input_description.val(dialog_description.val()).change();
+                input_params.val(dialog_params.val()).change();
             }
 
             // Update hidden inputs according to data in dialog form
@@ -336,6 +344,7 @@
                 dialog_topic.val(input_topic.val());
                 dialog_keywords.val(input_keywords.val());
                 dialog_description.val(input_description.val());
+                dialog_params.val(input_params.val());
             }
 
             function showDialog() {
@@ -345,7 +354,7 @@
                 } else {
                     dialog = dialog.waDialog({
                         width: '630px',
-                        height: '300px',
+                        height: '400px',
                         onLoad: function () {
                             inputs2dialog();
                         },

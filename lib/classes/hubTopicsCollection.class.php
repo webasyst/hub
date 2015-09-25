@@ -434,6 +434,14 @@ class hubTopicsCollection
             }
         }
 
+        if (!empty($other_fields['params'])) {
+            $defaults['params'] = array();
+            $topic_params_model = new hubTopicParamsModel();
+            foreach($topic_params_model->getByTopic($ids) as $id => $params) {
+                $data[$id]['params'] = $params;
+            }
+        }
+
         foreach ($data as &$t) {
             $t += $defaults;
         }

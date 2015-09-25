@@ -1,0 +1,132 @@
+.h-comments-widget {
+  font-size: 14px;
+}
+.h-comments-widget:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border: 10px solid #78d3c9;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+}
+.h-comments-widget:hover .h-link-to-all-posts {
+  opacity: 1;
+}
+.h-comments-widget .h-comment {
+  margin: 1.5em 0 0;
+}
+.h-comments-widget .h-comment:first-of-type {
+  margin-top: 0.5em;
+}
+.h-comments-widget .h-comment .h-header {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.h-comments-widget .h-comment .h-header .left-column,
+.h-comments-widget .h-comment .h-header .main-column {
+  display: table-cell;
+  vertical-align: middle;
+}
+.h-comments-widget .h-comment .h-header .left-column {
+  width: 2.285714285714286em;
+  padding: 0 0.75em 0 0;
+}
+.h-comments-widget .h-comment .h-header .main-column {
+  padding: 0 0 0.1em;
+}
+.h-comments-widget .h-comment .h-header .h-author-image {
+  display: block;
+  width: 2.285714285714286em;
+  height: 2.285714285714286em;
+}
+.h-comments-widget .h-comment .h-header .h-author-image img {
+  width: 100%;
+  max-height: 100%;
+}
+.h-comments-widget .h-comment .h-header .h-author-name,
+.h-comments-widget .h-comment .h-header .h-comment-date {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.h-comments-widget .h-comment .h-header .h-author-name {
+  padding: 0.2em 0 0;
+}
+.h-comments-widget .h-comment .h-header .h-comment-date {
+  margin: 0.25em 0 0;
+}
+.h-comments-widget .h-comment .h-comment-text {
+  margin: 0.3em 0 0;
+}
+.h-comments-widget .h-comment .h-comment-text p {
+  margin: 1em 0 0;
+  padding: 0;
+}
+.h-comments-widget .h-comment .h-comment-text p:first-child {
+  margin-top: 0;
+}
+.h-comments-widget .h-comment .h-comment-subtext {
+  margin: 0.2em 0 0;
+}
+.h-comments-widget .h-no-comments {
+  margin: 35px 20px;
+  font-weight: normal;
+}
+.h-comments-widget .h-link-to-all-posts {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  opacity: 0;
+  padding: 18px 0 0;
+  background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 50%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255,255,255,0)), color-stop(50%, #fff));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 50%);
+  background: -o-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 50%);
+  background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 50%);
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 50%);
+  transition: opacity 0.5s;
+}
+.widget-2x1 .h-comments-widget .h-no-comments {
+  margin: 45px 55px;
+}
+.widget-2x2 .h-comments-widget .h-no-comments {
+  margin: 105px 35px;
+}
+.tv .h-comments-widget {
+  font-size: 1rem;
+}
+.tv .h-comments-widget .hint a {
+  color: #e2e25b;
+}
+.tv .h-comments-widget .h-comment .h-header .h-comment-date {
+  color: #aaa;
+  font-size: 0.9em;
+}
+.tv .h-comments-widget .h-comment .h-header .h-author-name a {
+  color: #eee;
+}
+.tv .h-comments-widget .h-comment .h-comment-text {
+  font-size: 1.1em;
+}
+.tv .h-comments-widget .h-comment .h-comment-subtext {
+  font-size: 0.9em;
+}
+.tv .h-comments-widget .h-link-to-all-posts {
+  background: -moz-linear-gradient(top, rgba(51,51,51,0) 0%, #333 50%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(51,51,51,0)), color-stop(50%, #333));
+  background: -webkit-linear-gradient(top, rgba(51,51,51,0) 0%, #333 50%);
+  background: -o-linear-gradient(top, rgba(51,51,51,0) 0%, #333 50%);
+  background: -ms-linear-gradient(top, rgba(51,51,51,0) 0%, #333 50%);
+  background: linear-gradient(to bottom, rgba(51,51,51,0) 0%, #333 50%);
+}
+.mobile .h-comments-widget {
+  font-size: 1rem;
+}

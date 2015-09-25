@@ -32,6 +32,9 @@ class hubFrontendTopicAction extends hubFrontendAction
             throw new waException(_w('Topic not found'), 404);
         }
 
+        $topic_params_model = new hubTopicParamsModel();
+        $topic['params'] = $topic_params_model->getByTopic($topic['id']);
+
         $topic_tags_model = new hubTopicTagsModel();
         $tags = $topic_tags_model->getTags($topic['id']);
         $tag_url = wa()->getRouteUrl('/frontend/tag', array('tag' => '%TAG%'));

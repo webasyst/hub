@@ -49,8 +49,21 @@ class hubTopicsSaveController extends waJsonController
             }
 
             $this->response['add'] = 1;
-
         }
+
+        $params = array();
+        $params_string = waRequest::request('params_string', '', 'string_trim');
+        if ($params_string) {
+            foreach(explode("\n", $params_string) as $pair) {
+                @list($k, $v) = explode('=', $pair, 2);
+                $v = trim(ifempty($v, ''));
+                if ($k && $v) {
+                    $params[$k] = $v;
+                }
+            }
+        }
+        $topic_params_model = new hubTopicParamsModel();
+        $topic_params_model->assign($id, $params);
 
         $topic = $topic_model->getById($id);
 

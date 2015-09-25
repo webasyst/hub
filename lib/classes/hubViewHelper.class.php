@@ -82,7 +82,7 @@ class hubViewHelper extends waAppViewHelper
             $priority_topics = $topic_categories_model->getPriorityTopicIds(array_keys($cats));
 
             $tc = new hubTopicsCollection('search/priority=1');
-            $topics = $tc->getTopics('*,url,author');
+            $topics = $tc->getTopics('*,url,author,params');
             foreach ($cats as &$c) {
                 $c['priority_topics'] = array();
                 if (isset($priority_topics[$c['id']])) {
@@ -125,7 +125,7 @@ class hubViewHelper extends waAppViewHelper
         $old_hub_id = waRequest::param('hub_id');
         waRequest::setParam('hub_id', (int)$hub_id);
         $c = new hubTopicsCollection($hash, array('hub_id' => (int)$hub_id));
-        $result = $c->getTopics('*,url,tags,author,is_updated,follow', $offset, $limit);
+        $result = $c->getTopics('*,url,tags,author,is_updated,follow,params', $offset, $limit);
         waRequest::setParam('hub_id', $old_hub_id);
         return $result;
     }

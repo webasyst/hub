@@ -236,6 +236,13 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 #topic-form.published .hide-when-published,
 #topic-form.draft     .hide-when-draft      { display: none; }
 
+#topic-form .editing .hide-when-editing,
+#topic-form .selecting-subscribers .hide-when-selecting-subscribers
+    { display: none; }
+.users-to-notify .h-notify-user { margin: 10px 0; }
+.users-to-notify .h-notify-user .close { cursor: pointer; margin-left: 1em; }
+#subscribers-form-wrapper input { width: 300px; }
+
 /* Fix for editor toolbar to be below wa-dialogs. */
 #wa-app .redactor-toolbar { z-index: 1 !important; }
 #wa-app .dialog .redactor-toolbar { z-index: 1050 !important; }
