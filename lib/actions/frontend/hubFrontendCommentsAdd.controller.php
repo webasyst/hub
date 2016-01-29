@@ -139,8 +139,9 @@ class hubFrontendCommentsAddController extends waJsonController
         $m = new waMailMessage();
 
         $following_model = new hubFollowingModel();
+        $userId = wa()->getUser()->getId();
         foreach ($following_model->getFollowers($comment['topic']['id'], true) as $c) {
-            if (empty($c['email'])) {
+            if (empty($c['email']) || $userId == $comment['contact_id']) {
                 continue;
             }
             $view->assign('contact', $c);
