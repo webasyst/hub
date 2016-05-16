@@ -334,7 +334,7 @@ class hubTopicModel extends waModel
         $category_model->updateCategoriesStats($id, +1);
 
         // Write to wa_log
-        class_exists('waLogModel') || wa('webasyst');
+        class_exists('waLogModel', false) || wa('webasyst');
         $log_model = new waLogModel();
         $log_model->add('topic_publish', $id);
     }
@@ -358,7 +358,7 @@ class hubTopicModel extends waModel
         $category_model->updateCategoriesStats($id, -1);
 
         // Write to wa_log
-        class_exists('waLogModel') || wa('webasyst');
+        class_exists('waLogModel', false) || wa('webasyst');
         $log_model = new waLogModel();
         $log_model->add('topic_unpublish', $id);
     }
