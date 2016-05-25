@@ -303,6 +303,9 @@ class hubTopicModel extends waModel
             $this->updateStatsWhenPublished($id, $data);
         }
 
+        $event_data = array_merge($data, array('id' => $id));
+        wa()->event('topic.create', &$event_data);
+
         return $id;
     }
 
