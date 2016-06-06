@@ -304,7 +304,7 @@ class hubTopicModel extends waModel
         }
 
         $event_data = array_merge($data, array('id' => $id));
-        wa()->event('topic.create', &$event_data);
+        wa()->event('topic.create', $event_data);
 
         return $id;
     }
