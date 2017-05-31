@@ -93,11 +93,22 @@ class hubFrontendAddAction extends hubFrontendAction
             'title'       => '',
             'content'     => '',
             'tags'        => array(),
+            'params'      => array(),
             'category_id' => null,
         );
         if (!is_array($data['tags'])) {
             $data['tags'] = array_filter(array_map('trim', explode(',', $data['tags'])));
         }
+        if (is_array($data['params'])) {
+            foreach($data['params'] as $k => $v) {
+                if (!$k || $k{0} == '_' || strpos($k, '=') !== false) {
+                    unset($data['params'][$k]);
+                }
+            }
+        } else {
+            $data['params'] = array();
+        }
+
         $data['title'] = (string)$data['title'];
         if (!strlen($data['title'])) {
             $errors['title'] = true;
@@ -128,6 +139,7 @@ class hubFrontendAddAction extends hubFrontendAction
                     'content'         => ifset($sanitized_content),
                     'title'           => $data['title'],
                     'url'             => $url,
+                    'params'          => $data['params'],
                     'tags'            => $data['tags'],
                 )
             );

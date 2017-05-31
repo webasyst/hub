@@ -434,6 +434,9 @@
             paragraphy: false,
             convertDivs: false,
             imageUpload: '?module=pages&action=uploadimage&filelink=1',
+            uploadImageFields: {
+                _csrf: $form.find('input[name="_csrf"]').val()
+            },
             buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
                 'image', 'table', 'link', '|']
         });

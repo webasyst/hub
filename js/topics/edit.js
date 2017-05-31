@@ -625,6 +625,9 @@
 
                 lang: this.options.lang,
                 imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
+                uploadImageFields: {
+                    _csrf: that.form.find('input[name="_csrf"]').val()
+                },
                 keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redactor
                 changeCallback: function() {
                     that.form.change();

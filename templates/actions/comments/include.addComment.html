@@ -17,4 +17,5 @@
     {if !empty($topic)}
         <input type="hidden" name="topic_id" value="{$topic['id']}">
     {/if}
+    {$wa->csrf()}
 </form>

@@ -289,6 +289,7 @@ class hubTopicModel extends waModel
         // IMPORTANT: models with method assign
         foreach (array(
                      'tags'       => new hubTopicTagsModel(),
+                     'params'     => new hubTopicParamsModel(),
                      'categories' => new hubTopicCategoriesModel()
                  ) as $n => $m) {
             if (isset($data[$n])) {

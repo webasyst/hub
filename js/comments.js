@@ -73,6 +73,9 @@
                 convertDivs: false,
                 lang: this.options.lang,
                 imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
+                uploadImageFields: {
+                    _csrf: this.form.find('input[name="_csrf"]').val()
+                },
                 plugins: ['codeblock', 'blockquote'],
                 buttons: ['bold', 'italic', 'underline', 'deleted', '|', 'unorderedlist', 'orderedlist',
                     'image', 'table', 'link', '|', 'codeblock', 'blockquote', '|'],

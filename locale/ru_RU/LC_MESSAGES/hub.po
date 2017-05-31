@@ -751,7 +751,7 @@ msgstr "Перенести темы в другой хаб"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:260
 msgid "Delete permanently"
-msgstr "Удалить полноситью"
+msgstr "Удалить полностью"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:13
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:105

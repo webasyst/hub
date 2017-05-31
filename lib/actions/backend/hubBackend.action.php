@@ -96,6 +96,17 @@ class hubBackendAction extends waViewAction
         if (waRequest::request('sidebar')) {
             $this->setTemplate('templates/actions/backend/include.sidebar.html');
         }
+
+        $this->view->assign('backend_event', $this->backendEvent());
+    }
+
+    protected function backendEvent()
+    {
+        /**
+         * @return array[string]array $return[%plugin_id%]
+         * @return array[string][string]string $return[%plugin_id%]['head']
+         */
+        return wa('hub')->event('backend');
     }
 
     public function getCategories()

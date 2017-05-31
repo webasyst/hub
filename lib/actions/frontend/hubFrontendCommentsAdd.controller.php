@@ -21,9 +21,6 @@ class hubFrontendCommentsAddController extends waJsonController
             wa()->getUser()->addToCategory($this->getAppId());
         }
 
-        $count = waRequest::post('count', 0, waRequest::TYPE_INT) + 1;
-        $type = waRequest::post('type', 'comment', waRequest::TYPE_STRING_TRIM);
-
         $topic = $this->getTopic();
 
         $comment_count_str = '';

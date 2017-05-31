@@ -86,7 +86,11 @@ class hubTopicsCollection
             } else {
                 if ($this->options['check_rights'] && !wa()->getUser()->isAdmin('hub')) {
                     $hubs_read = wa('hub')->getConfig()->getAvailableHubs(hubRightConfig::RIGHT_READ);
-                    $this->where['check_rights'] = 't.hub_id IN (' . join(',', array_keys($hubs_read)) . ')';
+                    if ($hubs_read) {
+                        $this->where['check_rights'] = 't.hub_id IN (' . join(',', array_keys($hubs_read)) . ')';
+                    } else {
+                        $this->where['check_rights'] = '1=0';
+                    }
                 }
             }
 

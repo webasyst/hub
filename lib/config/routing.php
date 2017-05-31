@@ -13,9 +13,9 @@ return array(
     'author/<id:\d+>/following/' => 'frontend/authorFollowing',
     'author/<id:\d+>/replies/' => 'frontend/authorReplies',
     'author/<id:\d+>/' => 'frontend/author',
-    'login/' => 'login',
-    'forgotpassword/' => 'forgotpassword',
-    'signup/' => 'signup',
+    'login/' => 'login/',
+    'forgotpassword/' => 'forgotpassword/',
+    'signup/' => 'signup/',
     'my/' => array('module' => 'frontend', 'action' => 'my', 'secure' => true),
     // topic comments
     '<id:\d+>/<topic_url>/comments/add/' => array('module' => 'frontend', 'action' => 'commentsAdd', 'secure' => true),
@@ -31,5 +31,5 @@ return array(
     // category
     '<category_url>/' => 'frontend/category',
     // main page
-    '' => 'frontend'
+    '' => 'frontend/'
 );
