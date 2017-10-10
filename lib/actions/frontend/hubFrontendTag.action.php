@@ -40,7 +40,7 @@ class hubFrontendTagAction extends hubFrontendAction
          */
         $this->view->assign('frontend_tag', wa()->event('frontend_tag', $tag_info));
 
-        $this->getResponse()->setTitle($tag_info['name']);
+        $this->getResponse()->setTitle(htmlspecialchars($tag_info['name']));
         $this->view->assign('tag', $tag_info['name']);
         $this->view->assign('sort', $order);
         $this->setThemeTemplate('tag.html');
