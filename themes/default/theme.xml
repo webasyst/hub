@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE theme PUBLIC "wa-app-theme" "http://www.webasyst.com/wa-content/xml/wa-app-theme.dtd">
-<theme id="default" vendor="webasyst" app="hub" parent_theme_id="site:default" version="3.1.1">
+<theme id="default" vendor="webasyst" app="hub" parent_theme_id="site:default" version="3.1.2">
     <name locale="ru_RU">Дефолт 3.0</name>
     <name locale="en_US">Default 3.0</name>
     <files>
-        <file path="index.html" custom="0" parent="1">
+        <file path="index.html" parent="1">
         </file>
-        <file path="default.css" custom="0" parent="1">
+        <file path="default.css" parent="1">
         </file>
-        <file path="default.hub.css" custom="0">
+        <file path="default.hub.css">
         </file>
-        <file path="default.hub.js" custom="0">
-        </file> 
-        <file path="head.html" custom="0">
+        <file path="default.hub.js">
+        </file>
+        <file path="head.html">
             <description locale="en_US">Hub app's &lt;head&gt; instructions</description>
             <description locale="ru_RU">Блок &lt;head&gt; приложения «Хаб»</description>
         </file>
-        <file path="header.html" custom="0">
-    		<description locale="en_US">App specific header content</description>
-    		<description locale="ru_RU">Содержимое «шапки» приложения</description>
-    	</file>
-    	<file path="banner.html" custom="0">
-    		<description locale="en_US">App specific banner content</description>
-    		<description locale="ru_RU">Контент в области баннера</description>
-    	</file>
-        <file path="main.html" custom="0">
+        <file path="header.html">
+            <description locale="en_US">App specific header content</description>
+            <description locale="ru_RU">Содержимое «шапки» приложения</description>
+        </file>
+        <file path="banner.html">
+            <description locale="en_US">App specific banner content</description>
+            <description locale="ru_RU">Контент в области баннера</description>
+        </file>
+        <file path="main.html">
             <description locale="en_US">Main layout and navigation for Hub app content</description>
             <description locale="ru_RU">Основное макет вывода содержимого и навигации в приложении «Хаб»</description>
         </file>
-    	<file path="footer.html">
+        <file path="footer.html">
             <description locale="en_US">App specific footer content</description>
             <description locale="ru_RU">Содержимое футера приложения</description>
         </file>
@@ -68,11 +68,11 @@
             <description locale="en_US">Mixed list of all topics</description>
             <description locale="ru_RU">Список всех топиков</description>
         </file>
-        <file path="search.html" custom="0">
+        <file path="search.html">
             <description locale="en_US">Wrapper for topic search</description>
             <description locale="ru_RU">Обертка для страницы поиска топиков</description>
         </file>
-        <file path="page.html" custom="0">
+        <file path="page.html">
             <description locale="en_US">Static page content</description>
             <description locale="ru_RU">Содержимое информационной страницы</description>
         </file>
@@ -109,7 +109,7 @@
             <description locale="ru_RU">Произвольный тип топика</description>
         </file>
         <file path="login.html" parent="1">
-        </file>    
+        </file>
         <file path="signup.html" parent="1">
         </file>
         <file path="forgotpassword.html" parent="1">
@@ -118,7 +118,7 @@
         </file>
         <file path="error.html" parent="1">
         </file>
-        
+
     </files>
     <about locale="en_US">
 <![CDATA[

@@ -1,7 +1,7 @@
 <script type="text/javascript" src="{$wa_app_static_url}js/vendors/jquery-ui-1.10.3.custom.min.js"></script>
 <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/jquery-ui-1.10.3.custom.css">
 
-<h1>{if !empty($data.id)}{$data.title}{else}[`New topic`]{/if}</h1>
+<h1>{if !empty($data.id)}{$data.title|escape}{else}[`New topic`]{/if}</h1>
 
 {if !$wa->user()->isAuth()}
     <div id="user-auth-provider" data-provider="signup">
@@ -56,7 +56,7 @@
 
         <div class="topic-tags">
             [`Tags`]
-            <input type="text" name="data[tags]" value="{join(',',ifset($data.tags, []))}" id="ti-topic-form" />
+            <input type="text" name="data[tags]" value="{join(',',ifset($data.tags, []))|escape}" id="ti-topic-form" />
             {if !empty($errors.tags)}<em class="errormsg">{$errors.tags}</em>{/if}
         </div>
 
