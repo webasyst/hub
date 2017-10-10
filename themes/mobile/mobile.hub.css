@@ -403,7 +403,7 @@ i.sort-asc {
   font-family: helvetica;
   font-size: 13px;
   border: 1px solid transparent;
-  padding: 2px;
+  padding: 2px /* 5px */;
   background: transparent;
   color: #000;
   outline: 0px;
@@ -1174,4 +1174,13 @@ h1 .kudos {
 ol.checklist > lh {
   margin: 1em 0 !important;
   padding: 0 !important;
+}
+.h-page-wrapper {
+  padding: 0.5rem 0;
+}
+.h-page-wrapper .h-page-block {
+  margin: 0.5em 0 0;
+  padding: 0.5em;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
 }

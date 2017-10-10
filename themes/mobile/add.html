@@ -1,5 +1,5 @@
 <div class="add-topic-page">
-    <h1>{if !empty($data.id)}{$data.title}{else}[`New topic`]{/if}</h1>
+    <h1>{if !empty($data.id)}{$data.title|escape}{else}[`New topic`]{/if}</h1>
 
     {if !$wa->user()->isAuth()}
         <div id="user-auth-provider" data-provider="signup">
@@ -54,7 +54,7 @@
 
             <div class="topic-tags">
                 [`Tags`]
-                <input type="text" name="data[tags]" value="{join(',',ifset($data.tags, []))}" id="ti-topic-form" />
+                <input type="text" name="data[tags]" value="{join(',',ifset($data.tags, []))|escape}" id="ti-topic-form" />
                 {if !empty($errors.tags)}<em class="errormsg">{$errors.tags}</em>{/if}
             </div>
 
