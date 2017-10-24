@@ -120,7 +120,7 @@ class hubFrontendCommentsAddController extends waJsonController
     protected function sendNotifications($comment)
     {
         $view = wa()->getView();
-
+        $userId = wa()->getUser()->getId();
         $topic = $comment['topic'];
 
         $topic['url'] = wa()->getRouteUrl(
@@ -137,7 +137,7 @@ class hubFrontendCommentsAddController extends waJsonController
 
         $following_model = new hubFollowingModel();
         foreach ($following_model->getFollowers($comment['topic']['id'], true) as $c) {
-            if (empty($c['email'])) {
+            if (empty($c['email']) || $userId == $comment['contact_id']) {
                 continue;
             }
             $view->assign('contact', $c);
