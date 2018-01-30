@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -183,15 +183,8 @@ msgid "Welcome to your new Hub!"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:25
-msgid ""
-"Hub is an app for organizing your knowledge base. Store your articles, "
-"answer questions, collect customer feedback and bug reports, discuss various "
-"topics — all in one place. A perfect self-help tool for your your customers."
-msgstr ""
-"Hub is an app for organizing your knowledge base. Store your articles, "
-"answer questions, collect customer feedback and bug reports, discuss various "
-"topics — all in one place. A perfect self-help tool for your and your "
-"customers."
+msgid "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your your customers."
+msgstr "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your and your customers."
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:30
 #: /wa-apps/hub/templates/actions/settings/SettingsFilter.html:96
@@ -200,9 +193,7 @@ msgid "Topic types"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:32
-msgid ""
-"Select what kind of information you would like to mix and manage in your "
-"knowledge hub:"
+msgid "Select what kind of information you would like to mix and manage in your knowledge hub:"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/backend/BackendWelcome.html:46
@@ -375,9 +366,7 @@ msgid "Use default userpic"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/Settings.html:75
-msgid ""
-"(mystery-man) a simple, cartoon-style silhouetted outline of a person (does "
-"not vary by email hash)"
+msgid "(mystery-man) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/Settings.html:76
@@ -435,10 +424,7 @@ msgid "Only PNG and JPEG images are allowed"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:92
-msgid ""
-"Category logo will be published on the hub frontend homepage. Logo size "
-"depend on design theme you are using. Most design themes will scale the logo "
-"down to about 50px wide."
+msgid "Category logo will be published on the hub frontend homepage. Logo size depend on design theme you are using. Most design themes will scale the logo down to about 50px wide."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:102
@@ -453,9 +439,7 @@ msgid "Category"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:115
-msgid ""
-"You’ll be able to manually add new topics and move existing topics into this "
-"category."
+msgid "You’ll be able to manually add new topics and move existing topics into this category."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:125
@@ -463,20 +447,15 @@ msgid "Filter by topic type"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:135
-msgid ""
-"This category will be automatically filled with topics of the selected type. "
-"Topic sort order will be defined by topic type kind."
-msgstr ""
-"This category will be automatically filled with topics of the selected type. "
-"Topic sort order is defined by topic type."
+msgid "This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind."
+msgstr "This category will be automatically filled with topics of the selected type. Topic sort order is defined by topic type."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:147
 msgid "Filter by tags"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:151
-msgid ""
-"This category will be automatically filled with topics with selected tags."
+msgid "This category will be automatically filled with topics with selected tags."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:165
@@ -526,12 +505,8 @@ msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:265
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:285
-msgid ""
-"All topics will remain in the hub stream, and only the category will be "
-"deleted"
-msgstr ""
-"All topics will remain in the hub stream, and only the category will be "
-"deleted."
+msgid "All topics will remain in the hub stream, and only the category will be deleted"
+msgstr "All topics will remain in the hub stream, and only the category will be deleted."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsCategory.html:271
 msgid "Move all topics asigned to this category (%d)"
@@ -651,11 +626,7 @@ msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:59
 #: /wa-apps/hub/templates/actions/topics/Topics.html:101
-msgid ""
-"This hub is not visible on your sites now, because there were no routing "
-"rules added for Hub app with this particular hub. To make this hub visible "
-"on your site, <a href=\"%s\">create a route</a> for Hub app and this hub in "
-"your Site app routing settings."
+msgid "This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, <a href=\"%s\">create a route</a> for Hub app and this hub in your Site app routing settings."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:70
@@ -667,9 +638,7 @@ msgid "Enable kudos in this hub"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:76
-msgid ""
-"Kudos are user ratings calculated based on user activity in discussions and "
-"community."
+msgid "Kudos are user ratings calculated based on user activity in discussions and community."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:92
@@ -697,9 +666,7 @@ msgid "Age (newest topics are most popular)"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:110
-msgid ""
-"Popularity index is a combined hidden topic parameter used for sorting "
-"topics in categories and search results."
+msgid "Popularity index is a combined hidden topic parameter used for sorting topics in categories and search results."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:118
@@ -707,9 +674,7 @@ msgid "Staff"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:121
-msgid ""
-"List key users who participate in hub frontend discussions so their topics "
-"are marked with special badges."
+msgid "List key users who participate in hub frontend discussions so their topics are marked with special badges."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:127
@@ -733,9 +698,7 @@ msgid "Access rights"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:176
-msgid ""
-"Access to this hub will be restricted to backend users only. Use Contacts "
-"app to customize user access rights to this hub."
+msgid "Access to this hub will be restricted to backend users only. Use Contacts app to customize user access rights to this hub."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:184
@@ -751,9 +714,7 @@ msgid "None"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:193
-msgid ""
-"Backend only. All topics of this hub will be marked with the selected color. "
-"Recommended if you have multiple hubs."
+msgid "Backend only. All topics of this hub will be marked with the selected color. Recommended if you have multiple hubs."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:200
@@ -769,9 +730,7 @@ msgid "Selected only"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:246
-msgid ""
-"The <strong>%d topics</strong> at hub %s. What should be done with these "
-"topics?"
+msgid "The <strong>%d topics</strong> at hub %s. What should be done with these topics?"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:250
@@ -815,9 +774,7 @@ msgid "Functionality"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:107
-msgid ""
-"There are <strong>%d topics</strong> with %s type. By deleting this topic "
-"type you should either change type for all these topics or delete them."
+msgid "There are <strong>%d topics</strong> with %s type. By deleting this topic type you should either change type for all these topics or delete them."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsType.html:110
@@ -1192,12 +1149,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: /wa-apps/hub/templates/mail/Suggestion.html:13
-msgid ""
-"In just few words, tell us which question you had that this article did not "
-"answer?"
-msgstr ""
-"Tell us in a few words which question you had that this article did not "
-"answer to."
+msgid "In just few words, tell us which question you had that this article did not answer?"
+msgstr "Tell us in a few words which question you had that this article did not answer to."
 
 #: /wa-apps/hub/js/comments.js:233
 msgid "valid answer"
@@ -1273,9 +1226,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: /wa-apps/hub/lib/actions/frontend/hubFrontendUploadImage.controller.php:13
-msgid ""
-"File could not be saved due to insufficient write permissions for the %s "
-"folder."
+msgid "File could not be saved due to insufficient write permissions for the %s folder."
 msgstr ""
 
 #: /wa-apps/hub/lib/actions/frontend/hubFrontendUploadImage.controller.php:45
@@ -1316,9 +1267,7 @@ msgid "Page"
 msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:25
-msgid ""
-"Articles, guides, how-tos, tutorials and other materials that should be "
-"considered as static informational pages authored by a particular user."
+msgid "Articles, guides, how-tos, tutorials and other materials that should be considered as static informational pages authored by a particular user."
 msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:35
@@ -1327,8 +1276,7 @@ msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:36
 #: /wa-apps/hub/lib/updates/dev/1411473875.php:19
-msgid ""
-"A bug report is attached to a specific product version, and has a status"
+msgid "A bug report is attached to a specific product version, and has a status"
 msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:42
@@ -1336,9 +1284,7 @@ msgid "Question & Answers"
 msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:43
-msgid ""
-"Questions & Answers. The right topic type for getting user questions "
-"answered."
+msgid "Questions & Answers. The right topic type for getting user questions answered."
 msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:52
@@ -1451,9 +1397,7 @@ msgid "Your question title"
 msgstr ""
 
 #: /wa-apps/hub/themes/_webasystcom/ask.form.html:76
-msgid ""
-"Basic HTML is allowed: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;a&gt;, &lt;"
-"pre&gt;, &lt;img&gt;, &lt;blockquote&gt;"
+msgid "Basic HTML is allowed: &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;a&gt;, &lt;pre&gt;, &lt;img&gt;, &lt;blockquote&gt;"
 msgstr ""
 
 #: /wa-apps/hub/themes/_webasystcom/ask.form.html:90
@@ -1513,9 +1457,7 @@ msgstr ""
 #: /wa-apps/hub/themes/_webasystcom/comment_add.html:36
 #: /wa-apps/hub/themes/default/comment.add.html:14
 #: /wa-apps/hub/themes/default/topic.page.html:74
-msgid ""
-"To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">login</"
-"a>"
+msgid "To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">login</a>"
 msgstr ""
 
 #: /wa-apps/hub/themes/_webasystcom/comment_add.html:54
@@ -1584,9 +1526,7 @@ msgid "asked %s"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/add.html:5
-msgid ""
-"To add new topic please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</"
-"a>"
+msgid "To add new topic please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</a>"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/add.html:33
@@ -1616,9 +1556,7 @@ msgid "You are about to delete this record. Are you sure?"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/footer.html:6
-msgid ""
-"<a href=\"http://www.webasyst.com/store/app/hub/\">Feedback software</a> by "
-"Webasyst"
+msgid "<a href=\"http://www.webasyst.com/store/app/hub/\">Feedback software</a> by Webasyst"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/main.html:49
@@ -1693,9 +1631,7 @@ msgid "Unfollow"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/topic.forum.html:94
-msgid ""
-"To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</"
-"a>"
+msgid "To add a comment please <a href=\"%s\">sign up</a> or <a href=\"%s\">log in</a>"
 msgstr ""
 
 #: /wa-apps/hub/themes/default/topic.page.html:66
@@ -1756,9 +1692,7 @@ msgid "Hi %s,"
 msgstr ""
 
 #: /wa-apps/hub/templates/mail/Following.html:9
-msgid ""
-"%s posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you "
-"are following:"
+msgid "%s posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you are following:"
 msgstr ""
 
 #: /wa-apps/hub/templates/mail/Suggestion.html:8
@@ -1779,7 +1713,7 @@ msgid "popular"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:246
-msgid "There are <strong>%d topics</strong> in this hub right now. By deleting this hub you can either move topics to another hub or delete them entirely."
+msgid "Number of topics in this hub: <strong>%d</strong>. By deleting this hub you can either move topics to another hub or delete them entirely."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:250

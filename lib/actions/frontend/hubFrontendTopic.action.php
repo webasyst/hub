@@ -117,7 +117,7 @@ class hubFrontendTopicAction extends hubFrontendAction
         $this->getResponse()->setMeta('description', $topic['meta_description']);
         $this->getResponse()->setTitle(ifempty($topic['meta_title'], $topic['title']).($topic['badge']['id'] == 'archived' ? ' ['._w('Archived').']' : ''));
 
-        if ($topic['contact_id'] == $this->getUserId() && (wa()->getUser()->isAdmin('hub') || time() - strtotime($topic['create_datetime'])) <= 15 * 60) {
+        if ($topic['contact_id'] == $this->getUserId() && (wa()->getUser()->isAdmin('hub') || time() - strtotime($topic['create_datetime']) <= 45 * 60)) {
             $topic['editable'] = true;
             $topic['edit_url'] = wa()->getRouteUrl('/frontend/topicEdit', array('id' => $topic['id'], 'topic_url' => $topic['url']));
             $topic['delete_url'] = wa()->getRouteUrl('/frontend/topicDelete', array('id' => $topic['id'], 'topic_url' => $topic['url']));

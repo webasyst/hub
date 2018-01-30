@@ -6,10 +6,10 @@ class hubCommentsAction extends waViewAction
     {
         $offset = waRequest::get('offset', 0, waRequest::TYPE_INT);
         $comments_per_page = $this->getConfig()->getOption('comments_per_page');
-
+        $contact_id = waRequest::request('contact_id', null, 'int');
         $where = array();
-        if ( ( $contact_id = waRequest::request('contact_id', 0, 'int'))) {
-            $where['contact_id'] = waRequest::request('contact_id', 0, 'int');
+        if ($contact_id) {
+            $where['contact_id'] = $contact_id;
         }
 
         $comment_model = new hubCommentModel();
@@ -30,6 +30,7 @@ class hubCommentsAction extends waViewAction
         wa('hub')->getConfig()->markAsRead(array(), $visited_comments);
 
         $this->view->assign(array(
+            'contact_id'=>$contact_id,
             'comments' => $comments,
             'total_count' => $total_count,
             'count' => count($comments),

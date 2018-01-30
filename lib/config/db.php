@@ -157,7 +157,7 @@ return array(
         'update_datetime' => array('datetime', 'null' => 0),
         'contact_id' => array('int', 11, 'null' => 0),
         'title' => array('varchar', 255, 'null' => 0),
-        'content' => array('text', 'null' => 0),
+        'content' => array('longtext', 'null' => 0),
         'url' => array('varchar', 255, 'null' => 0),
         'votes_up' => array('int', 11, 'null' => 0, 'default' => '0'),
         'votes_down' => array('int', 11, 'null' => 0, 'default' => '0'),

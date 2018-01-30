@@ -5,6 +5,7 @@ class hubFrontendUploadImageController extends waController
     public function execute()
     {
         $path = wa()->getDataPath('upload/images/', true);
+        $redactor_version = waRequest::request('_version', 1, waRequest::TYPE_INT);
 
         $response = '';
 
@@ -14,6 +15,7 @@ class hubFrontendUploadImageController extends waController
         } else {
             $errors = array();
             $f = waRequest::file('file');
+
             $name = $f->name;
             if ($this->processFile($f, $path, $name, $errors)) {
                 $response = wa()->getDataUrl('upload/images/'.$name, true, null, !waRequest::get('relative'));
@@ -24,7 +26,8 @@ class hubFrontendUploadImageController extends waController
         if ($errors) {
             echo json_encode(array('error' => $errors));
         } else {
-            echo json_encode(array('filelink' => $response));
+            $key = ($redactor_version == 2) ? 'url' : 'filelink';
+            echo json_encode(array($key => $response));
         }
     }
 

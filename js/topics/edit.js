@@ -591,6 +591,8 @@
         },
 
         initDateEditor: function() {
+            $('#topic-create-date').val($('#topic-create-date').val()*1000); //convert php timestamp to js timestamp
+
             $('#edit-datetime-link').click(function() {
                 var $wrapper = $(this).closest('.block');
                 $wrapper.find('.non-editable-view').hide();

@@ -11,8 +11,7 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
         $topic_model = new hubTopicModel();
         $this->topic = $topic_model->getById($this->topic_id);
 
-        if (!$this->topic || $this->topic['contact_id'] != $this->getUserId() ||
-            (time() - strtotime($this->topic['create_datetime']) > 15 * 60)) {
+        if (!$this->hasAccess()) {
             throw new waRightsException(_ws('Access denied'));
         }
 
@@ -115,5 +114,19 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
             return ifset($sanitized_content);
         }
         return false;
+    }
+
+    protected function hasAccess()
+    {
+        if (!$this->topic) {
+            return false;
+        }
+        if (wa()->getUser()->isAdmin('hub')) {
+            return true;
+        }
+        if ($this->topic['contact_id'] != $this->getUserId()) {
+            return false;
+        }
+        return time() - strtotime($this->topic['create_datetime']) <= 60 * 60;
     }
 }

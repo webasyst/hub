@@ -6,6 +6,7 @@ class hubSitemapConfig extends waSitemapConfig
         $hm = new hubHubModel();
         $cm = new hubCategoryModel();
         $tm = new hubTagModel();
+        $page_model = new hubPageModel();
 
         $real_domain = $this->routing->getDomain(null, true, false);
 
@@ -65,6 +66,7 @@ class hubSitemapConfig extends waSitemapConfig
                     }
                 }
 
+                $this->addPages($page_model,$route);
             }
         }
     }

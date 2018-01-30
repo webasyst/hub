@@ -37,7 +37,7 @@
                     <div class="hidden editable-view">
                         <input type="text" class="short date" value="{$topic.create_datetime|wa_date:date|escape}" disabled>
                         <input type="text" class="short time" name="topic[create_time]" value="{$topic.create_datetime|wa_date:time|escape}" disabled>
-                        <input type="hidden" name="topic[create_date]" value="{strtotime($topic.create_datetime)}" disabled>
+                        <input id='topic-create-date' type="hidden" name="topic[create_date]" value="{strtotime($topic.create_datetime|escape)}">
                     </div>
                 </div>
             {/if}

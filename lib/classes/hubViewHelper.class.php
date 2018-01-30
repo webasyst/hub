@@ -17,7 +17,8 @@ class hubViewHelper extends waAppViewHelper
                 'offset' => 0,
                 'limit'  => $limit,
                 'where'  => array(
-                    'hub_id' => $hub_id
+                    'hub_id' => $hub_id,
+                    'status' => 'approved',
                 ),
                 'order'  => 'datetime DESC'
             )

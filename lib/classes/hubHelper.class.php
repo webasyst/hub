@@ -449,7 +449,7 @@ class hubHelper
     public static function sanitizeHtmlIframe($m)
     {
         $url = $m[1];
-        if (preg_match('~^//player.vimeo.com/video/[0-9]+$|^//www.youtube.com/embed/[a-z0-9]+$~i', $url)) {
+        if (preg_match('~^(https?:)?//player.vimeo.com/video/[0-9]+$|^//www.youtube.com/embed/[a-z0-9\-\_]+$~i', $url)) {
             return html_entity_decode($m[0], ENT_COMPAT, 'UTF-8');
         } else {
             return _w('[Incorrect video embed]');
@@ -506,6 +506,25 @@ class hubHelper
             array('hubHelper', 'sanitizeHtmlAHref'),
             $content
         );
+
+        // Allow width="" height="" as attributes in iframe, but replace them internally with style=""
+        $youtube_pattern = '~
+            &lt;
+                iframe
+                \s+
+                width=
+                    &quot;
+                        (\d+)
+                    &quot;
+                \s+
+                height=
+                    &quot;
+                        (\d+)
+                    &quot;
+            ~iux';
+
+        $youtube_style = '&lt;iframe style=&quot;width: $1px; height: $2px;&quot;';
+        $content = preg_replace($youtube_pattern, $youtube_style, $content);
 
         // iframes for youtube and vimeo
         // <iframe style="width: 500px; height: 281px;" src="//www.youtube.com/embed/TOTIBzyWjLM" frameborder="0" allowfullscreen=""></iframe>

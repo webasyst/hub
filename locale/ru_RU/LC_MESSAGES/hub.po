@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 1.7.6\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -711,7 +711,7 @@ msgstr "Права доступа"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:176
 msgid "Access to this hub will be restricted to backend users only. Use Contacts app to customize user access rights to this hub."
-msgstr "Доступ к этому хабу будет предоставлен только пользователям бекенда. Измененить уровень прав доступа можно в приложении «Контакты»."
+msgstr "Доступ к этому хабу будет предоставлен только пользователям бекенда. Изменить уровень прав доступа можно в приложении «Контакты»."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:184
 msgid "Hub color marker"
@@ -1731,8 +1731,8 @@ msgid "popular"
 msgstr "популярные"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:246
-msgid "There are <strong>%d topics</strong> in this hub right now. By deleting this hub you can either move topics to another hub or delete them entirely."
-msgstr "В этом хабе содержится <strong>%d темы</strong>. Чтобы удалить этот хаб, необходимо либо удалить все содержащиеся в нем темы, либо перенести их в другой хаб."
+msgid "Number of topics in this hub: <strong>%d</strong>. By deleting this hub you can either move topics to another hub or delete them entirely."
+msgstr "Количество тем в этом хабе: <strong>%d</strong>. Чтобы удалить этот хаб, необходимо либо удалить все содержащиеся в нем темы, либо перенести их в другой хаб."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:250
 msgid "Move topics to another hub"
@@ -1949,3 +1949,11 @@ msgstr "Категории указанного хаба. Если $priority_top
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:59
 msgid "Classic forum thread with plain comment list sorted chronologically."
 msgstr "Классический вид обсуждения на форуме: топик и список комментариев в хронологическом порядке."
+
+#: /wa-apps/contacts/templates/actions/contacts/ContactsMergeSelectMaster.html
+msgid "Comment author"
+msgstr "Автор комментария"
+
+#: /wa-apps/contacts/templates/actions/contacts/ContactsMergeSelectMaster.html
+msgid "Topic author"
+msgstr "Автор темы"

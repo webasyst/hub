@@ -52,7 +52,8 @@
         lazy_loading: {
             auto: true,
             total_count: {ifempty($total_count, 0)},
-            count: {$count}
+            count: {$count},
+            contact_id: {$contact_id}
         },
         container: '#comments-wrapper'
     });

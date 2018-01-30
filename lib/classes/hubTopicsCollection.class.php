@@ -6,7 +6,7 @@ class hubTopicsCollection
     protected $prepared;
     protected $title = '';
 
-    protected $order_by = 't.create_datetime DESC';
+    protected $order_by = 't.votes_sum DESC';
     protected $where = array();
     protected $fields = array();
     protected $other_fields = array();

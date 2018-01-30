@@ -5,9 +5,10 @@ class hubTopicsSaveController extends waJsonController
     public function execute()
     {
         $id = waRequest::get('id');
-        $data = $this->getData();
 
         $topic_model = new hubTopicModel();
+        $topic = null;
+
         if ($id) {
             $topic = $topic_model->getById($id);
             if (!$topic) {
@@ -20,6 +21,8 @@ class hubTopicsSaveController extends waJsonController
                 throw new waRightsException('Access denied');
             }
         }
+
+        $data = $this->getData($topic);
 
         // Does user have access to the hub where topic is going to be put?
         $hub_id = ifempty($data['hub_id']);
@@ -112,7 +115,7 @@ class hubTopicsSaveController extends waJsonController
         $this->response['topic']['datetime'] = wa_date('humandate', $this->response['topic']['create_datetime']);
     }
 
-    public function getData()
+    public function getData($topic)
     {
         $data = waRequest::post('topic');
         if (isset($data['tags'])) {
@@ -126,7 +129,7 @@ class hubTopicsSaveController extends waJsonController
         $ts = time();
         if (!empty($data['create_date']) && (int)$data['create_date']) {
             $ts = round($data['create_date'] / 1000);
-            if (!empty($data['create_time'])) {
+            if (!empty($data['create_time']) && strtotime($topic['create_datetime']) != $ts) {
                 @list($h, $m) = explode(':', $data['create_time'], 2);
                 $ts += (int)$h * 3600 + (int)$m * 60;
             }

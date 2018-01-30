@@ -51,8 +51,9 @@ class hubTopicsEditAction extends waViewAction
             $params_string = '';
         }
 
-        // Check access rights
-        if (!$hubs || empty($hubs[$hub_id])) {
+        // Does user have access to hub where topic used to be?
+        $access_level = wa()->getUser()->getRights('hub', 'hub.'.$topic['hub_id']);
+        if ($access_level < hubRightConfig::RIGHT_READ_WRITE || ($access_level == hubRightConfig::RIGHT_READ_WRITE && $topic['contact_id'] != wa()->getUser()->getId())) {
             throw new waRightsException('Access denied');
         }
 
@@ -183,14 +184,14 @@ class hubTopicsEditAction extends waViewAction
             foreach ($routes as $r) {
                 if (!empty($r['hub_id'])) {
                     $routing->setRoute($r, $domain);
-                    $result[$r['hub_id']] = $routing->getUrl(
+                    $result[$r['hub_id']] = waIdna::dec($routing->getUrl(
                         '/frontend/topic',
                         array(
                             'id'        => '%topic_id%',
                             'topic_url' => '%topic_url%',
                         ),
                         true
-                    );
+                    ));
                 }
             }
         }

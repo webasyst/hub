@@ -30,9 +30,9 @@ class hubContactsLinksHandler extends waEventHandler
 
         foreach(array(
             //array('hub_author', 'contact_id', 'Author'),
-            array('hub_comment', 'contact_id', 'Comment author'),               // !!! no index
-            array('hub_staff', 'contact_id', 'Stuff'),                          // !!! no index
-            array('hub_topic', 'contact_id', 'Topic author'),                   // !!! no index
+            array('hub_comment', 'contact_id', _w('Comment author')),               // !!! no index
+            array('hub_staff', 'contact_id', _w('Staff')),                          // !!! no index
+            array('hub_topic', 'contact_id', _w('Topic author')),                   // !!! no index
             //array('hub_vote', 'contact_id', 'Voted for topics and comments'),   // !!! no index
             //array('hub_following', 'contact_id', 'Follows topics'),
         ) as $data) {

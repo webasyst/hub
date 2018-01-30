@@ -282,7 +282,7 @@
                     <div class="dialog-content-indent">
                         <h1>[`Delete hub`]</h1>
                         {if $hub.topics_count}
-                            <p>{sprintf('[`There are <strong>%d topics</strong> in this hub right now. By deleting this hub you can either move topics to another hub or delete them entirely.`]',$hub.topics_count,$hub.name|escape)}</p>
+                            <p>{sprintf('[`Number of topics in this hub: <strong>%d</strong>. By deleting this hub you can either move topics to another hub or delete them entirely.`]',$hub.topics_count,$hub.name|escape)}</p>
                             <label>
                                 <input type="radio" name="delete" checked="checked" {* disabled="disabled" *} value="move">
                                 [`Move topics to another hub`]:

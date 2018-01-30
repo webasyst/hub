@@ -33,14 +33,14 @@ class hubTopicsInfoAction extends waViewAction
             }
         }
 
-        $topic_public_url = $routing->getUrl(
+        $topic_public_url = waIdna::dec($routing->getUrl(
             '/frontend/topic',
             array(
                 'id'        => $topic['id'],
                 'topic_url' => $topic['url']
             ),
             true
-        );
+        ));
 
         $comment_model = new hubCommentModel();
 

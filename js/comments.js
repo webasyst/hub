@@ -52,6 +52,8 @@
 
             this.statuses = options.statuses || {};
 
+            this.contact_id = options.contact_id || {};
+
             if (this.options.lazy_loading) {
                 this.initLazyLoad(this.options.lazy_loading);
             }
@@ -171,7 +173,7 @@
                         $('.lazyloading-link').hide();
                         $('.lazyloading-progress').show();
                         $.get(
-                            url+'&lazy=1&offset='+offset+'&total_count='+total_count,
+                            url+'&lazy=1&offset='+offset+'&total_count='+total_count+'&contact_id='+options.contact_id,
                             function (html) {
                                 var div = document.createElement('div');
                                 div.innerHTML = html;

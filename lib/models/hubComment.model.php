@@ -16,17 +16,17 @@ class hubCommentModel extends waNestedSetModel
     private function getListDefaultOptions()
     {
         return array(
-            'offset' => 0,
-            'limit'  => 50,
-            'where'  => array(),
-            'order'  => "{$this->left}",
+            'offset'       => 0,
+            'limit'        => 50,
+            'where'        => array(),
+            'order'        => "{$this->left}",
             'check_rights' => true,
-            'escape' => false,
+            'escape'       => false,
             'updated_only' => false,
         );
     }
 
-    public function getList($fields = '*,is_updated,contact,vote,topic,parent', $options = array(), &$total_rows=null)
+    public function getList($fields = '*,is_updated,contact,vote,topic,parent', $options = array(), &$total_rows = null)
     {
         $main_fields = '';
         $post_fields = '';
@@ -70,10 +70,10 @@ class hubCommentModel extends waNestedSetModel
 
         $sql = "SELECT ".(func_num_args() > 2 ? 'SQL_CALC_FOUND_ROWS' : '')." $main_fields
                 FROM `{$this->table}`".
-                    $rights_sql.
-                ($where ? " WHERE $where" : "").
-                " ORDER BY ".$options['order'].
-                $limit_str;
+            $rights_sql.
+            ($where ? " WHERE $where" : "").
+            " ORDER BY ".$options['order'].
+            $limit_str;
 
         $data = $this->query($sql)->fetchAll('id');
         if (!$data) {
@@ -86,7 +86,7 @@ class hubCommentModel extends waNestedSetModel
         unset($item);
 
         if (func_num_args() > 2) {
-            $total_rows = (int) $this->query('SELECT FOUND_ROWS()')->fetchField();
+            $total_rows = (int)$this->query('SELECT FOUND_ROWS()')->fetchField();
         }
 
         $this->workupList($data, $post_fields, $options['escape']);
@@ -254,7 +254,7 @@ class hubCommentModel extends waNestedSetModel
             if ($topic_ids) {
                 $types = hubHelper::getTypes();
                 $topics = $topic_model->select('id,title,type_id,hub_id,url')->where("id IN(".implode(',', $topic_ids).")")->fetchAll('id');
-                foreach($topics as &$t) {
+                foreach ($topics as &$t) {
                     $t['type'] = ifset($types[$t['type_id']], array('id' => $t['type_id']));
                 }
                 unset($t);
@@ -403,7 +403,7 @@ class hubCommentModel extends waNestedSetModel
 
         $result = 0;
         $hub_visited_comments = wa()->getStorage()->get('hub_visited_comments');
-        foreach($this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime())) as $row) {
+        foreach ($this->query($sql, date('Y-m-d H:i:s', wa('hub')->getConfig()->getLastDatetime())) as $row) {
             if (empty($hub_visited_comments[$row['id']])) {
                 $result++;
             }
@@ -427,7 +427,7 @@ class hubCommentModel extends waNestedSetModel
             wa()->getUser()->getId()
         ));
         $hub_visited_comments = wa()->getStorage()->get('hub_visited_comments');
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             if (empty($hub_visited_comments[$row['id']])) {
                 $result++;
             }
@@ -503,8 +503,8 @@ class hubCommentModel extends waNestedSetModel
         $update = array(
             'update_datetime' => date('Y-m-d H:i:s'),
             'comments_count'  => $this->countByField(array(
-                'status'    => self::STATUS_PUBLISHED,
-                'topic_id'  => $data['topic_id'],
+                'status'   => self::STATUS_PUBLISHED,
+                'topic_id' => $data['topic_id'],
             )),
         );
         $topic_model->updateById($data['topic_id'], $update);
@@ -570,7 +570,9 @@ class hubCommentModel extends waNestedSetModel
             return false;
         }
 
-        $this->updateById($comment_id, array('status' => $status));
+        $this->query("UPDATE {$this->table} SET status='{$status}' WHERE `{$this->left}` >= i:left AND `{$this->right}` <= i:right",
+            array('left' => $comment['left_key'], 'right' => $comment['right_key']));
+
 
         // Write to wa_log
         class_exists('waLogModel') || wa('webasyst');
@@ -585,14 +587,13 @@ class hubCommentModel extends waNestedSetModel
         $topic_model = new hubTopicModel();
         $topic_model->updateById($comment['topic_id'], array(
             'comments_count' => $this->countByField(array(
-                'status'    => self::STATUS_PUBLISHED,
-                'topic_id'  => $comment['topic_id'],
+                'status'   => self::STATUS_PUBLISHED,
+                'topic_id' => $comment['topic_id'],
             ))
         ));
 
         return true;
     }
-
 
     public function changeSolution($comment_id, $solution)
     {

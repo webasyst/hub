@@ -7,9 +7,14 @@ class hubPagesActions extends waPageActions
 
     public function __construct()
     {
-        if (!$this->getRights('pages')) {
+        $this->options['is_ajax'] = true;
+    }
+
+    public function preExecute()
+    {
+        parent::preExecute();
+        if ($this->action != 'uploadimage' && !$this->getRights('pages')) {
             throw new waRightsException("Access denied");
         }
-        $this->options['is_ajax'] = true;
     }
 }
