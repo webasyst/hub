@@ -1,0 +1,162 @@
+<!-- plugin hook: 'frontend_header' -->
+{* @event frontend_header.%plugin_id% *}
+{foreach $frontend_header as $_}{$_}{/foreach}
+
+<nav class="page-nav" role="navigation">
+
+    <div class="nav-sidebar">
+
+        <div class="nav-sidebar-body">
+
+            {if $wa->currentUrl() != $wa_app_url}
+                <!-- back nav -->
+                <ul class="menu-h single-link">
+                    <li class="waSlideMenu-back">
+                        {if !empty($breadcrumbs)}
+                            <a href="{$breadcrumbs[0].url}">{$breadcrumbs[0].name|escape}</a>
+                        {else}
+                            <a href="{$wa_app_url}">[`All topics`]</a>
+                        {/if}
+                    </li>
+                </ul>
+            {/if}
+
+            <div class="userbox">
+                {if $wa->user()->isAuth()}
+                    <p class="small">
+
+                        <a href="{$wa->getUrl('/frontend/author', ['id' => $user.id])}" title="[`My topics`]"><img src="{$user.photo_url_96}" class="userpic" alt="{$wa->user()->getName()}"></a>
+                        {$user.name|escape}
+                        {if !empty($hub.params.kudos)}
+                            <br>
+                            <strong class="kudos{if $user.rate > 0} positive{elseif $user.rate < 0} negative{/if}" title="{_w('%d kudo', '%d kudos', $user.rate)|escape}">{if $user.rate >= 0}+{else}&minus;{/if}{abs($user.rate)}</strong>
+                        {/if}
+                    </p>
+                {/if}
+                <form method="get" action="{$wa->getUrl('/frontend/add')}">
+                    {if !empty($category)}
+                        <input type="hidden" name="category" value="{$category.id}">
+                    {/if}
+                    <input type="submit" class="large" value="[`New topic`]" >
+                </form>
+
+            </div>
+
+            {if $wa->user()->isAuth()}
+            <ul class="menu-v">
+                <li>
+                    <a href="{$wa->getUrl('/frontend/author', ['id' => $user.id])}">[`My topics`]<span class="count">{$user.topics_count}</span></a>
+                </li>
+                <li>
+                    <a href="{$wa->getUrl('/frontend/authorReplies', ['id' => $user.id])}">[`My replies`]<span class="count">{$user.comments_count}</span></a>
+                </li>
+                <li>
+                    <a href="{$wa->getUrl('/frontend/authorFollowing', ['id' => $user.id])}">[`Favorites`] <span class="count"><i class="icon16 star"></i>{* $following_count *}</span></a>
+                </li>
+            </ul>
+            {/if}
+
+            <!-- last comments -->
+            {$comments_stream = $wa->hub->comments(10)}
+            {if !empty($comments_stream)}
+                <aside class="hub-aside-nav">
+                    <h5>[`Last comments`]</h5>
+                    <ul>
+                        {foreach $comments_stream as $c}
+                            <li>
+                                <a href="{$wa->getUrl('hub/frontend/topic', [ 'id' => $c.topic.id, 'topic_url' => $c.topic.url ])}#comment{$c.id}">
+                                    {strip_tags($c.text)|truncate:100}
+                                </a>
+                                <span class="hint">{$c.datetime|wa_datetime:humandatetime}</span>
+                            </li>
+                        {/foreach}
+                    </ul>
+                </aside>
+            {/if}
+
+            <!-- hub staff -->
+            {$staff = $wa->hub->staff()}
+            {if !empty($staff)}
+                <aside class="hub-aside-nav">
+                    <h5>[`Staff`]</h5>
+                    <ul>
+                        {foreach $staff as $s}
+                            <li>
+                                <a href="{$wa_app_url}author/{$s.id}/">
+                                    <img src="{$s.photo_url_50}" class="userpic" alt="{$s.name|escape}">
+                                    {$s.name|escape}
+                                    {if !empty($s.badge)}
+                                        <span class="staff"{if !empty($s.badge_color)} style="background-color: {$s.badge_color}"{/if}>{$s.badge}</span>
+                                    {/if}
+                                </a>
+                            </li>
+                        {/foreach}
+                    </ul>
+                </aside>
+            {/if}
+
+            <!-- plugin hook: 'frontend_nav' -->
+            {* @event frontend_nav.%plugin_id% *}
+            {foreach $frontend_nav as $_}{$_}{/foreach}
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="page-content" itemscope itemtype="http://schema.org/WebPage">
+
+    {if empty($topics) && $wa->currentUrl() == $wa_app_url}
+
+        {if $wa->setting('welcome')}
+            {*
+             * User went to frontend before completing the 'welcome' setup in backend.
+             *}
+            <div class="welcome">
+                <h1>[`Welcome to your new hub!`]</h1>
+                <p>{sprintf('[`Please complete the initial <a href="%s">setup</a> in app backend.`]', $wa_backend_url|cat:'hub/?action=welcome')}</p>
+            </div>
+
+            {* Disable navigation since all links show 404 until the initial setup is done. *}
+            <script>(function() { "use strict";
+                $('.maincontent a:not(.welcome a), :input').click(false);
+            })();</script>
+
+        {elseif waRequest::param('hub_id')}
+            {*
+             * This is a new empty hub.
+             *}
+            <div class="welcome">
+                <h1>[`Welcome to your new hub!`]</h1>
+                <p>{sprintf('[`Start by <a href="%s">writing a topic</a>.`]', $wa_app_url|cat:'add/')}</p>
+            </div>
+        {else}
+            {*
+             * There is no 'hub_id' parameter in this settlement's routing setup. Something's badly wrong.
+             *}
+        {/if}
+
+    {else}
+
+        {if isset($breadcrumbs)}
+            <div class="breadcrumbs" itemprop="breadcrumb">
+                <a href="{$wa_app_url}">[`All topics`]</a> <span class="rarr">&rarr;</span>
+                {if $wa->globals('isMyAccount')}
+                    {$breadcrumbs[0] = null}
+                {/if}
+                {foreach $breadcrumbs as $breadcrumb}
+                    {if $breadcrumb}
+                        <a href="{$breadcrumb.url}">{$breadcrumb.name|default:'[`(no name)`]'|escape}</a> <span class="rarr">&rarr;</span>
+                    {/if}
+                {/foreach}
+            </div>
+        {/if}
+
+        {$content}
+
+    {/if}
+
+    <div class="clear-both"></div>
+
+</div>

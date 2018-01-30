@@ -1,0 +1,61 @@
+<div class="breadcrumbs" itemprop="breadcrumb">
+    <a href="{$wa_app_url}authors/">[`All authors`]</a> <span class="rarr">&rarr;</span>
+</div>
+
+{if $wa->userId() == $author.contact_id}
+    <h1>[`My topics`]</h1>
+{else}
+    <h1>
+        {$author.name|default:"[`%username%`]"|escape}
+
+        {if !empty($author.badge)}
+            <span class="staff"{if !empty($author.badge_color)} style="background-color: {$author.badge_color}"{/if}>{$author.badge}</span>
+        {/if}
+
+        {if !empty($hub.params.kudos) && isset($author.rate)}
+            <span class="kudos{if $author.rate > 0} positive{elseif $author.rate < 0} negative{/if}" title="{_w('%d kudo', '%d kudos', $author.rate)|escape}">{if $author.rate >= 0}+{else}&minus;{/if}{abs($author.rate)}</span>
+        {/if}
+    </h1>
+    <p><img src="{$author.photo_url_96}" class="userpic" alt="{$author.name|escape}" style="width: 96px;"></p>
+{/if}
+
+<ul class="author-nav">
+    <li{if !empty($author_topics)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/">{if $wa->userId() == $author.contact_id}[`My topics`]{else}[`Topics`]{/if}{if !empty($author.topics_count)} <span class="hint">{$author.topics_count}</span>{/if}</a></li>
+    <li{if !empty($author_replies)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/replies/">{if $wa->userId() == $author.contact_id}[`My replies`]{else}[`Replies`]{/if}{if !empty($author.comments_count)} <span class="hint">{$author.comments_count}</span>{/if}</a></li>
+    {if $wa->userId() == $author.contact_id}
+        <li{if !empty($author_following)} class="selected"{/if}><a href="{$wa_app_url}author/{$author.contact_id}/following/">[`Favorites`]</a></li>
+    {/if}
+</ul>
+
+<!-- plugin hook: 'frontend_author' -->
+{* @event frontend_author.%plugin_id% *}
+{foreach $frontend_author as $_}{$_}{/foreach}
+
+{if !empty($author_replies)}
+
+    {if empty($comments)}
+
+        <p class="empty-list">{sprintf('[`%s did not post any comments yet.`]', $author.name|default:"[`Author`]"|escape)}</p>
+    
+    {else}
+
+        <div class="comments">
+            <ul class="lazyloading-list">
+                {foreach $comments as $comment}
+                    <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}">{include file="comment.html" inline}</li>
+                {/foreach}
+            </ul>
+        </div>
+        {if isset($pages_count) && $pages_count > 1}
+            <div class="block lazyloading-paging" data-times="1" data-link-text="[`Load more`]">
+                {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+            </div>
+        {/if}
+    
+    {/if}
+    
+{else}
+    {include file="list-topics.html"}
+{/if}
+
+<div class="clear-both"></div>

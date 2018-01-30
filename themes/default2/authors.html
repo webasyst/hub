@@ -1,0 +1,29 @@
+<h1>[`Authors`]</h1>
+
+<ul class="authors lazyloading-list">
+    {foreach $authors as $a}
+        <li>
+            <a href="{$a.url}">
+                <img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_static_url)}" class="userpic" alt="{$a.name|escape}">
+                {$a.name|default:"[`%username%`]"|escape}
+            </a>
+            
+            {if !empty($a.badge)}
+                <span class="staff"{if !empty($a.badge_color)} style="background-color: {$a.badge_color}"{/if}>{$a.badge}</span>
+            {/if}
+
+            {if !empty($hub.params.kudos)}
+                <strong class="kudos{if $a.rate > 0} positive{elseif $a.rate < 0} negative{/if}" title="{_w('%d kudo', '%d kudos', $a.rate)|escape}">{if $a.rate >= 0}+{else}&minus;{/if}{abs($a.rate)}</strong>
+            {/if}
+
+            <br>
+            <span class="hint">{sprintf('[`%d topics, %d answers, and %d comments`]', $a.topics_count, $a.answers_count, $a.comments_count)}</span>
+        </li>
+    {/foreach}
+</ul>
+
+{if isset($pages_count) && $pages_count > 1}
+<div class="block lazyloading-paging" data-times="1" data-link-text="[`Load more`]">
+    {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+</div>
+{/if}
