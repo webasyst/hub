@@ -9,6 +9,8 @@
     $.storage = new $.store();
     // js controller
     $.hub = {
+        lang: false,
+        framework_version: false,
         options: {
             accountName: ''
         },

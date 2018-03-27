@@ -295,6 +295,7 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 .h-comment-text { line-height: 1.4em; margin: 0.5em 0; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Helvetica Neue', Arial, sans-serif; }
 .h-comment-text img,
 .h-comment-text iframe { max-width: 100%; }
+.h-comments ul li.h-comment .h-comment-text pre { background-color: rgba(0,0,0,0.05); padding: 20px !important; font-size: 1.1em; overflow-x: auto; }
 .h-comments ul li.h-comment .h-comment-text ul,
 .h-comments ul li.h-comment .h-comment-text ol { padding-left: 25px; }
 .h-comments ul li.h-comment .h-comment-text ul li { list-style: disc; }

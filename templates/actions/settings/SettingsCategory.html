@@ -433,12 +433,13 @@
             minHeight: 150,
             paragraphy: false,
             convertDivs: false,
-            imageUpload: '?module=pages&action=uploadimage&filelink=1',
-            uploadImageFields: {
+            lang: $.hub.lang,
+            imageUpload: '?module=pages&action=uploadimage&r=2&',
+            imageUploadFields: {
                 _csrf: $form.find('input[name="_csrf"]').val()
             },
-            buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
-                'image', 'table', 'link', '|']
+            plugins: ['table'],
+            buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'table']
         });
 
         // Tags input

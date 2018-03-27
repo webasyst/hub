@@ -15,7 +15,7 @@ class hubFrontendUploadImageController extends waController
         } else {
             $errors = array();
             $f = waRequest::file('file');
-
+            $f->transliterateFilename();
             $name = $f->name;
             if ($this->processFile($f, $path, $name, $errors)) {
                 $response = wa()->getDataUrl('upload/images/'.$name, true, null, !waRequest::get('relative'));

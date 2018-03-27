@@ -179,7 +179,7 @@
                 if (that.button.first().prop('disabled')) {
                     return false;
                 }
-                $('#topic-editor').waEditor('sync');
+                $('#topic-editor').waEditor2('sync');
                 that.tags_input.save();
                 var notification_sent = !!that.form.find('input[name="users_to_notify"]').val();
                 that.button.prop('disabled', true).parent().append('<i class="icon16 loading"></i>');
@@ -615,19 +615,23 @@
         },
 
         initEditor: function() {
-
             var that = this;
 
-            $('#topic-editor').waEditor({
-                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th|h1|h2|h3|h4|h5|h6'.split('|'),
-                buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
-                    'outdent', 'indent', 'image', 'video', 'table', 'link', 'alignment', '|',
-                    'horizontalrule', '|', 'codeblock', 'blockquote'],
-                plugins: ['fontcolor', 'fontsize', 'fontfamily', 'table', 'video', 'codeblock', 'blockquote'],
+            if(!$.fileupload) {
+                $.wa.loadFiles(wa_url+"wa-content/js/jquery-plugins/fileupload/jquery.fileupload.js?v"+$.hub.framework_version);
+            }
 
-                lang: this.options.lang,
-                imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
-                uploadImageFields: {
+            $('#topic-editor').waEditor2({
+                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th|h1|h2|h3|h4|h5|h6'.split('|'),
+                formatting: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                buttons: ['format', 'bold', 'italic', 'underline', 'deleted', 'lists',
+                          'outdent', 'indent', 'image', 'video', 'table', 'link', 'alignment',
+                          'horizontalrule', 'codeblock', 'blockquote'],
+                plugins: ['fontcolor', 'fontsize', 'fontfamily', 'table', 'video', 'alignment', 'codeblock', 'blockquote'],
+                upload_img_dialog: '#s-upload-dialog',
+                lang: $.hub.lang,
+                imageUpload: '?module=pages&action=uploadimage&r=2&absolute=1',
+                imageUploadFields: {
                     _csrf: that.form.find('input[name="_csrf"]').val()
                 },
                 keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redactor

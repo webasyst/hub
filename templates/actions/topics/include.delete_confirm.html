@@ -41,11 +41,11 @@
                 }
 
                 // Go back to a safe place
-                if (history.length > 0) {
+                if (history.length > 1) {
                     $.hub.backWithoutDispatch(function() {
                         // Make sure we won't end up on a topic page we just deleted
                         if ($.hub.helper.cleanHash() == $.hub.helper.cleanHash('#/topic/{$topic.id}') || $.hub.helper.cleanHash() == $.hub.helper.cleanHash('#/topic/edit/{$topic.id}')) {
-                            if (history.length > 0) {
+                            if (history.length > 1) {
                                 history.back();
                             } else {
                                 window.location.hash = '#/';

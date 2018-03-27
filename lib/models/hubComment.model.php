@@ -570,27 +570,31 @@ class hubCommentModel extends waNestedSetModel
             return false;
         }
 
-        $this->query("UPDATE {$this->table} SET status='{$status}' WHERE `{$this->left}` >= i:left AND `{$this->right}` <= i:right",
-            array('left' => $comment['left_key'], 'right' => $comment['right_key']));
+        if (isset($comment['topic_id'])) {
+            $this->query("UPDATE {$this->table} SET status='{$status}' WHERE `{$this->left}` >= i:left AND `{$this->right}` <= i:right AND `topic_id` = i:topic_id",
+                array(
+                    'left'     => $comment['left_key'],
+                    'right'    => $comment['right_key'],
+                    'topic_id' => $comment['topic_id'],
+                ));
+            // Write to wa_log
+            class_exists('waLogModel') || wa('webasyst');
+            $log_model = new waLogModel();
+            $log_model->add($status == self::STATUS_DELETED ? 'comment_delete' : 'comment_restore', $comment_id);
 
+            // Update stats in hub_author
+            $author_model = new hubAuthorModel();
+            $author_model->updateCounts('comments', $comment['hub_id'], $comment['contact_id']);
 
-        // Write to wa_log
-        class_exists('waLogModel') || wa('webasyst');
-        $log_model = new waLogModel();
-        $log_model->add($status == self::STATUS_DELETED ? 'comment_delete' : 'comment_restore', $comment_id);
-
-        // Update stats in hub_author
-        $author_model = new hubAuthorModel();
-        $author_model->updateCounts('comments', $comment['hub_id'], $comment['contact_id']);
-
-        // Update stats in hub_topic
-        $topic_model = new hubTopicModel();
-        $topic_model->updateById($comment['topic_id'], array(
-            'comments_count' => $this->countByField(array(
-                'status'   => self::STATUS_PUBLISHED,
-                'topic_id' => $comment['topic_id'],
-            ))
-        ));
+            // Update stats in hub_topic
+            $topic_model = new hubTopicModel();
+            $topic_model->updateById($comment['topic_id'], array(
+                'comments_count' => $this->countByField(array(
+                    'status'   => self::STATUS_PUBLISHED,
+                    'topic_id' => $comment['topic_id'],
+                ))
+            ));
+        }
 
         return true;
     }

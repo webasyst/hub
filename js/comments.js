@@ -73,15 +73,15 @@
                 minHeight: 150,
                 paragraphy: false,
                 convertDivs: false,
-                lang: this.options.lang,
-                imageUpload: '?module=pages&action=uploadimage&filelink=1&absolute=1',
-                uploadImageFields: {
+                lang: $.hub.lang,
+                imageUpload: '?module=pages&action=uploadimage&r=2&absolute=1',
+                imageUploadFields: {
                     _csrf: this.form.find('input[name="_csrf"]').val()
                 },
-                plugins: ['codeblock', 'blockquote'],
-                buttons: ['bold', 'italic', 'underline', 'deleted', '|', 'unorderedlist', 'orderedlist',
-                    'image', 'table', 'link', '|', 'codeblock', 'blockquote', '|'],
+                plugins: ['video', 'codeblock', 'blockquote'],
+                buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'link', 'codeblock', 'blockquote'],
                 allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br'.split('|'),
+                pasteBlockTags: ['pre', 'blockquote', 'p', 'ul', 'ol', 'li', 'div', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'figure', 'figcaption'],
                 keydownCallback: function (e) {
                     if (e.keyCode == 13 && e.ctrlKey) {
                         //return addComment(); // Ctrl+Enter disabled
@@ -327,7 +327,7 @@
             $('.errormsg', this.form).remove();
             $('.error', this.form).removeClass('error');
             if (clear_inputs) {
-                $('textarea', this.form).val('').redactor('code.set', '');
+                $('textarea', this.form).val('').redactor('code.set', '').redactor('toolbar.setUnfixed');
             }
         },
 

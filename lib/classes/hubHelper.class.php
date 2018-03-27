@@ -443,7 +443,42 @@ class hubHelper
         if (!$url) {
             return '';
         }
-        return '<img src="'.self::$attr_start.$url.self::$attr_end.'">';
+
+        $attributes = array(
+            'src' => $url,
+        );
+
+        $legal_attributes = array(
+            'title',
+            'alt'
+        );
+
+        foreach ($legal_attributes as $attribute) {
+            preg_match(
+                '~
+                &lt;
+                    img\s+
+                    .*?
+                    '.$attribute.'=&quot;([^"\'><]+?)&quot;
+                    .*?
+                    /?
+                &gt;
+            ~iuxs',
+                $m[0],
+                $match
+            );
+
+            if ($match) {
+                $val = $match[1];
+                $attributes[$attribute] = $val;
+            }
+        }
+
+        foreach ($attributes as $attribute => $val) {
+            $attributes[$attribute] = $attribute.'="'.self::$attr_start.$val.self::$attr_end.'"';
+        }
+
+        return '<img '.join(' ', $attributes).'>';
     }
 
     public static function sanitizeHtmlIframe($m)
@@ -583,7 +618,7 @@ class hubHelper
         $content = preg_replace(
             '~
                 &lt;
-                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th))
+                    (/?(?:a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th|figure|figcaption))
                     ((?!&gt;)[^a-z\-\_]((?!&gt;).)+)?
                 &gt;
             ~iux',

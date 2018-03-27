@@ -51,6 +51,7 @@ class hubFrontendCommentsAddController extends waJsonController
             $count = $comment_model->countByField(
                 array(
                     'topic_id' => $topic['id'],
+                    'status'   => hubCommentModel::STATUS_PUBLISHED,
                 )
             );
             $comment_count_str = _w('%d comment', '%d comments', $count);

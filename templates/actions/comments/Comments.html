@@ -44,7 +44,6 @@
     document.title = "{_w('comments')|escape:js} — {$wa->accountName()|escape:js}";
 
     $.comments.init({
-        lang: {json_encode(substr($wa->locale(), 0, 2))},
         statuses: {
             deleted: '{hubCommentModel::STATUS_DELETED}',
                  published: '{hubCommentModel::STATUS_PUBLISHED}'
@@ -53,7 +52,7 @@
             auto: true,
             total_count: {ifempty($total_count, 0)},
             count: {$count},
-            contact_id: {$contact_id}
+            contact_id: {json_encode($contact_id)}
         },
         container: '#comments-wrapper'
     });
