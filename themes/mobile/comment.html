@@ -55,7 +55,7 @@
         <!-- comment text -->
         <div class="text">
 
-            <div itemprop="{if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'}text{else}commentText{/if}">
+            <div itemprop="{if !$comment.depth && !empty($topic) && $types[$topic.type_id].type == 'question'}text{else}commentText{/if}" class="h-text">
                 {$comment.text}
             </div>
 
@@ -83,7 +83,7 @@
                 {if !empty($comment.editable) && !empty($topic)}
                     <!-- edit / delete -->
                     <a class="aux comment-delete" href="javascript:void(0);" data-url="{$wa->getUrl('hub/frontend/commentsDelete', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}" data-confirm="[`You are about to delete this record. Are you sure?`]">[`delete`]</a>
-                    <a class="aux comment-edit inline-link" href="javascript:void(0);" data-save-string="[`Save`]" data-url="{$wa->getUrl('hub/frontend/commentsEdit', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}"><b><i>[`edit`]</i></b></a>
+                    <a class="aux comment-edit inline-link" href="javascript:void(0);" data-save-string="[`Save`]" data-url="{$wa->getUrl('hub/frontend/commentsEdit', [ 'id' => $topic.id, 'topic_url' => $topic.url ])}" data-upload-url="{$wa->getUrl('/frontend/uploadImage')}"><b><i>[`edit`]</i></b></a>
                     {$wa->csrf()}
                 {/if}
 

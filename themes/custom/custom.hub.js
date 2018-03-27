@@ -63,16 +63,17 @@ $.hub.initTopicVotesGuest = function (wrapper, login_url) { // {{{
 
 $.hub.initEditor = function (el, options) { // {{{
     options = $.extend({
-        minHeight: 300,
+        minHeight: 150,
         buttonSource: false,
         paragraphy: false,
         convertDivs: false,
-        imageUpload: el.data('upload-url'),
-        buttons: ['bold', 'italic', 'underline', 'deleted', 'unorderedlist', 'orderedlist',
-            'image', 'video', 'link', '|', 'codeblock', 'blockquote'],
+        pasteLinkTarget: '_blank',
+        buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'link', 'codeblock', 'blockquote'],
         plugins: ['video', 'codeblock', 'blockquote'],
-        uploadImageFields: {
-            _csrf: el.closest('form').find('input[name="_csrf"]').val()
+        imageUpload: el.data('upload-url'),
+        imageUploadFields: {
+            _csrf: (el.data('csrf') || el.closest('form').find('input[name="_csrf"]').val()),
+            _version: 2
         },
         imageUploadErrorCallback: function(json) {
             alert(json.error);
@@ -402,6 +403,9 @@ $(function () {
                     }
                     $('input[name=count]', form).val(r.data.count);
                     form.find('em.errormsg').remove();
+                    var $parent_comment = $('li[data-id='+parent_id+']');
+                    $parent_comment.find('div.comment').removeClass('in-reply-to');
+                    form.find('#comment-text').redactor('toolbar.setUnfixed');
                     prepareAddingForm('');
                 },
                 'json')
@@ -455,7 +459,9 @@ $(function () {
         $content.on('click', '.comment-edit', function() {
             var $edit_link = $(this);
             var $comment_wrapper = $edit_link.closest('.comment');
-            var $text_wrapper = $comment_wrapper.find('.text:first');
+            var $text_wrapper = $comment_wrapper.find('.h-text');
+            var upload_url = $edit_link.data('upload-url');
+            var csrf = $edit_link.parent('.actions').find('input[name="_csrf"]').val();
 
             // Ignore the click if the comment is already in edit mode
             if ($text_wrapper.find('textarea').length) {
@@ -466,7 +472,7 @@ $(function () {
             var comment_id = $text_wrapper.closest('[data-id]').data('id');
 
             // Replace comment text with form to edit it
-            var $textarea = $(document.createElement('textarea')).val(comment_text);
+            var $textarea = $(document.createElement('textarea')).data('upload-url', upload_url).data('csrf', csrf).val(comment_text);
             var $submit = $($.parseHTML('<input type="submit" class="save">')).val($edit_link.data('save-string'));
 
             $comment_wrapper.find('.actions:first').hide();
@@ -495,7 +501,7 @@ $(function () {
                         // Revert field back to original state.
                         $submit.parent().remove();
                         $edit_link.closest('.edit-links').remove();
-                        $textarea.closest('.redakcor-box').css('border', '2px solid red');
+                        $textarea.closest('.redactor-box').css('border', '2px solid red');
                         // !!! should say something to user here?..
                     }
                 }, 'json');
