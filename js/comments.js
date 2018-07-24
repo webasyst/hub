@@ -81,13 +81,10 @@
                 plugins: ['video', 'codeblock', 'blockquote'],
                 buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'link', 'codeblock', 'blockquote'],
                 allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br'.split('|'),
-                pasteBlockTags: ['pre', 'blockquote', 'p', 'ul', 'ol', 'li', 'div', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'figure', 'figcaption'],
-                keydownCallback: function (e) {
-                    if (e.keyCode == 13 && e.ctrlKey) {
-                        //return addComment(); // Ctrl+Enter disabled
-                    }
-                }
+                pasteBlockTags: ['pre', 'blockquote', 'p', 'ul', 'ol', 'li', 'div', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'figure', 'figcaption']
             });
+
+            this.form.find('textarea').redactor('toolbar.setUnfixed');
 
 
             var that = this;

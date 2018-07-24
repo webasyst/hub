@@ -316,6 +316,7 @@
                     // too late!
                     return;
                 }
+                $(window).scrollTop(0);
                 $('#content').html(result);
 
                 var h1 = $('#content').find('h1:first');

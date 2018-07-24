@@ -265,8 +265,10 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 #h-comment-add .hr { margin: 30px 0 20px; }
 #h-comment-add-form { padding-top: 5px; }
 #h-comment-add-form .redactor-box { border: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px; }
+#h-comment-add-form .redactor-box .redactor-toolbar:after { clear: none; }
 #h-comment-add-form .redactor-box p { color: #000; }
 #h-comment-add-form .errormsg { margin-bottom: 20px; }
+#h-comment-add-form .loading { display: inline-block; margin: 9px 0 0 5px; }
 
 .h-comments {  }
 .h-comments.top-padded { margin-top: 40px; }
@@ -313,7 +315,7 @@ ul.h-topic-type li.selected a { color: #000; font-weight: bold; }
 .h-topic .h-plain-discussion { margin: 30px -30px 0; border-top: 1px solid #ddd; }
 .h-topic .h-plain-discussion .h-comments { margin-top: 0; }
 .h-topic .h-plain-discussion .h-comments ul li.h-comment .h-comment-container { padding: 20px 30px 20px 50px; }
-.h-topic #h-comment-add-form { padding-top: 10px; margin: 15px 30px 0 30px; }
+.h-topic #h-comment-add-form { margin: 15px 30px 0 30px; /* padding-top: 10px; */ overflow: visible }
 
 /* Authors
 ---------- */

@@ -69,8 +69,8 @@ class hubViewHelper extends waAppViewHelper
         $category_model = new hubCategoryModel();
         $cats = $category_model->getByHub($hub_id);
         $category_model->checkForNew($cats);
-        $url = $this->wa->getRouteUrl('hub/frontend/category', array('category_url' => '%URL%', 'hub_id' => $hub_id));
-        $logo_url = $this->wa->getDataUrl('categories/', true, 'hub');
+        $url = wa()->getRouteUrl('hub/frontend/category', array('category_url' => '%URL%', 'hub_id' => $hub_id));
+        $logo_url = wa()->getDataUrl('categories/', true, 'hub');
         foreach ($cats as &$c) {
             $c['url'] = str_replace('%URL%', $c['url'], $url);
             if (!empty($c['logo'])) {
@@ -137,7 +137,7 @@ class hubViewHelper extends waAppViewHelper
     public function tags($limit = 50, $hub_id = null)
     {
         $hub_id = (int)ifempty($hub_id, waRequest::param('hub_id', 0, 'int'));
-        if ( ( $cache = $this->wa->getCache())) {
+        if ( ( $cache = $this->wa()->getCache())) {
             $cache_key = 'tags'.(int)$hub_id.'l'.$limit;
             $tags = $cache->get($cache_key);
             if ($tags !== null) {

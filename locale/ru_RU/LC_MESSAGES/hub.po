@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -710,8 +710,8 @@ msgid "Access rights"
 msgstr "Права доступа"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:176
-msgid "Access to this hub will be restricted to backend users only. Use Contacts app to customize user access rights to this hub."
-msgstr "Доступ к этому хабу будет предоставлен только пользователям бекенда. Изменить уровень прав доступа можно в приложении «Контакты»."
+msgid "Access to this hub will be restricted to backend users only. Use Team app to customize user access rights to this hub."
+msgstr "Доступ к этому хабу будет предоставлен только пользователям бекенда. Изменить уровень прав доступа можно в приложении «Команда»."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:184
 msgid "Hub color marker"
@@ -1962,7 +1962,13 @@ msgid "Upload image"
 msgstr "Загрузить изображение"
 
 msgid "<b>WYSIWYG editor may change your HTML code.</b><br><br>It is necessary for correct text formatting. Smarty code may be broken and outdated HTML tags may be replaced with modern ones.<br><br>Are you sure to switch to WYSIWYG editor?"
-msgstr "<b>Редактор WYSIWYG может изменить ваш HTML-код.</b><br><br>Это необходимо для правильного форматирования текста. Код Smarty может быть взломан, и устаревшие HTML-теги могут быть заменены на современные.<br><br>Вы действительно хотите переключиться на WYSIWYG-редактор?"
+msgstr "<b>Редактор WYSIWYG может изменить ваш HTML-код.</b><br><br>Это необходимо для правильного форматирования текста. Код Smarty может быть сломан, и устаревшие HTML-теги могут быть заменены на современные.<br><br>Вы действительно хотите переключиться на WYSIWYG-редактор?"
 
 msgid "Switch"
 msgstr "Переключиться"
+
+msgid "Topic “<b>%s</b>” will be permanently deleted without the ability to recover. Delete?"
+msgstr "Тема «<b>%s</b>» будет удалена навсегда без возможности восстановления. Удалить?"
+
+msgid "User %s suggests that you improve your topic “<a href=\"%s\"><strong>%s</strong></a>” as follows:"
+msgstr "Пользователь %s предлагает вам улучшить вашу тему «<a href=\"%s\"><strong>%s</strong></a>»:"

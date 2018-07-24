@@ -62,7 +62,7 @@ class hubRepairActions extends waViewActions
         $sql = "UPDATE hub_author AS a
                     JOIN (
                         SELECT c.contact_id,
-                            SUM(IF(c.solution, i:kudos_per_answer, i:kudos_per_comment)*v.vote) AS kudos,
+                            SUM(IF(c.solution, i:kudos_per_answer, i:kudos_per_comment)*v.vote*IF(v.contact_id != c.contact_id, 1, 0)) AS kudos,
                             SUM(IF(v.contact_id != c.contact_id AND v.vote > 0, 1, 0)) AS votes_up,
                             SUM(IF(v.contact_id != c.contact_id AND v.vote < 0, 1, 0)) AS votes_down
                         FROM hub_vote AS v
@@ -85,7 +85,7 @@ class hubRepairActions extends waViewActions
         $sql = "UPDATE hub_author AS a
                     JOIN (
                         SELECT t.contact_id,
-                            SUM(i:kudos_per_topic * v.vote) AS kudos,
+                            SUM(i:kudos_per_topic * v.vote * IF(v.contact_id != t.contact_id, 1, 0)) AS kudos,
                             SUM(IF(v.contact_id != t.contact_id AND v.vote > 0, 1, 0)) AS votes_up,
                             SUM(IF(v.contact_id != t.contact_id AND v.vote < 0, 1, 0)) AS votes_down
                         FROM hub_vote AS v
@@ -116,7 +116,16 @@ class hubRepairActions extends waViewActions
             die('no hub_id');
         }
 
-        wao(new hubAuthorModel())->updateCounts('all', $hub_id);
+        $author_model = new hubAuthorModel();
+        $author_model->updateByField(array(
+            'hub_id' => $hub_id,
+        ), array(
+            'topics_count' => 0,
+            'comments_count' => 0,
+            'answers_count' => 0,
+        ));
+
+        $author_model->updateCounts('all', $hub_id);
         echo "Author topic anc comment counts recalculated for hub_id=".$hub_id;
         exit;
     }

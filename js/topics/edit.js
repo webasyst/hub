@@ -634,6 +634,7 @@
                 imageUploadFields: {
                     _csrf: that.form.find('input[name="_csrf"]').val()
                 },
+                saveButton : '.button-form-submit',
                 keydownCallback: function(event) { }, // without this waEditor intercepts Ctrl+S event in Redactor
                 changeCallback: function() {
                     that.form.change();

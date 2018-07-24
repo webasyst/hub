@@ -126,10 +126,10 @@ class hubConfig extends waAppConfig
 
         // Modules with specific access control rights
         if ($module == 'design') {
-            return !!wa()->getUser()->getRights('design');
+            return !!wa()->getUser()->getRights('hub','design');
         }
         if ($module == 'pages' && $action != 'uploadimage') {
-            return !!wa()->getUser()->getRights('pages');
+            return !!wa()->getUser()->getRights('hub', 'pages');
         }
 
         // Some settings are available to everybody, and some are admin-only
@@ -280,7 +280,7 @@ class hubConfig extends waAppConfig
                 $logs[$l_id]['params_html'] .= '<div class="activity-target"><a href="'.$url.'">'.htmlspecialchars($t['title']).'</a></div>';
             }
             if (!empty($c)) {
-                $logs[$l_id]['params_html'] .= '<div class="activity-body"><p'.(empty($c['status']) ? ' class="strike gray"' : '').'>'.nl2br(htmlspecialchars(mb_substr(strip_tags($c['text']), 0, 512))).'</p></div>';
+                $logs[$l_id]['params_html'] .= '<div class="activity-body"><p'.(empty($c['status']) ? ' class="strike gray"' : '').'>'.nl2br(mb_substr(strip_tags($c['text']), 0, 512)).'</p></div>';
             }
         }
         return $logs;

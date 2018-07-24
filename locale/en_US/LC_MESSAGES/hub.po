@@ -698,7 +698,7 @@ msgid "Access rights"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:176
-msgid "Access to this hub will be restricted to backend users only. Use Contacts app to customize user access rights to this hub."
+msgid "Access to this hub will be restricted to backend users only. Use Team app to customize user access rights to this hub."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:184
