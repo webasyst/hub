@@ -126,7 +126,8 @@
 
         // Highlight current active link in sidebar
         highlight: function(hash) {
-            var hash = $.hub.helper.cleanHash(hash);
+            var hash = $.hub.helper.cleanHash(hash),
+                hash = hash.replace('\"', '\\"');
             $('#wa-app > .sidebar li.selected').removeClass('selected');
             var tmp_a = $('#wa-app > .sidebar li a[href="'+hash+'"]');
             if (!tmp_a.length && hash.length > 2) {

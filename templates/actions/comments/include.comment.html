@@ -43,10 +43,12 @@
     {/strip}{/if}
 
     <div class="h-comment-text">
-        {if $comment.status == hubCommentModel::STATUS_DELETED}
-            <em class="gray strike">[`comment deleted`]</em>
-        {else}
-            {$comment.text}
+        <em class="gray strike js-comment-deleted"{if $comment.status !== hubCommentModel::STATUS_DELETED} style="display: none;"{/if}>[`comment deleted`]</em>
+        <em class="js-comment-restored" style="display: none;">[`comment restored`]</em>
+        {if $comment.status !== hubCommentModel::STATUS_DELETED}
+            <div class="js-comment-text">
+                {$comment.text}
+            </div>
         {/if}
         {if !empty($comment.parent)}
             <span class="hint">[`in reply to`]

@@ -12,12 +12,12 @@ class hubFrontendAuthorAction extends hubFrontendAction
 
         wa()->getResponse()->setTitle($author['name']);
 
-        $c = new hubTopicsCollection('contact/'.$id, array('hub_id' => waRequest::param('hub_id')));
+        $c = new hubTopicsCollection('contact/'.$id, array('sort' => 'recent', 'hub_id' => waRequest::param('hub_id')));
         $this->setCollection($c);
 
         $this->view->assign(array(
             'author_topics' => true,
-            'author' => $author
+            'author'        => $author
         ));
 
         /**

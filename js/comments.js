@@ -210,12 +210,31 @@
                     if (r.status == 'ok') {
                         var comment_li  = container.find('li[data-id='+comment_id+']');
                         var comment_div = comment_li.find('div:first');
+
                         comment_div.addClass('h-deleted');
                         comment_div.find('.h-comment-delete').hide();
                         comment_div.find('.h-comment-restore').show();
+                        comment_div.find('.js-comment-deleted').show();
+                        comment_div.find('.js-comment-text').hide();
+                        comment_div.find('.js-comment-restored').hide();
+
                         if (sidebar_counter.length) {
                             sidebar_counter.text(parseInt(sidebar_counter.text(), 10) - 1);
                         }
+
+                        // Deleted children comments
+                        var children_comments = comment_li.find('.h-comment div');
+                        children_comments.each(function (i) {
+                            $(this).addClass('h-deleted');
+                            $(this).find('.h-comment-delete').hide();
+                            $(this).find('.h-comment-restore').show();
+                            $(this).find('.js-comment-deleted').show();
+                            $(this).find('.js-comment-text').hide();
+                            $(this).find('.js-comment-restored').hide();
+                            if (sidebar_counter.length) {
+                                sidebar_counter.text(parseInt(sidebar_counter.text(), 10) - 1);
+                            }
+                        });
                     }
                 },
             'json');
@@ -234,9 +253,24 @@
                         comment_div.removeClass('h-deleted');
                         comment_div.find('.h-comment-delete').show();
                         comment_div.find('.h-comment-restore').hide();
+                        comment_div.find('.js-comment-deleted').hide();
+                        comment_div.find('.js-comment-restored').show();
                         if (sidebar_counter.length) {
                             sidebar_counter.text(parseInt(sidebar_counter.text(), 10) + 1);
                         }
+
+                        // Restore children comments
+                        var children_comments = comment_li.find('.h-comment div');
+                        children_comments.each(function (i) {
+                            $(this).removeClass('h-deleted');
+                            $(this).find('.h-comment-delete').show();
+                            $(this).find('.h-comment-restore').hide();
+                            $(this).find('.js-comment-deleted').hide();
+                            $(this).find('.js-comment-restored').show();
+                            if (sidebar_counter.length) {
+                                sidebar_counter.text(parseInt(sidebar_counter.text(), 10) - 1);
+                            }
+                        });
                     }
                 },
             'json');

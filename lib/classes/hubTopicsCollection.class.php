@@ -78,7 +78,7 @@ class hubTopicsCollection
 
             if ((wa()->getEnv() == 'frontend') && empty($this->options['search_all'])) {
                 $hub = hubHelper::getHub();
-                if ($hub['status']) {
+                if (!empty($hub['status'])) {
                     $this->where[] = 't.hub_id = ' . (int)waRequest::param('hub_id');
                 } else {
                     $this->where[] = '0';
@@ -749,7 +749,15 @@ class hubTopicsCollection
 
                 $where[$type_id] = '`t`.`type_id`='.intval($type_id);
                 if (!empty($type_conditions['badge'])) {
+                    $no_badge = false;
+                    if (($key = array_search(hubConfig::VIRTUAL_NO_BADGE_ID, $type_conditions['badge'])) !== false) {
+                        $no_badge = true;
+                        unset($type_conditions['badge'][$key]);
+                    }
                     $where[$type_id] .= " AND `t`.`badge` IN ('".implode("', '", $this->getModel()->escape($type_conditions['badge']))."')";
+                    if ($no_badge) {
+                        $where[$type_id] .= " OR `t`.`badge` IS NULL";
+                    }
                 }
 
                 if (isset($type_conditions['comments_count']) && ($type_conditions['comments_count'] !== '')) {

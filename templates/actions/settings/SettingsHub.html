@@ -112,7 +112,7 @@
                                 <label>
                                     <input type="checkbox" name="hub_params[kudos]"{if !empty($hub_params.kudos)} checked="checked"{/if} value="1"> [`Enable kudos in this hub`]
                                 </label>
-                                <p class="hint">[`Kudos are user ratings calculated based on user activity in discussions and community.`]</p>
+                                <p class="hint">[`Kudos are a rating based on user activity in discussions and community, and on how it’s rated by other users.`]</p>
                             </div>
                             <div class="value js-hub-settings-kudos">
                                 <strong>[`Topics`]:</strong> {sprintf('[`+1 vote for user’s topic gives +%s kudos`]', sprintf('<input type="text" class="numerical short" name="hub_params[kudos_per_topic]" value="%s">', $hub_params.kudos_per_topic|default:'2'|escape))}

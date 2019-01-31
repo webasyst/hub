@@ -81,7 +81,7 @@ i.icon16.h-badge-color-helper.h-archived  { background: #eed; color: #aa7; }
 .h-badge ul.menu-h.dropdown li:hover { background: transparent; }
 .h-badge ul.menu-h.dropdown ul.menu-v { margin-top: -1px; min-width: 220px; }
 
-.h-badge-list { line-height: 2.5em; margin-top: -7px; }
+.h-badge-list { line-height: 2.5em; }
 .h-badge-list.small .h-badge { font-size: 0.8em; }
 
 h1 .h-badge { position: relative; top: -3px; }

@@ -2,6 +2,7 @@
 
 class hubConfig extends waAppConfig
 {
+    const VIRTUAL_NO_BADGE_ID = '_no_badge_';
 
     public function onInit()
     {

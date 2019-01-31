@@ -94,31 +94,31 @@ class hubHelper
         static $result = null;
         if (empty($result)) {
             $result = array(
-                'archived'  => array(
+                'archived'   => array(
                     'name' => _w('Archived'),
                 ),
-                'answered'  => array(
+                'answered'   => array(
                     'name' => _w('Answered'),
                 ),
-                'pending'   => array(
+                'pending'    => array(
                     'name' => _w('Pending'),
                 ),
-                'accepted'  => array(
+                'accepted'   => array(
                     'name' => _w('Accepted'),
                 ),
-                'confirmed' => array(
+                'confirmed'  => array(
                     'name' => _w('Confirmed'),
                 ),
                 'inprogress' => array(
                     'name' => _w('In progress'),
                 ),
-                'complete'  => array(
+                'complete'   => array(
                     'name' => _w('Complete'),
                 ),
-                'fixed'     => array(
+                'fixed'      => array(
                     'name' => _w('Fixed'),
                 ),
-                'rejected'  => array(
+                'rejected'   => array(
                     'name' => _w('Rejected'),
                 ),
             );

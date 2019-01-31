@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -277,6 +277,9 @@ msgstr "Убрать отметку решения"
 #: /wa-apps/hub/templates/actions/comments/include.comment.html:47
 msgid "comment deleted"
 msgstr "комментарий удален"
+
+msgid "comment restored"
+msgstr "комментарий восстановлен"
 
 #: /wa-apps/hub/templates/actions/comments/include.comment.html:52
 msgid "in reply to"
@@ -650,8 +653,8 @@ msgid "Enable kudos in this hub"
 msgstr "Включить подсчет рейтинга авторов для этого хаба"
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:76
-msgid "Kudos are user ratings calculated based on user activity in discussions and community."
-msgstr "Рейтинг автора вычисляется на основании его активности в обсуждениях и в сообществе."
+msgid "Kudos are a rating based on user activity in discussions and community, and on how it’s rated by other users."
+msgstr "Рейтинг автора вычисляется на основании его активности в обсуждениях и в сообществе и ее оценок другими пользователями."
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:92
 msgid "Topic popularity index"
@@ -1033,7 +1036,7 @@ msgstr "Мета"
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:33
 msgid "No meta parameters are defined for this topic."
-msgstr "Мета-данные для этой теме не заданы."
+msgstr "Метаданные для этой теме не заданы."
 
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:35
 msgid "Edit meta"
@@ -1972,3 +1975,15 @@ msgstr "Тема «<b>%s</b>» будет удалена навсегда без
 
 msgid "User %s suggests that you improve your topic “<a href=\"%s\"><strong>%s</strong></a>” as follows:"
 msgstr "Пользователь %s предлагает вам улучшить вашу тему «<a href=\"%s\"><strong>%s</strong></a>»:"
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:308
+msgid "Custom parameters"
+msgstr "Дополнительные параметры"
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:332
+msgid "Uploading..."
+msgstr "Загружается..."
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:339
+msgid "Upload"
+msgstr "Загрузить"

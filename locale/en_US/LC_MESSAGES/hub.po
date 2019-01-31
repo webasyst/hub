@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -638,7 +638,7 @@ msgid "Enable kudos in this hub"
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:76
-msgid "Kudos are user ratings calculated based on user activity in discussions and community."
+msgid "Kudos are a rating based on user activity in discussions and community, and on how it’s rated by other users."
 msgstr ""
 
 #: /wa-apps/hub/templates/actions/settings/SettingsHub.html:92
@@ -1950,4 +1950,45 @@ msgstr ""
 
 #: /wa-apps/hub/lib/classes/hubHelper.class.php:59
 msgid "Classic forum thread with plain comment list sorted chronologically."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:156
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:327
+msgid "Upload image"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:308
+msgid "Custom parameters"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:332
+msgid "Uploading..."
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:339
+msgid "Upload"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/comments/include.comment.html:47
+msgid "comment restored"
+msgstr ""
+
+#: /wa-apps/hub/templates/actions/handlers/HandlersProfiletab.html:26
+msgid "All comments"
+msgstr ""
+
+#: /wa-apps/hub/lib/config/site.php:41
+msgid "Stuff as set up in hub settings."
+msgstr ""
+
+#: /wa-apps/hub/lib/config/site.php:42
+msgid "Categories of given hub. When $priority_topics is <em>true</em>, list of high-priority topics is returned for each category."
+msgstr ""
+
+#: /wa-apps/hub/lib/handlers/contacts.links.handler.php:33
+msgid "Comment author"
+msgstr ""
+
+#: /wa-apps/hub/lib/handlers/contacts.links.handler.php:35
+msgid "Topic author"
 msgstr ""

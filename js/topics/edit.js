@@ -182,7 +182,7 @@
                 $('#topic-editor').waEditor2('sync');
                 that.tags_input.save();
                 var notification_sent = !!that.form.find('input[name="users_to_notify"]').val();
-                that.button.prop('disabled', true).parent().append('<i class="icon16 loading"></i>');
+                that.button.prop('disabled', true).parent().append('<i class="icon16 loading" style="margin-top: 12px;"></i>');
                 $.post($(this).attr('action'), $(this).serialize(), function (response) {
                     that.button.prop('disabled', false).siblings('.loading').remove();
                     if (response.status == 'ok') {
@@ -241,7 +241,7 @@
             });
 
             // Turn the button yellow when something's changed by keyboard event
-            that.form.on('change keypress', function(e) {
+            that.form.on('input keypress', function(e) {
                 if ((e.type == 'change' || e.charCode) && that.button.hasClass('green') && !$(e.target).hasClass('ignore-dirty')) {
                     that.button.removeClass('green').addClass('yellow');
                 }

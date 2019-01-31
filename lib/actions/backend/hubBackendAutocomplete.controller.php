@@ -110,14 +110,23 @@ class hubBackendAutocompleteController extends waController
                        FROM wa_contact AS c
                            JOIN wa_contact_data AS d
                                ON d.contact_id=c.id AND d.field='phone'
-                       WHERE  c.is_user AND d.value LIKE '%".$m->escape($dq, 'like')."%'
+                       WHERE c.is_user AND d.value LIKE '%".$m->escape($dq, 'like')."%'
                        LIMIT {LIMIT}";
         }
 
         // Name contains requested string
+        $name_ar = preg_split('/\s+/', $q);
+        if (count($name_ar) == 2) {
+            $name_condition =
+                "((c.firstname LIKE '%".$m->escape($name_ar[0], 'like')."%' AND c.lastname LIKE '%".$m->escape($name_ar[1], 'like')."%')
+                    OR (c.firstname LIKE '%".$m->escape($name_ar[1], 'like')."%' AND c.lastname LIKE '%".$m->escape($name_ar[0], 'like')."%'))";
+        } else {
+            $name_condition = "c.name LIKE '_%".$m->escape($q, 'like')."%'";
+        }
         $sqls[] = "SELECT c.*
                    FROM wa_contact AS c
-                   WHERE c.is_user AND c.name LIKE '_%".$m->escape($q, 'like')."%'
+                   WHERE $name_condition
+                    AND c.is_user
                    LIMIT {LIMIT}";
 
         // Email contains requested string
