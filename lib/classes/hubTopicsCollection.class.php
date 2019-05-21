@@ -754,10 +754,11 @@ class hubTopicsCollection
                         $no_badge = true;
                         unset($type_conditions['badge'][$key]);
                     }
-                    $where[$type_id] .= " AND `t`.`badge` IN ('".implode("', '", $this->getModel()->escape($type_conditions['badge']))."')";
+                    $badge_where = "`t`.`badge` IN ('".implode("', '", $this->getModel()->escape($type_conditions['badge']))."')";
                     if ($no_badge) {
-                        $where[$type_id] .= " OR `t`.`badge` IS NULL";
+                        $badge_where = "({$badge_where} OR `t`.`badge` IS NULL)";
                     }
+                    $where[$type_id] .= " AND {$badge_where}";
                 }
 
                 if (isset($type_conditions['comments_count']) && ($type_conditions['comments_count'] !== '')) {

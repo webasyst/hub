@@ -138,19 +138,10 @@
 <script type="text/javascript">
     $(function () {
         var $form = $('#h-type-settings-form');
+
+        // voting selector must be first, cause in :input[name="type\[type\]"] we will call .change already
+
         var voting_selector = ':input[name^="type\\[settings\\]\\[voting\\]"]';
-
-        $form.find('.js-type-settings-type').hide().find(':input').attr('disabled', true);
-
-        $form.find(':input[name="type\\[type\\]"]').change(function () {
-            if (this.checked) {
-                $form.find('.js-type-settings-type').hide().find(':input').attr('disabled', true);
-                var $type_settings =$form.find('#h-type-settings-type-' + this.value);
-                $type_settings.show().find(':input').attr('disabled', null).change();
-            }
-        }).change();
-
-
         $form.find(voting_selector + '[value="\\+"]').change(function (event) {
             var $dislike = $(this).parents('div.field').find(voting_selector + '[value="\\-"]');
             if (this.checked) {
@@ -165,9 +156,14 @@
             }
         });
 
-        $form.find(voting_selector+'[value="\\+"]').each(function(){
-            $(this).change();
-        });
+        $form.find('.js-type-settings-type').hide().find(':input').attr('disabled', true);
+        $form.find(':input[name="type\\[type\\]"]').change(function () {
+            if (this.checked) {
+                $form.find('.js-type-settings-type').hide().find(':input').attr('disabled', true);
+                var $type_settings = $form.find('#h-type-settings-type-' + this.value);
+                $type_settings.show().find(':input').attr('disabled', null).change();
+            }
+        }).change();
 
         var $glyphs = $form.find('.js-type-settings-glyphs');
         var $glyph_input = $form.find(':input[name="type\\[glyph\\]"]:first');
