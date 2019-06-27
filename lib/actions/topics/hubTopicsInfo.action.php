@@ -72,6 +72,9 @@ class hubTopicsInfoAction extends waViewAction
         }
         foreach ($comments as &$c) {
             $c['topic'] = $topic;
+            if (!empty($c['parent_id']) && !empty($comments[$c['parent_id']])) {
+                $c['parent'] = $comments[$c['parent_id']];
+            }
         }
         unset($c);
 

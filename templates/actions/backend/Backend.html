@@ -41,6 +41,7 @@
         {$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js
         {$wa_url}wa-content/js/farbtastic/farbtastic.js
         {$wa_url}wa-content/js/jquery-plugins/jquery-tagsinput/jquery.tagsinput.min.js
+        {$wa_app_static_url}js/vendors/popper/popper.min.js
 
         {$wa_app_static_url}js/jquery.sticky.js
         {$wa_app_static_url}js/lazy.load.js
@@ -50,6 +51,7 @@
 
     <script src="{$wa_url}wa-content/js/jquery-ui/i18n/jquery.ui.datepicker-{$wa->locale()}.js"></script>
     <script src="{$wa_url}wa-content/js/jquery-wa/editor2.js?v{$wa->version(true)}"></script>
+
     {$wa->js()}
     {foreach $backend_event as $e}{if !empty($e.head)}{$e.head}{/if}{/foreach}
 </head>
@@ -70,8 +72,8 @@
         </div>
     </div>
 
-    <script type="text/javascript">
-        $.wa.locale = $.extend($.wa.locale || {}, {
+    <script>
+        $.wa.locale = $.extend($.wa.locale || { }, {
             'Insert code block': "[`Insert code block`]",
             'Insert quote': "[`Insert quote`]",
             'Insert': "[`Insert`]"
@@ -79,6 +81,66 @@
         $.hub.lang = {json_encode(substr($wa->locale(), 0, 2))};
         $.hub.framework_version = {$wa->version(true)|json_encode};
         $.hub.init({json_encode(['accountName' => $wa->accountName(false)])});
+    </script>
+
+    {* Tooltip with parent comments *}
+    <script>
+        $(function () {
+            var $document = $(document),
+                popper;
+
+            $document.on('mouseenter', '.js-parent-comment-reference', function () {
+                var $ref = $(this),
+                    $parent_comment = $ref.parents('.js-parent-comment'),
+                    comment_id = $parent_comment.data('id'),
+                    $popper = $parent_comment.find('.js-parent-comment-popper-wrapper');
+
+                if (popper) {
+                    return false;
+                }
+
+                popper = new Popper($ref, $popper, {
+                    placement: 'top-start',
+                    modifiers: {
+                        flip: {
+                            behavior: ['top', 'bottom']
+                        }
+                    }
+                });
+                $popper.show().css({ opacity: 1 });
+
+                $parent_comment.on('mouseleave', function () {
+                    setTimeout( function() {
+                        if (!$parent_comment.is(':hover')) {
+                            $popper.css({ opacity: 0 });
+                            setTimeout(function () {
+                                $popper.hide();
+                                $popper.html($popper.html()); // A hack that helps stop video playback :]
+
+                                if (!popper) {
+                                    return false;
+                                }
+
+                                popper.destroy();
+                                popper = null;
+                            }, 150);
+                        }
+                    }, 450);
+                });
+
+                // Scroll to parent comment in list
+                // Scroll worked only if parent comment exists in DOM :[
+                $parent_comment.on('click', '.js-parent-datetime', function () {
+                    var $real_parent_comment = $('.js-comment[data-id="'+ comment_id +'"]');
+
+                    if (!$real_parent_comment.length) {
+                        return false;
+                    }
+
+                    $('html, body').animate({ scrollTop: $real_parent_comment.offset().top });
+                });
+            });
+        });
     </script>
 </body>
 </html>

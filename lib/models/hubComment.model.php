@@ -275,7 +275,28 @@ class hubCommentModel extends waNestedSetModel
             }
             $parent_ids = array_unique($parent_ids);
             if ($parent_ids) {
-                $parents = $this->select('id,text')->where("id IN(".implode(',', $parent_ids).")")->fetchAll('id');
+                $parents = $this->select('*')->where("id IN(".implode(',', $parent_ids).")")->fetchAll('id');
+
+                $parent_contact_ids = array();
+                foreach ($data as $item) {
+                    $parent_contact_ids[] = $item['contact_id'];
+                }
+                $parent_contact_ids = array_unique($parent_contact_ids);
+                $parent_contacts = hubHelper::getAuthor($parent_contact_ids);
+
+                foreach ($parents as &$parent) {
+                    $parent['ip'] = long2ip($parent['ip']);
+                    if (isset($contacts[$parent['contact_id']])) {
+                        $parent['author'] = $parent_contacts[$parent['contact_id']];
+                        if ($escape) {
+                            $parent['author']['name'] = htmlspecialchars($parent['author']['name']);
+                        }
+                    } else {
+                        $parent['author'] = array();
+                    }
+                }
+                unset($parent);
+
                 foreach ($data as &$item) {
                     if ($item['parent_id']) {
                         $item['parent'] = $parents[$item['parent_id']];

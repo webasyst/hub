@@ -2,10 +2,10 @@
  * Sub-template included in comments/Comments.html and topics/Topics.html
  *}
 
-<div class="h-comment-container{if $comment.status == hubCommentModel::STATUS_DELETED} h-deleted{/if}{if $comment.solution} h-solution{/if}" id="h-comment-{$comment.id}">
+<div class="js-comment h-comment-container{if $comment.status == hubCommentModel::STATUS_DELETED} h-deleted{/if}{if $comment.solution} h-solution{/if}" id="h-comment-{$comment.id}" data-id="{$comment.id}">
 
     <div class="float-right">
-        <strong class="{if $comment.vote > 0}h-positive{else if $comment.vote < 0}h-negative{else}gray{/if} total-score">{if $comment.vote > 0}+{/if}{$comment.vote}</strong>
+        <strong class="{if $comment.vote > 0}h-positive{elseif $comment.vote < 0}h-negative{else}gray{/if} total-score">{if $comment.vote > 0}+{/if}{$comment.vote}</strong>
         {if !($comment.status == hubCommentModel::STATUS_DELETED)}
             <a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($comment.votes_up),true)}"><i class="icon16 hbicns up{if $comment.my_vote<=0}-bw{/if}"></i></a>
             <a href="javascript:void(0)" class="h-vote-down" title="{_w('%d vote','%d votes',abs($comment.votes_down),true)}"><i class="icon16 hbicns down{if $comment.my_vote>=0}-bw{/if}"></i></a>
@@ -50,14 +50,56 @@
                 {$comment.text}
             </div>
         {/if}
-        {if !empty($comment.parent)}
-            <span class="hint">[`in reply to`]
-                <strong>
-                    {strip_tags($comment.parent.text)|truncate:100}
-                </strong>
-            </span>
-        {/if}
     </div>
+
+    {if !empty($comment.parent)}
+        {$_parent_comment_preview = strip_tags($comment.parent.text)|truncate:27:'...'}
+        <div class="h-parent-comment js-parent-comment" data-id="{$comment.parent.id}">
+
+            <div class="h-parent-comment-reference js-parent-comment-reference">
+                <span class="hint">[`in reply to`]
+                    <strong>
+                        {if !empty($_parent_comment_preview)}
+                            {$_parent_comment_preview}
+                        {else}
+                            [`comment`]
+                        {/if}
+                    </strong>
+                </span>
+            </div>
+
+            <div class="h-popper-wrapper js-parent-comment-popper-wrapper" style="display: none;">
+
+                <div class="h-parent-meta">
+                    <span class="h-parent-author">
+                        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="bold h-comment-author">
+                            {if $comment.parent.author}
+                                <i class="icon16 userpic20" style="background-image: url('{$comment.parent.author.photo_url_20}');"></i><span class="bold">{$comment.parent.author.name|escape}</span>
+                            {else}
+                                <i class="icon16 userpic20" style="background-image: url('{$wa_url}wa-content/img/userpic20.jpg');"></i>
+                            {/if}
+                        </a>
+                    </span>
+
+                    <span class="hint">
+                        {strip}
+                            <a href="javascript:void(0);" class="js-parent-datetime h-comment-datetime">
+                                {$comment.parent.datetime|wa_datetime:"humandatetime"}
+                            </a>, {$comment.parent.ip}
+                        {/strip}
+                    </span>
+                </div>
+
+                <div class="h-parent-content h-comment-text">
+                    {$comment.parent.text}
+                </div>
+
+                <div class="popper__arrow" x-arrow></div>
+
+            </div>
+
+        </div>
+    {/if}
 
     {if $comment.status != hubCommentModel::STATUS_DELETED && (empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting) && $comment.topic.type.type != 'forum')}
         <a href="#" class="h-comment-reply small inline-link"><b><i>[`reply`]</i></b></a>

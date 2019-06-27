@@ -1987,3 +1987,7 @@ msgstr "Загружается..."
 #: /wa-apps/hub/templates/actions/topics/TopicsEdit.html:339
 msgid "Upload"
 msgstr "Загрузить"
+
+#: /wa-apps/hub/templates/actions/comments/include.comment.html:65
+msgid "comment"
+msgstr "комментарий"
