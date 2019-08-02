@@ -70,7 +70,14 @@ class hubTopicsInfoAction extends waViewAction
         } else {
             $comments = $comment_model->getFullTree($topic['id'], '*,is_updated,contact,vote,can_delete,my_vote');
         }
+
+
+        $is_admin = wa()->getUser()->isAdmin('hub');
         foreach ($comments as &$c) {
+            $current_user_is_author = $c['contact_id'] == wa()->getUser()->getId();
+            $edit_time_is_relevant = time() - strtotime($c['datetime']) < 15 * 60;
+            $c['editable'] = $is_admin || ($current_user_is_author && $edit_time_is_relevant);
+
             $c['topic'] = $topic;
             if (!empty($c['parent_id']) && !empty($comments[$c['parent_id']])) {
                 $c['parent'] = $comments[$c['parent_id']];

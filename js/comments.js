@@ -89,6 +89,10 @@
 
             var that = this;
             this.container
+                .on('click', '.h-comment-edit', function() {
+                    that.editComment($(this).closest('li').data('id'));
+                    return false;
+                })
                 .on('click', '.h-comment-delete', function() {
                     that.deleteComment($(this).closest('li').data('id'));
                     return false;
@@ -200,6 +204,84 @@
             }
         },
 
+        editComment: function(comment_id)
+        {
+            var that = this,
+                $container = that.container,
+                $comment_wrapper = $container.find('.h-comment-container[data-id="'+ comment_id +'"]'),
+                $edit_link = $comment_wrapper.find('.h-comment-edit'),
+                $text_wrapper = $comment_wrapper.find('.js-comment-text'),
+                csrf = this.form.find('input[name="_csrf"]').val();
+
+            $edit_link.hide();
+
+            $text_wrapper.data('source-text', $text_wrapper.html());
+
+            // Ignore the click if the comment is already in edit mode
+            if ($text_wrapper.find('textarea').length) {
+                return;
+            }
+
+            // Create textarea and submit button
+            var $textarea = $(document.createElement('textarea')).val($text_wrapper.data('source-text')),
+                $submit = $($.parseHTML('<input type="submit" class="js-save button green">')).val($edit_link.data('save-string'));
+
+            // Render textarea
+            $text_wrapper.empty().append($textarea).append($($.parseHTML('<div class="comment-submit" style="margin-top: 12px;"></div>')).append($submit));
+            // Setup redactor
+            $textarea.redactor({
+                minHeight: 150,
+                paragraphy: false,
+                convertDivs: false,
+                lang: $.hub.lang,
+                imageUpload: '?module=pages&action=uploadimage&r=2&absolute=1',
+                imageUploadFields: {
+                    _csrf: csrf
+                },
+                plugins: ['video', 'codeblock', 'blockquote'],
+                buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'link', 'codeblock', 'blockquote'],
+                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br'.split('|'),
+                pasteBlockTags: ['pre', 'blockquote', 'p', 'ul', 'ol', 'li', 'div', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'figure', 'figcaption']
+            });
+
+            // Setup submit button
+            $submit.click(function() {
+                var new_comment_text = $.trim($textarea.val()),
+                    href = "?module=commentsEdit",
+                    data = {
+                        id: comment_id,
+                        text: new_comment_text,
+                        _csrf: csrf
+                    };
+
+                $submit.after('<i class="icon16 loading" style="margin-top: 9px; margin-left: 12px;"></i>').prop('disabled', true);
+
+                $.post(href, data, null, 'json').always(function (res, textStatus) {
+                    $submit.prop('disabled', false).siblings('.loading').remove();
+                    $submit.siblings('.errormsg').remove();
+
+                    if (textStatus == 'success' && res.status == 'ok') {
+                        $text_wrapper.html(new_comment_text);
+                        $text_wrapper.data('source-text', $text_wrapper.html());
+                        $edit_link.show();
+                    } else if (textStatus == 'success' && res.errors) {
+                        // Validation error
+                        $.each(res.errors, function(key, value) {
+                            $submit.parent().prepend($($.parseHTML('<em class="errormsg" style="margin: 0 0 10px;"></em>')).text(value));
+                        });
+                    } else {
+                        // Something bad happened, probably 403.
+                        // Revert field back to original state.
+                        $submit.parent().remove();
+                        $edit_link.remove();
+                        $textarea.closest('.redactor-box').css('border', '2px solid red');
+                        // !!! should say something to user here?..
+                    }
+
+                }, 'json');
+            });
+        },
+
         deleteComment: function(comment_id)
         {
             var container = this.container;
@@ -212,6 +294,7 @@
                         var comment_div = comment_li.find('div:first');
 
                         comment_div.addClass('h-deleted');
+                        comment_div.find('.h-comment-edit').hide();
                         comment_div.find('.h-comment-delete').hide();
                         comment_div.find('.h-comment-restore').show();
                         comment_div.find('.js-comment-deleted').show();
@@ -226,6 +309,7 @@
                         var children_comments = comment_li.find('.h-comment div');
                         children_comments.each(function (i) {
                             $(this).addClass('h-deleted');
+                            $(this).find('.h-comment-edit').hide();
                             $(this).find('.h-comment-delete').hide();
                             $(this).find('.h-comment-restore').show();
                             $(this).find('.js-comment-deleted').show();
@@ -237,7 +321,7 @@
                         });
                     }
                 },
-            'json');
+                'json');
         },
 
         restoreComment: function(comment_id)
@@ -251,6 +335,7 @@
                         var comment_li  = container.find('li[data-id='+comment_id+']');
                         var comment_div = comment_li.find('div:first');
                         comment_div.removeClass('h-deleted');
+                        // comment_div.find('.h-comment-edit').show();
                         comment_div.find('.h-comment-delete').show();
                         comment_div.find('.h-comment-restore').hide();
                         comment_div.find('.js-comment-deleted').hide();
@@ -263,6 +348,7 @@
                         var children_comments = comment_li.find('.h-comment div');
                         children_comments.each(function (i) {
                             $(this).removeClass('h-deleted');
+                            $(this).find('.h-comment-edit').show();
                             $(this).find('.h-comment-delete').show();
                             $(this).find('.h-comment-restore').hide();
                             $(this).find('.js-comment-deleted').hide();

@@ -101,9 +101,11 @@ class hubFrontendTopicAction extends hubFrontendAction
         }
 
         // comment.editable for smarty
+        $is_admin = wa()->getUser()->isAdmin('hub');
         foreach($comments as &$c) {
-            $c['editable'] = wa()->getUser()->isAdmin('hub')
-                                || ($c['contact_id'] == wa()->getUser()->getId() && time() - strtotime($c['datetime']) < 15 * 60);
+            $current_user_is_author = $c['contact_id'] == wa()->getUser()->getId();
+            $edit_time_is_relevant = time() - strtotime($c['datetime']) < 15 * 60;
+            $c['editable'] = $is_admin || ($current_user_is_author && $edit_time_is_relevant);
         }
         unset($c);
 

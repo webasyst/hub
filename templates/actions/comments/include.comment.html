@@ -30,6 +30,10 @@
         {$comment.datetime|wa_datetime:"humandatetime"}, {$comment.ip}
     </span>
 
+    {if !empty($comment.editable) && !empty($topic)}
+        <a href="#" class="small h-comment-edit" data-save-string="{_w('Save')}" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if}>[`edit`]</a>
+    {/if}
+
     {if !empty($comment.can_delete)}
         <a href="#" class="small h-comment-delete" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if}>[`delete`]</a>
         <a href="#" class="small h-comment-restore" {if $comment.status == hubCommentModel::STATUS_PUBLISHED}style="display: none;"{/if}>[`restore`]</a>
