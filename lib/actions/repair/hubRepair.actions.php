@@ -3,8 +3,25 @@ class hubRepairActions extends waViewActions
 {
     protected function defaultAction()
     {
-        echo "?module=repair&action=kudos&hub_id=\n<br>\n";
+        echo "<b>Update kudos for one specific hub</b><br>\n";
+        echo "?module=repair&action=kudos&hub_id=\n<br>\n<br>\n";
+
+        echo "<b>Update authors counters (topics, comments, answers) for one specific hub</b><br>\n";
         echo "?module=repair&action=authorCounts&hub_id=\n<br>\n";
+
+        echo "<br>\n";
+        echo "<b>Update authors comment counts</b><br>\n";
+        echo "&mdash;&nbsp;For <i>all hubs</i>:<br>\n";
+        echo "&nbsp;&nbsp;?module=repair&action=authorCommentCounts<br>\n";
+        echo "&mdash;&nbsp;For one <i>specific hub</i>:<br>\n";
+        echo "&nbsp;&nbsp;?module=repair&action=authorCommentCounts&hub_id=<br>\n";
+        echo "&mdash;&nbsp;For several <i>specific hubs</i>:<br>\n";
+        echo "&nbsp;&nbsp;?module=repair&action=authorCommentCounts&hub_id[]=&hub_id[]=&hub_id[]=<br>\n";
+        echo "&mdash;&nbsp;For several <i>specific hubs</i>:<br>\n";
+        echo "&nbsp;&nbsp;?module=repair&action=authorCommentCounts&hub_id=hub_id_1,hub_id_2,hub_id_3<br>\n";
+        echo "<br>\n";
+
+        echo "<b>Update topic comment count for one specific hub</b><br>\n";
         echo "?module=repair&action=topicCommentCounts\n";
         exit;
     }
@@ -127,6 +144,36 @@ class hubRepairActions extends waViewActions
 
         $author_model->updateCounts('all', $hub_id);
         echo "Author topic anc comment counts recalculated for hub_id=".$hub_id;
+        exit;
+    }
+
+    protected function authorCommentCountsAction()
+    {
+        $author_model = new hubAuthorModel();
+
+        $hub_id_param = waRequest::get('hub_id');
+
+        if (is_array($hub_id_param) || $hub_id_param === null) {
+            $hub_id = $hub_id_param;
+        } elseif (wa_is_int($hub_id_param) && $hub_id_param > 0) {
+            $hub_id = $hub_id_param;
+        } elseif (is_scalar($hub_id_param)) {
+            $hub_id = array_map('trim', explode(',', $hub_id_param));
+        } else {
+            die("Invalid hub_id parameter");
+        }
+
+        $ok = $author_model->updateCommentCounts($hub_id);
+
+        if (!$ok) {
+            die("Invalid hub_id parameter");
+        }
+
+        if ($hub_id === null) {
+            echo "Author comment counts recalculated for all hubs";
+        } else {
+            echo "Author comment counts recalculated for hub_id=" . join(',', (array)$hub_id);
+        }
         exit;
     }
 

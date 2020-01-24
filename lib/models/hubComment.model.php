@@ -541,9 +541,14 @@ class hubCommentModel extends waNestedSetModel
         }
 
         // Update author stats
-        if (!empty($data['contact_id']) && !empty($data['hub_id']) && $data['contact_id'] != wa()->getUser()->getId()) {
+        if (!empty($data['contact_id']) && !empty($data['hub_id'])) {
             $author_model = new hubAuthorModel();
-            $author_model->receiveVote('comment', $data['hub_id'], $data['contact_id'], +1);
+
+            // New comments and topics does not change own kudos.
+            if ($data['contact_id'] != wa()->getUser()->getId()) {
+                $author_model->receiveVote('comment', $data['hub_id'], $data['contact_id'], +1);
+            }
+
             $author_model->updateCounts('comments', $data['hub_id'], $data['contact_id']);
         }
 

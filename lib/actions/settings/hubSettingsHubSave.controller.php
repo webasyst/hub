@@ -87,7 +87,14 @@ class hubSettingsHubSaveController extends waJsonController
 
         $something_changed = false;
         $route_config = include($path);
+        if (empty($route_config)) {
+            return;
+        }
+
         foreach($route_config as $domain => $routes) {
+            if (!is_array($routes)) {
+                continue;
+            }
             foreach($routes as $k => $route) {
                 if (!empty($route['app']) && ($route['app'] == 'hub') && !empty($route['hub_id']) && ($route['hub_id'] == $hub_id)) {
                     unset($route_config[$domain][$k]);

@@ -64,6 +64,7 @@ class hubAuthorModel extends waModel
             $contacts = array();
         }
 
+
         if (empty($contacts)) {
             $where_contacts = '';
         } else {
@@ -131,6 +132,101 @@ class hubAuthorModel extends waModel
                 ));
             }
         }
+    }
+
+    /**
+     * Update comments_count of authors
+     * Use SQL queries to update, no foreach`s as updateCounts, could to be more efficient
+     * Also take into account cases when hub_author table record not exists yet, but there are hub_comment records
+     * @param int|int[]|null $hub_id        Hub ID or list of hub ID or NULL (all hubs for which there are hub_comment records)
+     * @param int|int[]|null $contact_id    Contact ID or list of contact ID or NULL (all contacts for which there are hub_comments records)
+     * @param string         $type          How to update: only for existing records in hub_author OR with inserting new records.
+     *                                          Variants 'existing', 'all'. Default is 'all'
+     *
+     * @return bool                         Invalid input param(params)
+     */
+    public function updateCommentCounts($hub_id = null, $contact_id=null, $type = 'all')
+    {
+        // check $type input parameter
+        if ($type !== 'all' && $type !== 'existing') {
+            return false;
+        }
+
+        // prepare SQL filter by hub IDs with checking $hub_id input parameter
+        if ($hub_id === null) {
+            $hub_filter = '';
+            $hub_ids = array();
+        } else {
+            $hub_ids = waUtils::toIntArray($hub_id);
+            $hub_ids = waUtils::dropNotPositive($hub_ids);
+            if ($hub_ids) {
+                $hub_filter = ' AND c.hub_id IN(:hub_ids)';
+            } else {
+                return false;
+            }
+        }
+
+        // prepare SQL filter by contact IDS with checking $contact_id input parameter
+        if ($contact_id === null) {
+            $contact_filter = '';
+            $contact_ids = array();
+        } else {
+            $contact_ids = waUtils::toIntArray($contact_id);
+            $contact_ids = waUtils::dropNotPositive($contact_ids);
+            if ($contact_ids) {
+                $contact_filter = ' AND c.contact_id IN(:contact_ids)';
+            } else {
+                return false;
+            }
+        }
+
+        // Repair comments_count counters
+        // insert case - make extra LEFT JOIN to define which records need to be inserted
+
+        if ($type === 'all') {
+            $sql = "
+                INSERT IGNORE INTO hub_author (`hub_id`, `contact_id`, `topics_count`, `comments_count`, `answers_count`, `votes_up`, `votes_down`, `rate`)
+                
+                SELECT c.hub_id, c.contact_id, 0, COUNT(*) AS comments_count, 0, 0, 0, 0
+                    FROM hub_comment c
+                    LEFT JOIN hub_author a ON a.contact_id = c.contact_id AND a.hub_id = c.hub_id
+                    WHERE c.status='approved'
+                        {$hub_filter}
+                        {$contact_filter}
+                GROUP BY c.contact_id, c.hub_id
+            ";
+
+            $this->exec($sql, array(
+                'hub_ids' => $hub_ids,
+                'contact_ids' => $contact_ids
+            ));
+        }
+
+        // Repair comments_count counters
+        // update case (when in hub_author proper record exists)
+        // inner select get counters grouped by hub_id and contact_id
+        // than do update in hub_author table for proper hub_id and contact_id
+
+        $sql = "
+                UPDATE hub_author a 
+                JOIN (
+                  SELECT c.contact_id, c.hub_id, COUNT(*) AS comments_count
+                        FROM hub_comment c
+                        WHERE c.status='approved' 
+                            {$hub_filter}
+                            {$contact_filter} 
+                        GROUP BY c.contact_id, c.hub_id
+                ) r
+                ON a.contact_id = r.contact_id AND a.hub_id = r.hub_id
+                SET a.comments_count = r.comments_count
+        ";
+
+        $this->exec($sql, array(
+            'hub_ids' => $hub_ids,
+            'contact_ids' => $contact_ids
+        ));
+
+        return true;
 
     }
 
