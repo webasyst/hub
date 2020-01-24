@@ -1314,3 +1314,12 @@ msgstr "комментарий"
 
 msgid "%s has posted new topic “<a href=\"%s\"><strong>%s</strong></a>” and invites you to take a look:"
 msgstr "%s опубликовал новую тему «<a href=\"%s\"><strong>%s</strong></a>» и предлагает вам посмотреть:"
+
+msgid "Allowed actions for authorized website visitors"
+msgstr "Разрешённые действия для авторизованных посетителей сайта"
+
+msgid "deletion of own topics"
+msgstr "удаление своих тем"
+
+msgid "editing of own topics"
+msgstr "редактирование своих тем"

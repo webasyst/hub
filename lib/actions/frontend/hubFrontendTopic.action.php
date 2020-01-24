@@ -119,12 +119,18 @@ class hubFrontendTopicAction extends hubFrontendAction
         $this->getResponse()->setMeta('description', $topic['meta_description']);
         $this->getResponse()->setTitle(ifempty($topic['meta_title'], $topic['title']).($topic['badge']['id'] == 'archived' ? ' ['._w('Archived').']' : ''));
 
-        if ($topic['contact_id'] == $this->getUserId() && (wa()->getUser()->isAdmin('hub') || time() - strtotime($topic['create_datetime']) <= 45 * 60)) {
-            $topic['editable'] = true;
+        $this->extendByTopicRights($topic);
+
+        if ($topic['editable']) {
             $topic['edit_url'] = wa()->getRouteUrl('/frontend/topicEdit', array('id' => $topic['id'], 'topic_url' => $topic['url']));
+        } else {
+            $topic['edit_url'] = 'javascript:void(0)';
+        }
+
+        if ($topic['deletable']) {
             $topic['delete_url'] = wa()->getRouteUrl('/frontend/topicDelete', array('id' => $topic['id'], 'topic_url' => $topic['url']));
         } else {
-            $topic['editable'] = false;
+            $topic['delete_url'] = 'javascript:void(0)';
         }
 
         $category_model = new hubCategoryModel();
@@ -170,5 +176,105 @@ class hubFrontendTopicAction extends hubFrontendAction
                 'name' => $c['name']
             )
         );
+    }
+
+    /**
+     * Extend topic info by rights flags
+     * @param array &$topic
+     *    Topic will be extended by these 2 flags
+     *      - bool $topic['editable']  - can current user edit topic?
+     *      - bool $topic['deletable'] - can current user delete topic?
+     * @throws waDbException
+     * @throws waException
+     *
+     * @see hubFrontendTopicEditAction::hasAccess()
+     * @see hubFrontendTopicDeleteController::hasAccess()
+     */
+    protected function extendByTopicRights(&$topic)
+    {
+        // admin has full access
+        // same as in hubFrontendTopicEditAction::hasAccess() and hubFrontendTopicDeleteController::hasAccess()
+        if ($this->isHubAppAdmin()) {
+            $topic['editable'] = true;
+            $topic['deletable'] = true;
+            return;
+        }
+        
+        $hub_params_model = new hubHubParamsModel();
+        $hub_params = $hub_params_model->getParams($topic['hub_id']);
+        $topic['editable'] = $this->isEditable($topic, $hub_params);
+        $topic['deletable'] = $this->isDeletable($topic, $hub_params);
+    }
+
+    /**
+     * Can current user edit topic?
+     * @param array $topic
+     * @param array $hub_params
+     * @return bool
+     * @throws waException
+     * @see hubFrontendTopicEditAction::hasAccess()
+     */
+    protected function isEditable($topic, $hub_params = array())
+    {
+        // admin has full access
+        // same as in hubFrontendTopicEditAction::hasAccess()
+        if ($this->isHubAppAdmin()) {
+            return true;
+        }
+        if (!$this->isOwnTopic($topic)) {
+            return false;
+        }
+        return $this->isTopicNewlyCreated($topic) || !empty($hub_params['frontend_allow_edit_topic']);
+    }
+
+    /**
+     * Can current user delete topic?
+     * @param array $topic
+     * @param array $hub_params
+     * @return bool
+     * @throws waException
+     * @see hubFrontendTopicDeleteController::hasAccess()
+     */
+    protected function isDeletable($topic, $hub_params = array())
+    {
+        // admin has full access
+        // same as in hubFrontendTopicDeleteController::hasAccess()
+        if ($this->isHubAppAdmin()) {
+            return true;
+        }
+        if (!$this->isOwnTopic($topic)) {
+            return false;
+        }
+        return $this->isTopicNewlyCreated($topic) || !empty($hub_params['frontend_allow_delete_topic']);
+    }
+
+    /**
+     * Current user is owner of topic?
+     * @param array $topic
+     * @return bool
+     */
+    protected function isOwnTopic($topic)
+    {
+        return $topic['contact_id'] == $this->getUserId();
+    }
+
+    /**
+     * Has topic created recently?
+     * @param array $topic
+     * @return false|int
+     */
+    protected function isTopicNewlyCreated($topic)
+    {
+        return time() - strtotime($topic['create_datetime']) <= 60 * 60;    // 1h
+    }
+
+    /**
+     * Is current user admin of hub application?
+     * @return bool
+     * @throws waException
+     */
+    protected function isHubAppAdmin()
+    {
+        return wa()->getUser()->isAdmin('hub');
     }
 }

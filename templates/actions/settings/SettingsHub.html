@@ -257,6 +257,28 @@
                       </div>
                     </div>
 
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Allowed actions for authorized website visitors`]</div>
+                            <div class="value no-shift">
+                                <label>
+                                    {$_checked = $hub.params.frontend_allow_delete_topic|default:''}
+                                    <input type="hidden" name="hub_params[frontend_allow_delete_topic]" value="0">
+                                    <input type="checkbox" name="hub_params[frontend_allow_delete_topic]" value="1" {if $_checked}checked="checked"{/if}>
+                                    [`deletion of own topics`]
+                                </label>
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    {$_checked = $hub.params.frontend_allow_edit_topic|default:''}
+                                    <input type="hidden" name="hub_params[frontend_allow_edit_topic]" value="0">
+                                    <input type="checkbox" name="hub_params[frontend_allow_edit_topic]" value="1" {if $_checked}checked="checked"{/if}>
+                                    [`editing of own topics`]
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="field">
                         <div class="value">
                             <input type="submit" class="button green submit" value="[`Save`]">

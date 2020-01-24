@@ -11,12 +11,8 @@ class hubFrontendTopicDeleteController extends waJsonController
             throw new waException(_w('Topic not found'), 404);
         }
 
-        if (!wa()->getUser()->isAdmin('hub')) {
-            if ($topic['contact_id'] != $this->getUserId() ||
-                (time() - strtotime($topic['create_datetime']) > 120 * 60)
-            ) {
-                throw new waRightsException(_ws('Access denied'));
-            }
+        if (!$this->hasAccess($topic)) {
+            throw new waRightsException(_ws('Access denied'));
         }
 
         if (waRequest::method() != 'post') {
@@ -51,6 +47,29 @@ class hubFrontendTopicDeleteController extends waJsonController
             $this->response = $url;
 
         }
+    }
+
+    /**
+     * @param $topic
+     * @return bool
+     * @throws waDbException
+     * @throws waException
+     * @see hubFrontendTopicAction::isDeletable()
+     */
+    protected function hasAccess($topic)
+    {
+        if (wa()->getUser()->isAdmin('hub')) {
+            return true;
+        }
+        if ($topic['contact_id'] != $this->getUserId()) {
+            return false;
+        }
+
+        $hub_params_model = new hubHubParamsModel();
+        $hub_params = $hub_params_model->getParams($topic['hub_id']);
+
+        $is_newly_created = time() - strtotime($topic['create_datetime']) <= 60 * 60;   // 1h
+        return $is_newly_created || !empty($hub_params['frontend_allow_delete_topic']);
     }
 }
 

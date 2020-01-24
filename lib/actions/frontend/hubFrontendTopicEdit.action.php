@@ -116,6 +116,12 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
         return false;
     }
 
+    /**
+     * @return bool
+     * @throws waDbException
+     * @throws waException
+     * @see hubFrontendTopicAction::isEditable()
+     */
     protected function hasAccess()
     {
         if (!$this->topic) {
@@ -127,6 +133,11 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
         if ($this->topic['contact_id'] != $this->getUserId()) {
             return false;
         }
-        return time() - strtotime($this->topic['create_datetime']) <= 60 * 60;
+
+        $hub_params_model = new hubHubParamsModel();
+        $hub_params = $hub_params_model->getParams($this->topic['hub_id']);
+
+        $is_newly_created = time() - strtotime($this->topic['create_datetime']) <= 60 * 60; // 1h
+        return $is_newly_created || !empty($hub_params['frontend_allow_edit_topic']);
     }
 }
