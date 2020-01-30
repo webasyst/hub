@@ -5,10 +5,14 @@
 
 <article class="topic type-page" itemscope itemtype="http://schema.org/Article">
 
-    {if !empty($topic.editable)}
+    {if !empty($topic.editable) || !empty($topic.deletable)}
         <div class="edit-links aux">
-            <a href="{$topic.edit_url}" class="bold">[`Edit topic`]</a>
-            <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+            {if !empty($topic.editable)}
+                <a href="{$topic.edit_url}" class="bold">[`Edit topic`]</a>
+            {/if}
+            {if !empty($topic.deletable)}
+                <a class="delete" data-confirm="[`You are about to delete this record. Are you sure?`]" href="{$topic.delete_url}">[`Delete`]</a>
+            {/if}
         </div>
     {/if}
 

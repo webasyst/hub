@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE theme PUBLIC "wa-app-theme" "http://www.webasyst.com/wa-content/xml/wa-app-theme.dtd">
-<theme id="nifty" vendor="webasyst" app="hub" parent_theme_id="site:nifty" version="1.1.3">
+<theme id="nifty" vendor="webasyst" app="hub" parent_theme_id="site:nifty" version="1.2.8">
     <name locale="ru_RU">Nifty</name>
     <name locale="en_US">Nifty</name>
     <files>
@@ -18,7 +18,7 @@
         </file>
         <file path="content.html" custom="0">
             <description locale="en_US">Main layout and navigation for Hub app content</description>
-            <description locale="ru_RU">Основное макет вывода содержимого и навигации в приложении «Хаб»</description>
+            <description locale="ru_RU">Основной макет вывода содержимого и навигации в приложении «Хаб»</description>
         </file>
     	<file path="footer.html">
             <description locale="en_US">App specific footer content</description>
