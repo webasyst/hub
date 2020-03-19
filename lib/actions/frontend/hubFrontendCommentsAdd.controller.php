@@ -21,6 +21,8 @@ class hubFrontendCommentsAddController extends waJsonController
             wa()->getUser()->addToCategory($this->getAppId());
         }
 
+        $count = 0;
+
         $topic = $this->getTopic();
 
         $comment_count_str = '';
@@ -136,11 +138,19 @@ class hubFrontendCommentsAddController extends waJsonController
 
         $m = new waMailMessage();
 
+        $current_user = $this->getUser();
+
         $following_model = new hubFollowingModel();
         foreach ($following_model->getFollowers($comment['topic']['id'], true) as $c) {
             if (empty($c['email'])) {
                 continue;
             }
+
+            // if current user leave comment, ignore sending notification to her / him
+            if ($c['id'] > 0 && $c['id'] === $current_user->getId()) {
+                continue;
+            }
+
             $view->assign('contact', $c);
 
             $subject = 'New comment';
