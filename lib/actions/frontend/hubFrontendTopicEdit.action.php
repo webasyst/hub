@@ -80,12 +80,12 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
         } else {
             // Params starting with underscore can not be modified via frontend editor
             foreach($data['params'] as $k => $v) {
-                if (!$k || $k{0} == '_' || strpos($k, '=') !== false) {
+                if (!$k || $k[0] == '_' || strpos($k, '=') !== false) {
                     unset($data['params'][$k]);
                 }
             }
             foreach($this->topic['params'] as $k => $v) {
-                if ($k && $k{0} == '_') {
+                if ($k && $k[0] == '_') {
                     $data['params'][$k] = $v;
                 }
             }

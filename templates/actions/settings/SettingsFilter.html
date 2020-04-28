@@ -112,25 +112,45 @@
                                 <option value="1"{if ifset($filter.conditions.types[$t.id]['comments_count'],'')==='1'} selected="selected"{/if}>[`Answered only`]</option>
                             </select>
                             {/if}
-
-                            {if $t.type == 'feedback'}
-                            <div class="h-badge-list">
-                                {* Virtual bage :no_bage: *}
-                                <label>
-                                    <span class="h-badge">
-                                        <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
-                                        &nbsp;[`No badge`]
-                                    </span>
-                                </label>
-                                {foreach hubHelper::getBadges() as $badge_id=>$badge_info}
+                            
+                            {if $t.type == 'question'}
+                                <div class="h-badge-list">
+                                    {* Virtual bage :no_bage: *}
                                     <label>
-                                        <span class="h-badge h-{$badge_id}">
-                                            <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
-                                            &nbsp;{$badge_info.name|escape}
+                                        <span class="h-badge">
+                                            <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
+                                            &nbsp;[`No badge`]
                                         </span>
                                     </label>
-                                {/foreach}
-                            </div>
+                                    {foreach hubHelper::getBadgesByType('question') as $badge_id=>$badge_info}
+                                    <label>
+                                            <span class="h-badge h-{$badge_id}">
+                                                <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
+                                                &nbsp;{$badge_info.name|escape}
+                                            </span>
+                                    </label>
+                                    {/foreach}
+                                </div>
+                            {/if}
+
+                            {if $t.type == 'feedback'}
+                                <div class="h-badge-list">
+                                    {* Virtual bage :no_bage: *}
+                                    <label>
+                                        <span class="h-badge">
+                                            <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
+                                            &nbsp;[`No badge`]
+                                        </span>
+                                    </label>
+                                    {foreach hubHelper::getBadges() as $badge_id=>$badge_info}
+                                        <label>
+                                            <span class="h-badge h-{$badge_id}">
+                                                <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
+                                                &nbsp;{$badge_info.name|escape}
+                                            </span>
+                                        </label>
+                                    {/foreach}
+                                </div>
                             {/if}
 
                         </li>

@@ -101,7 +101,7 @@ class hubFrontendAddAction extends hubFrontendAction
         }
         if (is_array($data['params'])) {
             foreach($data['params'] as $k => $v) {
-                if (!$k || $k{0} == '_' || strpos($k, '=') !== false) {
+                if (!$k || $k[0] == '_' || strpos($k, '=') !== false) {
                     unset($data['params'][$k]);
                 }
             }

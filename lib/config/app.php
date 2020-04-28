@@ -10,7 +10,7 @@ return array(
     ),
     'sash_color' => '#78d3c9',
     'vendor'     => 'webasyst',
-    'version'    => '1.2.8',
+    'version'    => '1.2.9',
     'rights'     => true,
     'frontend'   => true,
     'pages'      => true,

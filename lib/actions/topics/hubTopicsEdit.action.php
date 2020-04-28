@@ -24,7 +24,7 @@ class hubTopicsEditAction extends waViewAction
             $params = $topic_params_model->getByTopic($id);
             $params_string = array();
             foreach($params as $k => $v) {
-                if ($k && $k{0} != '_' && strpos($k, '=') === false) {
+                if ($k && $k[0] != '_' && strpos($k, '=') === false) {
                     $params_string[] = "{$k}={$v}";
                 }
             }
