@@ -152,7 +152,7 @@
     <hr>
 
     {* Add comment form *}
-    {if $topic.badge.id == 'archived'}
+    {if !empty($topic.badge) && $topic.badge.id == 'archived'}
         <p><em>[`This topic is in the archive. Posting new comments is disabled.`]</em></p>
     {else}
         <h4>[`Add answer`]</h4>

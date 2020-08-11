@@ -7,6 +7,13 @@ class hubFrontendTopicAction extends hubFrontendAction
         $id = waRequest::param('id');
         $topic_model = new hubTopicModel();
         $topic = $topic_model->getById($id);
+        $comment_model = new hubCommentModel();
+
+        $newest_comment = $comment_model->select('datetime')
+            ->where("`topic_id` = {$id} AND `datetime` > '{$topic['update_datetime']}'")
+            ->order('datetime DESC')->fetchField('datetime');
+        $topic_update_datetime = ifempty($newest_comment, $topic['update_datetime']);
+        $this->getResponse()->setLastModified($topic_update_datetime);
 
         if (!$topic) {
             throw new waException(_w('Topic not found'), 404);
@@ -62,7 +69,6 @@ class hubFrontendTopicAction extends hubFrontendAction
             }
         }
 
-        $comment_model = new hubCommentModel();
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']]['type'] : 'custom';
 
         $base_types = hubHelper::getBaseTypes();
@@ -109,6 +115,8 @@ class hubFrontendTopicAction extends hubFrontendAction
         }
         unset($c);
 
+        $is_archived = ifset($topic, 'badge', 'id', null) === 'archived';
+
         /**
          * @event frontend_comments
          * @param array $comments
@@ -117,7 +125,7 @@ class hubFrontendTopicAction extends hubFrontendAction
 
         $this->getResponse()->setMeta('keywords', $topic['meta_keywords']);
         $this->getResponse()->setMeta('description', $topic['meta_description']);
-        $this->getResponse()->setTitle(ifempty($topic['meta_title'], $topic['title']).($topic['badge']['id'] == 'archived' ? ' ['._w('Archived').']' : ''));
+        $this->getResponse()->setTitle(ifempty($topic['meta_title'], $topic['title']).($is_archived ? ' ['._w('Archived').']' : ''));
 
         $this->extendByTopicRights($topic);
 
@@ -137,7 +145,7 @@ class hubFrontendTopicAction extends hubFrontendAction
         $categories = $category_model->getByTopic($topic);
 
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']] : null;
-        $comments_allowed = $topic['badge']['id'] != 'archived' && ifset($this->types[$topic['type_id']]['settings']['commenting'], 1) != 0;
+        $comments_allowed = !$is_archived && ifset($this->types, $topic['type_id'], 'settings', 'commenting', 1) != 0;
         $this->view->assign(array(
             'tags' => $tags,
             'topic' => $topic,
@@ -199,7 +207,7 @@ class hubFrontendTopicAction extends hubFrontendAction
             $topic['deletable'] = true;
             return;
         }
-        
+
         $hub_params_model = new hubHubParamsModel();
         $hub_params = $hub_params_model->getParams($topic['hub_id']);
         $topic['editable'] = $this->isEditable($topic, $hub_params);
