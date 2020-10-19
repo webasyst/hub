@@ -70,6 +70,16 @@ class hubTopicsSaveController extends waJsonController
 
         $topic = $topic_model->getById($id);
 
+        /**
+         * @event 'backend_topic_save_after'
+         * @param array['topic']          array Topic data
+         * @param array['just_published'] bool  Whether a new topic has just been published
+         */
+        wa()->event('backend_topic_save_after', ref(array(
+            'topic' => $topic,
+            'just_published' => $just_published
+        )));
+
         // Notify users about published topic
         if ($just_published && ( $users_to_notify = waRequest::post('users_to_notify'))) {
             $users_to_notify = array_map('intval', explode(',', $users_to_notify));

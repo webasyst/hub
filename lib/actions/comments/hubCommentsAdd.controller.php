@@ -72,6 +72,12 @@ class hubCommentsAddController extends waJsonController
         $comment['topic'] = $topic;
         $this->view->assign('comment', $comment);
 
+        /**
+         * @event 'backend_comment_add_after'
+         * @param array Comment data
+         */
+        wa()->event('backend_comment_add_after', $comment);
+
         $this->response['id'] = $data['id'];
         $this->response['parent_id'] = $data['parent_id'];
         $this->response['html'] = $this->view->fetch('templates/actions/comments/include.comment.html');

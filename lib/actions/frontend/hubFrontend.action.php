@@ -58,7 +58,7 @@ class hubFrontendAction extends waViewAction
     public function execute()
     {
         // Do not show home page unless URL is /
-        if (wa()->getRouting()->getCurrentUrl()) {
+        if (strlen(wa()->getRouting()->getCurrentUrl())) {
             throw new waException('Page not found', 404);
         }
 
