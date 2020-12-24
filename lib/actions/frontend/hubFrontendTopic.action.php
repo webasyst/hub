@@ -74,7 +74,7 @@ class hubFrontendTopicAction extends hubFrontendAction
         $base_types = hubHelper::getBaseTypes();
 
         if (!empty($base_types[$topic_type]['solution'])) {
-            $comments = $comment_model->getFullTree($topic['id'], '*,author,vote,my_vote', 'solution DESC, votes_sum DESC', true);
+            $comments = $comment_model->getFullTree($topic['id'], '*,author,vote,my_vote', 'datetime', true);
         } elseif ($topic_type == 'forum') {
             $limit = $this->getConfig()->getOption('comments_per_page');
             if (!$limit) {
@@ -146,6 +146,7 @@ class hubFrontendTopicAction extends hubFrontendAction
 
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']] : null;
         $comments_allowed = !$is_archived && ifset($this->types, $topic['type_id'], 'settings', 'commenting', 1) != 0;
+
         $this->view->assign(array(
             'tags' => $tags,
             'topic' => $topic,
