@@ -354,6 +354,22 @@ $(function () {
             return false;
         });
 
+        var is_changed = false,
+            is_submit_event = false;
+
+        form
+            .on("submit", function() {
+                is_submit_event = true;
+                setTimeout( function() { is_submit_event = false; }, 100);
+            })
+            .on("input change", function () { is_changed = true; });
+
+        $(window).on('beforeunload', function(event) {
+            if (is_changed && !is_submit_event) {
+                return "";
+            }
+        });
+
         function addComment() {
             var $submit = form.find(':submit').after('<i class="icon16 loading"></i>').prop('disabled', true);
             $.post(

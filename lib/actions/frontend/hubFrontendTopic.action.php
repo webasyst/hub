@@ -9,15 +9,15 @@ class hubFrontendTopicAction extends hubFrontendAction
         $topic = $topic_model->getById($id);
         $comment_model = new hubCommentModel();
 
+        if (!$topic) {
+            throw new waException(_w('Topic not found'), 404);
+        }
+
         $newest_comment = $comment_model->select('datetime')
             ->where("`topic_id` = {$id} AND `datetime` > '{$topic['update_datetime']}'")
             ->order('datetime DESC')->fetchField('datetime');
         $topic_update_datetime = ifempty($newest_comment, $topic['update_datetime']);
         $this->getResponse()->setLastModified($topic_update_datetime);
-
-        if (!$topic) {
-            throw new waException(_w('Topic not found'), 404);
-        }
 
         if (!$topic['status']) {
             $app_settings_model = new waAppSettingsModel();
