@@ -211,7 +211,7 @@ class hubTopicModel extends waModel
         if (empty($item['status']) && !empty($data['status'])) {
             // Publish
             $this->updateStatsWhenPublished($id, $data + $item);
-        } else if (empty($data['status']) && !empty($item['status'])) {
+        } else if (isset($data['status']) && empty($data['status']) && !empty($item['status'])) {
             // Unpublish
             $this->updateStatsWhenUnpublished($id, $data + $item);
         } else if (!empty($item['status'])) {
