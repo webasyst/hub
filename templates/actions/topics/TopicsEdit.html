@@ -52,6 +52,10 @@
                 <input type="hidden" name="topic[meta_title]" value="{$topic.meta_title|escape}">
                 <input type="hidden" name="topic[meta_keywords]" value="{$topic.meta_keywords|escape}">
                 <input type="hidden" name="topic[meta_description]" value="{$topic.meta_description|escape}">
+                <input type="hidden" name="og[title]" value="{$og.title|escape}">
+                <input type="hidden" name="og[image]" value="{$og.image|escape}">
+                <input type="hidden" name="og[video]" value="{$og.video|escape}">
+                <input type="hidden" name="og[description]" value="{$og.description|escape}">
                 <input type="hidden" name="params_string" value="{$params_string|escape}">
             </div>
 
@@ -283,39 +287,76 @@
 
 
 {* Dialog to edit meta data *}
-<div id="meta-dialog" class="hidden"><form>
-    <div class="dialog-content">
-        <h1>[`Meta`]</h1>
-        <div class="fields">
-            <div class="field">
-                <div class="name">
-                    <span class="bold">[`Title`]</span>
-                    <span class="hint">&lt;title&gt;</span>
+<div class="dialog width650px height500px" id="meta-dialog">
+    <div class="dialog-background"></div>
+    <form>
+        <div class="dialog-window">
+            <div class="dialog-content">
+                <div class="dialog-content-indent">
+                    <h1>[`Meta`]</h1>
+                    <div class="fields">
+                        <div class="field">
+                            <div class="name">
+                                <span class="bold">[`Title`]</span>
+                                <span class="hint">&lt;title&gt;</span>
+                            </div>
+                            <div class="value">
+                                <input type="text" name="title">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Meta description`]</div>
+                            <div class="value"><textarea name="description" style="height: 40px"></textarea></div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Meta keywords`]</div>
+                            <div class="value"><textarea name="keywords" style="height: 40px"></textarea></div>
+                        </div>
+                        <div class="field top-padded">
+                            <div class="name">[`Custom parameters`]</div>
+                            <div class="value"><textarea name="params" style="height: 40px"></textarea></div>
+                        </div>
+
+                        {$use_custom_settings = !isset($og.title) && !isset($og.description)}
+                        <h5>[`Social media tags (Open Graph)`]</h5>
+
+                        <div class="field">
+                            <div class="name">[`Social sharing`]</div>
+                            <div class="value no-shift">
+                                <label><input type="checkbox" class="js-settings-custom-switcher" {if $use_custom_settings} checked{/if}> [`Use these meta tags for social sharing too`]</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing title`] <span class="hint">og:title</span></div>
+                            <div class="value"><input name="og_title"></div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing image URL`] <span class="hint">og:image</span></div>
+                            <div class="value"><input name="og_image"><br>
+                                <span class="hint">[`If no value is specified, a social network will attempt to automatically determine a preview image.`]</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing video URL`] <span class="hint">og:video</span></div>
+                            <div class="value"><input name="og_video"></div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing description`] <span class="hint">og:description</span></div>
+                            <div class="value"><textarea name="og_description" style="height: 40px"></textarea></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="value">
-                    <input type="text" name="title">
+            </div>
+            <div class="dialog-buttons">
+                <div class="dialog-buttons-gradient">
+                    <input type="submit" class="button green" value="[`Save`]">
+                    [`or`]
+                    <a href="javascript:void(0)" class="cancel">[`cancel`]</a>
                 </div>
-            </div>
-            <div class="field">
-                <div class="name">[`Meta description`]</div>
-                <div class="value"><textarea name="description"></textarea></div>
-            </div>
-            <div class="field">
-                <div class="name">[`Meta keywords`]</div>
-                <div class="value"><textarea name="keywords"></textarea></div>
-            </div>
-            <div class="field top-padded">
-                <div class="name">[`Custom parameters`]</div>
-                <div class="value"><textarea name="params"></textarea></div>
             </div>
         </div>
-    </div>
-    <div class="dialog-buttons">
-        <input type="submit" class="button green" value="[`Save`]">
-        [`or`]
-        <a href="javascript:void(0)" class="cancel">[`cancel`]</a>
-    </div>
-</form></div>
+    </form>
+</div>
 
 <div class="dialog" id="s-upload-dialog">
     <div class="dialog-background"> </div>

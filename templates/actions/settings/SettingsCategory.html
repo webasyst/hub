@@ -235,6 +235,69 @@
 
                     </div>
 
+                    {*META TAGS*}
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Title`]</div>
+                            <div class="value">
+                                <input name="category[meta_title]" value="{$category.meta_title|default:''|escape}" class="long">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`META Keywords`]</div>
+                            <div class="value">
+                                <textarea name="category[meta_keywords]">{$category.meta_keywords|default:''|escape}</textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`META Description`]</div>
+                            <div class="value">
+                                <textarea name="category[meta_description]">{$category.meta_description|default:''|escape}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {*SOCIAL NETWORK*}
+                    {$use_custom_settings = !isset($og.title) && !isset($og.description)}
+                    <h5>[`Social media tags (Open Graph)`]</h5>
+                    <p class="hint">[`Please refer to <a href="http://ogp.me" target="_blank">Open Graph</a> protocol site for more information on social sharing meta tags and available values.`]</p>
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Social sharing`]</div>
+                            <div class="value no-shift">
+                                <label><input type="checkbox" class="js-settings-custom-switcher" {if $use_custom_settings} checked{/if}> [`Use these meta tags for social sharing too`]</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="name">[`Social sharing title`] <span class="hint">og:title</span></div>
+                            <div class="value">
+                                <input name="og[title]" value="{$og.title|escape}" class="long">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing image URL`] <span class="hint">og:image</span></div>
+                            <div class="value">
+                                <input name="og[image]" value="{$og.image|escape}" class="long">
+                                <br>
+                                <span class="hint">[`If no value is specified, a social network will attempt to automatically determine a preview image.`]</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing video URL`] <span class="hint">og:video</span></div>
+                            <div class="value">
+                                <input name="og[video]" value="{$og.video|escape}" class="long">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing description`] <span class="hint">og:description</span></div>
+                            <div class="value">
+                                <textarea name="og[description]">{$og.description|escape}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="field-group">
                         <div class="field">
                             <div class="value">
@@ -322,7 +385,12 @@
 
         var type = 0;
         var $type =  $form.find(':input[name="category\\[type\\]"]');
-        var $type_conditions =$form.find(':input[name="category\\[conditions\\]\\[type_id\\]"]');
+        var $type_conditions =$form.find(':input[name="category\\[conditions\\]\\[type_id\\]"]'),
+            $meta_title = $form.find('input[name="category[meta_title]"]'),
+            $meta_description = $form.find('textarea[name="category[meta_description]"]'),
+            $og_title = $form.find('input[name="og[title]"]'),
+            $og_description = $form.find('textarea[name="og[description]"]'),
+            $switcher = $form.find('.js-settings-custom-switcher');
 
         var showViewSettings = function(selector){
             $form.find('div.js-related-view').each(function(index,el){
@@ -378,6 +446,32 @@
             }
         }).change();
 
+        $meta_title.on('change', function () {
+            if ($switcher.prop('checked')) {
+                $og_title.val($(this).val());
+            }
+        });
+
+        $meta_description.on('change', function () {
+            if ($switcher.prop('checked')) {
+                $og_description.val($(this).val());
+            }
+        });
+
+        $switcher.on('change', function () {
+            if ($(this).prop('checked')) {
+                $og_title.attr('disabled', true).val($meta_title.val());
+                $og_description.attr('disabled', true).val($meta_description.val());
+            } else {
+                $og_title.attr('disabled', false).val('');
+                $og_description.attr('disabled', false).val('');
+            }
+        });
+
+        if ($switcher.prop('checked')) {
+            $switcher.change();
+        }
+
         {if empty($category.id)}
             // Transliterate name to url
             var src_input = $('#h-category-name');
@@ -429,7 +523,7 @@
         });
 
         // WYSIWYG for description
-        $form.find('textarea').redactor({
+        $form.find('textarea[name="category[description]"]').redactor({
             minHeight: 150,
             paragraphy: false,
             convertDivs: false,

@@ -27,8 +27,19 @@ return array(
         'enable_sorting' => array('tinyint', 1, 'null' => 0, 'default' => '0'),
         'update_datetime' => array('datetime'),
         'logo' => array('varchar', 255, 'null' => 0, 'default' => ''),
+        'meta_title' => array('varchar', 255),
+        'meta_keywords' => array('text'),
+        'meta_description' => array('text'),
         ':keys' => array(
             'PRIMARY' => 'id',
+        ),
+    ),
+    'hub_category_og' => array(
+        'category_id' => array('int', 11, 'null' => 0),
+        'property' => array('varchar', 255, 'null' => 0),
+        'content' => array('text', 'null' => 0),
+        ':keys' => array(
+            'PRIMARY' => array('category_id', 'property'),
         ),
     ),
     'hub_comment' => array(
@@ -185,6 +196,14 @@ return array(
         'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => array('topic_id', 'category_id'),
+        ),
+    ),
+    'hub_topic_og' => array(
+        'topic_id' => array('int', 11, 'null' => 0),
+        'property' => array('varchar', 255, 'null' => 0),
+        'content' => array('text', 'null' => 0),
+        ':keys' => array(
+            'PRIMARY' => array('topic_id', 'property'),
         ),
     ),
     'hub_topic_params' => array(

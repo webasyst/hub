@@ -82,6 +82,23 @@ class hubFrontendAction extends waViewAction
         $this->getResponse()->setMeta('keywords', waRequest::param('meta_keywords'));
         $this->getResponse()->setMeta('description', waRequest::param('meta_description'));
 
+        $route = wa()->getRouting()->getRoute();
+        $og = array(
+            'site_name'   => $route['og_site_name'],
+            'locale'      => $route['og_locale'],
+            'title'       => !empty($route['use_default_settings']) ? $route['title'] : $route['og_title'],
+            'type'        => 'website',
+            'url'         => wa()->getConfig()->getHostUrl() . wa()->getConfig()->getRequestUrl(false, true),
+            'description' => !empty($route['use_default_settings']) ? $route['meta_description'] : $route['og_description'],
+            'image'       => $route['og_image'],
+            'video'       => $route['og_video'],
+        );
+        foreach ($og as $property => $content) {
+            if (strlen($content)) {
+                $this->getResponse()->setOGMeta('og:'.$property, $content);
+            }
+        }
+
         $this->view->assign('sort', $sort);
 
         /**

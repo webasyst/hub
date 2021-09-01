@@ -153,7 +153,7 @@ class hubFrontendCommentsAddController extends waJsonController
 
             $view->assign('contact', $c);
 
-            $subject = 'New comment';
+            $subject = _w('New comment to a topic you are subscribed to');
             $body = $view->fetch(wa()->getAppPath('templates/mail/Following.html'));
             $m->setSubject($subject);
             $m->setBody($body);

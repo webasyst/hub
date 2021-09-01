@@ -123,9 +123,27 @@ class hubFrontendTopicAction extends hubFrontendAction
          */
         wa()->event('frontend_comments', $comments);
 
+        $topic_og_model = new hubTopicOgModel();
+        $route = wa()->getRouting()->getRoute();
+        $og = $topic_og_model->get($topic['id']) + array(
+            'site_name'   => $route['og_site_name'],
+            'locale'      => $route['og_locale'],
+            'type'        => 'website',
+            'url'         => wa()->getConfig()->getHostUrl() . wa()->getConfig()->getRequestUrl(false, true),
+        );
+
+        $this->getResponse()->setTitle(ifempty($topic['meta_title'], $topic['title']).($is_archived ? ' ['._w('Archived').']' : ''));
         $this->getResponse()->setMeta('keywords', $topic['meta_keywords']);
         $this->getResponse()->setMeta('description', $topic['meta_description']);
-        $this->getResponse()->setTitle(ifempty($topic['meta_title'], $topic['title']).($is_archived ? ' ['._w('Archived').']' : ''));
+        if (!isset($og['title']) && !isset($og['description'])) {
+            $og['title'] = $topic['meta_title'];
+            $og['description'] = $topic['meta_description'];
+        }
+        foreach ($og as $property => $content) {
+            if (strlen($content)) {
+                $this->getResponse()->setOGMeta('og:'.$property, $content);
+            }
+        }
 
         $this->extendByTopicRights($topic);
 
@@ -146,7 +164,6 @@ class hubFrontendTopicAction extends hubFrontendAction
 
         $topic_type = isset($this->types[$topic['type_id']]) ? $this->types[$topic['type_id']] : null;
         $comments_allowed = !$is_archived && ifset($this->types, $topic['type_id'], 'settings', 'commenting', 1) != 0;
-
         $this->view->assign(array(
             'tags' => $tags,
             'topic' => $topic,

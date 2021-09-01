@@ -54,6 +54,12 @@ class hubTopicsSaveController extends waJsonController
             $this->response['add'] = 1;
         }
 
+        $og_data = waRequest::post('og', [], waRequest::TYPE_ARRAY);
+        if ($id && !empty($og_data)) {
+            $hub_topic_og_model = new hubTopicOgModel();
+            $hub_topic_og_model->set($id, $og_data);
+        }
+
         $params = array();
         $params_string = waRequest::request('params_string', '', 'string_trim');
         if ($params_string) {

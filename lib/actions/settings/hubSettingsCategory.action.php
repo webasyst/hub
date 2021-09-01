@@ -17,6 +17,10 @@ class hubSettingsCategoryAction extends waViewAction
             //force recount topics count
             $topic_categories_model = new hubTopicCategoriesModel();
             $category['topics_count'] = $topic_categories_model->countByField('category_id', $id);
+
+            $category_og_model = new hubCategoryOgModel();
+            $og = $category_og_model->get($id);
+            $og += hubCategoryOgModel::getEmptyData();
         } else {
             $category = array(
                 'description'     => '',
@@ -25,10 +29,13 @@ class hubSettingsCategoryAction extends waViewAction
                 'sorting'         => '',//TODO setup default sorting
                 'sorting_enabled' => false,
                 'glyph'           => '',
+                'meta_title'      => '',
+                'meta_keywords'   => '',
+                'meta_description' => '',
             );
+            $og = hubCategoryOgModel::getEmptyData();
         }
 
-        $hub_model = new hubHubModel();
         $hub = hubHelper::getHub($category['hub_id']);
         if (!$hub) {
             throw new waException(_w('Hub not found', 404));
@@ -74,6 +81,7 @@ class hubSettingsCategoryAction extends waViewAction
         $this->view->assign('routes', $routes);
         $this->view->assign('sorts', hubHelper::getSorting());
         $this->view->assign('base_types', hubHelper::getBaseTypes());
+        $this->view->assign('og', $og);
     }
 
     private function getCloud($category)

@@ -283,22 +283,60 @@
         },
 
         initMetaDataDialog: function() { "use strict";
-            var wrapper = $('#meta-editor');
-            var input_topic = wrapper.find('input[name="topic[meta_title]"]');
-            var input_keywords = wrapper.find('input[name="topic[meta_keywords]"]');
-            var input_description = wrapper.find('input[name="topic[meta_description]"]');
-            var input_params = wrapper.find('input[name="params_string"]');
-            var edit_link = $('#edit-meta-link');
+            var wrapper = $('#meta-editor'),
+                input_topic = wrapper.find('input[name="topic[meta_title]"]'),
+                input_keywords = wrapper.find('input[name="topic[meta_keywords]"]'),
+                input_description = wrapper.find('input[name="topic[meta_description]"]'),
+                input_og_title = wrapper.find('input[name="og[title]"]'),
+                input_og_image = wrapper.find('input[name="og[image]"]'),
+                input_og_video = wrapper.find('input[name="og[video]"]'),
+                input_og_description = wrapper.find('input[name="og[description]"]'),
+                input_params = wrapper.find('input[name="params_string"]'),
+                edit_link = $('#edit-meta-link');
 
-            var dialog = $('#meta-dialog');
-            var dialog_topic = dialog.find('input[name="title"]');
-            var dialog_keywords = dialog.find('textarea[name="keywords"]');
-            var dialog_description = dialog.find('textarea[name="description"]');
-            var dialog_params = dialog.find('textarea[name="params"]');
+            var dialog = $('#meta-dialog'),
+                dialog_topic = dialog.find('input[name="title"]'),
+                dialog_keywords = dialog.find('textarea[name="keywords"]'),
+                dialog_description = dialog.find('textarea[name="description"]'),
+                dialog_og_title = dialog.find('input[name="og_title"]'),
+                dialog_og_image = dialog.find('input[name="og_image"]'),
+                dialog_og_video = dialog.find('input[name="og_video"]'),
+                dialog_og_description = dialog.find('textarea[name="og_description"]'),
+                dialog_params = dialog.find('textarea[name="params"]'),
+                switcher = dialog.find('.js-settings-custom-switcher');
+
+            var dialog_is_initialized = false;
 
             inputs2sidebar();
 
-            edit_link.click(function() {
+            dialog_topic.on('change', function () {
+                if (switcher.prop('checked')) {
+                    dialog_og_title.val($(this).val());
+                }
+            });
+
+            dialog_description.on('change', function () {
+                if (switcher.prop('checked')) {
+                    dialog_og_description.val($(this).val());
+                }
+            });
+
+            switcher.on('change', function () {
+                if ($(this).prop('checked')) {
+                    dialog_og_title.attr('disabled', true).val(dialog_topic.val());
+                    dialog_og_description.attr('disabled', true).val(dialog_description.val());
+                } else {
+                    dialog_og_title.attr('disabled', false).val('');
+                    dialog_og_description.attr('disabled', false).val('');
+                }
+            });
+
+            if (switcher.prop('checked')) {
+                switcher.change();
+            }
+
+            edit_link.on("click", function(event) {
+                event.preventDefault();
                 showDialog();
             });
 
@@ -308,6 +346,10 @@
                 $.each([[input_topic, dialog_topic],
                         [input_keywords, dialog_keywords],
                         [input_description, dialog_description],
+                        [input_og_title, dialog_og_title],
+                        [input_og_image, dialog_og_image],
+                        [input_og_video, dialog_og_video],
+                        [input_og_description, dialog_og_description],
                         [input_params, dialog_params]],
                     function(i, inputs) {
                         var input = inputs[0];
@@ -336,6 +378,15 @@
                 input_topic.val(dialog_topic.val()).change();
                 input_keywords.val(dialog_keywords.val()).change();
                 input_description.val(dialog_description.val()).change();
+                input_og_image.val(dialog_og_image.val()).change();
+                input_og_video.val(dialog_og_video.val()).change();
+                if (switcher.prop('checked')) {
+                    input_og_title.val('').change().prop('disabled', true);
+                    input_og_description.val('').change().prop('disabled', true);
+                } else {
+                    input_og_title.val(dialog_og_title.val()).change().prop('disabled', false);
+                    input_og_description.val(dialog_og_description.val()).change().prop('disabled', false);
+                }
                 input_params.val(dialog_params.val()).change();
             }
 
@@ -344,27 +395,34 @@
                 dialog_topic.val(input_topic.val());
                 dialog_keywords.val(input_keywords.val());
                 dialog_description.val(input_description.val());
+                dialog_og_title.val(input_og_title.val());
+                dialog_og_image.val(input_og_image.val());
+                dialog_og_video.val(input_og_video.val());
+                dialog_og_description.val(input_og_description.val());
                 dialog_params.val(input_params.val());
+
+                if (switcher.prop('checked')) {
+                    switcher.change();
+                }
             }
 
             function showDialog() {
-                if (dialog.hasClass('dialog')) {
+                if (dialog_is_initialized) {
                     inputs2dialog();
                     dialog.show();
                 } else {
                     dialog = dialog.waDialog({
-                        width: '630px',
-                        height: '400px',
-                        onLoad: function () {
+                        onLoad: function() {
                             inputs2dialog();
                         },
-                        onSubmit: function (d) {
+                        onSubmit: function() {
                             dialog2inputs();
                             inputs2sidebar();
                             hideDialog();
                             return false;
                         }
                     });
+                    dialog_is_initialized = true;
                 }
             }
 
@@ -798,6 +856,6 @@
 
         };
         return instance.init();
-    };
+    }
 
 })(jQuery);

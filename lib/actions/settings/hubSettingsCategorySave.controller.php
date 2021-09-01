@@ -12,7 +12,7 @@ class hubSettingsCategorySaveController extends waJsonController
         if (!$id) {
             $hub_id = (int)waRequest::request('hub_id');
             $hub_model = new hubHubModel();
-            if ($hub = $hub_model->getById($hub_id)) {
+            if ($hub_model->getById($hub_id)) {
                 $id = $this->save($this->getData(), 0, $hub_id);
             } else {
                 throw new waException(_w('Hub is not found', 404));
@@ -68,6 +68,12 @@ class hubSettingsCategorySaveController extends waJsonController
         } else {
             throw new waException('Category not found', 404);
         }
+
+        if ($id && !empty($data['og'])) {
+            $hub_category_og_model = new hubCategoryOgModel();
+            $hub_category_og_model->set($id, $data['og']);
+        }
+
         try {
             $this->saveLogo($id);
         } catch (Exception $ex) {
@@ -124,9 +130,10 @@ class hubSettingsCategorySaveController extends waJsonController
 
     private function getData()
     {
-        $data = waRequest::post('category', array(), 'array');
+        $data = waRequest::post('category', array(), waRequest::TYPE_ARRAY);
         $data['url'] = trim(ifset($data['url'], ''), "/ \t\r\n");
         $data['type'] = intval(!!ifset($data['type'], 0));
+        $data['og'] = waRequest::post('og', [], waRequest::TYPE_ARRAY);
         $data += array(
             'enable_sorting' => 0,
         );

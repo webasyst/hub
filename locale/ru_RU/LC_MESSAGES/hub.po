@@ -1323,3 +1323,69 @@ msgstr "удаление своих тем"
 
 msgid "editing of own topics"
 msgstr "редактирование своих тем"
+
+msgid "New comment to a Hub topic you are subscribed to"
+msgstr "Новый комментарий к теме «Хаба», на которую вы подписаны"
+
+msgid "New comment to a topic you are subscribed to"
+msgstr "Новый комментарий к теме, на которую вы подписаны"
+
+msgid "Social media tags (Open Graph)"
+msgstr "Разметка для соцсетей (Open Graph)"
+
+msgid "Social sharing"
+msgstr "Социальные сети"
+
+msgid "Use these meta tags for social sharing too"
+msgstr "Для соцсетей использовать эти же заголовки"
+
+msgid "Social sharing title"
+msgstr "Заголовок для соцсетей"
+
+msgid "Social sharing image URL"
+msgstr "URL изображения для соцсетей"
+
+msgid "If no value is specified, a social network will attempt to automatically determine a preview image."
+msgstr "Если адрес не указан явно, соцсеть автоматически выберет одно из изображений на странице"
+
+msgid "Social sharing video URL"
+msgstr "URL видео для соцсетей"
+
+msgid "Social sharing description"
+msgstr "Описание для соцсетей"
+
+msgid "META Keywords"
+msgstr ""
+
+msgid "META Description"
+msgstr ""
+
+msgid "Please refer to <a href=\"http://ogp.me\" target=\"_blank\">Open Graph</a> protocol site for more information on social sharing meta tags and available values."
+msgstr "Подробная информация о параметрах для соцсетей и их возможных значениях опубликована на сайте протокола <a href=\"http://ogp.me\" target=\"_blank\">Open Graph</a>."
+
+msgid "Site name"
+msgstr "Название сайта"
+
+msgid "Brief website name. May be used instead of a URL; e.g., by Telegram messenger."
+msgstr "Краткое название сайта. Может использоваться вместо URL, например, месенджером Telegram."
+
+msgid "Locale"
+msgstr "Языковая локаль"
+
+msgid "Page’s main locale."
+msgstr "Основная локаль страницы."
+
+msgid "Social sharing title (og:title)"
+msgstr "Заголовок для соцсетей (og:title)"
+
+msgid "Social sharing image URL (og:image)"
+msgstr "Изображение для соцсетей (og:image)"
+
+msgid "Social sharing video URL (og:video)"
+msgstr "Видео для соцсетей (og:video)"
+
+msgid "Social sharing description (og:description)"
+msgstr "Описание для соцсетей (og:description)"
+
+msgid "For detailed information on Open Graph parameters and examples please refer to <a href=\"http://ogp.me\" target=\"_blank\">ogp.me</a>."
+msgstr "Подробная информация о возможных вариантах значений параметров Open Graph опубликована на сайте протокола <a href=\"http://ogp.me\" target=\"_blank\">ogp.me</a>."

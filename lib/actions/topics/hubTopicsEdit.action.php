@@ -30,6 +30,9 @@ class hubTopicsEditAction extends waViewAction
             }
             $params_string = join("\n", $params_string);
 
+            $topic_og_model = new hubTopicOgModel();
+            $og = $topic_og_model->get($id);
+            $og += hubTopicOgModel::getEmptyData();
         } else {
 
             $hub_id = waRequest::get('hub_id');
@@ -49,6 +52,8 @@ class hubTopicsEditAction extends waViewAction
                 ) + $topic_model->getEmptyRow();
 
             $params_string = '';
+
+            $og = hubTopicOgModel::getEmptyData();
         }
 
         // Does user have access to hub where topic used to be?
@@ -110,6 +115,7 @@ class hubTopicsEditAction extends waViewAction
                 'topic'             => $topic,
                 'hub_id'            => $hub_id,
                 'hubs'              => $hubs,
+                'og'                => $og,
                 'types'             => $topic_types,
                 'categories'        => $categories,
                 'hub_type_ids'      => $hub_type_ids,

@@ -37,12 +37,31 @@ class hubFrontendCategoryAction extends hubFrontendAction
                 }
             }
         }
+        $category_og_model = new hubCategoryOgModel();
+        $route = wa()->getRouting()->getRoute();
+        $og = $category_og_model->get($category['id']) + array(
+            'site_name'   => $route['og_site_name'],
+            'locale'      => $route['og_locale'],
+            'type'        => 'website',
+            'url'         => wa()->getConfig()->getHostUrl() . wa()->getConfig()->getRequestUrl(false, true),
+        );
+        if (!isset($og['title']) && !isset($og['description'])) {
+            $og['title'] = $category['meta_title'];
+            $og['description'] = $category['meta_description'];
+        }
 
         // All topics of this category
         $c = new hubTopicsCollection('category/'.$category['id']);
         $this->setCollection($c);
 
-        $this->getResponse()->setTitle($category['name']);
+        $this->getResponse()->setTitle(ifempty($category['meta_title'], $category['name']));
+        $this->getResponse()->setMeta('keywords', $category['meta_keywords']);
+        $this->getResponse()->setMeta('description', $category['meta_description']);
+        foreach ($og as $property => $content) {
+            if (strlen($content)) {
+                $this->getResponse()->setOGMeta('og:'.$property, $content);
+            }
+        }
 
         $this->view->assign('breadcrumbs', $this->breadcrumbs($category['id']));
         /**
