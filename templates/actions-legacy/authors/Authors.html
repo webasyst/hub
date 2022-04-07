@@ -1,0 +1,185 @@
+<div class="h-stream h-white">
+
+    <div class="h-header">
+        <div class="list-title">
+            <h1>[`Authors`]</h1>
+        </div>
+    </div>
+    
+    <div class="h-content">
+
+        <table class="zebra authors-table h-authors">
+            <thead>
+                <tr class="">
+                    <th class="h-author-name"></th>
+    
+                    {if count($hubs) > 1}
+                        <th>[`All hubs`]</th>
+                        {foreach $hubs as $h}
+                            <th>{$h.name|default:'[`(no name)`]'|escape|truncate:23:'...':false:true}</th>
+                        {/foreach}
+                    {elseif count($hubs) <= 0}
+                        <th class="bold">[`All hubs`]</th>
+                    {else}
+                        {$hub = reset($hubs)}
+                        <th>{$hub.name|default:'[`(no name)`]'|escape|truncate:23:'...':false:true}</th>
+                    {/if}
+    
+                </tr>
+            </thead>
+    
+            <tbody>
+                {function stats_row_html a=null stats=null}
+    
+                    {if (empty($stats.hub_id) && $kudos_globally_enabled) || (!empty($stats.hub_id) && !empty($hubs[$stats.hub_id]) && !empty($hubs[$stats.hub_id].params.kudos))}
+                        <div class="h-author-kudos">
+                            <span class="h-kudos{if $stats.rate > 0} h-positive{/if}">{if $stats.rate > 0}+{/if}{$stats.rate}</span>
+                            <br>
+                            <span class="hint h-positive" title="[`Upvotes`]">
+                                <i class="icon16 hbicns up{if !$stats.votes_up}-bw{/if}"></i> {$stats.votes_up}
+                            </span>
+                            <span class="hint h-negative" title="[`Downvotes`]">
+                                <i class="icon16 hbicns down{if !$stats.votes_down}-bw{/if}"></i> {$stats.votes_down}
+                            </span>
+                        </div>
+                    {/if}
+    
+                    <a href="#/contact/{$a.id}/{if !empty($stats.hub_id)}{$stats.hub_id}{else}0{/if}/"{if !$stats.topics_count} class="gray"{/if}>{_w('%d topic','%d topics', $stats.topics_count)}</a>
+                    <span class="hint">
+                        {_w('%d answer','%d answers', $stats.answers_count)},
+                        {_w('%d comment','%d comments', $stats.comments_count)}
+                    </span>
+                {/function}
+    
+                {foreach $authors as $a}
+                    <tr>
+                        <td class="h-author-name">
+                            <a href="{$wa_backend_url}contacts/#/contact/{$a.id}"{if !$a.id} class="gray"{/if}>
+                                <img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_url)}" class="userpic">
+                                {$a.name|default:'[`(missing contact)`]'|escape}
+                            </a>
+                        </td>
+    
+                        {* Overall stats *}
+                        <td class="h-stats large{if count($hubs) > 1} bold{/if}">
+                            {stats_row_html a=$a stats=$a}
+                        </td>
+    
+                        {* Stats by hub *}
+                        {if count($hubs) > 1}
+                            {foreach $hubs as $h}
+                                <td class="h-stats">
+                                    {stats_row_html a=$a stats=$a.stats_by_hub[$h.id]}
+                                </td>
+                            {/foreach}
+                        {/if}
+                    </tr>
+                {foreachelse}
+                    <tr>
+                        <td colspan="{if count($hubs) > 1}{count($hubs) + 2}{else}2{/if}">[`No authors yet.`]</td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+            
+        <div class="block lazyloading-wrapper">
+            <span>{sprintf('%s of %d', _w('%d author','%d authors', $offset + $count), $total_count)}</span>
+    
+            {if $total_count > $count + $offset}
+                <br>
+                <span><i class="icon16 loading"></i> [`Loading`] {_w('%d author', '%d authors', min($total_count - $count - $offset, $count))}...</span>
+            {/if}
+        </div>
+
+    </div>
+        
+</div>
+
+{if $total_count > $offset + $count}
+<script class="run-after-lazyloading">(function() { "use strict";
+    //
+    // Lazy loading.
+    //
+    // When user scrolls down to lazyloading wrapper, trigger loading more data.
+    // This is done only once. The idea is that the page that we're going to load and
+    // attach will contain the same piece of code to load more data.
+    //
+
+    function distanceBetweenBottoms(container, win, offset) {
+        return (container.position().top + container.outerHeight() - (offset || 0)) - (win.scrollTop() + win.height());
+    };
+
+    var $lazyloading_wrapper = $('.lazyloading-wrapper');
+    var $window = $(window), h;
+    var $table = $lazyloading_wrapper.parent().find('table.authors-table');
+
+    $window.on('scroll resize', h = function() {
+
+        // Make sure we're still on the same page
+        if (!$lazyloading_wrapper.closest('body').length) {
+            $window.off('scroll resize', h);
+            return;
+        }
+
+        // Check if we're close enough to the bottom of the page to trigger lazy loading
+        if (distanceBetweenBottoms($lazyloading_wrapper, $window) < 50) {
+            $window.off('scroll resize', h);
+            $.get('?module=authors&offset={$offset+$count}', function(r) {
+                var $div = $(document.createElement('div'));
+
+                // .innerHTML does not run <script>s, as opposed to $.html()
+                $div[0].innerHTML = r;
+
+                // Append rows from new table to the old table
+                $table.children('tbody').append($div.find('table.authors-table > tbody').children());
+                $lazyloading_wrapper.empty().append($div.find('.lazyloading-wrapper').children());
+
+                // Run the scripts that will further extend lazy loading
+                $lazyloading_wrapper.parent().append($div.find('script.run-after-lazyloading')); // now the scripts run
+
+                $table.trigger('change');
+            });
+        }
+
+    });
+    $window.scroll();
+})();</script>
+{/if}
+
+<script>(function() { "use strict";
+
+    //
+    // Make the table header stick to top of the page
+    //
+
+    var $table = $('.authors-table');
+    var $header_clone = $($.parseHTML('<table class="zebra h-authors"></table>')).append($table.children('thead').clone()).css({
+        position: 'fixed',
+        display: 'none',
+        top: 0
+    }).insertAfter($table)
+
+    $table.children('thead').sticky({
+        getClone: function($e, o) {
+            return $header_clone;
+        },
+        showFixed: function(e) {
+            updateWidths();
+            $header_clone.show();
+        },
+        hideFixed: function(e) {
+            $header_clone.hide();
+        }
+    });
+
+    $table.change(updateWidths);
+
+    function updateWidths() {
+        $header_clone.width($table.width());
+        var $orig_ths = $table.find('>thead>tr>th');
+        $header_clone.find('>thead>tr>th').each(function(i, th) {
+            $(th).width($($orig_ths[i]).width());
+        });
+    }
+
+})();</script>

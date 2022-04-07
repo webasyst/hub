@@ -1,143 +1,182 @@
-<div class="shadowed">
-
-    <div class="sidebar left200px h-settings-sidebar">
+<div class="article">
+    <div class="article-body custom-pb-0">
         {include file="./Sidebar.html" inline}
-    </div>
 
-    <div class="content left200px blank bordered-left">
-        <div class="block double-padded">
         <form method="post" action="?module=settings&action=typeSave&id={$type.id|default:'new'}" id="h-type-settings-form">
-            <div class="float-right">
-                <ul class="menu-h">
-                    {if !empty($type.id)}
-                    <li><a href="#" class="js-hub-type-delete"><i class="icon16 delete"></i>[`Delete topic type`]</a></li>
-                    {/if}
-                </ul>
-            </div>
-
-            <h1>{if empty($type.name)}[`New topic type`]{else}{$type.name|escape}{/if}</h1>
+            <h2 class="js-page-title">{if empty($type.name)}[`New topic type`]{else}{$type.name|escape}{/if}</h2>
 
             <div class="fields form">
-              <div class="field-group">
-                  <div class="field">
-                      <div class="name">
-                          [`Type name`]
-                      </div>
-                      <div class="value bold">
-                          <input type="text" class="large" name="type[name]" value="{$type.name|escape}" placeholder="[`Type name`]">
-                      </div>
-                  </div>
-                  <div class="field">
-                      <div class="name">
-                          [`Glyph`]
-                      </div>
-                      <div class="value">
-                          <ul class="menu-h js-type-settings-glyphs h-settings-glyph">
-                              <li class="{if ($type.glyph == 'userpic')}selected{/if}"><a href="#" data-glyph="userpic">{hubHelper::getGlyph('userpic', 32, true,['contact'=>$wa->user()])}</a></li>
-                              {foreach hubHelper::getGlyphs() as $glyph}
-                                  <li class="{if ($type.glyph == $glyph)}selected{/if}"><a href="#" data-glyph="{$glyph}">{hubHelper::getGlyph($glyph, 32, $type.glyph == $glyph)}</a></li>
-                              {/foreach}
-                              <li class="{if strpos($type.glyph, '.')} selected{/if}"><a href="#" class="inline-link hint"><b><i>[`custom glyph`]</i></b></a></li>
-                          </ul>
-                          <input type="hidden" name="type[glyph]" value="{if !strpos($type.glyph, '.')}{$type.glyph|escape}{/if}" {if strpos($type.glyph, '.')} disabled="disabled" {/if}>
-                      </div>
-                      <div class="value no-shift"{if !strpos($type.glyph, '.')} style="display: none;" {/if}>
-                          <span class="small">[`Or enter glyph image URL (image will be scaled to 32x32 px image)`]:</span><br>
-                          <input type="text" name="type[glyph]" value="{if strpos($type.glyph, '.')}{$type.glyph}{/if}" placeholder="https://example.com/custom/image.png" class="long"{if !strpos($type.glyph, '.')} disabled="disabled"{/if}>
-                          {if strpos($type.glyph, '.')}<br>{hubHelper::getGlyph($type.glyph, 32, true)}{/if}
-                      </div>
-                  </div>
+                <div class="fields-group">
+                    <div class="field">
+                        <div class="name">
+                            [`Type name`]
+                        </div>
 
-                  <div class="field">
-                      <div class="name">
-                          [`Functionality`]
-                      </div>
-                      {foreach hubHelper::getBaseTypes() as $type_id => $type_info}
-                          {if $type_id != 'custom'}
-                          <div class="value no-shift">
-                              <label>
-                                  <input type="radio" name="type[type]"{if $type.type eq $type_id} checked="checked"{/if} value="{$type_id}" {if !"`$smarty.current_dir`/types/`$type_id`.html"|file_exists} disabled="disabled" {/if}> {$type_info.name}
-                                  <span class="hint">topic.{$type_id}.html</span>
-                                  <p class="hint">{$type_info.description}</p>
-                              </label>
-                          </div>
-                          {/if}
-                      {/foreach}
+                        <div class="value">
+                            <input type="text" class="bold" name="type[name]" value="{$type.name|escape}" placeholder="[`Type name`]">
+                        </div>
+                    </div>
 
-                  </div>
-              </div>
+                    <div class="field">
+                        <div class="name">
+                            [`Glyph for public websites`]
+                        </div>
 
-              {foreach hubHelper::getBaseTypes() as $type_id => $type_info}
-                  <div class="field-group js-type-settings-type" id="h-type-settings-type-{$type_id}">
-                      {if "`$smarty.current_dir`/types/`$type_id`.html"|file_exists}
-                      {include file="./types/{$type_id}.html"}
-                      {/if}
-                  </div>
-              {/foreach}
+                        <div class="value">
+                            <ul class="flexbox wrap h-settings-glyph custom-mb-0 js-type-settings-glyphs">
+                                <li class="custom-m-4 {if ($type.glyph == 'userpic')}selected{/if}"><a href="#" data-glyph="userpic">{hubHelper::getGlyph('userpic', 32, true,['contact'=>$wa->user()])}</a></li>
+                                {foreach hubHelper::getGlyphs() as $glyph}
+                                <li class="custom-m-4 {if ($type.glyph == $glyph)}selected{/if}"><a href="#" data-glyph="{$glyph}">{hubHelper::getGlyph($glyph, 32, $type.glyph == $glyph)}</a></li>
+                                {/foreach}
 
-              <div class="field">
-                  <div class="value">
-                      <input type="submit" class="button green" value="[`Save`]">
-                      <span class="js-hub-type-settings-message"></span>
-                  </div>
-              </div>
+                                <li class="custom-m-4 {if strpos($type.glyph, '.')} selected{/if}"><a href="#">[`custom glyph`]</a></li>
+                            </ul>
 
+                            <input type="hidden" name="type[glyph]" class="js-glyph-from-collection" value="{if !strpos($type.glyph, '.')}{$type.glyph|escape}{/if}"{if strpos($type.glyph, '.')} disabled="disabled"{/if}>
+
+                            <div class="custom-my-8 js-custom-glyph"{if !strpos($type.glyph, '.')} style="display: none;"{/if}>
+                                <p class="small custom-mb-8">[`Or enter glyph image URL (image will be scaled to 32x32 px image)`]:</p>
+                                <input type="text" name="type[glyph]" class="long small js-glyph-custom-value" value="{if strpos($type.glyph, '.')}{$type.glyph}{/if}" placeholder="https://example.com/custom/image.png" {if !strpos($type.glyph, '.')} disabled="disabled"{/if}>
+                                {if strpos($type.glyph, '.')}
+                                <br>{hubHelper::getGlyph($type.glyph, 32, true)}
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name">
+                            [`Functionality`]
+                        </div>
+
+                        <div class="value">
+                            {foreach hubHelper::getBaseTypes() as $type_id => $type_info}
+                            {if $type_id !== 'custom'}
+                            <p class="custom-{if $type_info@first}mb{elseif $type_info@last}mt{else}my{/if}-12">
+                                <label>
+                                    <span class="wa-radio small">
+                                        <input type="radio" name="type[type]" value="{$type_id}"{if $type.type eq $type_id} checked="checked"{/if}{if !"`$smarty.current_dir`/types/`$type_id`.html"|file_exists} disabled="disabled"{/if}>
+                                        <span></span>
+                                    </span>
+                                    <span class="small">{$type_info.name}</span>
+                                    <span class="hint">topic.{$type_id}.html</span>
+                                    <span class="hint" style="display: block;">{$type_info.description|escape}</span>
+                                </label>
+                            </p>
+                            {/if}
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+
+                {foreach hubHelper::getBaseTypes() as $type_id => $type_info}
+                <div class="js-type-settings-type" id="h-type-settings-type-{$type_id}">
+                    {if "`$smarty.current_dir`/types/`$type_id`.html"|file_exists}
+                    {include file="./types/{$type_id}.html"}
+                    {/if}
+                </div>
+                {/foreach}
             </div>
         </form>
-            <div class="clear-both"></div>
+    </div>
+</div>
+
+<div class="bottombar bottombar--shadowless sticky bordered-top flexbox middle custom-mt-32">
+    <div class="article width-100">
+        <div class="article-body custom-py-0">
+            <div class="flexbox middle space-12 width-100">
+                <div class="wide">
+                    <button type="submit" class="button js-save-hub-type">
+                        [`Save`]
+                        <span class="js-hub-type-settings-message"></span>
+                    </button>
+                </div>
+
+                {if !empty($type.id)}
+                <button class="button red outlined js-hub-type-delete">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="desktop-and-tablet-only">[`Delete topic type`]</span>
+                </button>
+                {/if}
+            </div>
         </div>
     </div>
-
 </div>
+
 
 {* type delete dialog*}
 {if !empty($type.id)}
-<div class="dialog width500px height300px" id="h-type-delete-dialog">
+<div class="dialog" id="h-type-delete-dialog">
     <div class="dialog-background"></div>
-    <form method="post" action="?module=settings&action=typeDelete">
-        <input type="hidden" name="id" value="{$type.id}">
-        <div class="dialog-window">
-            <div class="dialog-content">
-                <div class="dialog-content-indent">
-                    <h1>[`Delete topic type`]</h1>
-                    {if $type.topics_count}
-                        <p>{sprintf('[`There are <strong>%d topics</strong> with %s type. By deleting this topic type you should either change type for all these topics or delete them.`]',$type.topics_count,$type.name|escape)}</p>
-                        <label>
-                            <input type="radio" name="delete" checked="checked" {* disabled="disabled" *} value="move">
-                            [`Change type of these topics to`]
-                        </label>
-                        <select name="type_id"{if false} disabled="disabled"{/if}>
-                            {foreach $types as $_type_id => $_type}
-                                <option value="{$_type_id}"{if $_type_id eq $type.id} disabled="disabled"{/if}>{$_type.name|escape}</option>
-                            {/foreach}
-                        </select>
-                        <br><br>
-                        <label>
-                            <input type="radio" name="delete"{if false} checked="checked"{/if} value="delete">
-                            {sprintf('[`Delete all %d topics permanently`]', $type.topics_count)}
-                        </label>
-                    {else}
-                        <input type="hidden" name="delete" value="safe">
-                        <p>{sprintf('[`There are no topics of %s type, so it can be easily deleted.`]', $type.name|escape)}</p>
-                    {/if}
-                    <span class="errormsg"></span>
 
+    <div class="dialog-body">
+        <header class="dialog-header">
+            <h2>[`Delete topic type`]</h2>
+        </header>
+
+        <div class="dialog-content">
+            <form method="post" action="?module=settings&action=typeDelete" class="js-dialog-delete-type">
+                <input type="hidden" name="id" value="{$type.id}">
+
+                {if $type.topics_count}
+                    <div>
+                        {sprintf(_w('There is <strong>%d topic</strong> with the <strong>%s</strong> type.', 'There are <strong>%d topics</strong> with the <strong>%s</strong> type.', $type.topics_count, false), $type.topics_count, $type.name|escape)}
+
+                        {if $type.topics_count > 1}
+                            [`To delete this topic type, please either change the type for all those topics or delete them.`]
+                        {else}
+                            [`To delete this topic type, please either change the type for that topic or delete it.`]
+                        {/if}
+                    </div>
+
+                <p class="custom-mb-12">
+                    <label>
+                        <span class="wa-radio">
+                            <input type="radio" name="delete" checked="checked" value="move">
+                            <span></span>
+                        </span>
+                        [`Change type of these topics to`]:
+                    </label>
+                </p>
+
+                <div class="wa-select custom-ml-20">
+                    <select name="type_id"{if false} disabled="disabled"{/if}>
+                        {foreach $types as $_type_id => $_type}
+                            <option value="{$_type_id}"{if $_type_id eq $type.id} disabled="disabled"{/if}>{$_type.name|escape}</option>
+                        {/foreach}
+                    </select>
                 </div>
-            </div>
-            <div class="dialog-buttons">
-                <div class="dialog-buttons-gradient">
-                    <input type="submit" value="[`Delete topic type`]" class="button red">
-                    [`or`] <a class="cancel" href="#">[`cancel`]</a>
-                </div>
-            </div>
+
+                <p>
+                    <label>
+                        <span class="wa-radio">
+                            <input type="radio" name="delete"{if false} checked="checked"{/if} value="delete">
+                            <span></span>
+                        </span>
+                        {sprintf(_w('Delete that %d topic permanently', 'Delete those %d topics permanently', $type.topics_count, false), $type.topics_count)}
+                    </label>
+                </p>
+                {else}
+                    <input type="hidden" name="delete" value="safe">
+                    <div>{sprintf('[`There are no topics of <strong>%s</strong> type, so this type can be deleted.`]', $type.name|escape)}</div>
+                {/if}
+                <span class="errormsg state-error"></span>
+            </form>
         </div>
-    </form>
+
+        <footer class="dialog-footer">
+            <button type="submit" class="button red js-hub-type-delete-confirm">[`Delete topic type`]</button>
+            <a class="button light-gray cancel js-dialog-close" href="#">[`Cancel`]</a>
+        </footer>
+    </div>
 </div>
 {/if}
 
 <script type="text/javascript">
     $(function () {
-        var $form = $('#h-type-settings-form');
+        const $form = $('#h-type-settings-form');
+        const $dialogForm = $('.js-dialog-delete-type');
+        const $saveButton = $('.js-save-hub-type');
 
         // voting selector must be first, cause in :input[name="type\[type\]"] we will call .change already
 
@@ -165,71 +204,84 @@
             }
         }).change();
 
-        var $glyphs = $form.find('.js-type-settings-glyphs');
-        var $glyph_input = $form.find(':input[name="type\\[glyph\\]"]:first');
-        var $glyph_input_url = $form.find(':input[name="type\\[glyph\\]"]:last');
-        $glyphs.on('click', 'li > a', function () {
+        const $glyphs = $form.find('.js-type-settings-glyphs');
+        const $icons = $glyphs.find('.js-glyph');
+        const $glyph_input = $form.find('.js-glyph-from-collection');
+        const $glyph_input_url = $form.find('.js-glyph-custom-value');
+        $glyphs.on('click', 'li > a', function (event) {
+            event.preventDefault();
+
+            const $this = $(this);
+            const $icon = $this.find('.js-glyph');
+
+            $saveButton.addClass('yellow');
+
             $glyphs.find('.selected').removeClass('selected');
-            var $this = $(this);
+            $icons.removeClass('selected');
 
-            var glyph = $this.data('glyph');
+            const glyph = $this.data('glyph');
+            $this.parents('li').addClass('selected');
+            $icon.addClass('selected');
+
             if (glyph) {
-                $this.parents('li').addClass('selected');
-                $this.find('i').addClass('selected');
-
-                $glyph_input.attr('disabled', null);
+                $glyph_input.prop('disabled', false);
                 $glyph_input.val(glyph);
 
-               // $this.parents('ul').find('li:hidden').show();
-                $glyph_input_url.attr('disabled', true);
-                $glyph_input_url.parents('div.value').hide();
+                $glyph_input_url.prop('disabled', true);
+                $glyph_input_url.parents('.js-custom-glyph').hide();
             } else {
-                //$this.parents('li').hide();
-                $glyph_input.attr('disabled', true);
-                $glyph_input_url.attr('disabled', null);
-                $glyph_input_url.parents('div.value').show();
+                $glyph_input.prop('disabled', true);
+                $glyph_input_url.prop('disabled', false);
+                $glyph_input_url.parents('.js-custom-glyph').show();
             }
-            return false;
         });
 
+        let dialog;
+
         {if !empty($type.id)}
-        $('a.js-hub-type-delete:first').click(function () {
-            $('#h-type-delete-dialog').waDialog({
-                onLoad: function(d){
+        $('.js-hub-type-delete').on('click', function(event) {
+            event.preventDefault();
+
+            dialog = $.waDialog({
+                $wrapper: $('#h-type-delete-dialog'),
+                onOpen() {
                     $('#h-type-delete-dialog').find('.errormsg').text('');
-                },
-                onSubmit: function (d) {
-                    var $form = $(this);
-                    d.find(':input.error').removeClass('error');
-                    $.post($form.attr('action'), $form.serialize(), function (r) {
-                        if (r.status == 'ok') {
-                            d.trigger('close');
-                            window.location.hash='/settings/'
-                        } else {
-                            d.find('.errormsg').text(r.errors.join("\n"));
-                            console.log(r.errors);
-
-                        }
-                    }, 'json').error(function(r){
-                        console.log(r);
-                    });
-                    return false;
-
                 }
             });
-            return false;
+
+            $('.js-hub-type-delete-confirm').on('click', function(event) {
+                event.preventDefault();
+                dialog.close();
+
+                dialog.$content.find(':input.error').removeClass('error');
+                $.post($dialogForm.attr('action'), $dialogForm.serialize(), function (r) {
+                    if (r.status == 'ok') {
+                        window.location.hash='/settings/'
+                    } else {
+                        d.find('.errormsg').text(r.errors.join("\n"));
+                        console.log(r.errors);
+                    }
+                }, 'json').error(function(r){
+                    console.log(r);
+                });
+            });
         });
         {/if}
 
-        $form.submit(function () {
-            var $message = $form.find('.js-hub-type-settings-message');
-            $message.show().html('<i class="icon16 loading"></>');
+        $saveButton.on('click', function(event) {
+            event.preventDefault();
+
+            var $message = $('.js-hub-type-settings-message');
+            $message.show().html('<i class="fas fa-spinner fa-spin"></>');
+
             $.ajax({
                 url: $form.attr('action'),
                 dataType: 'json',
                 type: 'post',
                 data: $form.serialize(),
                 success: function (r) {
+                    $saveButton.removeClass('yellow');
+
                     if (r.status != 'ok') {
                         if (typeof error === 'function') {
                             if (error(r) !== false) {
@@ -240,14 +292,16 @@
                         }
                         return;
                     }
-                    $message.show().html( '<i class="icon16 yes"></i>' );
+
+                    $message.show().html('<i class="fas fa-check-circle"></i>');
+
                     if (r.data.hash) {
                         window.location.hash = r.data.hash;
                     } else {
                         if (r.data.id) {
                             var $type = $('.h-settings-sidebar:first').find('a[href="\\#/settings/type/' + r.data.id + '/"]');
                             $type.find('.js-type-name').text(r.data.name);
-                            $type.find('.js-glyph').replaceWith(r.data.glyph_html);
+                            $type.find('.js-glyph').html('<i class="fas fa-' + r.data.glyph + '"></i>');
                         }
                         setTimeout(function () {
                             $message.hide();
@@ -255,11 +309,13 @@
                     }
                 }
             });
-
-            return false;
         });
 
         $form.find('input:text:visible:first').focus();
+
+        $form.on('change', function(event) {
+            $saveButton.addClass('yellow');
+        });
     });
 
 </script>

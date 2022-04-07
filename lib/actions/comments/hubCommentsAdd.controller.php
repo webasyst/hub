@@ -70,6 +70,7 @@ class hubCommentsAddController extends waJsonController
 
         $comment = $this->model->getComment($id, 'author,vote,can_delete,my_vote');
         $comment['topic'] = $topic;
+        $comment['editable'] = true;
         $this->view->assign('comment', $comment);
 
         /**
@@ -80,7 +81,11 @@ class hubCommentsAddController extends waJsonController
 
         $this->response['id'] = $data['id'];
         $this->response['parent_id'] = $data['parent_id'];
-        $this->response['html'] = $this->view->fetch('templates/actions/comments/include.comment.html');
+        if (wa()->whichUI() === '1.3') {
+            $this->response['html'] = $this->view->fetch('templates/actions-legacy/comments/include.comment.html');
+        } else {
+            $this->response['html'] = $this->view->fetch('templates/actions/comments/include.comment.html');
+        }
         if ($data['topic_id']) {
             $this->response['comments_count_str'] = _w(
                 '%d comment',

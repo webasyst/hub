@@ -1,0 +1,35 @@
+<div class="dialog-background"></div>
+<form method="post" action="?module=topics&action=bulkMove">
+    <div class="dialog-window">
+        <div class="dialog-content">
+            <div class="dialog-content-indent">
+                <h1>[`Move topics`]</h1>
+                <input type="hidden" name="topic_ids" value="">
+                <div class="field">
+                    <div class="name">[`Hub`]</div>
+                    {foreach $hubs as $hub_id=>$hub}
+                    <div class="value">
+                        <label><input name="hub_id" type="radio" value="{$hub_id}" {if $hub_id ==$current_hub_id}checked="checked"{/if}>
+                            {$hub.name|escape}
+                        </label>
+                        {if !empty($hub.categories)}
+                        <select name="category_id">
+                            <option value="">[`Select hub category`]</option>
+                            {foreach $hub.categories as $category_id=>$category}
+                            <option value="{$category_id}" {if !empty($current_category_id) && ($current_category_id==$category_id)} disabled{/if}>{$category.name|escape}</option>
+                            {/foreach}
+                        </select>
+                        {/if}
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        <div class="dialog-buttons">
+            <div class="dialog-buttons-gradient">
+                <input type="submit" value="[`Move topics`]" class="button green">
+                [`or`] <a class="cancel" href="#">[`close`]</a>
+            </div>
+        </div>
+    </div>
+</form>

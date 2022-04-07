@@ -1,0 +1,41 @@
+<style>
+table.zebra.wa-tr-hover tr td { border-bottom:solid 1px #fff;}
+table.zebra.wa-tr-hover tr:hover td { background: #ffffe5!important; cursor: pointer; border-bottom: dashed 1px #ddd;}
+</style>
+
+<table id="hub-topics-table" class="zebra full-width bottom-bordered requests-table wa-tr-hover">
+<tr>
+    <th class="min-width">[`ID`]</th>
+    <th class="min-width">[`Created`]</th>
+    <th class="min-width">[`Updated`]</th>
+    <th></th>
+</tr>
+{foreach $topics as $t}
+<tr rel="{$t.id}">
+    <td>{$t.id}</td>
+    <td class="nowrap">{$t.create_datetime|wa_date}</td>
+    <td class="nowrap">{$t.update_datetime|wa_date}</td>
+    <td><div class="h-hide-rest">{$t.title|escape}</div></td>
+</tr>
+{/foreach}
+</table>
+
+<p>
+    <a href="{$wa_backend_url}hub/#/contact/{$contact_id}/0/">[`All topics`] ({$total_topics})</a>
+    <br>
+    <a href="{$wa_backend_url}hub/#/comments/contact_id={$contact_id}/">[`All comments`] ({$total_comments})</a>
+</p>
+
+<script>setTimeout(function() {
+    /** Initialize <td>s of a table to be clickable (middle-click friendly) */
+    var initTableLinks = function(tds, getUrl) {
+        tds.each(function() {
+            var td = $(this);
+            var a = $('<a style="color:inherit !important"></a>').attr('href', getUrl(td)).html(td.html());
+            td.empty().append(a);
+        });
+    };
+
+    initTableLinks($('#hub-topics-table td'), function(td) { return "{$link_tpl}".replace('%id%', td.parent().attr('rel')); });
+}, 1);</script>
+

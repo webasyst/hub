@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
+
+    {$wa->css()}
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css-legacy/hub.css?v{$wa->version()}">
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css-legacy/glyphs.css?v{$wa->version()}">
+    <link rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css?v={$wa->version()}">
+
+    <script type="text/javascript" src="{$wa_url}wa-content/js/jquery/jquery-1.8.2.min.js"></script>
+
+    {$wa->js()}
+</head>
+<body>
+<div id="wa">
+    {$wa->header()}
+    <div id="wa-app">
+        <div class="content">
+            <div class="block not-padded" id="content">
+
+                <div class="block double-padded">
+                  <form method="POST" action="?action=welcome">
+                    <h1>[`Welcome to your new Hub!`]</h1>
+                    <p>[`Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your your customers.`]</p>
+                    <div class="form fields">
+
+                      <div class="field-group">
+                        <div class="field js-bold">
+                            <div class="name">[`Topic types`]</div>
+                            <div class="value">
+                                <p>[`Select what kind of information you would like to mix and manage in your knowledge hub:`]</p>
+                            </div>
+
+                            {foreach $types as $type_id => $type}
+                            <div class="value no-shift">
+                                <label>
+                                    {hubHelper::getGlyph($type.glyph, 16, true)}
+                                    <input type="checkbox" name="types[]" value="{$type_id|escape}" checked="checked">
+                                    {$type.category_name|escape}
+                                    <span class="hint">{$type.description|escape}</span>
+                                </label>
+                            </div>
+                            {/foreach}
+                            <div class="value no-shift">
+                                <p class="hint">[`You will be able to customize this list later also.`]</p>
+                            </div>
+                        </div>
+                      </div>
+
+                      <div class="field-group">
+                        <div class="field">
+                            <div class="value submit">
+                            {$wa->csrf()}
+                            <input type="submit" class="button green" value="[`Start using Hub app`]"> [`or`] <a href="{$wa_app_url}?skipwelcome=1">[`skip this setup`]</a>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

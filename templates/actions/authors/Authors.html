@@ -1,99 +1,222 @@
-<div class="h-stream h-white">
+<div class="article{if count($hubs) > 2} article_authors{/if}">
+    <div class="article-body">
+        <h2>[`Authors`]</h2>
 
-    <div class="h-header">
-        <div class="list-title">
-            <h1>[`Authors`]</h1>
-        </div>
-    </div>
-    
-    <div class="h-content">
-
-        <table class="zebra authors-table h-authors">
-            <thead>
-                <tr class="">
-                    <th class="h-author-name"></th>
-    
-                    {if count($hubs) > 1}
-                        <th>[`All hubs`]</th>
-                        {foreach $hubs as $h}
-                            <th>{$h.name|default:'[`(no name)`]'|escape|truncate:23:'...':false:true}</th>
-                        {/foreach}
-                    {elseif count($hubs) <= 0}
-                        <th class="bold">[`All hubs`]</th>
-                    {else}
-                        {$hub = reset($hubs)}
-                        <th>{$hub.name|default:'[`(no name)`]'|escape|truncate:23:'...':false:true}</th>
-                    {/if}
-    
+        {if count($hubs) == 1}
+        <div class="table-scrollable-x">
+            <table class="h-authors js-lazyload-table">
+                <thead>
+                <tr>
+                    <th class="h-author-name-simple">[`user`]</th>
+                    <th>[`rating`]</th>
+                    <th>[`topics`]</th>
+                    <th>[`replies`]</th>
+                    <th>[`comments`]</th>
                 </tr>
-            </thead>
-    
-            <tbody>
-                {function stats_row_html a=null stats=null}
-    
-                    {if (empty($stats.hub_id) && $kudos_globally_enabled) || (!empty($stats.hub_id) && !empty($hubs[$stats.hub_id]) && !empty($hubs[$stats.hub_id].params.kudos))}
-                        <div class="h-author-kudos">
-                            <span class="h-kudos{if $stats.rate > 0} h-positive{/if}">{if $stats.rate > 0}+{/if}{$stats.rate}</span>
-                            <br>
-                            <span class="hint h-positive" title="[`Upvotes`]">
-                                <i class="icon16 hbicns up{if !$stats.votes_up}-bw{/if}"></i> {$stats.votes_up}
-                            </span>
-                            <span class="hint h-negative" title="[`Downvotes`]">
-                                <i class="icon16 hbicns down{if !$stats.votes_down}-bw{/if}"></i> {$stats.votes_down}
-                            </span>
-                        </div>
-                    {/if}
-    
-                    <a href="#/contact/{$a.id}/{if !empty($stats.hub_id)}{$stats.hub_id}{else}0{/if}/"{if !$stats.topics_count} class="gray"{/if}>{_w('%d topic','%d topics', $stats.topics_count)}</a>
-                    <span class="hint">
-                        {_w('%d answer','%d answers', $stats.answers_count)},
-                        {_w('%d comment','%d comments', $stats.comments_count)}
-                    </span>
-                {/function}
-    
+                </thead>
+
+                <tbody class="h-authors-body-simple small">
                 {foreach $authors as $a}
+                <tr>
+                    <td class="h-author-name-simple">
+                        <div class="flexbox middle wrap">
+                            <a href="{$wa_backend_url}contacts/#/contact/{$a.id}"><img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_url)}" class="userpic userpic-48"></a>
+                            <a href="{$wa_backend_url}contacts/#/contact/{$a.id}" class="custom-ml-4{if !$a.id} gray{/if}">{$a.name|default:'[`(missing contact)`]'|escape}</a>
+                        </div>
+                    </td>
+
+                    <td class="nowrap h-authors-hub-simple">
+                        {if (empty($a.hub_id) && $kudos_globally_enabled) || (!empty($a.hub_id) && !empty($hubs[$a.hub_id]) && !empty($hubs[$a.hub_id].params.kudos))}
+                        <span class="bold custom-mr-4 {if $a.rate > 0}text-green{elseif $a.rate == 0}text-gray{else}text-red{/if}">{if $a.rate > 0}+{/if}{$a.rate}</span>
+
+                        <span title="[`Upvotes`]"><i class="fas fa-arrow-up text-green"></i>{$a.votes_up}</span>
+                        <span title="[`Downvotes`]"><i class="fas fa-arrow-down text-red"></i>{$a.votes_down}</span>
+                        {else}
+                        <span class="gray">&mdash;</span>
+                        {/if}
+                    </td>
+
+                    <td class="h-authors-hub-simple">
+                        <a href="#/contact/{$a.id}/{if !empty($a.hub_id)}{$a.hub_id}{else}0{/if}/" class="semibold{if !$a.topics_count} gray{/if}">{_w('%d topic','%d topics', $a.topics_count)}</a>
+                    </td>
+
+                    <td class="h-authors-hub-simple">
+                        {_w('%d answer','%d answers', $a.answers_count)}
+                    </td>
+
+                    <td class="h-authors-hub-simple">
+                        {_w('%d comment','%d comments', $a.comments_count)}
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr>
+                    <td>[`No authors yet.`]</td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
+        {else}
+
+        <div class="h-authors-header blank">
+            <div class="h-authors-header-wrapper js-authors-list">
+                <table class="authors-table h-authors h-authors-header-table">
+                    <thead>
                     <tr>
-                        <td class="h-author-name">
-                            <a href="{$wa_backend_url}contacts/#/contact/{$a.id}"{if !$a.id} class="gray"{/if}>
-                                <img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_url)}" class="userpic">
-                                {$a.name|default:'[`(missing contact)`]'|escape}
-                            </a>
-                        </td>
-    
-                        {* Overall stats *}
-                        <td class="h-stats large{if count($hubs) > 1} bold{/if}">
-                            {stats_row_html a=$a stats=$a}
-                        </td>
-    
-                        {* Stats by hub *}
+                        <th class="h-author-name"></th>
+
                         {if count($hubs) > 1}
-                            {foreach $hubs as $h}
-                                <td class="h-stats">
-                                    {stats_row_html a=$a stats=$a.stats_by_hub[$h.id]}
-                                </td>
-                            {/foreach}
+                        <th class="h-authors-hub">[`All hubs`]</th>
+
+                        {foreach $hubs as $h}
+                        <th class="h-authors-hub">{$h.name|default:'[`(no name)`]'|escape|truncate:23:'...':false:true}</th>
+                        {/foreach}
+                        {elseif count($hubs) <= 0}
+                        <th class="h-authors-hub bold">[`All hubs`]</th>
+                        {else}
+                        {$hub = reset($hubs)}
+                        <th class="h-authors-hub">{$hub.name|default:'[`(no name)`]'|escape|truncate:23:'...':false:true}</th>
                         {/if}
                     </tr>
-                {foreachelse}
-                    <tr>
-                        <td colspan="{if count($hubs) > 1}{count($hubs) + 2}{else}2{/if}">[`No authors yet.`]</td>
-                    </tr>
-                {/foreach}
-            </tbody>
-        </table>
-            
-        <div class="block lazyloading-wrapper">
-            <span>{sprintf('%s of %d', _w('%d author','%d authors', $offset + $count), $total_count)}</span>
-    
-            {if $total_count > $count + $offset}
-                <br>
-                <span><i class="icon16 loading"></i> [`Loading`] {_w('%d author', '%d authors', min($total_count - $count - $offset, $count))}...</span>
-            {/if}
+                    </thead>
+                </table>
+            </div>
+
+            <div class="h-authors-scroll h-authors-scroll_left hidden js-authors-scroll">
+                <i class="fas fa-angle-left"></i>
+            </div>
+            <div class="h-authors-scroll h-authors-scroll_right hidden js-authors-scroll">
+                <i class="fas fa-angle-right"></i>
+            </div>
         </div>
 
+        <div class="table-scrollable-x h-authors-list js-authors-list">
+            <table class="authors-table h-authors js-lazyload-table">
+                <tbody>
+                {function stats_row_html a=null stats=null}
+                <div class="nowrap custom-mb-4">
+                    {if (empty($stats.hub_id) && $kudos_globally_enabled) || (!empty($stats.hub_id) && !empty($hubs[$stats.hub_id]) && !empty($hubs[$stats.hub_id].params.kudos))}
+                    <span class="{if $stats.rate > 0}text-green{elseif $stats.rate == 0}text-gray{else}text-red{/if}">{if $stats.rate > 0}+{/if}{$stats.rate}</span>
+
+                    <span class="hint custom-ml-4">
+                        <span title="[`Upvotes`]"><i class="fas fa-arrow-up{if $stats.votes_up > 0} text-green{/if}"></i> {$stats.votes_up}</span>
+                        <span title="[`Downvotes`]"><i class="fas fa-arrow-down{if $stats.votes_down > 0} text-red{/if}"></i> {$stats.votes_down}</span>
+                    </span>
+                    {else}
+                    <span class="hint">&mdash;</span>
+                    {/if}
+                </div>
+
+                <div class="small">
+                    <a href="#/contact/{$a.id}/{if !empty($stats.hub_id)}{$stats.hub_id}{else}0{/if}/" class="semibold{if !$stats.topics_count} gray{/if}">{_w('%d topic','%d topics', $stats.topics_count)}</a>
+
+                    <div class="nowrap{if !$stats.answers_count} gray{/if}">{_w('%d answer','%d answers', $stats.answers_count)}</div>
+
+                    <div class="nowrap{if !$stats.comments_count} gray{/if}">{_w('%d comment','%d comments', $stats.comments_count)}</div>
+                </div>
+                {/function}
+
+                {foreach $authors as $a}
+                <tr>
+                    <td class="h-author-name align-center">
+                        <a href="{$wa_backend_url}contacts/#/contact/{$a.id}"{if !$a.id} class="gray"{/if}>
+                            <img src="{$a.photo_url_50|default:sprintf('%swa-content/img/userpic50@2x.jpg',$wa_url)}" class="userpic userpic-48">
+                            <span class="small" style="display: block;">{$a.name|default:'[`(missing contact)`]'|escape}</span>
+                        </a>
+                    </td>
+
+                    {* Overall stats *}
+                    <td class="h-authors-hub {if count($hubs) > 1} bold{/if}">
+                        {stats_row_html a=$a stats=$a}
+                    </td>
+
+                    {* Stats by hub *}
+                    {if count($hubs) > 1}
+                    {foreach $hubs as $h}
+                    <td class="h-authors-hub">
+                        {stats_row_html a=$a stats=$a.stats_by_hub[$h.id]}
+                    </td>
+                    {/foreach}
+                    {/if}
+                </tr>
+                {foreachelse}
+                <tr>
+                    <td colspan="{if count($hubs) > 1}{count($hubs) + 2}{else}2{/if}">[`No authors yet.`]</td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
+        {/if}
+
+        <div class="block lazyloading-wrapper">
+            <span>{sprintf_wp('%s of %d', _w('%d author','%d authors', $offset + $count), $total_count)}</span>
+
+            {if $total_count > $count + $offset}
+                <br>
+                <span><i class="fas fa-spinner wa-animation-spin speed-1500 loading"></i> [`Loading`] {_w('%d author', '%d authors', min($total_count - $count - $offset, $count))}...</span>
+            {/if}
+        </div>
     </div>
-        
 </div>
+
+<script>
+    $(function () {
+        const $arrow = $('.js-authors-scroll');
+        const $wrapper = $('.js-authors-list');
+        const scrollShift = 100;
+
+        // check horizontal scrollbar
+        if ($wrapper[0].scrollWidth > $wrapper[0].clientWidth) {
+            $arrow.removeClass('hidden');
+
+            $arrow.on('click', function(event) {
+                event.preventDefault();
+
+                if ($(this).hasClass('h-authors-scroll_left')) {
+                    const currentScroll = $wrapper.scrollLeft();
+                    $wrapper.scrollLeft(currentScroll - scrollShift);
+                    return;
+                }
+
+                const currentScroll = $wrapper.scrollLeft();
+                $wrapper.scrollLeft(currentScroll + scrollShift);
+            });
+
+            scrollSync('.js-authors-list');
+        }
+
+        function scrollSync(selector) {
+            let active = null;
+            const selectorList = document.querySelectorAll(selector);
+
+            for (const div of selectorList) {
+                div.addEventListener('mouseenter', function(e) {
+                    active = e.target;
+                });
+
+                div.addEventListener('touchstart', function(e) {
+                    active = e.target.closest(selector);
+                });
+
+                div.addEventListener('scroll', function(e) {
+                    if (e.target !== active) {
+                        return;
+                    }
+
+                    for (const target of selectorList) {
+                        if (active === target) {
+                            return;
+                        }
+
+                        target.scrollTop = active.scrollTop;
+                        target.scrollLeft = active.scrollLeft;
+                    }
+                });
+            }
+        }
+    });
+</script>
 
 {if $total_count > $offset + $count}
 <script class="run-after-lazyloading">(function() { "use strict";
@@ -111,7 +234,7 @@
 
     var $lazyloading_wrapper = $('.lazyloading-wrapper');
     var $window = $(window), h;
-    var $table = $lazyloading_wrapper.parent().find('table.authors-table');
+    var $table = $lazyloading_wrapper.parent().find('table.js-lazyload-table');
 
     $window.on('scroll resize', h = function() {
 
@@ -131,7 +254,7 @@
                 $div[0].innerHTML = r;
 
                 // Append rows from new table to the old table
-                $table.children('tbody').append($div.find('table.authors-table > tbody').children());
+                $table.children('tbody').append($div.find('table.js-lazyload-table > tbody').children());
                 $lazyloading_wrapper.empty().append($div.find('.lazyloading-wrapper').children());
 
                 // Run the scripts that will further extend lazy loading
@@ -145,41 +268,3 @@
     $window.scroll();
 })();</script>
 {/if}
-
-<script>(function() { "use strict";
-
-    //
-    // Make the table header stick to top of the page
-    //
-
-    var $table = $('.authors-table');
-    var $header_clone = $($.parseHTML('<table class="zebra h-authors"></table>')).append($table.children('thead').clone()).css({
-        position: 'fixed',
-        display: 'none',
-        top: 0
-    }).insertAfter($table)
-
-    $table.children('thead').sticky({
-        getClone: function($e, o) {
-            return $header_clone;
-        },
-        showFixed: function(e) {
-            updateWidths();
-            $header_clone.show();
-        },
-        hideFixed: function(e) {
-            $header_clone.hide();
-        }
-    });
-
-    $table.change(updateWidths);
-
-    function updateWidths() {
-        $header_clone.width($table.width());
-        var $orig_ths = $table.find('>thead>tr>th');
-        $header_clone.find('>thead>tr>th').each(function(i, th) {
-            $(th).width($($orig_ths[i]).width());
-        });
-    }
-
-})();</script>

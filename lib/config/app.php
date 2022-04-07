@@ -5,12 +5,12 @@ return array(
     'icon' => array(
         16 => 'img/hub16.png',
         24 => 'img/hub24.png',
-        48 => 'img/hub.png',
+        48 => 'img/hub48.png',
         96 => 'img/hub96.png',
     ),
     'sash_color' => '#78d3c9',
     'vendor'     => 'webasyst',
-    'version'    => '1.2.17',
+    'version'    => '2.1.2',
     'rights'     => true,
     'frontend'   => true,
     'pages'      => true,
@@ -19,4 +19,5 @@ return array(
     'auth'       => true,
     'my_account' => true,
     'plugins'    => true,
+    'ui'         => '1.3, 2.0'
 );

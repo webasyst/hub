@@ -1,0 +1,224 @@
+@use 'variables' as v;
+
+.h-topics {
+    .h-topic-private {
+        background-color: var(--background-color-blockquote);
+    }
+
+    .h-sort-handle {
+        display: table-cell;
+        padding-top: 24px;
+        padding-left: 12px;
+        transition: var(--timing-fast) opacity;
+
+        @media (v.$mobile) {
+            padding-top: 10px;
+        }
+
+        svg {
+            cursor: move;
+        }
+    }
+
+    &.list {
+        & > .item {
+            &:hover {
+                a {
+                    color: inherit;
+                }
+
+                .link-hover {
+                    color: var(--list-item-link-color-hover);
+                }
+            }
+
+            .h-comment-text {
+                a {
+                    color: var(--text-color-link);
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .blue-link {
+                color: var(--text-color-link);
+                text-decoration: none !important;
+            }
+        }
+    }
+
+    &-back,
+    &-selected,
+    &-actions-disable {
+        display: none;
+    }
+
+    &.h-bulk-mode {
+        .h-topic {
+            pointer-events: none;
+            padding-left: 2rem;
+
+            @media (v.$mobile) {
+                padding-left: 0;
+            }
+        }
+
+        .h-topic-avatar {
+            .userpic {
+                opacity: 0;
+            }
+        }
+
+        .h-topic-checkbox {
+            display: flex;
+
+            @media (v.$mobile) {
+                position: static;
+
+                display: inline;
+                vertical-align: middle;
+            }
+        }
+
+        .h-sort-handle,
+        .h-topic-avatar {
+            display: none;
+        }
+    }
+}
+
+.h-topic {
+    box-sizing: border-box;
+    width: 100%;
+
+    &-header {
+        position: sticky;
+        top: 4rem;
+        z-index: 15;
+        background-color: var(--background-color-blank);
+
+        .settings-active & {
+            position: static;
+        }
+    }
+
+    &-private {
+        background-color: var(--background-color-blockquote);
+    }
+
+    &-avatar {
+        position: relative;
+
+        .userpic {
+            transition: var(--timing-fast) opacity;
+        }
+    }
+
+    &-checkbox {
+        pointer-events: auto;
+
+        position: absolute;
+        top: 0;
+        left: -.5rem;
+        z-index: 10;
+
+        display: none;
+        justify-content: center;
+        align-items: center;
+
+        width: 3rem;
+        height: 3rem;
+
+        &-mobile {
+            pointer-events: auto;
+            display: none;
+        }
+    }
+}
+
+#bulk-menu {
+    display: none;
+}
+
+.h-topic-header {
+    &.active {
+        .h-topic-actions-enable,
+        .h-topics-title,
+        .js-sort-menu {
+            display: none;
+        }
+
+        .h-topics-back,
+        .h-topics-selected,
+        .h-topics-actions-disable,
+        #bulk-menu {
+            display: block;
+        }
+    }
+}
+
+#content {
+    &.settings-active {
+        .h-topics,
+        .h-topics-footer,
+        .js-sort-menu,
+        .h-topic-action {
+            display: none;
+        }
+
+        .article-body {
+            padding-bottom: 0;
+        }
+    }
+}
+
+.h-stream {
+    .lazyloading-load-more {
+        display: block;
+        margin: 20px 0 0 16px;
+    }
+
+    &.h-mode-normal {
+        .show-in-bulk-mode {
+            display: none;
+        }
+    }
+
+    &.h-mode-bulk {
+        .show-in-normal-mode {
+            display: none;
+        }
+    }
+
+    &.h-js-filtered {
+        .hide-when-filtered {
+            display: none;
+        }
+    }
+
+    &.h-not-js-filtered {
+        .hide-when-not-filtered {
+            display: none;
+        }
+    }
+}
+
+.h-topic-mobile-block-view {
+    @media (v.$mobile) {
+        display: block;
+
+        & > span {
+            display: block;
+        }
+    }
+}
+
+.h-circle-mobile {
+    display: none;
+
+    @media (v.$mobile) {
+        display: inline;
+    }
+}

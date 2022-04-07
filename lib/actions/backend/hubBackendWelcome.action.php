@@ -128,7 +128,12 @@ class hubBackendWelcomeAction extends waViewAction
             array(
                 'name'   => wa()->accountName(),
                 'status' => 1,
-
+            )
+        );
+        $hub_model->add(
+            array(
+                'name'   => wa()->getLocale() === 'ru_RU' ? 'Приватный' : 'Private',
+                'status' => 0,
             )
         );
 

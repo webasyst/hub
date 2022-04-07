@@ -1,0 +1,145 @@
+@use 'variables' as v;
+
+.h-topic-edit-buttons,
+.h-topic-draft-button {
+    display: none;
+}
+
+.draft {
+    .h-topic-draft-button {
+        display: flex;
+    }
+
+    .bottombar_topic {
+        position: static;
+        z-index: 2;
+    }
+}
+
+.published {
+    .h-topic-edit-buttons {
+        display: flex;
+    }
+
+    .bottombar_topic {
+        position: sticky;
+        top: auto;
+        bottom: 0;
+        z-index: 4;
+        display: none;
+    }
+
+    &.with-changes {
+        .bottombar_topic {
+            display: block;
+        }
+    }
+}
+
+.h-topic-editor-wrapper {
+    @media (v.$mobile) {
+        max-width: calc(100vw - 2rem);
+    }
+}
+
+.h-topic-content {
+    img,
+    iframe {
+        max-width: 100%;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        background: var(--background-color-blockquote);
+        padding: 20px;
+    }
+}
+
+.h-topic-settings {
+    display: grid;
+    grid-template-columns: repeat(3, calc(33.33% - 6px));
+    grid-gap: 1.5rem 12px;
+
+    @media (v.$mobile) {
+        display: block;
+    }
+
+    @media (v.$tablet1) and (v.$tablet2) {
+        grid-template-columns: repeat(2, calc(50% - 6px));
+    }
+}
+
+.dropdown {
+    .dropdown-toggle.h-topic-custom-dropdown {
+        position: relative;
+        display: block;
+        overflow: hidden;
+
+        width: 100%;
+
+        color: var(--text-color-input);
+        font-size: .9375rem;
+        line-height: 1.5em;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        background-color: var(--background-color-input);
+        border: 0.125em solid var(--border-color-input);
+        border-radius: .25em;
+        padding: 0.1875em 2.25em 0.1875em 0.375em;
+
+        &:hover {
+            background-color: var(--background-color-input-solid);
+        }
+    }
+}
+
+.h-topic-custom-dropdown {
+    &::before {
+        content: '';
+
+        position: absolute;
+        top: 50%;
+        right: 0.75em;
+
+        display: block;
+
+        border: solid transparent;
+        border-width: 0.375em;
+        border-top-color: var(--text-color-hint);
+        margin: -0.125em 0 0;
+    }
+}
+
+.h-topic-title {
+    &:focus {
+        line-height: 1;
+        background-color: var(--background-color-editable);
+        outline: none;
+    }
+
+    &:empty::before {
+        content: attr(data-placeholder);
+        color: var(--gray);
+        pointer-events: none;
+    }
+}
+
+.users-to-notify {
+    .h-notify-user {
+        margin: 10px 0;
+
+        .close {
+            cursor: pointer;
+            margin-left: 1em;
+        }
+    }
+}
+
+.notification-message {
+    resize: none;
+}
+
+.h-topic-gray-bg {
+    background-color: var(--background-color-table-row-hover);
+}

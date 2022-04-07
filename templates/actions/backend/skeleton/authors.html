@@ -1,0 +1,39 @@
+<div class="article">
+    <div class="article-body">
+        <div class="skeleton">
+            <div class="skeleton-header" style="width: 40%;"></div>
+
+            <table class="borderless">
+                <thead>
+                    <th style="width: 30%;"></th>
+                    <th><div class="skeleton-line" style="width: 70%;"></div></th>
+                    <th class="desktop-and-tablet-only"><div class="skeleton-line" style="width: 70%;"></div></th>
+                    <th class="desktop-and-tablet-only"><div class="skeleton-line" style="width: 70%;"></div></th>
+                </thead>
+
+                <tbody>
+                    {for $foo=1 to 3}
+                    <tr>
+                        <td>
+                            <div class="flexbox middle wrap-mobile">
+                                <div class="skeleton-custom-circle flex-shrinkless custom-mr-4" style="width: 3rem; height: 3rem;"></div>
+
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="skeleton-custom-box" style="height: 120px;"></div>
+                        </td>
+                        <td class="desktop-and-tablet-only">
+                            <div class="skeleton-custom-box" style="height: 120px;"></div>
+                        </td>
+                        <td class="desktop-and-tablet-only">
+                            <div class="skeleton-custom-box" style="height: 120px;"></div>
+                        </td>
+                    </tr>
+                    {/for}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

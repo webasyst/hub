@@ -1,11 +1,5 @@
 (function ($) {
 
-    $('#topic-access-toggle').iButton({
-        labelOn: '',
-        labelOff: '',
-        className: 'mini'
-    });
-
     $.storage = new $.store();
     // js controller
     $.hub = {
@@ -14,11 +8,29 @@
         options: {
             accountName: ''
         },
+        deleteDialog: {},
         // init js controller
         init: function (options) {
 
             this.options = options || {};
-            $.sidebar.init();
+            this.waLoading = $.waLoading();
+            this.topics_count = parseInt(this.options.topics_count['all']);
+
+            $.sidebar.init({
+                reloadTime: 300000,
+            });
+
+            // DOM
+            this.$window = $(window);
+            this.$body = $('body');
+            this.$content = $('#content');
+            this.$addTopicButtonMobile = $('.js-add-topic-mobile');
+
+            // loaded event
+            this.loadedEvent = $.Event('wa_loaded');
+
+            this.$window.on('wa_loaded.pulsar', $.proxy(this.setPulsar, this));
+            this.toggleAddTopicButton();
 
             // Init dispatcher based on location.hash
             if (typeof($.History) != "undefined") {
@@ -46,7 +58,7 @@
                     }
                 };
             }
-            var hash = window.location.hash;
+            const hash = window.location.hash;
             if (hash === '#/' || !hash) {
                 this.dispatch();
             }
@@ -90,6 +102,8 @@
 
         // dispatch call method by hash
         dispatch: function (hash) {
+            const that = this;
+
             if (this !== $.hub) {
                 return $.hub.dispatch(hash);
             }
@@ -104,17 +118,19 @@
                 return;
             }
 
-            var old_hash = $.hub.currentHash;
+            const old_hash = $.hub.currentHash;
             $.hub.currentHash = hash;
 
             // Fire an event allowing to prevent navigation away from current hash
-            var e = new $.Event('wa_before_dispatched');
-            $(window).trigger(e);
+            const e = new $.Event('wa_before_dispatched');
+            that.$window.trigger(e);
             if (e.isDefaultPrevented()) {
                 $.hub.currentHash = old_hash;
                 $.wa.setHash(old_hash);
                 return false;
             }
+
+            this.removeSettingsClass();
 
             if (hash) {
                 // clear hash
@@ -122,14 +138,14 @@
                 hash = hash.split('/');
 
                 if (hash[0]) {
-                    var actionName = "";
-                    var attrMarker = hash.length;
-                    for (var i = 0; i < hash.length; i++) {
-                        var h = hash[i];
+                    let actionName = "";
+                    let attrMarker = hash.length;
+                    for (let i = 0; i < hash.length; i++) {
+                        const h = hash[i];
                         if (i < 2) {
                             if (i === 0) {
                                 actionName = h;
-                            } else if ((h == 'add') || ((parseInt(h, 10) != h) && (h.indexOf('=') == -1) && (actionName != 'search') && (actionName != 'following') && (actionName != 'plugins'))) {
+                            } else if ((h == 'add') || ((parseInt(h, 10) != h) && (h.indexOf('=') == -1) && (actionName !== 'search') && (actionName !== 'following') && (actionName !== 'plugins'))) {
                                 actionName += h.substr(0, 1).toUpperCase() + h.substr(1);
                             } else {
                                 attrMarker = i;
@@ -140,14 +156,14 @@
                             break;
                         }
                     }
-                    var attr = hash.slice(attrMarker);
+                    const attr = hash.slice(attrMarker);
                     // call action if it exists
                     if ($.hub[actionName + 'Action']) {
                         $.sidebar.highlight();
                         $.hub.currentAction = actionName;
                         $.hub.currentActionAttr = attr;
                         $.hub[actionName + 'Action'].apply($.hub, attr);
-                        $('body').animate({scrollTop: 0}, 200);
+                        that.$body.animate({scrollTop: 0}, 200);
                     } else {
                         if (console) {
                             console.log('Invalid action name:', actionName + 'Action');
@@ -164,19 +180,31 @@
         },
 
         defaultAction: function (order) {
-            $('#wa-app > .sidebar li.selected').removeClass('selected');
-            $('#wa-app > .sidebar li a[href="#/"]').parent().addClass('selected');
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
+
+            $.sidebar.sidebar.find('li.selected').removeClass('selected');
+            $.sidebar.sidebar.find('a[href="#/"]').parent().addClass('selected');
             order = this.getOrder('default', order);
-            this.load('?module=topics' + (order ? '&sort=' + order : ''), function () {
-            });
+            this.load('?module=topics' + (order ? '&sort=' + order : ''));
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         pluginsAction: function (params) {
+            if (!this.loaded) {
+                $('.js-skeleton-plugins').show();
+                this.loaded = true;
+            }
+
             if ($('#wa-plugins-container').length) {
                 $.plugins.dispatch(params);
             } else {
                 this.load('?module=plugins');
             }
+
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         getOrder: function (key, order) {
@@ -190,88 +218,94 @@
         },
 
         initLazyLoad: function () {
-            var paging = $('.lazyloading-paging');
+            const that = this;
+            const paging = $('.lazyloading-paging');
             if (!paging.length) {
                 return;
             }
 
-            var times = parseInt(paging.data('times') || '10', 10);
-            var link_text = paging.data('linkText') || 'Load more';
+            let times = parseInt(paging.data('times') || '10', 10);
+            const link_text = paging.data('linkText') || 'Load more';
 
             // check need to initialize lazy-loading
-            var current = paging.find('li.selected');
+            const current = paging.find('li.selected');
             if (current.children('a').text() != '1') {
                 return;
             }
             paging.hide();
-            var win = $(window);
 
             // prevent previous launched lazy-loading
-            win.lazyLoad('stop');
+            that.$window.lazyLoad('stop');
 
             // check need to initialize lazy-loading
-            var next = current.next();
-            if (next.length) {
-                win.lazyLoad({
-                    container: '#h-content .h-topics',
-                    load: function () {
-                        win.lazyLoad('sleep');
+            const next = current.next();
+            if (!next.length) {
+                return;
+            }
 
-                        var paging = $('.lazyloading-paging').hide();
-                        var footer = $('.h-footer');
+            that.$window.lazyLoad({
+                container: '#h-content .h-topics',
+                load: function () {
+                    that.$window.lazyLoad('sleep');
 
-                        // determine actual current and next item for getting actual url
-                        var current = paging.find('li.selected');
-                        var next = current.next();
-                        var url = next.find('a').attr('href');
-                        if (!url) {
-                            win.lazyLoad('stop');
-                            return;
-                        }
+                    let paging = $('.lazyloading-paging').hide();
+                    const footer = $('.h-footer');
 
-                        var list = $('#h-content .h-topics');
-                        $('.loading-wrapper').show();
-                        $.get(url, function (html) {
-                            var tmp = $('<div></div>').html(html);
-                            list.append(tmp.find('#h-content .h-topics').children());
-                            var tmp_paging = tmp.find('.lazyloading-paging').hide();
-                            paging.replaceWith(tmp_paging);
-                            paging = tmp_paging;
+                    // determine actual current and next item for getting actual url
+                    const current = paging.find('li.selected');
+                    const next = current.next();
+                    const url = next.find('a').attr('href');
+                    if (!url) {
+                        that.$window.lazyLoad('stop');
+                        return;
+                    }
 
-                            footer.replaceWith(tmp.find('.h-footer'));
+                    const list = $('#h-content .h-topics');
+                    $('.loading-wrapper').show();
 
-                            times -= 1;
+                    $.get(url, function (html) {
+                        const tmp = $('<div></div>').html(html);
+                        list.append(tmp.find('#h-content .h-topics').children());
+                        const tmp_paging = tmp.find('.lazyloading-paging').hide();
+                        paging.replaceWith(tmp_paging);
+                        paging = tmp_paging;
 
-                            // check need to stop lazy-loading
-                            var current = paging.find('li.selected');
-                            var next = current.next();
-                            if (next.length) {
-                                if (!isNaN(times) && times <= 0) {
-                                    win.lazyLoad('sleep');
-                                    if (!$('.lazyloading-load-more').length) {
-                                        $('<a href="#" class="lazyloading-load-more">' + link_text + '</a>').insertAfter(paging)
-                                            .click(function () {
-                                                times = 1;      // one more time
-                                                win.lazyLoad('wake');
-                                                win.lazyLoad('force');
-                                                return false;
-                                            });
-                                    }
+                        footer.replaceWith(tmp.find('.h-footer'));
+
+                        times -= 1;
+
+                        // check need to stop lazy-loading
+                        const current = paging.find('li.selected');
+                        const next = current.next();
+                        if (next.length) {
+                            if (!isNaN(times) && times <= 0) {
+                                that.$window.lazyLoad('sleep');
+                                if (!$('.lazyloading-load-more').length) {
+                                    $('<a href="#" class="semibold custom-ml-4 lazyloading-load-more">' + link_text + '</a>').insertAfter($('.loading-wrapper'))
+                                        .on('click', function (event) {
+                                            event.preventDefault();
+                                            $(this).hide();
+                                            times = 1;      // one more time
+                                            that.$window.lazyLoad('wake');
+                                            that.$window.lazyLoad('force');
+                                        });
                                 } else {
-                                    win.lazyLoad('wake');
+                                    $('.lazyloading-load-more').show();
                                 }
                             } else {
-                                win.lazyLoad('stop');
-                                $('.lazyloading-load-more').remove();
+                                that.$window.lazyLoad('wake');
                             }
-                            tmp.remove();
+                        } else {
+                            that.$window.lazyLoad('stop');
+                            $('.lazyloading-load-more').remove();
+                        }
+                        tmp.remove();
 
-                            list.trigger('lazyload_append');
-                            $('.loading-wrapper').hide();
-                        });
-                    }
-                });
-            }
+                        list.trigger('lazyload_append');
+                        $('.loading-wrapper').hide();
+                    });
+                }
+            });
         },
 
         popularAction: function () {
@@ -304,35 +338,32 @@
                 hub_id = '&hub_id=' + hub_id;
             }
             this.load('?module=topics' + order + hub_id + '&hash=contact/' + encodeURIComponent(contact_id), function () {
-                $('.h-header .h-sort').remove();
+                $('.js-sort-menu').remove();
             });
         },
 
         load: function (url, callback) {
-            var options = this.options;
-            var load_protector = $.hub.load_protector = Math.random();
+            const that = this;
+
+            const load_protector = $.hub.load_protector = Math.random();
+            that.waLoading.animate(2000, 96, false);
+            that.$content.removeClass('flexbox');
             $.get(url, { }, function (result) {
                 if (load_protector !== $.hub.load_protector) {
                     // too late!
                     return;
                 }
-                $(window).scrollTop(0);
-                $('#content').html(result);
+                that.$window.scrollTop(0);
+                that.$content.html(result);
+                that.waLoading.done();
 
-                var h1 = $('#content').find('h1:first');
-                var title;
-                if (h1.length) {
-                    if (h1.children().length) {
-                        if (h1.find('.title').length) {
-                            title = h1.find('.title').text();
-                        } else {
-                            title = h1.contents()[0].textContent ? h1.contents()[0].textContent : h1.contents()[0].innerText;
-                        }
-                    } else {
-                        title = h1.text();
-                    }
-                    document.title = title + ' — ' + options.accountName;
+                const $pageTitle = that.$content.find('.js-page-title:first');
+
+                if ($pageTitle.length) {
+                    const title = $pageTitle.text();
+                    document.title = title + ' — ' + that.options.accountName;
                 }
+
                 if (callback) {
                     try {
                         callback.call(this);
@@ -340,34 +371,51 @@
                     }
                 }
 
-                $(window).trigger($.Event('wa_loaded'));
+                that.$window.trigger(that.loadedEvent);
+                that.$body.find('.rx-popup').hide();
             });
         },
 
         typeAction: function (id, order) {
-            this.load('?module=topics&hash=type/' + id + (order ? '&sort=' + order : ''), function () {
-
-            });
+            this.load('?module=topics&hash=type/' + id + (order ? '&sort=' + order : ''));
         },
 
         hubAction: function (id, order) {
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
+
             order = this.getOrder('hub' + id, order);
             this.load('?module=topics&hash=hub/' + id + (order ? '&sort=' + order : ''));
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         followingAction: function (order) {
-            order = this.getOrder('following', order);
-            this.load('?module=topics&hash=following' + (order ? '&sort=' + order : ''), function () {
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
 
-            });
+            order = this.getOrder('following', order);
+            this.load('?module=topics&hash=following' + (order ? '&sort=' + order : ''));
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         categoryAddAction: function (hub_id) {
-            var self = this;
+            const that = this;
+
+            if (!this.loaded) {
+                $('.js-skeleton-category-add').show();
+                this.loaded = true;
+            }
+
             hub_id = parseInt(hub_id);
             this.load('?module=settings&action=category&hub_id=' + hub_id, function () {
-                self.streamSettingsHandler(null, null, 'category');
+                that.streamSettingsHandler(null, null, 'category');
             });
+
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         /**
@@ -376,31 +424,56 @@
          * @param order
          */
         categoryAction: function (id, order, callback) {
-            var self = this;
+            const that = this;
+
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
+
             this.load('?module=topics&hash=category/' + id + (order ? '&sort=' + order : ''), function () {
                 if (callback && (typeof callback == 'function')) {
                     callback();
                 }
-                $('a.stream-edit').click(function () {
-                    var $link = $(this);
-                    $link.find('.icon16').removeClass('settings').addClass('loading');
-                    $('#h-stream-settings').load('?module=settings&action=category&id=' + id, function () {
-                        self.streamSettingsHandler(id, $link, 'category');
+
+                that.$content.on('click', 'a.stream-edit',function(event) {
+                    event.preventDefault();
+
+                    const $link = $(this);
+                    const $icon = $link.find('.fa-pen');
+                    $icon.removeClass('fa-pen').addClass('fa-spinner fa-spin');
+
+                    that.$content.find('#h-stream-settings').load('?module=settings&action=category&id=' + id, function () {
+                        that.streamSettingsHandler(id, $link, 'category');
                     });
-                    return false;
                 });
             });
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         filterAddAction: function () {
-            var self = this;
+            const that = this;
+
+            if (!this.loaded) {
+                $('.js-skeleton-filter-add').show();
+                this.loaded = true;
+            }
+
             this.load('?module=settings&action=filter', function () {
-                self.streamSettingsHandler(null, null, 'filter');
+                that.streamSettingsHandler(null, null, 'filter');
             });
+
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         filterAction: function (id, order, callback) {
-            var self = this;
+            const that = this;
+
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
+
             order = this.getOrder('filter' + id, order);
             this.load('?module=topics&hash=filter/' + id + (order ? '&sort=' + order : ''), function () {
 
@@ -408,97 +481,263 @@
                     callback();
                 }
 
-                $('a.stream-edit').click(function () {
-                    var $link = $(this);
-                    $link.find('.icon16').removeClass('funnel').addClass('loading');
-                    $('#h-stream-settings').load('?module=settings&action=filter&id=' + id, function () {
-                        self.streamSettingsHandler(id, $link, 'filter');
+                that.$content.on('click', 'a.stream-edit',function(event) {
+                    event.preventDefault();
+
+                    const id = $(this).data('filter-id');
+
+                    const $link = $(this);
+                    $link.find('.fa-pen').removeClass('fa-pen').addClass('fa-spinner fa-spin');
+                    that.$content.find('#h-stream-settings').load('?module=settings&action=filter&id=' + id, function () {
+                        that.streamSettingsHandler(id, $link, 'filter');
                     });
-                    return false;
                 });
             });
+
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
-
         tagAction: function (id, order) {
-            this.load('?module=topics&hash=tag/' + id + (order ? '&sort=' + order : ''), function () {
-            });
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
+
+            this.load('?module=topics&hash=tag/' + id + (order ? '&sort=' + order : ''));
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         searchAction: function (q) {
-            this.load('?module=topics&hash=search/' + encodeURIComponent(q), function () {
-            });
+            if (!this.loaded) {
+                $('.js-skeleton-default').show();
+                this.loaded = true;
+            }
+
+            this.load('?module=topics&hash=search/' + encodeURIComponent(q));
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         topicAddAction: function () {
+            if (!this.loaded) {
+                $('.js-skeleton-topic-edit').show();
+                this.loaded = true;
+            }
+
             this.load('?module=topics&action=edit');
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         topicEditAction: function (id) {
+            if (!this.loaded) {
+                $('.js-skeleton-topic-edit').show();
+                this.loaded = true;
+            }
+
             this.load('?module=topics&action=edit&id=' + id);
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         topicAction: function (id) {
+            if (!this.loaded) {
+                $('.js-skeleton-topic-edit').show();
+                this.loaded = true;
+            }
+
             this.load('?module=topics&action=info&id=' + id);
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         settingsAction: function () {
+            if (!this.loaded) {
+                $('.js-skeleton-settings').show();
+                this.loaded = true;
+            }
+
             this.load('?module=settings');
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         authorsAction: function () {
+            if (!this.loaded) {
+                $('.js-skeleton-authors').show();
+                this.loaded = true;
+            }
+
             this.load('?module=authors');
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
-
         settingsTypeAction: function (id) {
+            if (!this.loaded) {
+                $('.js-skeleton-settings-type').show();
+                this.loaded = true;
+            }
+
             this.load('?module=settings&action=type&id=' + id);
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         settingsHubAction: function (id) {
+            if (!this.loaded) {
+                $('.js-skeleton-settings-hub').show();
+                this.loaded = true;
+            }
+
             this.load('?module=settings&action=hub&id=' + id);
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         settingsFilterAction: function (id) {
             this.load('?module=settings&action=filter&id=' + id);
+
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         commentsAction: function (params) {
+            if (!this.loaded) {
+                $('.js-skeleton-comments').show();
+                this.loaded = true;
+            }
+
             this.load('?module=comments'+(params ? '&'+params : ''));
+            this.options.addTopicSettings.showAddTopicButton = true;
         },
 
         pagesAction: function (id) {
+            if (!this.loaded) {
+                $('.js-skeleton-pages').show();
+                this.loaded = true;
+            }
+
             if ($('#wa-page-container').length) {
                 waLoadPage(id);
+                this.$content.addClass('flexbox');
             } else {
-                this.load('?module=pages');
+                this.load('?module=pages', () => {
+                    this.$content.addClass('flexbox');
+                });
             }
+
+            this.options.addTopicSettings.showAddTopicButton = false;
         },
 
         designAction: function (params) {
-            if (params) {
-                if ($('#wa-design-container').length) {
-                    waDesignLoad();
-                } else {
-                    $("#content").load('?module=design', function () {
-                        waDesignLoad(params);
-                    });
-                }
-            } else {
-                $("#content").load('?module=design', function () {
-                    waDesignLoad('');
-                });
+            if (!this.loaded) {
+                $('.js-skeleton-pages').show();
+                this.loaded = true;
             }
-        },
 
-        designThemesAction: function (params) {
             if ($('#wa-design-container').length) {
                 waDesignLoad();
             } else {
-                $("#content").load('?module=design', function () {
+                this.load('?module=design', function () {
+                    params ? waDesignLoad(params) : waDesignLoad();
+                });
+            }
+
+            this.$window.trigger(this.loadedEvent);
+            this.options.addTopicSettings.showAddTopicButton = false;
+        },
+
+        designThemesAction: function (params) {
+            if (!this.loaded) {
+                $('.js-skeleton-pages').show();
+                this.loaded = true;
+            }
+
+            if ($('#wa-design-container').length) {
+                waDesignLoad();
+            } else {
+                this.load('?module=design', function () {
                     waDesignLoad();
                 });
             }
+
+            this.$window.trigger(this.loadedEvent);
+            this.options.addTopicSettings.showAddTopicButton = false;
+        },
+
+        setPulsar: function() {
+            const canCreateTopics = $.sidebar.$addTopicButton.length;
+
+            if (!canCreateTopics || this.topics_count || localStorage.getItem('wa_hub_pulsar')) {
+                this.unsetPulsar();
+
+                return;
+            }
+
+            const isMobile = !!$.sidebar.sidebarData;
+
+            if (!this.$pulsar && !isMobile) {
+                this.$pulsar = $.sidebar.$addTopicButton.clone().appendTo('body');
+            }
+
+            if (this.$pulsar && isMobile) {
+                this.$pulsar.remove();
+            }
+
+            const setOffset = () => {
+                if (!this.$pulsar) {
+                    return;
+                }
+
+                const { top, left } = $.sidebar.$addTopicButton.offset();
+                this.$pulsar.css({
+                    top,
+                    left
+                });
+            };
+
+            if (isMobile) {
+                $.sidebar.$addTopicButton.addClass('pulsar');
+                this.$addTopicButtonMobile.addClass('pulsar');
+            } else {
+                this.$pulsar.addClass('pulsar').css({
+                    position: 'fixed',
+                    'pointer-events': 'none'
+                });
+
+                setOffset();
+            }
+
+            $.sidebar.$addTopicButton.on('click.pulsar', $.proxy(this.unsetPulsar, this));
+            this.$addTopicButtonMobile.on('click.pulsar', $.proxy(this.unsetPulsar, this));
+
+            this.$window.on('resize.pulsar', $.proxy(this.setPulsar, this));
+            this.$window.on('wa_sidebar_loaded.pulsar', setOffset);
+        },
+
+        unsetPulsar: function() {
+            if (this.$pulsar) {
+                this.$pulsar.remove();
+            }
+
+            $.sidebar.$addTopicButton.removeClass('pulsar');
+            this.$addTopicButtonMobile.removeClass('pulsar');
+
+            $.sidebar.$addTopicButton.off('.pulsar');
+            this.$addTopicButtonMobile.off('.pulsar');
+            this.$window.off('.pulsar');
+
+            localStorage.setItem('wa_hub_pulsar', '1');
+        },
+
+        toggleAddTopicButton: function() {
+            const that = this;
+
+            this.options.addTopicSettings = new Proxy({}, {
+                set(target, key, value) {
+                    if (key === 'showAddTopicButton') {
+                        if (value) {
+                            that.$addTopicButtonMobile.removeClass('hidden');
+                            return true;
+                        } else {
+                            that.$addTopicButtonMobile.addClass('hidden');
+                            return false;
+                        }
+                    }
+                }
+            });
         },
 
         /**
@@ -511,61 +750,74 @@
          * @param {jQuery=} $link
          */
         streamSettingsSaveHandler: function (r, $settings, $form, id, type, $link) {
-            $form.find(':submit').prop('disabled', false);
-            if (r.status == 'ok') {
-                $settings.slideUp();
-                if ($link) {
-                    $link.find('.icon16').removeClass('loading').addClass(type == 'category' ? 'settings' : 'funnel');
-                    $link.show();
-                }
-                if (r.data) {
-                    var data = r.data || {};
-                    //update sidebar text & icons
-                    switch (type) {
-                        case 'category':
-                            $.hub.helper.updateCategory(id || data.id, data);
-                            break;
-                        case 'filter':
-                            $.hub.helper.updateFilter(id || data.id, data);
-                            break;
-                    }
+            this.options.addTopicSettings.showAddTopicButton = true;
 
-                    if (id) {
-                        $('.h-saved').slideDown();
-                        var callback = function () {
-                            $('.h-saved').show();
-                            setTimeout(function () {
-                                $('.h-saved').slideUp();
-                            }, 4000);
-                        };
-                        switch (type) {
-                            case 'category':
-                                if (data.type > 0) {
-                                    //reload stream for dynamic category
-                                    $.hub.categoryAction(id, null, callback);
-                                } else {
-                                    $('#list-title-text').text(r.data.name);
-                                    document.title = r.data.name + ' — ' + $.hub.options.accountName;
-                                }
-                                break;
-                            case 'filter':
-                                //always reload stream
-                                $.hub.filterAction(id, null, callback);
-                                break;
-                        }
+            const $submitButton = $form.find(':submit');
+            $submitButton.prop('disabled', false);
+            $submitButton.siblings('.spinner').remove();
+            this.removeSettingsClass();
+            window.scrollTo(0, 0);
 
-
-                    } else {
-                        // load new category stream
-                        window.location.hash = '/' + type + '/' + data.id + '/';
-                    }
-                }
-            } else {
+            if (r.status !== 'ok') {
                 $.hub.helper.formError($form, r.errors || {}, 'category');
+                return;
+            }
+
+            $settings.hide();
+            if ($link) {
+                $link.find('.fa-spinner').removeClass('loading fa-spinner fa-spin').addClass('fa-pen');
+                $link.show();
+            }
+
+            if (!r.data) {
+                return;
+            }
+
+            const data = r.data || {};
+
+            //update sidebar text & icons
+            switch (type) {
+                case 'category':
+                    $.hub.helper.updateCategory(id || data.id, data);
+                    break;
+                case 'filter':
+                    $.hub.helper.updateFilter(id || data.id, data);
+                    break;
+            }
+
+            // load new category stream
+            if (!id) {
+                window.location.hash = '/' + type + '/' + data.id + '/';
+                return;
+            }
+
+            const callback = () => {
+                $('.h-saved').show();
+                setTimeout(function () {
+                    $('.h-saved').hide();
+                }, 4000);
+            };
+
+            switch (type) {
+                case 'category':
+                    if (data.type > 0) {
+                        //reload stream for dynamic category
+                        $.hub.categoryAction(id, null, callback);
+                    } else {
+                        document.title = r.data.name + ' — ' + $.hub.options.accountName;
+                        callback();
+                    }
+                    break;
+                case 'filter':
+                    //always reload stream
+                    $.hub.filterAction(id, null, callback);
+                    break;
             }
         },
 
         streamDeleteHandler: function (id, type, data) {
+            const self = this;
+
             if (data) {
                 if (typeof(data) == 'string') {
                     data += '&id=' + id;
@@ -580,12 +832,18 @@
                     switch (type) {
                         case 'category':
                             $.sidebar.sidebar.find('#category-' + id).remove();
+                            if (self.deleteDialog[id]) {
+                                self.deleteDialog[id].close();
+                                delete self.deleteDialog[id];
+                            }
                             break;
                         case 'filter':
                             $.sidebar.sidebar.find('a[href="\\#/filter/' + id + '/"]').closest('li').remove();
                             break;
                     }
-                    location.hash = '#/';
+
+                    window.location.hash = '#/';
+                    $.sidebar.resetHub();
                 }
             }, 'json');
         },
@@ -598,54 +856,72 @@
          * @returns {boolean}
          */
         streamSettingsHandler: function (id, $link, type) {
+            const that = this;
+
+            this.options.addTopicSettings.showAddTopicButton = false;
+
             if ($link) {
                 $link.hide();
             }
-            var $settings = $('#h-stream-settings');
-            $settings.slideDown();
-            var self = this;
 
-            var $form = $settings.find('form');
+            const $settings = $('#h-stream-settings');
+            $settings.fadeIn(200);
+            that.$content.addClass('settings-active');
+
+            const self = this;
+
+            const $form = $settings.find('form');
             this.helper.glyphHandler($form, type, (type == 'filter') ? 'icon' : 'glyph');
             $form.find(':input[name$="\\[name\\]"]:first').focus();
-            $form.submit(function () {
+
+            const $categoryDescription = $form.find('textarea[name="category[description]"]');
+            if ($categoryDescription.length) {
+                $.hub.callRedactor($form.find('textarea[name="category[description]"]'), {
+                    uploadPath: '?module=pages&action=uploadimage&r=x&absolute=1',
+                    csrf: $form.find('input[name="_csrf"]').val()
+                });
+            }
+
+            $form.on('submit', function(event) {
+                event.preventDefault();
+
                 $.hub.helper.formError($form);
-                $form.find(':submit').attr('disabled', true);
-                // Update tags list
-                $('.tagsinput input').trigger(jQuery.Event("keypress", {which: 13}));
-                var formData = new FormData(this);
-                var $progress = $form.find('#h-category-logo-progressbar');
-                var progress = setTimeout(function () {
-                    $form.find('.progressbar').show();
-                }, 2000);
+
+                const formData = new FormData(this);
+                const $spinner = $('<i class="fas fa-spinner fa-spin custom-ml-4"></i>');
+
+                const $progress = $form.find('#h-category-logo-progressbar');
+                const $progressLine = $progress.find('.progressbar-inner');
+                const $progressText = $progress.find('.progressbar-text');
+                $progress.show();
+
+                $form.find(':submit').attr('disabled', true).append($spinner);
+
                 $.ajax({
                     url: $form.attr('action'),  //Server script to process data
                     type: 'POST',
                     async: true,
                     xhr: function () {  // Custom XMLHttpRequest
-                        var myXhr = $.ajaxSettings.xhr();
+                        const myXhr = $.ajaxSettings.xhr();
 
                         if (myXhr.upload && $form.find(':input[type="file"]').length) { // Check if upload property exists
                             myXhr.upload.addEventListener('progress', function (e) {
                                 if (e.lengthComputable) {
-                                    var done = e.loaded || e.position;
-                                    var total = e.totalSize || e.total;
-                                    $progress.show();
-                                    $progress.css('width', Math.min(100, Math.floor(done / total * 100)) + '%');
+                                    const done = e.loaded || e.position;
+                                    const total = e.totalSize || e.total;
+                                    const progressValue = Math.min(100, Math.floor(done / total * 100));
+                                    $progressLine.css('width', progressValue + '%');
+                                    $progressText.text(progressValue + '%');
                                 }
                             }, false);
                         }
                         return myXhr;
                     },
-                    //Ajax events
-
-                    //beforeSend: beforeSendHandler,
                     success: function (r) {
                         try {
-                            clearTimeout(progress);
                             $form.find('.progressbar').hide();
-                            var json = $.parseJSON(r);
-                            self.streamSettingsSaveHandler(json, $settings, $form, id, type, $link || false)
+                            const json = $.parseJSON(r);
+                            self.streamSettingsSaveHandler(json, $settings, $form, id, type, $link || false);
                         } catch (e) {
                             $.hub.helper.formError($form, {
                                 submit: r.replace(/<\/?[^>]+>/gi, '').substr(0, 512)
@@ -659,45 +935,93 @@
                     contentType: false,
                     processData: false
                 });
-
-
-                return false;
             });
 
 
-            $('a.cancel', $settings).click(function () {
-                $settings.slideUp();
+            $('.cancel', $settings).on('click', (event) => {
+                event.preventDefault();
+
+                $settings.hide();
+                self.removeSettingsClass();
+                window.scrollTo(0, 0);
+
                 if ($link) {
-                    $link.find('.icon16').removeClass('loading').addClass(type == 'category' ? 'settings' : 'funnel');
+                    $link.find('.fa-spinner').removeClass('fa-spinner fa-spin').addClass('fa-pen');
                     $link.show();
                 } else {
                     window.location.hash = '/';
                 }
-                //or redirect into hub
-                return false;
+
+                this.options.addTopicSettings.showAddTopicButton = true;
             });
 
-
             if (id) {
-                $('a.js-delete', $settings).click(function () {
-                    var $link = $(this);
+                $('.js-delete', $settings).on('click', function(event) {
+                    event.preventDefault();
+
+                    const $link = $(this);
+
                     if ((type == 'category') && $link.hasClass('js-dialog')) {
-                        var $dialog = $('#h-category-delete');
-                        $dialog.waDialog({
-                            onSubmit: function () {
-                                self.streamDeleteHandler(id, type, $dialog.find('form').serialize());
-                                return false;
-                            }
-                        });
-                    } else if (confirm($_('Are you sure?'))) {
-                        self.streamDeleteHandler(id, type);
+                        if (self.deleteDialog[id]) {
+                            self.deleteDialog[id].show()
+                        } else {
+                            self.deleteDialog[id] = $.waDialog({
+                                $wrapper: $('#h-category-delete'),
+                                onClose(dialog) {
+                                    dialog.hide();
+                                    return false;
+                                }
+                            });
+                        }
                     }
-                    return false;
+                });
+
+                $('.js-hub-remove-category').on('click', function(event) {
+                    event.preventDefault();
+
+                    $(this).attr('disabled', true);
+
+                    const $spinner = $('<i class="fas fa-spinner fa-spin custom-ml-4"></i>');
+                    $(this).append($spinner);
+
+                    self.streamDeleteHandler(id, type, self.deleteDialog[id].$body.find('form').serialize());
                 });
             }
-
         },
 
+        removeSettingsClass: function() {
+            this.$content.removeClass('settings-active');
+        },
+
+        callRedactor: function($redactor, options) {
+            return RedactorX($redactor, {
+                editor: {
+                    minHeight: '64px',
+                    lang: $.hub.lang || 'en'
+                },
+                context: true,
+                image: {
+                    upload: options.uploadPath,
+                    data: {
+                        _csrf: options.csrf
+                    }
+                },
+                toolbar: {
+                    sticky: false
+                },
+                topbar: false,
+                buttons: {
+                    addbar: ['paragraph', 'image', 'embed', 'quote', 'pre'],
+                    context: ['bold', 'italic', 'deleted', 'link', 'pre'],
+                    topbar: ['undo', 'redo']
+                },
+                format: ['p', 'ul', 'ol'],
+                quote: {
+                    template: `<blockquote data-placeholder="${$.wa.locale["blockquote"] || 'Quote...'}"></blockquote>`
+                },
+                shortcutsRemove: ['ctrl+h, ctrl+l, ctrl+alt+1, ctrl+alt+2, ctrl+alt+3, ctrl+alt+4, ctrl+alt+5, ctrl+alt+6']
+            });
+        },
 
         manageHandler: function (element, event) {
             $('#blog-stream-primary-menu').hide();
@@ -729,87 +1053,91 @@
                 this.last_hash = window.location.hash;
 
                 if (params && (typeof params.topics_count != 'undefined')) {
-                    var $counter = $('#wa-app > .sidebar li.selected:first .count:first');
+                    const $counter = $('#wa-app > .sidebar li.selected:first .count:first');
                     if ($counter.length) {
                         $counter.text(params.topics_count);
                     }
                 }
 
-                this.$topics_ul = $('ul.h-topics');
+                this.$topics_ul = $('.h-topics');
 
                 this.initBulkActions();
                 this.initFollowLinks();
+                this.initRatingBox();
                 this.initTopicTypesFilter();
 
                 // Show-hide new comments when user clicks comment counter
                 this.$topics_ul.on('click', '.toggle-comments', function () {
-                    $(this).closest('li').find('.h-comments').slideToggle();
+                    $(this).closest('.h-topic').find('.js-topic-comments').slideToggle(200);
+                });
+
+                this.$topics_ul.on('click', '.js-topic-comments-all', function () {
+                    $(this).closest('.js-topic-comments').find('.h-comment').removeClass('hidden');
+                    $(this).remove();
                 });
 
                 // Close 'saved' message when user clicks on a close button
-                $('.h-saved .h-close-saved').on('click', function() {
-                    $(this).closest('.h-saved').slideUp();
-                    return false;
+                $('.h-saved .h-close-saved').on('click', function(event) {
+                    event.preventDefault();
+                    $(this).closest('.h-saved').fadeOut(200);
                 });
             },
 
             initBulkActions: function() {
                 /** @var {$.hub.topics} self */
-                var self = this;
-                this.$bulk_menu = $('ul.js-bulk-menu:first');
-                this.$sort_menu = $('ul.js-sort-menu:first');
+                const self = this;
+                self.$topics_header = $('.js-topics-header');
+                self.$bulk_menu_toggle = self.$topics_header.find('.js-bulk-toggle');
+                self.$bulk_menu = self.$topics_header.find('#bulk-menu');
+                self.$sort_menu = self.$topics_header.find('.js-sort-menu:first');
+                self.$bulk_menu_priority = self.$topics_header.find('#bulk-menu-priority');
 
-                // Switch to Bulk mode when user clicks on "Select" link
-                this.$bulk_menu.find('a:first').click(function () {
-                    if ($(this).is(':visible')) {
-                        self.$topics_ul.addClass('h-bulk-mode').closest('.h-stream').removeClass('h-mode-normal').addClass('h-mode-bulk');
-                    }
-                    self.$sort_menu.hide();
-                    self.$bulk_menu.children('li').toggle();
-                    self.bulkCount();
-
-                    return false;
+                self.$bulk_menu_priority.waDropdown({
+                    update_title: false,
                 });
 
-                // Switch back to normal mode when user clicks on "cancel" link
-                this.$bulk_menu.find('a:last').click(function () {
-                    if ($(this).is(':visible')) {
-                        self.$topics_ul.removeClass('h-bulk-mode').closest('.h-stream').addClass('h-mode-normal').removeClass('h-mode-bulk');;
+                self.$sort_menu.waDropdown();
+
+                // Switch to Bulk mode when user clicks on "Select" link
+                this.$bulk_menu_toggle.on('click', function(event) {
+                    event.preventDefault();
+
+                    self.$topics_ul.toggleClass('h-bulk-mode');
+                    self.$topics_header.toggleClass('active');
+
+                    if (self.$bulk_menu.is(':visible')) {
+                        self.bulkCount();
                     }
-                    self.$sort_menu.show();
-                    self.$bulk_menu.children('li').toggle();
-                    return false;
                 });
 
                 // Actions with selected topics: select, delete, move
-                this.$bulk_menu.find('a.js-bulk-action').click(function () {
-                    var $link = $(this);
-                    if (self.bulkCount()) {
-                        var confirm_text = $link.data('confirm');
-                        if (!confirm_text || confirm(confirm_text)) {
-                            var actionName = $link.data('action');
-                            actionName = 'bulk' + actionName.substr(0, 1).toUpperCase() + actionName.substr(1);
-                            self[actionName + 'Action'].apply(self, [$link]);
-                        }
-                    } else {
-                        alert($_('Select at least one topic'));
+                this.$bulk_menu.find('.js-bulk-action').on('click', function(event) {
+                    event.preventDefault();
+
+                    const $link = $(this);
+
+                    if (!self.bulkCount()) {
+                        $.waDialog.alert({
+                            title: $_('Select at least one topic'),
+                            button_title: $_('Close'),
+                            button_class: 'warning',
+                        });
+                        return;
                     }
-                    return false;
+
+                    let actionName = $link.data('action');
+                    actionName = 'bulk' + actionName.substr(0, 1).toUpperCase() + actionName.substr(1);
+                    self[actionName + 'Action'].apply(self, [$link]);
                 });
 
                 // Update number of selected topics when checkbox status changes
                 this.$topics_ul.on('change', ':input.js-bulk-mode', function () {
                     self.bulkCount();
-                    if (this.checked) {
-                        $(this).closest('li').addClass('selected').find('h3').addClass('bold');
-                    } else {
-                        $(this).closest('li').removeClass('selected').find('h3').removeClass('bold');
-                    }
                 });
 
                 // Shift+click on a checkbox selects all between this one and previous one clicked
-                var $last_li_checked = null;
-                var $last_li_unchecked = null;
+                let $last_li_checked = null;
+                let $last_li_unchecked = null;
                 this.$topics_ul.on('click', ':input.js-bulk-mode', function (e) {
 
                     var $checkbox = $(this);
@@ -835,10 +1163,11 @@
                 if ($.storage.get('sort-handler-unavailable-notice-hidden')) {
                     $('.sort-handler-unavailable-notice').remove();
                 } else {
-                    $('.sort-handler-unavailable-notice .h-close').click(function() {
+                    $('.sort-handler-unavailable-notice').removeClass('hidden');
+                    $('.sort-handler-unavailable-notice .h-close').on('click', function(event) {
+                        event.preventDefault();
                         $(this).closest('.sort-handler-unavailable-notice').remove();
                         $.storage.set('sort-handler-unavailable-notice-hidden', true);
-                        return false;
                     });
                 }
 
@@ -848,7 +1177,7 @@
                     }
 
                     var is_between = false;
-                    $to.parent().children().each(function(i, el) {
+                    $to.closest('.h-topics').find('> li').each(function(i, el) {
                         if (!is_between) {
                             if ($from.is(el) || $to.is(el)) {
                                 is_between = true;
@@ -857,56 +1186,113 @@
                             if ($from.is(el) || $to.is(el)) {
                                 return false;
                             }
-                            $(el).find('input:checkbox.js-bulk-mode:visible').prop('checked', status).change();
+                            $(el).find('input:checkbox.js-bulk-mode').prop('checked', status).change();
                         }
                     });
                 }
             },
 
             initFollowLinks: function() {
-
                 // Follow/unfollow when user clicks a star
-                this.$topics_ul.on('click', '.h-follow', function () {
-                    var self = $(this);
-                    var i = self.find('i');
-                    var follow = i.hasClass('star-empty') ? 1 : 0;
+                const $followLink = $('.js-follow-topic');
+                const $followWrapper = $followLink.closest('.h-topic-meta');
+                const $followCount = $('#following-count');
+                const $followersCount = $followWrapper.find('.followers-count');
+                const $followerStatus = $followWrapper.find('.following-status');
+                const $own_follower_icon = $followWrapper.find('.own-follower-icon');
+
+                $(document).on('click', '.js-follow-topic', function (event) {
+                    event.preventDefault();
+
+                    const $a = $(this);
+                    const $i = $a.find('.fa-star');
+
+                    const followed = $i.data('prefix') === 'far' ? 1 : 0;
+
+                    let n = parseInt($('#following-count').html());
+                    if (!followed) {
+                        $i.attr('data-prefix', 'far');
+                        $i.removeClass('text-yellow').addClass('gray');
+                        $followerStatus.text($.wa.locale['not_following']).addClass('text-gray');
+                        $own_follower_icon.hide();
+                        n -= 1;
+                    } else {
+                        $i.attr('data-prefix', 'fas');
+                        $i.removeClass('gray').addClass('text-yellow');
+                        $followerStatus.text($.wa.locale['following']).removeClass('text-gray');
+                        $own_follower_icon.show();
+                        n += 1;
+                    }
+
+                    $followCount.addClass('highlighted').html(n);
 
                     $.post('?module=following', {
-                        topic_id: self.data('topic'),
-                        follow: follow
-                    }, function (response) {
-                        if (response.status == 'ok') {
-                            var n = parseInt($('#following-count').html());
-                            var topic_li = self.closest('li');
-                            var comments_ul = topic_li.find('.h-comments');
-                            if (follow) {
-                                comments_ul.slideDown();
-                                topic_li.addClass('h-followed').removeClass('h-not-followed');
-                                self.addClass('highlighted');
-                                i.removeClass('star-empty').addClass('star');
-                                self.find('.followers-count').html($_('Following'));
-                                n += 1;
-                            } else {
-                                comments_ul.slideUp();
-                                topic_li.removeClass('h-followed').addClass('h-not-followed');
-                                self.removeClass('highlighted');
-                                i.addClass('star-empty').removeClass('star');
-                                self.find('.followers-count').html('');
-                                n -= 1;
-                            }
-                            $('#following-count').addClass('highlighted').html(n);
+                        topic_id: $a.data('topic'),
+                        follow: followed
+                    }, function(response) {
+                        if (response.status !== 'ok') {
+                            console.warn(response);
+                            return;
                         }
-                    }, 'json');
-                    return false;
-                });
 
+                        $followersCount.text(response.data.followers);
+                    }, 'json');
+                });
+            },
+
+            initRatingBox: function() {
+                const $wrapper = $('.js-rating-box');
+                const $total_score = $wrapper.find('.total-score');
+                const $ratingCountUp = $('.js-rating-count-up');
+                const $ratingCountDown = $('.js-rating-count-down');
+
+                $wrapper.on('click', 'a', function(event) {
+                    event.preventDefault();
+
+                    const $this = $(this);
+
+                    const vote = $(this).hasClass('h-vote-down') ? -1 : 1;
+                    const topicId = $(this).data('topic-id');
+
+                    $.post('?module=frontend&action=vote', { id: topicId, type: 'topic', vote }, undefined, 'json').always(function (r, text_status) {
+                        if (text_status !== 'success' && !r && !r.data && !r.data.hasOwnProperty('votes_sum')) {
+                            return;
+                        }
+
+                        const $i_up = $this.parent().find('.up,.up-bw');
+                        const $i_down = $this.parent().find('.down,.down-bw');
+                        if (vote > 0) {
+                            $i_up.removeClass('up-bw').addClass('up');
+                            $i_down.removeClass('down').addClass('down-bw');
+                        } else {
+                            $i_up.addClass('up-bw').removeClass('up');
+                            $i_down.addClass('down').removeClass('down-bw');
+                        }
+
+                        $total_score.removeClass('text-green text-red text-gray');
+                        $total_score.text(r.data.votes_sum);
+                        $ratingCountUp.text(r.data.votes_up);
+                        $ratingCountDown.text(r.data.votes_down * -1);
+
+                        if (r.data.votes_sum - 0 > 0) {
+                            $total_score.addClass('text-green');
+                            $total_score.text('+'+r.data.votes_sum);
+                        } else if (r.data.votes_sum - 0 < 0) {
+                            $total_score.addClass('text-red');
+                        } else {
+                            $total_score.addClass('text-gray');
+                        }
+                    });
+                });
             },
 
             initTopicTypesFilter: function() {
+                const that = this;
 
-                var $ul = $('#h-content .h-topics');
-                var $sort_menu = $('.h-sort.js-sort-menu');
-                var $checkboxes = $sort_menu.find('.h-filter-by-type :checkbox');
+                const $ul = $('#h-content .h-topics');
+                const $sort_menu = $('.h-sort.js-sort-menu');
+                const $checkboxes = $sort_menu.find('.h-filter-by-type :checkbox');
+                const $window = $(window);
 
                 // Trigger when user changes checkbox status in filter settings
                 $sort_menu.find('.h-filter-by-type').on('change', ':checkbox', function() {
@@ -921,7 +1307,7 @@
 
                 // Update visibility of topics in list
                 function updateTopicVisibility() {
-                    var types_disabled = {};
+                    let types_disabled = {};
                     $checkboxes.map(function() {
                         if (this.checked) {
                             return 1;
@@ -930,10 +1316,11 @@
                         }
                     }).length || (types_disabled = {});
 
-                    var lis_to_hide = [];
-                    var lis_to_show = [];
+                    const lis_to_hide = [];
+                    const lis_to_show = [];
                     $ul.children().each(function() {
-                        var type_id = $(this).data('type-id');
+                        const type_id = $(this).data('type-id');
+
                         if (types_disabled[type_id]) {
                             lis_to_hide.push(this);
                         } else {
@@ -944,7 +1331,7 @@
                     if (lis_to_hide.length) {
                         $(lis_to_hide).css('opacity', 0.7).slideUp(function() {
                             $(lis_to_hide).css('opacity', '');
-                            $(window).scroll();
+                            $window.scroll();
                         });
                         $('.h-footer .place-for-hidden-label').show().children('span').text(lis_to_hide.length);
                         $ul.closest('.h-stream').addClass('h-js-filtered').removeClass('h-not-js-filtered');
@@ -953,100 +1340,88 @@
                         $ul.closest('.h-stream').addClass('h-not-js-filtered').removeClass('h-js-filtered');
                     }
                     lis_to_show.length && $(lis_to_show).slideDown(function() {
-                        $(window).scroll(); // triggers lazy loading if needed
+                        $window.scroll(); // triggers lazy loading if needed
                     });
                 };
 
                 function updateMenuHeader() {
-                    var label = $checkboxes.map(function() {
+                    let label = $checkboxes.map(function() {
                         return (this.checked || null) && $.trim($(this).closest('label').text());
                     }).get().join(', ');
                     label = $.trim($sort_menu.find('ul li.selected a').text()) + (label ? (': ' + label) : '');
-                    $sort_menu.find('> li > a i').text(label);
+                    $sort_menu.find('.js-filter-name').text(label);
                 }
             },
 
             // not called from init(), called directly from Topics.html
             initManualDragAndDrop: function(category_id) {
                 this.$topics_ul.sortable({
-                    //axis: 'y',
-                    items: '> li',
-                    distance: 5,
-                    //containment: 'parent',
-                    tolerance: 'pointer',
                     handle: '.sort,h3 a,i.h-glyph32',
-                    update: function (e, ui) {
-                        var topic_id = ui.item.data('id');
-                        var before_id = ui.item.next('li').data('id');
-                        $.post('?module=topics&action=move', { id: topic_id, before_id: before_id, category_id: category_id }, null, 'json').always(function(r, status) {
-                            if (status != 'success' || r.status !== 'ok') {
+                    onUpdate(event) {
+                        const topic_id = $(event.item).data('id');
+                        const before_id = $(event.item).next('li').data('id');
+                        $.post('?module=topics&action=move', {
+                            id: topic_id,
+                            before_id,
+                            category_id
+                        }, null, 'json').always(function(r, status) {
+                            if (status !== 'success' || r.status !== 'ok') {
                                 console && console.log(status, r.errors || r);
                             }
                         });
                     }
                 });
-                return;
-
-                // !!!
-                this.$topics_ul.children().draggable({
-                    connectToSortable: this.$topics_ul,
-                    appendTo: "body",
-                    helper: 'clone'/*function() {
-                        //console.log(this, arguments);
-                        return $($.parseHTML('<div style="width:10px;height:10px;background:white;border:2px solid red;border-radius:5px;"></div>'));
-                    }*/
-                });
-                // !!!
-                $('#category-1').droppable({
-                    tolerance: 'pointer',
-                    activeClass: "not-implemented",
-                    hoverClass: "highlighted",
-                    accept: ":not(.ui-sortable-helper)",
-                    drop: function (event, ui) {
-                        console.log(ui);
-                         $(this).find(".placeholder").remove();
-                         //$("<li></li>").text(ui.draggable.text()).appendTo(this);
-                     }
-                });
             },
             bulkCount: function () {
-                var count = this.$topics_ul.find(':input.js-bulk-mode:checked').length;
-                this.$bulk_menu.find('.js-count').text(count);
+                const count = this.$topics_ul.find(':input.js-bulk-mode:checked').length;
+                this.$topics_header.find('.js-count').text(count);
                 return count;
             },
             bulkDeleteAction: function ($link) {
-                $link.find('i.icon16').removeClass('delete').addClass('loading');
-                var ids = [];
-                this.$topics_ul.find(':input.js-bulk-mode:checked').each(function () {
-                    ids.push(this.value);
-                });
-                var self = this;
-                $.ajax({
-                    url: '?module=topics&action=delete',
-                    dataType: 'json',
-                    type: 'post',
-                    data: {
-                        ids: ids
-                    },
-                    /**
-                     *
-                     * @param {{data:{deleted:Array} }} r
-                     */
-                    success: function (r) {
-                        $link.find('i.icon16').removeClass('loading').addClass('delete');
-                        self.$bulk_menu.find('a:last').click();
-                        if (r.status != 'ok') {
-                            default_error_handler(r);
-                            return;
-                        }
+                const self = this;
 
-                        if (r.data.deleted) {
-                            for (var i in r.data.deleted) {
-                                if (r.data.deleted.hasOwnProperty(i)) {
-                                    self.$topics_ul.find('>li[data-id="' + r.data.deleted[i] + '"]').remove();
+                const confirm_text = $link.data('confirm');
+
+                $.waDialog.confirm({
+                    title: confirm_text,
+                    success_button_title: $_('Delete'),
+                    success_button_class: 'danger',
+                    cancel_button_title: $_('Close'),
+                    cancel_button_class: 'light-gray',
+                    onSuccess() {
+                        const ids = [];
+
+                        self.$topics_ul.find(':input.js-bulk-mode:checked').each(function () {
+                            ids.push(this.value);
+                        });
+
+                        $.ajax({
+                            url: '?module=topics&action=delete',
+                            dataType: 'json',
+                            type: 'post',
+                            data: {
+                                ids: ids
+                            },
+                            success: function (r) {
+                                self.$bulk_menu.find('.js-close-bulk-menu').click();
+
+                                if (r.status !== 'ok') {
+                                    console.warn(r);
+                                    return;
+                                }
+
+                                if (r.data.deleted) {
+                                    for (let i in r.data.deleted) {
+                                        if (r.data.deleted.hasOwnProperty(i)) {
+                                            self.$topics_ul.find('[data-id="' + r.data.deleted[i] + '"]').remove();
+                                        }
+                                    }
+
+                                    $.hub.topics.bulkCount();
+                                    $.sidebar.reload();
                                 }
                             }
-                        }
+                        });
                     }
                 });
             },
@@ -1060,62 +1435,88 @@
                 });
             },
             bulkMoveAction: function ($link) {
-                var params = '&hub_id=' + $link.data('hub') + '&category_id=' + $link.data('category');
-                var $dialog = $('#h-bulk-topics-move');
-                var self = this;
+                const params = '&hub_id=' + $link.data('hub') + '&category_id=' + $link.data('category');
+                const $dialog = $('#h-bulk-topics-move');
+                const self = this;
 
-                if (!$dialog.hasClass('dialog')) {
-                    $dialog.load('?module=dialog&action=topicsMove' + params, function () {
-                        $dialog.addClass('dialog');
-                        $dialog.find(':input[name="hub_id"]').change(function () {
-                            if (this.checked) {
-                                $dialog.find('select').attr('disabled', true);
-                                var $related = $(this).parents('.value:first').find('select:first');
-                                if ($related.length) {
-                                    $related.attr('disabled', null);
-                                }
-                            }
-                        }).change();
-                        self.bulkMoveDialog($dialog);
-                    });
-                } else {
-                    self.bulkMoveDialog($dialog);
+                if (self.bulMoveDialog) {
+                    self.bulkMoveDialog();
+                    return;
                 }
+
+                $dialog.load('?module=dialog&action=topicsMove' + params, function () {
+                    $dialog.find(':input[name="hub_id"]').on('change', function () {
+                        if (!this.checked) {
+                            return;
+                        }
+
+                        $dialog.find('select').attr('disabled', true).closest('.js-move-dialog-select').addClass('hidden');
+                        const $related = $(this).closest('.js-move-dialog-section').find('select:first');
+                        if ($related.length) {
+                            $related.attr('disabled', null);
+                            $related.closest('.js-move-dialog-select').removeClass('hidden');
+                        }
+                    });
+
+                    self.bulkMoveDialog($dialog);
+                });
             },
             bulkMoveDialog: function ($dialog) {
-                var self = this;
-                $dialog.waDialog({
-                    disableButtonsOnSubmit: true,
-                    onLoad: function () {
-                        var ids = [];
+                const self = this;
+
+                if (!$dialog) {
+                    self.bulMoveDialog.show();
+                    return;
+                }
+
+                self.bulMoveDialog = $.waDialog({
+                    html: $dialog,
+                    onOpen($dialog) {
+                        const ids = [];
                         self.$topics_ul.find(':input.js-bulk-mode:checked').each(function () {
                             ids.push(this.value);
                         });
                         $dialog.find(':input[name="topic_ids"]').val(ids.join(','));
                     },
-                    onSubmit: function () {
-                        var $form = $dialog.find('form:first');
-                        var $hub = $form.find(':input[name="hub_id"]:checked');
-                        var hub_id = $hub.val();
-                        var category_id = $hub.parents('.value:first').find('select:first').val();
-                        $.ajax({
-                            url: $form.attr('action'),
-                            data: $form.serialize(),
-                            dataType: 'json',
-                            type: 'post',
-                            success: function (r) {
-                                $dialog.waDialog('close');
-                                if (category_id) {
-                                    window.location.hash = '/category/' + category_id + '/';
-                                } else if (hub_id) {
-                                    window.location.hash = '/hub/' + hub_id + '/';
-                                } else {
-                                    window.location.hash = '/';
-                                }
-                            }
-                        });
+                    onClose(dialog) {
+                        dialog.hide();
                         return false;
                     }
+                });
+
+                const $saveButton = self.bulMoveDialog.$block.find('.js-move-dialog-save');
+
+                $saveButton.on('click', function(event) {
+                    event.preventDefault();
+
+                    const $form = self.bulMoveDialog.$block.find('form:first');
+                    const $hub = $form.find(':input[name="hub_id"]:checked');
+                    const hub_id = $hub.val();
+                    const category_id = $hub.closest('.js-move-dialog-section').find('select:first').val();
+
+                    const $saveButton = $(this);
+                    const $spinner = $('<i class="fas fa-spinner fa-spin custom-ml-4"></i>');
+                    $saveButton.attr('disabled', true);
+                    $saveButton.append($spinner);
+
+                    $.ajax({
+                        url: $form.attr('action'),
+                        data: $form.serialize(),
+                        dataType: 'json',
+                        type: 'post',
+                        success: function (r) {
+                            $saveButton.attr('disabled', false);
+                            $spinner.remove();
+                            self.bulMoveDialog.hide();
+                            if (category_id) {
+                                window.location.hash = '/category/' + category_id + '/';
+                            } else if (hub_id) {
+                                window.location.hash = '/hub/' + hub_id + '/';
+                            } else {
+                                window.location.hash = '/';
+                            }
+                        }
+                    });
                 });
             }
         },
@@ -1165,7 +1566,7 @@
              */
             updateCategory: function (id, data) {
                 //update sidebar text & icons
-                var $c = $.sidebar.sidebar.find('#category-' + id);
+                const $c = $.sidebar.sidebar.find('#category-' + id);
                 if ($c.length) {
                     $c.find('.name').text(data.name);
                     $c.find('.count').text(data.topics_count);
@@ -1184,23 +1585,79 @@
              * @param {{id:number, name:string, topics_count: number, icon_html: string}} data
              */
             updateFilter: function (id, data) {
-                var $f = $.sidebar.sidebar.find('a[href="\\#/filter/' + id + '/"]').parents('li');
+                let $f = $.sidebar.sidebar.find('a[href="\\#/filter/' + id + '/"]').parents('li');
+
                 if ($f.length) {
-                    $f.find('.count').text(data.topics_count);
                     $f.find('.name').text(data.name);
-                    $f.find('.js-icon').replaceWith(data.icon_html);
-                    $('h1.list-title .title').text(data.name);
+                    $f.find('.icon').replaceWith(data.icon_html);
                 } else {
-                    var html = '<li>' +
-                        '<a href="#/filter/' + (id || data.id) + '/">' + data.icon_html +
-                        '<span class="name">name placeholder</span>' +
-                            //'<span class="count">' + data.topics_count + '</span>' +
-                            //'<strong class="small highlighted">0</strong>' +
-                        '</a>' +
-                        '</li>';
+                    // fallback for old ui icons
+                    switch(data.icon) {
+                        case 'funnel':
+                            data.icon = 'filter';
+                            break;
+                        case 'lightning':
+                            data.icon = 'bolt';
+                            break;
+                        case 'light-bulb':
+                            data.icon = 'lightbulb';
+                            break;
+                        case 'lock-unlocked':
+                            data.icon = 'lock-open';
+                            break;
+                        case 'contact':
+                            data.icon = 'user-friends';
+                            break;
+                        case 'reports':
+                            data.icon = 'chart-line';
+                            break;
+                        case 'books':
+                            data.icon = 'book';
+                            break;
+                        case 'marker':
+                            data.icon = 'map-marker-alt';
+                            break;
+                        case 'lens':
+                            data.icon = 'camera';
+                            break;
+                        case 'alarm-clock':
+                            data.icon = 'clock';
+                            break;
+                        case 'notebook':
+                            data.icon = 'sticky-note';
+                            break;
+                        case 'blog':
+                            data.icon = 'file-alt';
+                            break;
+                        case 'disk':
+                            data.icon = 'save';
+                            break;
+                        case 'burn':
+                            data.icon = 'radiation-alt';
+                            break;
+                        case 'clapperboard':
+                            data.icon = 'video';
+                            break;
+                        case 'cup':
+                            data.icon = 'mug-hot';
+                            break;
+                        case 'smiley':
+                            data.icon = 'smile';
+                            break;
+                        case 'target':
+                            data.icon = 'bullseye';
+                            break;
+                    };
+
+                    const html = `<li id="filter-${id || data.id}" data-filter-id="${id || data.id}">
+                        <a href="#/filter/${id || data.id}/">
+                            <span class="icon"><i class="fas fa-${data.icon}"></i></span>
+                            <span class="name">${data.name}</span>
+                        </a>
+                        </li>`;
+
                     $f = $(html);
-                    $f.insertBefore($.sidebar.sidebar.find('a[href="\\#/filter/add/"]').parents('li'));
-                    $f.find('.name').text(data.name);
+                    $('.js-sidebar-filters').append($f);
                 }
             },
 
@@ -1214,14 +1671,16 @@
                 if (!name) {
                     name = 'glyph';
                 }
+
                 var $templates = $context.find('.js-' + name + '-templates');
                 var $input = $context.find(this.getSelector(name, namespace));
-                $templates.on('click', 'li > a', function () {
+                $templates.on('click', 'li > a', function(event) {
+                    event.preventDefault();
+
                     $templates.find('.selected').removeClass('selected');
-                    var $this = $(this);
+                    const $this = $(this);
                     $this.parents('li').addClass('selected');
                     $input.val($this.data(name));
-                    return false;
                 });
             },
 

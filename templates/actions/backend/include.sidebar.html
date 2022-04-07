@@ -1,156 +1,361 @@
-<div class="block">
+<div id="hub-sidebar-bg"></div>
 
-    <!-- topic streams -->
-    <ul class="menu-v with-icons">
-        {if $can_create_topics}
-            <li class="bottom-padded">
-                <a class="bold" href="#/topic/add/"><i class="icon16 add"></i>[`New topic`]</a>
-            </li>
-        {/if}
+<nav class="sidebar-mobile-toggle">
+    <div class="box align-center">
+        <a href="javascript:void(0);">
+            <i class="fas fa-bars"></i>&nbsp;
+            [s`Menu`]
+        </a>
+    </div>
+</nav>
 
-        <li class="selected">
-            <a href="#/"><i class="icon16 blogs"></i>[`All topics`]
-                <span class="count">{$count_topics.all|max:0}</span>
-                <strong class="small highlighted">{if $count_topics.new.all > 0}+{$count_topics.new.all}{/if}</strong>
-            </a>
-        </li>
-        <li>
-            <a href="#/following/"><i class="icon16 star"></i>[`Favorites`]
-                <span id="following-count" class="count">{$following_count|max:0}</span>
-                <strong class="small highlighted">{if !empty($following_comments_count)}+{$following_comments_count}{/if}</strong>
-            </a>
-        </li>
-    </ul>
-    <ul id="h-sidebar-filters-list" class="menu-v with-icons">
-        {foreach $filters as $filter_id => $filter}
-            <li id="filter-{$filter_id}" data-filter-id="{$filter_id}">
-                <a href="#/filter/{$filter_id}/"{* if $filter.contact_id == -1} style="color: #aaa;"{/if *}>{hubHelper::getIcon($filter.icon)}<span class="name">{$filter.name|default:'[`(no name)`]'|escape}</span>
-                </a>
-            </li>
-        {/foreach}
-    </ul>
-    <ul class="menu-v with-icons">
-        <li class="small">
-            <a href="#/filter/add/" ><i class="icon10 add"></i>[`New filter`]
-            </a>
-        </li>
-    </ul>
+<div class="sidebar-header">
+    <div class="box custom-mt-4">
+        <form id="search-form">
+            <div class="flexbox middle">
+                <div class="wide custom-py-4 h-search-form">
+                    <div class="state-with-inner-icon left width-100">
+                        <div class="icon">
+                            <i class="fas fa-search"></i>
+                        </div>
 
-    <!-- other activity -->
-    <ul class="menu-v with-icons">
-        <li class="top-padded">
-            <a href="#/comments/"><i class="icon16 comments"></i>[`Replies`]
-                <span class="count">{$count_comments.all|max:0}</span>
-                {if $count_comments.new}
-                <strong class="small highlighted">+{$count_comments.new}</strong>
+                        <input id="search-query" type="search" class="solid full-width" placeholder="[`Search topics`]" autocomplete="off"{if isset($query)} value="{$query|escape}"{/if}>
+                    </div>
+
+                    <script type="text/javascript">
+                      $('#search-form').on('submit', function(event) {
+                        event.preventDefault();
+
+                        if ($('#search-query').val()) {
+                          $.wa.setHash('#/search/' + $('#search-query').val());
+                        }
+                      });
+                    </script>
+                </div>
+
+                {if $can_create_topics}
+                <div class="custom-ml-8">
+                    <a class="circle button js-add-topic js-mobile-collapse-sidebar" href="#/topic/add/" title="[`New topic`]">
+                        <i class="fas fa-pen-alt"></i>
+                    </a>
+                </div>
                 {/if}
-            </a>
-        </li>
-        <li class="bottom-padded">
-            <a href="#/authors/"><i class="icon16 contact"></i>[`Authors`]
-                <span class="count">{$authors_count|max:0}</span>
-            </a>
-        </li>
-    </ul>
+            </div>
 
+            <div class="h-header"></div>
+        </form>
+    </div>
 </div>
 
-{if $can_create_topics}
-    <!-- drafts -->
-    <div class="block{if empty($drafts)} hidden{/if}">
-        <h5 class="heading collapse" id="drafts">
-            <i class="icon16 darr overhanging collapse-handler"></i>[`Drafts`]
-        </h5>
-        <ul id="hub-drafts" class="menu-v with-icons h-drafts collapsible">
-            {foreach $drafts as $d}
-                <li id="draft-{$d.id}" data-contact-id="{$d.contact_id}">
-                    <a class="" href="#/topic/edit/{$d.id}/">
-                        <i class="icon16 userpic20" style="background-image:url({waContact::getPhotoUrl($d.contact_id, $d.contact.photo, 20)})"></i><span class="title">{$d.title|escape}</span>
-                        <br>
-                        <span class="hint">{$d.create_datetime|wa_date:"humandate"}</span>
+<div class="sidebar-body hide-scrollbar">
+    <div class="js-hub-sidebar-skeleton skeleton">
+        <div class="box">
+            {for $i=1 to 4}
+            <div class="skeleton-list" style="margin-right: 2rem; margin-left: 0; transform: scale(-1, 1);"></div>
+            {/for}
+        </div>
+
+        <div class="box">
+            {for $i=1 to 4}
+            <div class="skeleton-line"></div>
+            {/for}
+        </div>
+
+        <div class="box">
+            <div class="skeleton-line"></div>
+            {for $i=1 to 2}
+            <div class="skeleton-list"></div>
+            {/for}
+        </div>
+    </div>
+
+    <div class="h-hub-sidebar hidden js-hub-sidebar-body">
+        <div class="h-hub" id="hub-all">
+            <ul class="menu">
+                <li class="selected">
+                    <a href="#/" class="h-hub-sidebar-item">
+                        <i class="fas fa-book-open text-light-gray"></i>
+                        <span>[`All topics`]</span>
+                        <span class="count">{$count_topics.all|max:0}</span>
+                        <strong class="small highlighted">{if $count_topics.new.all > 0}+{$count_topics.new.all}{/if}</strong>
                     </a>
                 </li>
-            {/foreach}
-        </ul>
-    </div>
-{/if}
 
-{foreach $hubs as $h}
-    <!-- hub -->
-    <div class="h-hub{if count($hubs) > 1} folded{/if}{if !empty($h.params.color)} h-{$h.params.color}{/if}" data-hub-id="{$h.id}">
-        <div class="block">
-            <h5 id="hub-{$h.id}">
-                {if $is_admin}
-                    <span class="count">
-                        <a href="#/settings/hub/{$h.id}/"><i class="icon16 settings"></i></a>
-                    </span>
-                {/if}
-                <a href="#/hub/{$h.id}/">{$h.name|default:'[`(no name)`]'|escape}{if $h.status == 0}<i class="icon10 lock-bw no-overhanging"></i>{/if}
-                </a>
-            </h5>
-        </div>
-        <div class="category-list">
-            <ul class="menu-v with-icons">
-                <li class="drag-newposition"></li>
-                {foreach $categories[$h.id] as $c}
-                    <li class="dr{if $c.is_updated} bold{/if}" id="category-{$c.id}" data-category-id="{$c.id}" title="{$c.conditions|escape}">
-                        <a href="#/category/{$c.id}/">
-                            {* o0 *}
-                            {if $c.type}
-                                {if (strpos($c.conditions,'tag_id=')===0)}
-                                    {hubHelper::getIcon('tags')}
-                                {else}
-                                    {$c.type_id = intval(str_replace('type_id=','',$c.conditions))}
-                                    {if !empty($types[$c.type_id])}
-                                        {hubHelper::getGlyph($types[$c.type_id].glyph)}
-                                    {else}
-                                        {hubHelper::getIcon('funnel')}
-                                    {/if}
-                                {/if}
+                <li class="custom-mb-8">
+                    <a href="#/following/" class="h-hub-sidebar-item">
+                        <i class="fas fa-star text-light-gray"></i>
+                        <span>[`Favorites`]</span>
+                        <span id="following-count" class="count">{$following_count|max:0}</span>
+                        <strong class="small highlighted">{if !empty($following_comments_count)}+{$following_comments_count}{/if}</strong>
+                    </a>
+                </li>
 
-                            {else}
-                                {hubHelper::getIcon('folder')}
-                            {/if}
-                            <span class="name">{$c.name|default:'[`(no name)`]'|escape}</span>
-                            <span class="count">{$c.topics_count|max:0}</span>
-                        </a>
-                    </li>
-                {/foreach}
-                {if $is_admin}
-                <li class="small"><a href="#/category/add/{$h.id}/" class="js-category-add" title="[`New category`]"><i class="icon10 add"></i>[`New category`]</a></li>
-                {/if}
+                <li>
+                    <a href="#/comments/" class="h-hub-sidebar-item">
+                        <i class="fas fa-comments text-light-gray"></i>
+                        <span>[`Replies`]</span>
+                        <span class="count">{$count_comments.all|max:0}</span>
+                        {if $count_comments.new}
+                        <strong class="small highlighted">+{$count_comments.new}</strong>
+                        {/if}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#/authors/" class="h-hub-sidebar-item">
+                        <i class="fas fa-users text-light-gray"></i>
+                        <span>[`Authors`]</span>
+                        <span class="count">{$authors_count|max:0}</span>
+                    </a>
+                </li>
             </ul>
 
-            {if !empty($tags[$h.id])}
-                <div class="block align-center tags">
-                    {foreach $tags[$h.id] as $tag name=foo}
-                        {if $smarty.foreach.foo.index == 10}
-                            {break}
-                        {/if}
-                        <a href="#/tag/{$tag.id}/" style="font-size: {$tag.size}%; opacity: {$tag.opacity}">{$tag.name|escape}</a>
-                    {/foreach}
+
+            <header class="heading custom-mt-16 custom-mb-4 js-collapse-block-wrapper">
+                <span class="cursor-pointer js-collapse-block" id="filters">
+                    <span class="caret"><i class="fas fa-caret-down"></i></span>
+                    <span>[`Filters`]</span>
+                </span>
+
+                <a href="#/filter/add/" class="count js-mobile-collapse-sidebar" title="[`New filter`]">
+                    <i class="fas fa-plus-circle"></i>
+                </a>
+            </header>
+            <ul class="menu custom-mt-0 js-sidebar-filters">
+                {foreach $filters as $filter_id => $filter}
+                {* fallback for old ui *}
+                {if $filter.icon == 'funnel'}
+                    {$filter.icon = 'filter'}
+                {else if $filter.icon == 'lightning'}
+                    {$filter.icon = 'bolt'}
+                {else if $filter.icon == 'light-bulb'}
+                    {$filter.icon = 'lightbulb'}
+                {else if $filter.icon == 'lock-unlocked'}
+                    {$filter.icon = 'lock-open'}
+                {else if $filter.icon == 'contact'}
+                    {$filter.icon = 'user-friends'}
+                {else if $filter.icon == 'reports'}
+                    {$filter.icon = 'chart-line'}
+                {else if $filter.icon == 'books'}
+                    {$filter.icon = 'book'}
+                {else if $filter.icon == 'marker'}
+                    {$filter.icon = 'map-marker-alt'}
+                {else if $filter.icon == 'lens'}
+                    {$filter.icon = 'camera'}
+                {else if $filter.icon == 'alarm-clock'}
+                    {$filter.icon = 'clock'}
+                {else if $filter.icon == 'notebook'}
+                    {$filter.icon = 'sticky-note'}
+                {else if $filter.icon == 'blog'}
+                    {$filter.icon = 'file-alt'}
+                {else if $filter.icon == 'disk'}
+                    {$filter.icon = 'save'}
+                {else if $filter.icon == 'burn'}
+                    {$filter.icon = 'radiation-alt'}
+                {else if $filter.icon == 'clapperboard'}
+                    {$filter.icon = 'video'}
+                {else if $filter.icon == 'cup'}
+                    {$filter.icon = 'mug-hot'}
+                {else if $filter.icon == 'smiley'}
+                    {$filter.icon = 'smile'}
+                {else if $filter.icon == 'target'}
+                    {$filter.icon = 'bullseye'}
+                {/if}
+
+                <li id="filter-{$filter_id}" data-filter-id="{$filter_id}">
+                    <a href="#/filter/{$filter_id}/" class="h-hub-sidebar-item">
+                        <span class="icon"><i class="fas fa-{$filter.icon} text-light-gray"></i></span>
+                        <span class="name">{$filter.name|default:'[`(no name)`]'|escape}</span>
+                    </a>
+                </li>
+                {/foreach}
+            </ul>
+
+            <header class="heading custom-mt-16 custom-mb-4 js-collapse-block-wrapper">
+                <span class="cursor-pointer js-collapse-block" id="hubs">
+                    <span class="caret"><i class="fas fa-caret-down"></i></span>
+                    <span>[`Hubs`]</span>
+                </span>
+
+                {if $is_admin}
+                <a href="#/settings/hub/add/" class="count js-mobile-collapse-sidebar" title="[`New hub`]">
+                    <i class="fas fa-plus-circle"></i>
+                </a>
+                {/if}
+            </header>
+            <div class="bricks custom-mt-8">
+                {foreach $hubs as $h}
+                <div class="brick full-width custom-mb-8 js-hub-selector" data-href="#/hub/{$h.id}/" data-hub-id="{$h.id}" data-hub-color="{$h.params.color|default:'white'}">
+                    <div class="flexbox">
+                        <span class="hub-name wide flexbox">
+                            {if !empty($h.params.color) && $h.params.color != 'white'}
+                            <span class="icon custom-mr-4"><i class="fas fa-circle small h-hub-text-color-{$h.params.color}"></i></span>
+                            {/if}
+                            {$h.name|default:'[`(no name)`]'|escape}
+                        </span>
+
+                        <span class="gray small nowrap">
+                            {if $h.status == 0}
+                            <i class="fas fa-lock small"></i>
+                            {/if}
+
+                            {$h.topics_count|default:'0'}
+                        </span>
+                    </div>
                 </div>
+                {/foreach}
+            </div>
+
+            {if $can_create_topics}
+            <div class="block{if empty($drafts)} hidden{/if}">
+                <header class="heading custom-mt-16 custom-mb-4 js-collapse-block-wrapper">
+                    <span class="cursor-pointer js-collapse-block" id="drafts">
+                        <span class="caret"><i class="fas fa-caret-down"></i></span>
+                        <span>[`Drafts`]</span>
+                    </span>
+                </header>
+
+                <ul id="hub-drafts" class="menu h-drafts custom-mt-0">
+                    {foreach $drafts as $d}
+                    <li id="draft-{$d.id}" data-contact-id="{$d.contact_id}">
+                        <a href="#/topic/edit/{$d.id}/">
+                            <span class="icon"><i class="userpic rounded" style="background-image:url({waContact::getPhotoUrl($d.contact_id, $d.contact.photo, 20)})"></i></span>
+                            <div>
+                                <div class="title">{$d.title|escape}</div>
+                                <div class="custom-mt-4 small gray">{$d.create_datetime|wa_date:"humandate"}</div>
+                            </div>
+                        </a>
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
             {/if}
         </div>
+
+        {foreach $hubs as $h}
+        <div class="h-hub" id="hub-{$h.id}" data-hub-id="{$h.id}" data-hub-color="{$h.params.color|default:'red'}">
+            <div class="box flexbox space-8">
+                <div class="blank flexbox middle custom-p-8 h-hub-select h-hub-back js-hub-selector-back" data-href="#/" data-hub-id="all" data-hub-color="transparent">
+                    <div class="align-center width-100">
+                        <i class="fas fa-angle-left"></i>
+                    </div>
+                </div>
+
+                <div class="blank wide flexbox middle custom-p-8 h-hub-select">
+                    {if !empty($h.params.color) && $h.params.color != 'white'}
+                    <span class="icon"><i class="fas fa-circle h-hub-text-color-{$h.params.color}"></i></span>
+                    {/if}
+                    <a href="#/hub/{$h.id}/" class="wide bold nowrap h-hub-select-name custom-mx-8 js-mobile-collapse-sidebar" title="{$h.name|escape}">{$h.name|escape}</a>
+                    <span class="hint">{$h.topics_count|default:'0'}</span>
+                </div>
+            </div>
+
+            <ul class="menu custom-mt-0 js-categories-sort{if !$h@last} custom-mb-0{/if}">
+                {foreach $categories[$h.id] as $c}
+                <li class="dr" id="category-{$c.id}" data-category-id="{$c.id}">
+                    <a href="#/category/{$c.id}/" class="h-hub-sidebar-item">
+                        {if $c.type}
+                        {if (strpos($c.conditions,'tag_id=') === 0)}
+                        <i class="fas fa-hashtag text-light-gray"></i>
+                        {else}
+                        {$c.type_id = intval(str_replace('type_id=','',$c.conditions))}
+                        {if !empty($types[$c.type_id])}
+                        <i class="fas fa-filter text-light-gray"></i>
+                        {else}
+                        <i class="fas fa-hashtag text-light-gray"></i>
+                        {/if}
+                        {/if}
+                        {else}
+                        <i class="fas fa-folder text-light-gray"></i>
+                        {/if}
+                        <span class="name">{$c.name|default:'[`(no name)`]'|escape}</span>
+                        <span class="count">{$c.topics_count|max:0}</span>
+                    </a>
+                </li>
+                {/foreach}
+            </ul>
+
+            {if $is_admin}
+            <ul class="menu custom-mt-8">
+                <li class="small">
+                    <a href="#/category/add/{$h.id}/" class="h-hub-sidebar-item js-category-add" title="[`New category`]">
+                        <span class="icon"><i class="fas fa-plus text-light-gray" style="font-size: 12px; margin: 2px 0 0 2px;"></i></span>
+                        <span class="gray">[`New category`]</span>
+                    </a>
+                </li>
+
+                <li class="small">
+                    <a href="#/settings/hub/{$h.id}/" class="h-hub-sidebar-item">
+                        <span class="icon"><i class="fas fa-cog text-light-gray" style="font-size: 12px; margin: 2px 0 0 2px;"></i></span>
+                        <span class="gray">[`Hub settings`]</span>
+                    </a>
+                </li>
+            </ul>
+            {/if}
+
+            {if !empty($tags[$h.id])}
+            <header class="heading custom-mt-16 custom-mb-4 js-collapse-block-wrapper">
+                <span class="cursor-pointer js-collapse-block" id="tags">
+                    <span class="caret"><i class="fas fa-caret-down"></i></span>
+                    <span>[`Tags`]</span>
+                </span>
+            </header>
+
+            <div class="box custom-pt-0">
+                <ul class="chips tags small custom-my-0">
+                    {foreach $tags[$h.id] as $tag name=foo}
+                    {if $smarty.foreach.foo.index === 10}
+                    {break}
+                    {/if}
+                    <li class="small">
+                        <a href="#/tag/{$tag.id}/" class="js-mobile-collapse-sidebar">
+                            <i class="fas fa-hashtag fa-xs"></i>
+                            {$tag.name|escape}
+                        </a>
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
+            {/if}
+        </div>
+        {/foreach}
     </div>
-{/foreach}
+</div>
 
-
-<div class="block">
-    <ul class="menu-v with-icons">
+<div class="sidebar-footer shadowed">
+    <ul class="menu">
         {if $wa->userRights('pages')}
-            <li><a href="#/pages/"><i class="icon16 notebook"></i>[`Pages`]</a></li>
+        <li>
+            <a href="#/pages/" class="h-hub-sidebar-item">
+                <i class="fas fa-file-alt text-light-gray"></i>
+                <span>[`Pages`]</span>
+            </a>
+        </li>
         {/if}
+
         {if $wa->userRights('design')}
-            <li><a href="#/design/"><i class="icon16 design"></i>[`Design`]</a></li>
+        <li>
+            <a href="#/design/" class="h-hub-sidebar-item">
+                <i class="fas fa-code text-light-gray"></i>
+                <span>[`Design`]</span>
+            </a>
+        </li>
         {/if}
 
         {if $wa->userRights('plugins')}
-            <li><a href="#/plugins/"><i class="icon16 plugins"></i>[s`Plugins`]</a></li>
+        <li>
+            <a href="#/plugins/" class="h-hub-sidebar-item">
+                <i class="fas fa-plug text-light-gray"></i>
+                <span>[s`Plugins`]</span>
+            </a>
+        </li>
         {/if}
 
-        <li class="top-padded"><a href="#/settings/"><i class="icon16 settings"></i>[`Settings`]</a></li>
-        {*<li class="not-implemented"><a href="?module=plugins"><i class="icon16 plugins"></i>[`Plugins`]</a></li>*}
+        <li>
+            <a href="#/settings/" class="h-hub-sidebar-item">
+                <i class="fas fa-cog text-light-gray"></i>
+                <span>[`Settings`]</span>
+            </a>
+        </li>
     </ul>
 </div>
-

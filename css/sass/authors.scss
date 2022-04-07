@@ -1,0 +1,111 @@
+@use 'variables' as v;
+
+.h-authors {
+    &-header {
+        position: sticky;
+        top: 4rem;
+        z-index: 5;
+        padding: .5rem 0;
+
+        &-wrapper {
+            overflow: hidden;
+            transition: all .5s;
+        }
+
+        &-table {
+            margin: 0;
+        }
+    }
+
+    &-scroll {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 40px;
+
+        color: var(--gray);
+        font-size: 1.5rem;
+        cursor: pointer;
+        user-select: none;
+
+        &_left {
+            left: 0;
+            background-image: linear-gradient(90deg, var(--dashboard-widget-fade-background-end) 0%, var(--dashboard-widget-fade-background-start) 100%);
+        }
+
+        &_right {
+            right: 0;
+            background-image: linear-gradient(270deg, var(--dashboard-widget-fade-background-end) 0%, var(--dashboard-widget-fade-background-start) 100%);
+        }
+    }
+
+    .h-author-name {
+        box-sizing: border-box;
+
+        position: sticky;
+        left: 0;
+
+        min-width: 150px;
+        max-width: 150px;
+
+        background: var(--background-color-blank);
+
+        @media (v.$desktop) {
+            vertical-align: middle;
+            min-width: 250px;
+            max-width: 250px;
+            text-align: left;
+
+            a {
+                display: flex;
+                align-items: center;
+            }
+
+            span {
+                display: inline !important;
+                margin-left: 10px;
+            }
+        }
+    }
+
+    tr:hover td.h-author-name {
+        background: var(--background-color-table-row-hover);
+    }
+
+    &-hub {
+        box-sizing: border-box;
+        min-width: 170px;
+        max-width: 170px;
+    }
+
+    .h-stats {
+        text-align: center;
+
+        .h-author-kudos {
+            margin: 10px 0;
+
+            .h-kudos {
+                display: inline-block;
+                margin-bottom: 2px;
+                margin-left: 10px;
+            }
+        }
+    }
+}
+
+.authors-table {
+    td {
+        vertical-align: top;
+    }
+}
+
+.article_authors {
+    @media (v.$desktop) {
+        max-width: calc(100vw - 22rem);
+    }
+}

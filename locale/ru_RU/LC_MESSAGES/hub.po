@@ -5,14 +5,14 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: hub\n"
+"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
-"Language: ru_RU\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -101,10 +101,10 @@ msgid "Loading..."
 msgstr "Загрузка..."
 
 msgid "Welcome to your new Hub!"
-msgstr "Добро пожаловать в ваш новый Хаб!"
+msgstr "Добро пожаловать в ваш новый «Хаб»!"
 
 msgid "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your your customers."
-msgstr "«Хаб» — это приложение для организации базы знаний. Публикуйте статьи, отвечайте на вопросы, собирайте комментарии клиентов и сообщения об ошибках, обсуждайте любые темы — все в едином пространстве. Отличное средство взаимопомощи для вас и ваших клиентов."
+msgstr "«Хаб» — это приложение для организации базы знаний. Публикуйте статьи, отвечайте на вопросы, собирайте комментарии клиентов и сообщения об ошибках, обсуждайте любые темы — всё в едином пространстве. Отличное средство взаимопомощи для вас и ваших клиентов."
 
 msgid "Topic types"
 msgstr "Типы тем"
@@ -152,7 +152,7 @@ msgid "Unmark solution"
 msgstr "Убрать отметку решения"
 
 msgid "comment deleted"
-msgstr "комментарий удален"
+msgstr "комментарий удалён"
 
 msgid "comment restored"
 msgstr "комментарий восстановлен"
@@ -191,16 +191,10 @@ msgid "General settings"
 msgstr "Общие настройки"
 
 msgid "App icon counter"
-msgstr "Счетчик на иконке"
+msgstr "Счётчик на иконке"
 
 msgid "New topics published by other users"
 msgstr "Новые темы других пользователей"
-
-msgid "New comments"
-msgstr "Новые комментарии"
-
-msgid "Count new comments on my posts only"
-msgstr "Считать новые комментарии только для моих тем"
 
 msgid "Notifications"
 msgstr "Уведомления"
@@ -253,10 +247,10 @@ msgstr "URL на сайте"
 msgid "Logo"
 msgstr "Логотип"
 
-msgid "Only PNG and JPEG images are allowed"
-msgstr "Допускаются только изображения в форматах PNG и JPEG"
+msgid "Only PNG and JPEG images are allowed."
+msgstr "Допускаются только изображения в форматах PNG и JPEG."
 
-msgid "Category logo will be published on the hub frontend homepage. Logo size depend on design theme you are using. Most design themes will scale the logo down to about 50px wide."
+msgid "Category logo will be published on the hub’s homepage. The logo size depends on the design theme you are using. Most design themes will scale the logo down to about 50px wide."
 msgstr "Логотип категории будет показан на главной странице хаба на сайте. Размер логотипа зависит от используемой темы дизайна. В большинстве тем логотип будет уменьшен до 50 пикселей по ширине."
 
 msgid "Category type"
@@ -282,12 +276,6 @@ msgstr "Эта категория будет автоматически запо
 
 msgid "This option is not available because this hub does not have any tags yet."
 msgstr "Этот вариант недоступен, потому что в хабе пока нет ни одного тега."
-
-msgid "Default view"
-msgstr "Вид"
-
-msgid "Manual"
-msgstr "Ручной"
 
 msgid "User selectable"
 msgstr "разрешить пользователям изменять способ сортировки"
@@ -315,9 +303,6 @@ msgstr "Не удалять темы"
 
 msgid "All topics will remain in the hub stream, and only the category will be deleted"
 msgstr "Все темы останутся в потоке хаба; будет удалена только категория."
-
-msgid "Move all topics asigned to this category (%d)"
-msgstr "Перенести все темы, прикрепленные к этой категории (%d)"
 
 msgid "Select category"
 msgstr "Выберите категорию"
@@ -395,10 +380,10 @@ msgid "Kudos"
 msgstr "Рейтинг авторов"
 
 msgid "Enable kudos in this hub"
-msgstr "Включить подсчет рейтинга авторов для этого хаба"
+msgstr "Включить подсчёт рейтинга авторов для этого хаба"
 
 msgid "Kudos are a rating based on user activity in discussions and community, and on how it’s rated by other users."
-msgstr "Рейтинг автора вычисляется на основании его активности в обсуждениях и в сообществе и ее оценок другими пользователями."
+msgstr "Рейтинг автора вычисляется на основании его активности в обсуждениях и в сообществе и её оценок другими пользователями."
 
 msgid "Topic popularity index"
 msgstr "Индекс популярности темы"
@@ -455,19 +440,13 @@ msgid "Backend only. All topics of this hub will be marked with the selected col
 msgstr "Только для бекенда. Все темы этого хаба будут отмечены выбранным цветом. Удобно, когда у вас несколько хабов."
 
 msgid "Allowed topic types"
-msgstr "Разрешенные типы тем"
+msgstr "Разрешённые типы тем"
 
 msgid "All topic types"
 msgstr "Все типы"
 
 msgid "Selected only"
 msgstr "Только выбранные"
-
-msgid "The <strong>%d topics</strong> at hub %s. What should be done with these topics?"
-msgstr "<strong>%d тем</strong> хаба %s. Что необходимо сделать с этими темами?"
-
-msgid "Move topics to another topics hub"
-msgstr "Перенести темы в другой хаб"
 
 msgid "Delete permanently"
 msgstr "Удалить полностью"
@@ -493,14 +472,26 @@ msgstr "Либо введите URL изображения символа (ук�
 msgid "Functionality"
 msgstr "Функциональность"
 
-msgid "There are <strong>%d topics</strong> with %s type. By deleting this topic type you should either change type for all these topics or delete them."
-msgstr "Есть <strong>%d тем</strong> типа %s. Для удаления этого типа необходимо либо изменить тип этих тем, либо удалить их."
+msgid "There is <strong>%d topic</strong> with the <strong>%s</strong> type."
+msgid_plural "There are <strong>%d topics</strong> with the <strong>%s</strong> type."
+msgstr[0] "Есть <strong>%d тема</strong> типа «<strong>%s</strong>»."
+msgstr[1] "Есть <strong>%d темы</strong> типа «<strong>%s</strong>»."
+msgstr[2] "Есть <strong>%d тем</strong> типа «<strong>%s</strong>»."
+
+msgid "To delete this topic type, please either change the type for that topic or delete it."
+msgstr "Для удаления этого типа необходимо либо изменить тип этой темы, либо удалить её."
+
+msgid "To delete this topic type, please either change the type for all those topics or delete them."
+msgstr "Для удаления этого типа необходимо либо изменить тип этих тем, либо удалить их."
 
 msgid "Change type of these topics to"
 msgstr "Сменить тип этих тем на"
 
-msgid "Delete all %d topics permanently"
-msgstr "Полностью удалить все %d тем"
+msgid "Delete that %d topic permanently"
+msgid_plural "Delete those %d topics permanently"
+msgstr[0] "Полностью удалить эту %d тему"
+msgstr[1] "Полностью удалить эти %d темы"
+msgstr[2] "Полностью удалить эти %d тем"
 
 msgid "There are no topics of %s type, so it can be easily deleted."
 msgstr "Нет ни одной темы типа %s — этот тип можно удалять."
@@ -527,13 +518,13 @@ msgid "Badges"
 msgstr "Метки"
 
 msgid "Posts per page"
-msgstr "Кол-во тем на странице"
+msgstr "Количество тем на странице"
 
 msgid "Auto archive"
 msgstr "Автоархивация"
 
 msgid "Automatically archive topics after %s days of inactivity"
-msgstr "Автоматически архивировать топики через %s дней неактивности"
+msgstr "Автоматически архивировать сообщения через %s дней неактивности"
 
 msgid "Archived topics are available for viewing only and cannot be commented."
 msgstr "Архивные темы доступны только для просмотра, но не для комментирования."
@@ -553,9 +544,6 @@ msgstr "Удалить тему"
 msgid "Search topics"
 msgstr "Поиск тем"
 
-msgid "Select"
-msgstr "Выбрать"
-
 msgid "Move"
 msgstr "Перенести"
 
@@ -573,15 +561,6 @@ msgstr "Популярные"
 
 msgid "Updated"
 msgstr "Обновленные"
-
-msgid "Archive"
-msgstr "Архив"
-
-msgid "Category settings"
-msgstr "Настройки категории"
-
-msgid "Customize filter"
-msgstr "Настроить фильтр"
 
 msgid "Hub settings"
 msgstr "Настройки хаба"
@@ -608,7 +587,7 @@ msgid "by %s"
 msgstr "%s"
 
 msgid "Load more"
-msgstr "Показать еще"
+msgstr "Показать ещё"
 
 msgid "There are no topics in this view."
 msgstr "В этом списке тем нет."
@@ -650,7 +629,7 @@ msgid "Meta"
 msgstr "Мета"
 
 msgid "No meta parameters are defined for this topic."
-msgstr "Метаданные для этой теме не заданы."
+msgstr "Метаданные для этой темы не заданы."
 
 msgid "Edit meta"
 msgstr "Редактировать"
@@ -742,15 +721,6 @@ msgstr[0] "%d подписчик"
 msgstr[1] "%d подписчика"
 msgstr[2] "%d подписчиков"
 
-msgid "In just few words, tell us which question you had that this article did not answer?"
-msgstr "Опишите вкратце, на какой ваш вопрос эта тема не дала ответ."
-
-msgid "valid answer"
-msgstr "правильный ответ"
-
-msgid "remove anwsered badge"
-msgstr "убрать отметку правильного ответа"
-
 msgid "Unanswered"
 msgstr "Без ответа"
 
@@ -796,7 +766,7 @@ msgstr "Не удалось сохранить файл из-за недоста
 msgid "Failed to upload file %s."
 msgstr "Не удалось загрузить файл %s."
 
-msgid "Someone suggested on how to improve your article"
+msgid "Someone suggested an improvement to your article"
 msgstr "Кто-то предложил улучшение для вашей статьи"
 
 msgid "Error when deleting"
@@ -839,7 +809,7 @@ msgid "Feedback (+/-)"
 msgstr "Обратная связь (+/-)"
 
 msgid "Ideas, bug reports, thank-yous and other feedback."
-msgstr "Новые идеи, отчеты об ошибках, выражения благодарности и другие сообщения."
+msgstr "Новые идеи, отчёты об ошибках, выражения благодарности и другие сообщения."
 
 msgid "Custom"
 msgstr "Собственный"
@@ -883,8 +853,8 @@ msgstr "META keywords главной страницы"
 msgid "Homepage META Description"
 msgstr "META description главной страницы"
 
-msgid "Url is in use"
-msgstr "URL используется"
+msgid "The URL is in use."
+msgstr "Этот URL уже используется."
 
 msgid "Article"
 msgstr "Статья"
@@ -899,7 +869,7 @@ msgid "Users can post answers to this topic"
 msgstr "Пользователи могут давать ответы на эту тему"
 
 msgid "Bug report"
-msgstr "Отчет об ошибке"
+msgstr "Отчёт об ошибке"
 
 msgid "Idea"
 msgstr "Идея"
@@ -971,7 +941,7 @@ msgid "Error"
 msgstr "Ошибка"
 
 msgid "The requested resource is not available."
-msgstr "Запрошенный ресурс недоступен"
+msgstr "Запрошенный ресурс недоступен."
 
 msgid "New topics"
 msgstr "Новые темы"
@@ -1014,9 +984,6 @@ msgstr "<a href=\"http://www.webasyst.ru/store/app/hub/\">Сервис подд�
 
 msgid "My answers"
 msgstr "Мои ответы"
-
-msgid "Hub staff"
-msgstr "Сотрудники хаба"
 
 msgid "Welcome to your new hub!"
 msgstr "Добро пожаловать в ваш новый хаб!"
@@ -1066,9 +1033,6 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-msgid "Thank you."
-msgstr "Спасибо."
-
 msgid "In just few words, tell us what you did not like about this article?"
 msgstr "Расскажите вкратце, что вам не понравилось в этой статье."
 
@@ -1076,7 +1040,7 @@ msgid "Send"
 msgstr "Отправить"
 
 msgid "(missing contact)"
-msgstr "(неопределенный контакт)"
+msgstr "(неопределённый контакт)"
 
 msgid "Favorites"
 msgstr "Избранное"
@@ -1088,19 +1052,19 @@ msgid "Created"
 msgstr "Создан"
 
 msgid "Unknown topic type"
-msgstr "Неопределенный тип топика"
+msgstr "Неопределённый тип сообщения"
 
-msgid "No badge"
-msgstr "Нет бейджика"
+msgid "No status"
+msgstr "Без статуса"
 
 msgid "Hi %s,"
 msgstr "Привет, %s."
 
-msgid "%s posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you are following:"
-msgstr "%s опубликовал новый комментарий к топику «<a href=\"%s\"><strong>%s</strong></a>», на который вы подписаны:"
+msgid "User %s has posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you are following:"
+msgstr "Пользователь %s опубликовал новый комментарий к сообщению «<a href=\"%s\"><strong>%s</strong></a>», на которое вы подписаны:"
 
 msgid "Hi,"
-msgstr "Привет,"
+msgstr "Привет!"
 
 msgid "Last comments"
 msgstr "Последние ответы"
@@ -1115,10 +1079,10 @@ msgid "Number of topics in this hub: <strong>%d</strong>. By deleting this hub y
 msgstr "Количество тем в этом хабе: <strong>%d</strong>. Чтобы удалить этот хаб, необходимо либо удалить все содержащиеся в нем темы, либо перенести их в другой хаб."
 
 msgid "Move topics to another hub"
-msgstr "Перенести топики в другой хаб"
+msgstr "Перенести сообщения в другой хаб"
 
 msgid "This hub does not contain any topics, so you can safely delete it. No topics will be affected."
-msgstr "Этот хаб не содержит ни одной темы, и поэтому при его удалении ни одна тема не пострадает. Не волнуйтесь."
+msgstr "Этот хаб не содержит ни одной темы, поэтому при его удалении ни одна тема не пострадает."
 
 msgid "Homepage default topic sort order"
 msgstr "Порядок сортировки тем на главной странице"
@@ -1148,7 +1112,7 @@ msgid "%d topics, %d answers, and %d comments"
 msgstr "%d тем, %d ответов и %d комментариев"
 
 msgid "This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, create a route using the form below or using <a href=\"%s\">Site app</a> routing settings."
-msgstr "Этот хаб не виден на сайте, потому что для него не заданы правила маршрутизации. Чтобы опубликовать хаб на сайте, добавьте правило маршрутизации с помощью формы ниже или в разделе «<a href=\"%s\">Структура</a>» в приложении «Сайт»."
+msgstr "Этот хаб не виден на сайте, потому что для него не заданы правила маршрутизации. Чтобы опубликовать хаб на сайте, добавьте правило маршрутизации с помощью формы ниже или в разделе «<a href=\"%s\">Структура</a>» приложения «Сайт»."
 
 msgid "Specify the public URL for this new hub on your site:"
 msgstr "Введите адрес для этого хаба на сайте:"
@@ -1156,11 +1120,11 @@ msgstr "Введите адрес для этого хаба на сайте:"
 msgid "Do not publish this hub on the site just yet"
 msgstr "Пока не публиковать этот хаб на сайте"
 
-msgid "Frontend posting"
-msgstr "Публикация во фронтенде"
+msgid "Posting on website"
+msgstr "Публикация на сайте"
 
-msgid "Topics of this type can be added by frontend users"
-msgstr "Пользователи фронтенда могут публиковать темы этого типа"
+msgid "Topics of this type can be added by website visitors"
+msgstr "Посетители сайта могут публиковать темы этого типа"
 
 msgid "support"
 msgstr "поддержка"
@@ -1207,20 +1171,17 @@ msgstr "Мои ответы"
 msgid "%s’s replies"
 msgstr "Ответы пользователя %s"
 
-msgid "%s topics on top"
-msgstr "%s"
-
 msgid "%s did not post any comments yet."
-msgstr "%s еще не добавил ни одного комментария."
+msgstr "%s ещё не добавил ни одного комментария."
 
-msgid "You can not reply to a removed comment."
-msgstr "Нельзя отвечать на удалённый комментарий."
+msgid "You cannot reply to a removed comment."
+msgstr "Нельзя отвечать на удалённые комментарии."
 
 msgid "Delete category logo?"
 msgstr "Удалить логотип категории?"
 
 msgid "Type selector is disabled since all topics in current view are of the same type."
-msgstr "Все топики в этом списке имеют один тип, поэтому фильтр по типам выключен."
+msgstr "Все сообщения в этом списке относятся к одному типу, поэтому фильтр по типам выключен."
 
 msgid "(%s hidden)"
 msgstr "(скрыто %s)"
@@ -1235,7 +1196,7 @@ msgid "Manual sort for topics is not available in dynamic topic lists. If you wa
 msgstr "В динамических списках возможность ручной сортировки тем недоступна. Для ручной сортировки создайте категорию типа «Папка»."
 
 msgid "Manual sort for topics is not available in this view because current sort order is set to <strong>%s</strong>. To activate the ability to sort topics in this category, set current sort order to “Manual sort”."
-msgstr "В данном списке возможность ручной сортировки тем недоступна, так как включен режим автоматической сортировки — <strong>%s</strong>. Для ручной сортировки тем переключите режим на «Ручной»."
+msgstr "В данном списке возможность ручной сортировки тем недоступна, потому что включён режим автоматической сортировки — <strong>%s</strong>. Для ручной сортировки тем переключите режим на «Ручной»."
 
 msgid "Normal"
 msgstr "Средний"
@@ -1273,11 +1234,11 @@ msgstr "Опубликовано"
 msgid "Stuff as set up in hub settings."
 msgstr "Сотрудники, указанные в настройках хаба."
 
-msgid "Categories of given hub. When $priority_topics is <em>true</em>, list of high-priority topics is returned for each category."
-msgstr "Категории указанного хаба. Если $priority_topics &mdash; true, для каждой категории загружается список высокоприоритетных тем."
+msgid "Categories of given hub. When <code>$priority_topics</code> is <em>true</em>, list of high-priority topics is returned for each category."
+msgstr "Категории указанного хаба. Если для параметра <code>$priority_topics</code> указано значение <em>true</em>, то для каждой категории загружается список тем с высоким приоритетом."
 
 msgid "Classic forum thread with plain comment list sorted chronologically."
-msgstr "Классический вид обсуждения на форуме: топик и список комментариев в хронологическом порядке."
+msgstr "Классический вид обсуждения на форуме: сообщение и список комментариев в хронологическом порядке."
 
 msgid "Comment author"
 msgstr "Автор комментария"
@@ -1288,16 +1249,10 @@ msgstr "Автор темы"
 msgid "Upload image"
 msgstr "Загрузить изображение"
 
-msgid "<b>WYSIWYG editor may change your HTML code.</b><br><br>It is necessary for correct text formatting. Smarty code may be broken and outdated HTML tags may be replaced with modern ones.<br><br>Are you sure to switch to WYSIWYG editor?"
-msgstr "<b>Редактор WYSIWYG может изменить ваш HTML-код.</b><br><br>Это необходимо для правильного форматирования текста. Код Smarty может быть сломан, и устаревшие HTML-теги могут быть заменены на современные.<br><br>Вы действительно хотите переключиться на WYSIWYG-редактор?"
-
-msgid "Switch"
-msgstr "Переключиться"
-
-msgid "Topic “<b>%s</b>” will be permanently deleted without the ability to recover. Delete?"
+msgid "Topic “<b>%s</b>” will be permanently deleted without a recovery option. Delete?"
 msgstr "Тема «<b>%s</b>» будет удалена навсегда без возможности восстановления. Удалить?"
 
-msgid "User %s suggests that you improve your topic “<a href=\"%s\"><strong>%s</strong></a>” as follows:"
+msgid "User %s suggests an improvement to your topic “<a href=\"%s\"><strong>%s</strong></a>” as follows:"
 msgstr "Пользователь %s предлагает вам улучшить вашу тему «<a href=\"%s\"><strong>%s</strong></a>»:"
 
 msgid "Custom parameters"
@@ -1312,7 +1267,7 @@ msgstr "Загрузить"
 msgid "comment"
 msgstr "комментарий"
 
-msgid "%s has posted new topic “<a href=\"%s\"><strong>%s</strong></a>” and invites you to take a look:"
+msgid "User %s has posted new topic “<a href=\"%s\"><strong>%s</strong></a>” and invites you to take a look:"
 msgstr "%s опубликовал новую тему «<a href=\"%s\"><strong>%s</strong></a>» и предлагает вам посмотреть:"
 
 msgid "Allowed actions for authorized website visitors"
@@ -1346,7 +1301,7 @@ msgid "Social sharing image URL"
 msgstr "URL изображения для соцсетей"
 
 msgid "If no value is specified, a social network will attempt to automatically determine a preview image."
-msgstr "Если адрес не указан явно, соцсеть автоматически выберет одно из изображений на странице"
+msgstr "Если адрес не указан явно, соцсеть автоматически выберет одно из изображений на странице."
 
 msgid "Social sharing video URL"
 msgstr "URL видео для соцсетей"
@@ -1367,7 +1322,7 @@ msgid "Site name"
 msgstr "Название сайта"
 
 msgid "Brief website name. May be used instead of a URL; e.g., by Telegram messenger."
-msgstr "Краткое название сайта. Может использоваться вместо URL, например, месенджером Telegram."
+msgstr "Краткое название сайта. Может использоваться вместо URL, например, мессенджером Telegram."
 
 msgid "Locale"
 msgstr "Языковая локаль"
@@ -1389,3 +1344,90 @@ msgstr "Описание для соцсетей (og:description)"
 
 msgid "For detailed information on Open Graph parameters and examples please refer to <a href=\"http://ogp.me\" target=\"_blank\">ogp.me</a>."
 msgstr "Подробная информация о возможных вариантах значений параметров Open Graph опубликована на сайте протокола <a href=\"http://ogp.me\" target=\"_blank\">ogp.me</a>."
+
+msgid "Glyph for public websites"
+msgstr "Символ для отображения на сайте"
+
+msgid "There are no topics of <strong>%s</strong> type, so this type can be deleted."
+msgstr "У вас нет тем типа «<strong>%s</strong>», поэтому этот тип можно удалить."
+
+msgid "Add a tag"
+msgstr "Добавьте тег"
+
+msgid "Quote..."
+msgstr "Цитата..."
+
+msgid "Restore"
+msgstr "Восстановить"
+
+msgid "user"
+msgstr "пользователь"
+
+msgid "rating"
+msgstr "рейтинг"
+
+msgid "topics"
+msgstr "темы"
+
+msgid "replies"
+msgstr "ответы"
+
+msgid "Skip this setup"
+msgstr "Пропустить эту настройку"
+
+msgid "Filters"
+msgstr "Фильтры"
+
+msgid "Selected"
+msgstr "Выбрано"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "Topic has been published!"
+msgstr "Тема опубликована!"
+
+msgid "Good news: a topic can now be edited and viewed on the same screen."
+msgstr "Хорошие новости: теперь тему можно сразу редактировать и просматривать на одной странице."
+
+msgid "Summary"
+msgstr "Краткое описание"
+
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+msgid "Notify..."
+msgstr "Уведомить..."
+
+msgid "Notify other users about the topic update"
+msgstr "Уведомить других пользователей об обновлении темы"
+
+msgid "Publish and send notifications"
+msgstr "Опубликовать и отправить уведомления"
+
+msgid "Topic type"
+msgstr "Тип темы"
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "Contact with ID %s does not exist."
+msgstr "Контакт с ID %s не существует."
+
+msgid "%s of %d"
+msgstr "%s из %d"
+
+msgid "Select a file"
+msgstr "Выберите файл"
+
+msgid "%d more new comment"
+msgid_plural "%d more new comments"
+msgstr[0] "Ещё %d новый ответ"
+msgstr[1] "Ещё %d новых ответа"
+msgstr[2] "Ещё %d новых ответов"
+
+msgid "Open in new tab"
+msgstr "Открыть в новой вкладке"

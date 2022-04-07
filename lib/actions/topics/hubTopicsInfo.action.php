@@ -17,12 +17,12 @@ class hubTopicsInfoAction extends waViewAction
         }
 
         $topic['tags'] = $this->getTags($topic);
-
+        $topic['categories'] = hubTopicsEditAction::getCategories($topic['id']);
         if ($topic['badge']) {
             $topic['badge'] = hubHelper::getBadge($topic['badge']);
         }
 
-        $routing = wa()->getRouting();
+        $routing = wa('hub')->getRouting();
         $domain_routes = $routing->getByApp($this->getAppId());
         foreach ($domain_routes as $domain => $routes) {
             foreach ($routes as $r) {
@@ -109,11 +109,12 @@ class hubTopicsInfoAction extends waViewAction
             'comments_count'     => $topic['comments_count'],
             'current_author'     => hubHelper::getAuthor($this->getUserId()),
             'notifications_sent' => waRequest::request('notifications_sent'),
+            'follow'             => $follow,
+            'followers'          => $followers,
+            'types'              => hubHelper::getTypes(),
+            'hub_is_public'      => $this->hubIsPublic($hub),
             'can_edit_delete'    => ($topic['contact_id'] == wa()->getUser()->getId() && $access_level >= hubRightConfig::RIGHT_READ_WRITE)
                                         || $access_level >= hubRightConfig::RIGHT_FULL,
-            'follow' => $follow,
-            'followers' => $followers,
-            'types' => hubHelper::getTypes()
         ));
     }
 
@@ -127,5 +128,31 @@ class hubTopicsInfoAction extends waViewAction
         $tag_ids = array_keys($topic_tags_model->getByField('topic_id', $topic['id'], 'tag_id'));
         $tag_model = new hubTagModel();
         return $tag_model->getByField('id', $tag_ids, 'id');
+    }
+
+    /**
+     * @param $hub
+     * @return bool
+     * @throws waException
+     */
+    private function hubIsPublic($hub)
+    {
+        $result = false;
+        $hub_id = (int) ifset($hub, 'id', 0);
+        $hub_status = !!ifset($hub, 'status', 1);
+
+        $hub_routings = wa()->getRouting()->getByApp('hub');
+        if ($hub_status) {
+            foreach ($hub_routings as $hub_routing) {
+                foreach ($hub_routing as $hub_route) {
+                    if (!empty($hub_route['hub_id']) && (int) $hub_route['hub_id'] === $hub_id) {
+                        $result = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        return $hub_status && $result;
     }
 }

@@ -17,8 +17,26 @@ class hubTopicsEditAction extends waViewAction
                 throw new waException(_w('Topic not found'), 404);
             }
             $topic['tags'] = $this->getTags($topic);
-            $topic['categories'] = $this->getCategories($id);
+            $topic['categories'] = self::getCategories($id);
             $hub_id = $topic['hub_id'];
+
+            if ($topic['badge']) {
+                $topic['badge'] = hubHelper::getBadge($topic['badge']);
+            }
+
+            $base_types = hubHelper::getBaseTypes();
+            $topic['type'] = ifempty($topic_types[$topic['type_id']]);
+
+            $possible_badges = hubHelper::getBadgesByType($topic['type']);
+
+            if ($topic['contact_id']) {
+                $contact_model = new waContactModel();
+                $contact = $contact_model->getById($topic['contact_id']);
+                if ($contact) {
+                    $topic['author'] = $contact;
+                    $topic['contact'] = new waContact($contact);
+                }
+            }
 
             $topic_params_model = new hubTopicParamsModel();
             $params = $topic_params_model->getByTopic($id);
@@ -33,6 +51,57 @@ class hubTopicsEditAction extends waViewAction
             $topic_og_model = new hubTopicOgModel();
             $og = $topic_og_model->get($id);
             $og += hubTopicOgModel::getEmptyData();
+
+            $comment_model = new hubCommentModel();
+
+            // Followers
+            $following_model = new hubFollowingModel();
+            $followers = $following_model->getFollowers($topic['id']);
+            $follow = $followers && $followers[0]['id'] == $this->getUser()->getId();
+
+            // Topic comments
+            if (!empty($base_types[$topic['type']['type']]['solution'])) {
+                $comments = $comment_model->getFullTree($topic['id'], '*,is_updated,contact,vote,can_delete,my_vote', 'solution DESC, votes_sum DESC');
+            } else {
+                $comments = $comment_model->getFullTree($topic['id'], '*,is_updated,contact,vote,can_delete,my_vote');
+            }
+
+
+            $is_admin = wa()->getUser()->isAdmin('hub');
+            foreach ($comments as &$c) {
+                $current_user_is_author = $c['contact_id'] == wa()->getUser()->getId();
+                $edit_time_is_relevant = time() - strtotime($c['datetime']) < 15 * 60;
+                $c['editable'] = $is_admin || ($current_user_is_author && $edit_time_is_relevant);
+
+                $c['topic'] = $topic;
+                if (!empty($c['parent_id']) && !empty($comments[$c['parent_id']])) {
+                    $c['parent'] = $comments[$c['parent_id']];
+                }
+            }
+            unset($c);
+
+            // User voted already?
+            $vote_model = new hubVoteModel();
+            $voted = $vote_model->getVote(wa()->getUser()->getId(), 'topic', $id);
+
+            // Mark topic and comments as read in session
+            $visited_comments = array();
+            foreach($comments as $c) {
+                if (!empty($c['is_updated']) || !empty($c['is_new'])) {
+                    $visited_comments[$c['id']] = $c['id'];
+                }
+            }
+            wa('hub')->getConfig()->markAsRead(array($id), $visited_comments);
+
+            $routing_url = wa('hub')->getRouting();
+            $topic_public_url = waIdna::dec($routing_url->getUrl(
+                '/frontend/topic',
+                array(
+                    'id'        => $topic['id'],
+                    'topic_url' => $topic['url']
+                ),
+                true
+            ));
         } else {
 
             $hub_id = waRequest::get('hub_id');
@@ -59,6 +128,10 @@ class hubTopicsEditAction extends waViewAction
         // Does user have access to hub where topic used to be?
         $access_level = wa()->getUser()->getRights('hub', 'hub.'.$topic['hub_id']);
         if ($access_level < hubRightConfig::RIGHT_READ_WRITE || ($access_level == hubRightConfig::RIGHT_READ_WRITE && $topic['contact_id'] != wa()->getUser()->getId())) {
+            if ((int) $access_level === hubRightConfig::RIGHT_READ_WRITE) {
+                echo '<script> document.location = "'.wa()->getRouting()->getCurrentUrl().'#/topic/'.$topic['id'].'/"; </script>';
+                exit;
+            }
             throw new waRightsException('Access denied');
         }
 
@@ -110,22 +183,52 @@ class hubTopicsEditAction extends waViewAction
             }
         }
 
-        $this->view->assign(
-            array(
-                'topic'             => $topic,
-                'hub_id'            => $hub_id,
-                'hubs'              => $hubs,
-                'og'                => $og,
-                'types'             => $topic_types,
-                'categories'        => $categories,
-                'hub_type_ids'      => $hub_type_ids,
-                'hub_url_templates' => self::getHubPublicUrlTemplates(),
-                'users'             => $users,
-                'user_id'           => wa()->getUser()->getId(),
-                'can_change_author' => $can_change_author,
-                'params_string'     => $params_string,
-            )
-        );
+
+        if ($id) {
+            $this->view->assign(
+                array(
+                    'topic'              => $topic,
+                    'voted'              => $voted,
+                    'hub_id'             => $hub_id,
+                    'hubs'               => $hubs,
+                    'og'                 => $og,
+                    'types'              => $topic_types,
+                    'categories'         => $categories,
+                    'hub_type_ids'       => $hub_type_ids,
+                    'hub_url_templates'  => self::getHubPublicUrlTemplates(),
+                    'users'              => $users,
+                    'user_id'            => wa()->getUser()->getId(),
+                    'can_change_author'  => $can_change_author,
+                    'params_string'      => $params_string,
+                    'allow_commenting'   => !$topic['type'] || empty($topic['type']['settings']) || !empty($topic['type']['settings']['commenting']),
+                    'topic_public_url'   => $topic_public_url,
+                    'comments'           => $comments,
+                    'possible_badges'    => $possible_badges,
+                    'comments_count'     => $topic['comments_count'],
+                    'current_author'     => hubHelper::getAuthor($this->getUserId()),
+                    'notifications_sent' => waRequest::request('notifications_sent'),
+                    'follow'             => $follow,
+                    'followers'          => $followers,
+                )
+            );
+        } else {
+            $this->view->assign(
+                array(
+                    'topic'              => $topic,
+                    'hub_id'             => $hub_id,
+                    'hubs'               => $hubs,
+                    'og'                 => $og,
+                    'types'              => $topic_types,
+                    'categories'         => $categories,
+                    'hub_type_ids'       => $hub_type_ids,
+                    'hub_url_templates'  => self::getHubPublicUrlTemplates(),
+                    'users'              => $users,
+                    'user_id'            => wa()->getUser()->getId(),
+                    'can_change_author'  => $can_change_author,
+                    'params_string'      => $params_string,
+                )
+            );
+        }
     }
 
     protected function getPreviewHash()
@@ -159,7 +262,12 @@ class hubTopicsEditAction extends waViewAction
         return array_keys($tags);
     }
 
-    public function getCategories($topic_id)
+    /**
+     * @param int $topic_id
+     * @return array|null
+     * @throws waException
+     */
+    public static function getCategories($topic_id)
     {
         $topic_categories_model = new hubTopicCategoriesModel();
         $category_ids = array_keys($topic_categories_model->getByField('topic_id', $topic_id, 'category_id'));

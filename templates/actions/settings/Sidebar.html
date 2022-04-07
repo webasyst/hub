@@ -1,92 +1,82 @@
-<ul class="menu-v stack with-icons">
-    <li class="{if empty($type) && empty($hub)}selected {/if}top-padded">
-        <a href="#/settings/">
-            <i class="icon16 settings"></i>[`Settings`]
+<div class="flexbox middle wrap custom-mb-32 bordered-bottom">
+    <div class="wide">
+        <ul class="tabs overflow-dropdown{if $wa->isMobile()} small custom-mb-12{/if}" {if $wa->isMobile()} style="flex-wrap: wrap;"{/if}>
+            <li class="custom-pb-0 {if empty($type) && empty($hub)} selected{/if}">
+                <a href="#/settings/" class="custom-py-4-mobile">[`General settings`]</a>
+            </li>
+
+            {if $is_admin}
+            <li class="custom-mr-12 custom-pb-0{if !empty($hub)} selected{/if}">
+                <div class="dropdown js-settings-dropdown-hubs custom-py-12 custom-py-4-mobile" style="border-bottom: .25em solid transparent;{if !empty($hub)} border-bottom-color: var(--accent-color);{/if}">
+                    <div class="dropdown-toggle cursor-pointer">[`Hubs`]</div>
+
+                    <div class="dropdown-body">
+                        <ul class="menu">
+                            {foreach $hubs as $h}
+                            {$_h_color = ''}
+                            {if !empty($h.params.color) && $h.params.color == 'white'}
+                            {$_h_color = 'light-gray'}
+                            {else}
+                            {$_h_color = $h.params.color|default:'red'}
+                            {/if}
+                            <li{if !empty($hub) && ($hub.id == $h.id)} class="selected"{/if}>
+                                <a href="#/settings/hub/{$h.id}/"{if $h.status && !$h.urls} class="text-gray"{/if}>
+                                    <span class="icon"><i class="fas fa-circle text-{$_h_color}"></i></span>
+                                    <span class="js-hub-name">{$h.name|default:'[`(no name)`]'|escape}</span>
+                                    {if !$h.status}
+                                    <span class="count small"><i class="fas fa-lock no-overhanging"></i></span>
+                                    {/if}
+                                </a>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </li>
+
+            <li class="custom-pb-0">
+                <div class="dropdown js-settings-dropdown-types custom-py-12 custom-py-4-mobile" style="border-bottom: .25em solid transparent;{if !empty($type)} border-bottom-color: var(--accent-color);{/if}">
+                    <div class="dropdown-toggle cursor-pointer">[`Topic types`]</div>
+
+                    <div class="dropdown-body">
+                        <ul class="menu">
+                            {foreach $types as $t}
+                            <li{if !empty($type) && ($type.id == $t.id)} class="selected"{/if}>
+                                <a href="#/settings/type/{$t.id}/">
+                                    <span class="js-type-name">{$t.name|escape}</span>
+                                </a>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </li>
+            {/if}
+        </ul>
+    </div>
+
+    {if $is_admin}
+    <div class="custom-mb-8 custom-mt-4">
+        <a href="#/settings/hub/add/" class="semibold small text-gray custom-mr-12">
+            <i class="fas fa-plus-circle"></i>
+            [`New hub`]
         </a>
-    </li>
-</ul>
 
-{if $is_admin}
+        <a href="#/settings/type/new/" class="semibold small text-gray">
+            <i class="fas fa-plus-circle"></i>
+            [`New topic type`]
+        </a>
+    </div>
 
-    <!-- hubs -->
-    <h5 class="heading">
-        <a href="#/settings/hub/add/" class="count"><i class="icon16 add"></i></a>
-        [`Hubs`]
-    </h5>
-    <ul class="menu-v stack with-icons" id="h-hubs-list-settings">
-        {foreach $hubs as $h}
-        <li{if !empty($hub) && ($hub.id == $h.id)} class="selected"{/if} data-id="{$h.id}">
-            <a href="#/settings/hub/{$h.id}/"{if $h.status && !$h.urls} style="color: #aaa;"{/if}>{strip}<i class="icon16 color{if !empty($h.params.color)} h-{$h.params.color}{/if}"></i>{/strip}<span class="js-hub-name">{$h.name|default:'[`(no name)`]'|escape}</span>
-                {if !$h.status}
-                    <i class="icon10 lock-bw no-overhanging"></i>
-                {/if}
-            </a>
-        </li>
-        {/foreach}
-    </ul>
-
-    <!-- topic types -->
-    <h5 class="heading">
-        <a href="#/settings/type/new/" class="count"><i class="icon16 add"></i></a>
-        [`Topic types`]
-    </h5>
-    <ul class="menu-v stack with-icons" id="h-types-list-settings">
-        {foreach $types as $t}
-        <li{if !empty($type) && ($type.id == $t.id)} class="selected"{/if} data-id="{$t.id}">
-            <a href="#/settings/type/{$t.id}/">{hubHelper::getGlyph($t.glyph, 16, true)}<span class="js-type-name">{$t.name|escape}</span></a>
-        </li>
-        {/foreach}
-    </ul>
-
-<script>(function() { "use strict";
-
-    var timeout = null;
-
-    $('#h-hubs-list-settings').sortable({
-        axis: 'y',
-        items: '> li',
-        distance: 5,
-        containment: 'parent',
-        tolerance: 'pointer',
-        update: function (e, ui) {
-            var params = {
-                id: ui.item.data('id'),
-                prev_id: ui.item.prev().data('id') || 0,
-                type: 'hub'
-            };
-            $.post('?module=settings&action=move', params, null, 'json').always(function(r, status) {
-                if (status != 'success' || r.status !== 'ok') {
-                    console && console.log(status, r.errors || r);
-                }
-
-                timeout && clearTimeout(timeout);
-                timeout = setTimeout(function() {
-                    $.sidebar.reload();
-                }, 2500);
-            });
-        }
-    });
-
-    $('#h-types-list-settings').sortable({
-        axis: 'y',
-        items: '> li',
-        distance: 5,
-        containment: 'parent',
-        tolerance: 'pointer',
-        update: function (e, ui) {
-            var params = {
-                id: ui.item.data('id'),
-                prev_id: ui.item.prev().data('id') || 0,
-                type: 'type'
-            };
-            $.post('?module=settings&action=move', params, null, 'json').always(function(r, status) {
-                if (status != 'success' || r.status !== 'ok') {
-                    console && console.log(status, r.errors || r);
-                }
-            });
-        }
-    });
-
-})();</script>
-
-{/if}
+    <script>
+      ( function($) {
+          $('.js-settings-dropdown-hubs').waDropdown({
+              update_title: false
+          });
+          $('.js-settings-dropdown-types').waDropdown({
+              update_title: false
+          });
+      })(jQuery);
+    </script>
+    {/if}
+</div>

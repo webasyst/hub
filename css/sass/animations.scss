@@ -1,0 +1,12 @@
+.fade-in {
+    animation: fadeIn var(--timing-default);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

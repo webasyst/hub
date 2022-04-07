@@ -1,0 +1,576 @@
+{if empty($category.id)}
+<div class="h-stream{if !empty($hub_color)} h-{$hub_color}{/if}">
+    <div class="h-header">
+
+        <ul class="menu-h h-sort">
+            <li>
+                &nbsp;{* dummy placeholder *}
+            </li>
+        </ul>
+
+        <h1 class="list-title">
+            {if !empty($hub_context)}
+                <a href="#/hub/{$hub_context.id}/" class="back">&larr; {$hub_context.name|default:'[`(no name)`]'|escape}</a>
+            {/if}
+            {$category.name|default:'[`New category`]'|escape}
+
+        </h1>
+        <div class="clear-right"></div>
+
+    </div>
+
+    <div id="h-content">
+        <div id="h-stream-settings" class="block double-padded">
+        {else}
+        <div class="float-right">
+            <ul class="menu-h">
+                    <li><a href="#/category/{$category.id}/" class="js-delete js-dialog"><i class="icon16 delete"></i>[`Delete category`]</a></li>
+            </ul>
+        </div>
+
+{/if}
+
+
+    <form id="h-category-settings" method="post" action="?module=settings&action=categorySave" enctype="multipart/form-data">
+        <input type="hidden" name="hub_id" value="{$category.hub_id}">
+        {if !empty($category.id)}
+            <input type="hidden" name="id" value="{$category.id}">
+        {/if}
+                <div class="fields form">
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Category name`]</div>
+                            <div class="value">
+                                <input type="text" name="category[name]" class="large long s-full-width-input" value="{$category.name|default:''|escape}" id="h-category-name" placeholder="[`Category name`]">
+                            </div>
+                        </div>
+                        {if $hub.status}
+                        <div class="field">
+                            <div class="name">
+                                [`Frontend URL`]
+                            </div>
+                            <div class="value">
+                                {if $routes}{$routes[0].start|escape}{/if}
+                                <input type="text" name="category[url]" value="{$category.url|default:''|escape}" id="h-category-url">
+                                {if $routes}{$routes[0].end|escape}{/if}
+                                <em class="errormsg"></em>
+                                <p class="hint">
+                                    {foreach $routes as $route}{if !$route@first}
+                                        <span class="js-category-url" data-url="{$route.url|escape}">{if !empty($category.url)}{$route.url|replace:'%url%':$category.url|escape}{/if}</span><br>
+                                    {/if}{/foreach}
+                                </p>
+                            </div>
+                        </div>
+                        {/if}
+
+                        <div class="field">
+                            <div class="name">
+                                [`Category summary`]
+                            </div>
+                            <div class="value">
+                                <textarea name="category[description]">{$category.description|escape}</textarea>
+                            </div>
+                        </div>
+
+                        {if $hub.status}
+                        <div class="field">
+                            <div class="name">
+                                [`Logo`]
+                            </div>
+                            <div class="value">
+                                {if !empty($category.logo)}
+                                    <img class="h-category-logo" src="{$logo_base_url}{$category.logo}"><br><br>
+                                {/if}
+
+                                <input type="file" name="category_logo">
+                                {if !empty($category.logo)}
+                                    <br><a href="javascript:void(0)" id="delete-category-logo-link" title="[`Delete category logo?`]">[`Delete`]</a>
+                                {/if}
+
+                                <div class="block">
+                                    <div class="progressbar small blue" style="display: none;">
+                                        <div class="progressbar-outer">
+                                            <div class="progressbar-inner" id="h-category-logo-progressbar" style="width: 0%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="errormsg" style="display: none;"><em>[`Only PNG and JPEG images are allowed.`]</em></p>
+                                <p class="hint">[`Category logo will be published on the hub’s homepage. The logo size depends on the design theme you are using. Most design themes will scale the logo down to about 50px wide.`]</p>
+                            </div>
+                        </div>
+
+                        {/if}
+                    </div>
+
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Category type`]</div>
+                            {if !empty($category.id)}
+                                <input type="hidden" name="category[type]" value="{if $category.type==hubCategoryModel::TYPE_DYNAMIC}{if empty($category.conditions.type_id)}tag_id{else}type{/if}{else}0{/if}">
+                            {/if}
+                            {if empty($category.id) || ($category.type==hubCategoryModel::TYPE_STATIC)}
+                            <div class="value no-shift">
+                                <label>
+                                    {if empty($category.id)}
+                                    <input type="radio" name="category[type]" value="0" {if $category.type==hubCategoryModel::TYPE_STATIC} checked="checked"{/if}>
+                                    {/if}
+                                    <strong>[`Folder`]</strong>
+                                    <i class="icon16 folder"></i>
+                                </label>
+                                <p class="hint">[`You’ll be able to manually add new topics and move existing topics into this category.`]</p>
+                            </div>
+                            {/if}
+
+                            {if empty($category.id) || (($category.type==hubCategoryModel::TYPE_DYNAMIC) && !empty($category.conditions.type_id))}
+                            <div class="value no-shift">
+                                <label>
+                                    {if empty($category.id)}
+                                    <input type="radio" name="category[type]" value="type"{if (!empty($category.id) && empty($category.type))||empty($types)} disabled="disabled"{elseif !empty($category.conditions.type_id)} checked="checked" {/if}>
+                                    {/if}
+                                    <strong>[`Filter by topic type`]</strong>
+
+                                </label>
+                                {hubHelper::getGlyph('info', 16, true)}
+                                <select name="category[conditions][type_id]"{if !empty($category.id) && empty($category.type)} disabled="disabled" {/if}>
+                                    {foreach $types as $t}
+                                        <option value="{$t.id}" data-type="{$t.type|escape}" data-glyph="{hubHelper::getGlyph($t.glyph, 16, true)|escape}" {if ifset($category.conditions.type_id)==$t.id} selected="selected"{/if}>{$t.name|escape}</option>
+                                    {/foreach}
+                                </select>
+
+                                <p class="hint">[`This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind.`]</p>
+
+                            </div>
+                            {/if}
+
+
+                            {if empty($category.id) || (($category.type==hubCategoryModel::TYPE_DYNAMIC) && empty($category.conditions.type_id))}
+                            <div class="value no-shift">
+                                <label>
+                                    {if empty($category.id)}
+                                    <input type="radio" name="category[type]" value="tag_id"{if (!empty($category.id) && empty($category.type))||empty($cloud)} disabled="disabled"{elseif isset($category.conditions.tag_id)} checked="checked"{/if}>
+                                    {/if}
+                                    <strong>[`Filter by tags`]</strong>
+                                    <i class="icon16 tags"></i>
+                                </label>
+                                {if empty($category.id) && empty($cloud)}
+                                    <p class="hint">[`This option is not available because this hub does not have any tags yet.`]</p>
+                                {else}
+                                    <p class="hint">[`This category will be automatically filled with topics with selected tags.`]</p>
+                                {/if}
+                            </div>
+                            <div class="value no-shift js-related-view" data-related="tag_id">
+
+                                <input id="h-category-tags" type="text" name="tags" value="{foreach $assigned_tags as $tag}{$tag.name|escape}{if !$tag@last},{/if}{/foreach}">
+
+                            </div>
+                            {/if}
+
+                        </div>
+
+                        {if $hub.status}
+                        <div class="field js-related-view" data-related="0">
+                            <div class="name">
+                                [`Default sort order`]
+                            </div>
+                            <div class="value no-shift">
+                                <select name="category[sorting]">
+                                    <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual sort`]</option>
+                                    {foreach $sorts as $s}
+                                        {if $s.id != 'unanswered'}
+                                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
+                                        {/if}
+                                    {/foreach}
+                                </select>
+                                <label>
+                                    <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
+                                    [`User selectable`]
+                                </label>
+                            </div>
+                        </div>
+
+                        {foreach $base_types as $t_id => $t}
+                        <div class="field js-related-view" data-related="type:{$t_id}">
+                            <div class="name">
+                                [`Default sort order`]
+                            </div>
+                            <div class="value">
+                                <select name="category[sorting]">
+                                    {foreach ifset($t.sorting,array()) as $s}
+                                        <option value="{$s}"{if ifset($category.sorting) == $s} selected="selected"{/if}>
+                                            {$sorts[$s].name|escape}
+                                        </option>
+                                    {/foreach}
+                                </select>
+                                <label>
+                                    <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
+                                    [`User selectable`]
+                                </label>
+                            </div>
+                        </div>
+                        {/foreach}
+
+
+                        <div class="field js-related-view" data-related="tag_id">
+                            <div class="name">
+                                [`Default sort order`]
+                            </div>
+                            <div class="value">
+                                <select name="category[sorting]">
+                                    {foreach $sorts as $s}
+                                        {if $s.id != 'unanswered'}
+                                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
+                                        {/if}
+                                    {/foreach}
+                                </select>
+                                <label>
+                                    <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
+                                    [`User selectable`]
+                                </label>
+                            </div>
+                        </div>
+                        {/if}
+
+
+                    </div>
+
+                    {*META TAGS*}
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Title`]</div>
+                            <div class="value">
+                                <input name="category[meta_title]" value="{$category.meta_title|default:''|escape}" class="long">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`META Keywords`]</div>
+                            <div class="value">
+                                <textarea name="category[meta_keywords]">{$category.meta_keywords|default:''|escape}</textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`META Description`]</div>
+                            <div class="value">
+                                <textarea name="category[meta_description]">{$category.meta_description|default:''|escape}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {*SOCIAL NETWORK*}
+                    {$use_custom_settings = !isset($og.title) && !isset($og.description)}
+                    <h5>[`Social media tags (Open Graph)`]</h5>
+                    <p class="hint">[`Please refer to <a href="http://ogp.me" target="_blank">Open Graph</a> protocol site for more information on social sharing meta tags and available values.`]</p>
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">[`Social sharing`]</div>
+                            <div class="value no-shift">
+                                <label><input type="checkbox" class="js-settings-custom-switcher" {if $use_custom_settings} checked{/if}> [`Use these meta tags for social sharing too`]</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="name">[`Social sharing title`] <span class="hint">og:title</span></div>
+                            <div class="value">
+                                <input name="og[title]" value="{$og.title|escape}" class="long">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing image URL`] <span class="hint">og:image</span></div>
+                            <div class="value">
+                                <input name="og[image]" value="{$og.image|escape}" class="long">
+                                <br>
+                                <span class="hint">[`If no value is specified, a social network will attempt to automatically determine a preview image.`]</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing video URL`] <span class="hint">og:video</span></div>
+                            <div class="value">
+                                <input name="og[video]" value="{$og.video|escape}" class="long">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing description`] <span class="hint">og:description</span></div>
+                            <div class="value">
+                                <textarea name="og[description]">{$og.description|escape}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="value">
+                                {$wa->csrf()}
+                            <input type="submit" name="submit" value="[`Save`]" class="button green">
+                            [`or`] <a class="cancel" href="#">[`cancel`]</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+    </form>
+
+{if empty($category.id)}
+
+            <div class="clear-both"></div>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="clear-both"></div>
+
+</div>
+{/if}
+
+
+{if !empty($category.id)}
+    <div id="h-category-delete" style="display: none;" class="dialog">
+        <div class="dialog-background"></div>
+        <form method="post" action="module=settings&action=categoryDelete">
+            <div class="dialog-window">
+                <div class="dialog-content">
+                    <div class="dialog-content-indent">
+                        <h1>[`Delete category`]</h1>
+                        {if ($category.type==hubCategoryModel::TYPE_STATIC) && ($category.topics_count) && (count($hub.categories)>1)}
+                        <ul class="menu-v">
+                            <li>
+                                <label><input name="delete" type="radio" value="delete" checked="checked">
+                                    [`Don't delete topics`]
+                                    <span class="hint">
+                                        [`All topics will remain in the hub stream, and only the category will be deleted`]
+                                    </span>
+                                </label>
+                            </li>
+
+                            <li>
+                                {assign var="move_topics_text" value='[`Move all %d topics to`]'|sprintf:$category.topics_count}
+                                <label><input name="delete" type="radio" value="move">
+                                    {$move_topics_text}
+                                </label>
+
+                                <select name="target_category">
+                                    <option value="">[`Select category`]</option>
+                                    {foreach $hub.categories as $target_category}
+                                        <option value="{$target_category.id}" {if ($category.id==$target_category.id)} disabled{/if}>{$target_category.name|escape}</option>
+                                    {/foreach}
+                                </select>
+                            </li>
+                        </ul>
+                        {else}
+                            [`All topics will remain in the hub stream, and only the category will be deleted`]
+                        {/if}
+                    </div>
+                </div>
+                <div class="dialog-buttons">
+                    <div class="dialog-buttons-gradient">
+                        <input type="submit" value="[`Delete`]" class="button red">
+                        [`or`] <a class="cancel" href="#">[`close`]</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{/if}
+
+
+<script type="text/javascript">
+    $(function() {
+
+        var $form = $('#h-category-settings');
+
+        var type = 0;
+        var $type =  $form.find(':input[name="category\\[type\\]"]');
+        var $type_conditions =$form.find(':input[name="category\\[conditions\\]\\[type_id\\]"]'),
+            $meta_title = $form.find('input[name="category[meta_title]"]'),
+            $meta_description = $form.find('textarea[name="category[meta_description]"]'),
+            $og_title = $form.find('input[name="og[title]"]'),
+            $og_description = $form.find('textarea[name="og[description]"]'),
+            $switcher = $form.find('.js-settings-custom-switcher');
+
+        var showViewSettings = function(selector){
+            $form.find('div.js-related-view').each(function(index,el){
+                var $field = $(el);
+                if($field.data('related')==selector){
+                    $field.show().find(':input').attr('disabled',null);
+                } else {
+                    $field.hide().find(':input').attr('disabled',true);
+                }
+            });
+        };
+
+        var setCategoryType = function (value) {
+            type = value;
+            if (value == 'type') {
+                $type_conditions.attr('disabled', null);
+                value += ':' + $type_conditions.find(':selected').data('type');
+            } else {
+                $type_conditions.attr('disabled', true);
+            }
+            showViewSettings(value);
+        };
+        if($type.attr('type')=='hidden'){
+            setCategoryType($type.val());
+        } else {
+            $type.change(function () {
+                if (this.checked) {
+                    setCategoryType(this.value);
+
+                }
+            }).change();
+        }
+
+        $form.find(':input[name="category\\[url\\]"]').on('change keyup keypress',function () {
+            var url = this.value;
+            if(url.length) {
+                $(this).parents('div.field').find('.js-category-url').each(function (index, el) {
+                    var $url = $(el);
+                    $url.text($url.data('url').replace(/%url%/, url));
+                });
+            }
+        });
+
+
+        $type_conditions.change(function(){
+            if (type=='type') {
+                var $this = $(this);
+                var $selected = $this.find(':selected');
+                showViewSettings('type:'+$selected.data('type'));
+
+                var $glyph = $this.parents('div.value').find('.js-glyph:first');
+                $glyph.replaceWith($selected.data('glyph'));
+            }
+        }).change();
+
+        $meta_title.on('change', function () {
+            if ($switcher.prop('checked')) {
+                $og_title.val($(this).val());
+            }
+        });
+
+        $meta_description.on('change', function () {
+            if ($switcher.prop('checked')) {
+                $og_description.val($(this).val());
+            }
+        });
+
+        $switcher.on('change', function () {
+            if ($(this).prop('checked')) {
+                $og_title.attr('disabled', true).val($meta_title.val());
+                $og_description.attr('disabled', true).val($meta_description.val());
+            } else {
+                $og_title.attr('disabled', false).val('');
+                $og_description.attr('disabled', false).val('');
+            }
+        });
+
+        if ($switcher.prop('checked')) {
+            $switcher.change();
+        }
+
+        {if empty($category.id)}
+            // Transliterate name to url
+            var src_input = $('#h-category-name');
+            var dst_input = $('#h-category-url');
+            var timer_id = null;
+            src_input.bind('keydown.category_create', function() {
+                if (timer_id) {
+                    clearTimeout(timer_id);
+                }
+                timer_id = setTimeout(function() {
+                    $.get('?action=transliterate', {
+                        str: src_input.val()
+                    }, function(r) {
+                        if (r.status == 'ok') {
+                            dst_input.val(r.data);
+                        }
+                    }, 'json');
+                }, 500);
+            });
+            dst_input.bind('keydown.category_create', function() {
+                if (timer_id) {
+                    clearTimeout(timer_id);
+                }
+                timer_id = null;
+                src_input.unbind('keydown.category_create');
+                dst_input.unbind('keydown.category_create');
+            });
+        {else}
+            // Category logo deletion link
+            $('#delete-category-logo-link').click(function() {
+                var $a = $(this);
+                if (!confirm($a.attr('title'))) {
+                    return false;
+                }
+
+                $a.closest('.field').find('.h-category-logo').remove();
+                $a.remove();
+
+                $.post($form.attr('action'), { id: {$category.id}, delete_logo: 1 });
+            });
+        {/if}
+
+        $('input[name=type]', $form).click(function() {
+            if ($(this).val() == '0') {
+                $('#s-dynamic-field-group').hide();
+            } else {
+                $('#s-dynamic-field-group').show();
+            }
+        });
+
+        // WYSIWYG for description
+        $form.find('textarea[name="category[description]"]').redactor({
+            minHeight: 150,
+            paragraphy: false,
+            convertDivs: false,
+            lang: $.hub.lang,
+            imageUpload: '?module=pages&action=uploadimage&r=2&',
+            imageUploadFields: {
+                _csrf: $form.find('input[name="_csrf"]').val()
+            },
+            plugins: ['table'],
+            buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'table']
+        });
+
+        // Tags input
+        (function() { "use strict";
+            var $div = $('<div>');
+            var tags = $.map({json_encode(array_values($cloud))},
+                function(tag) {
+                    $div.text(tag.name);
+                    return {
+                        label: $div.html()+'<span class="count">'+tag.count+'</span>',
+                        value: tag.name,
+                        id: tag.id
+                    };
+                }
+            );
+
+            $('#h-category-tags').tagsInput({
+                defaultText: '',
+                width: '', // from .css
+                height: '', // from .css
+                autocomplete_url: '',
+                autocomplete: {
+                    source: function(request, response) {
+                        var result = [];
+                        $.each(tags, function(i, tag) {
+                            if (tag.value.indexOf(request.term) >= 0) {
+                                result.push(tag);
+                                if (result.length >= 5) {
+                                    return false;
+                                }
+                            }
+                        });
+                        response(result);
+                    }
+                }
+            });
+        })();
+
+    });
+</script>

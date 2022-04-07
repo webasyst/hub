@@ -39,7 +39,7 @@ class hubTopicsAction extends waViewAction
         // Mark new topics
         $topic_model = new hubTopicModel();
         $topic_model->checkForNew($topics);
-
+        $this->addCategories($topics);
         // Fetch new comments from DB
         if ($topics) {
             foreach ($topics as &$t) {
@@ -69,7 +69,8 @@ class hubTopicsAction extends waViewAction
 
         // Mark comments as read in session
         $visited_comments = array();
-        foreach($topics as $t) {
+        $user = wa()->getUser();
+        foreach($topics as $topic_id => $t) {
             if (!empty($t['new_comments']) && $t['follow']) {
                 foreach($t['new_comments'] as $c) {
                     if (!empty($c['is_updated']) || !empty($c['is_new'])) {
@@ -77,6 +78,7 @@ class hubTopicsAction extends waViewAction
                     }
                 }
             }
+            $topics[$topic_id]['editable'] = hubHelper::checkTopicRights($t, $user);
         }
         wa('hub')->getConfig()->markAsRead(array(), $visited_comments);
 
@@ -178,5 +180,24 @@ class hubTopicsAction extends waViewAction
             'hub_full_access' => $hub_full_access,
             'current_author' => hubHelper::getAuthor($this->getUserId()),
         ));
+    }
+
+    /**
+     * @param array $topics
+     * @return void
+     * @throws waException
+     */
+    protected function addCategories(&$topics)
+    {
+        $topic_categories_model = new hubTopicCategoriesModel();
+        $category_model = new hubCategoryModel();
+        $topic_ids = array_keys($topics);
+        $category_ids = $topic_categories_model->getByField('topic_id', $topic_ids, 'category_id');
+        $categories = $category_model->getById(array_keys($category_ids));
+        foreach ($category_ids as $category_id => $category_params) {
+            if (isset($topics[$category_params['topic_id']]) && isset($categories[$category_id])) {
+                $topics[$category_params['topic_id']]['categories'][$category_id] = $categories[$category_id];
+            }
+        }
     }
 }

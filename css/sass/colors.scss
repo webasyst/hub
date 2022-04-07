@@ -1,0 +1,191 @@
+.h-gray {
+    background-color: #ededed;
+
+    [data-theme="dark"] & {
+        background-color: #272633;
+    }
+}
+
+.h-green {
+    background-color: #eeffe5;
+
+    [data-theme="dark"] & {
+        background-color: #0c2400;
+    }
+}
+
+.h-blue {
+    background-color: #f5fdfe;
+
+    [data-theme="dark"] & {
+        background-color: #002129;
+    }
+}
+
+.h-purple {
+    background-color: #f8f0fe;
+
+    [data-theme="dark"] & {
+        background-color: #1f0f2e;
+    }
+}
+
+.h-red {
+    background-color: #fff0f3;
+
+    [data-theme="dark"] & {
+        background-color: #3d000e;
+    }
+}
+
+.h-yellow {
+    background-color: #fff7e5;
+
+    [data-theme="dark"] & {
+        background-color: #291b00;
+    }
+}
+
+.h-hub-settings-color-picker {
+    flex: 0 0 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.125em var(--light-gray);
+    cursor: pointer;
+}
+
+.h-hub-color {
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.125em var(--light-gray);
+    cursor: pointer;
+
+    &::before {
+        content: '';
+        position: absolute;
+        opacity: 0;
+
+        width: 1.25em;
+        height: 1.25em;
+
+        background-color: var(--light-gray);
+        border-radius: 50%;
+        transition: opacity var(--timing-fast);
+    }
+
+    svg {
+        position: relative;
+        opacity: 0;
+        transition: opacity var(--timing-fast);
+    }
+
+    &.selected {
+        &::before {
+            opacity: 1;
+        }
+
+        svg {
+            opacity: 1;
+        }
+    }
+
+    &-white {
+        background-color: var(--background-color-blank);
+    }
+
+    &-gray {
+        background-color: #999;
+    }
+
+    &-yellow {
+        background-color: #ffb726;
+    }
+
+    &-red {
+        background-color: #ff7394;
+    }
+
+    &-green {
+        background-color: #70da3b;
+    }
+
+    &-blue {
+        background-color: #4ad4f6;
+    }
+
+    &-purple {
+        background-color: #c289fa;
+    }
+}
+
+.h-hub-text-color {
+    &-gray {
+        color: #999;
+    }
+
+    &-yellow {
+        color: #ffb726;
+    }
+
+    &-red {
+        color: #ff7394;
+    }
+
+    &-green {
+        color: #70da3b;
+    }
+
+    &-blue {
+        color: #4ad4f6;
+    }
+
+    &-purple {
+        color: #c289fa;
+    }
+}
+
+.h-badge {
+    &[data-name=""] {
+        color: var(--text-color-input);
+        background-color: var(--background-color-btn-light-gray);
+        box-shadow: none;
+    }
+
+    &[data-name="accepted"] {
+        background-color: var(--orange);
+    }
+
+    &[data-name="answered"] {
+        background-color: var(--purple);
+    }
+
+    &[data-name="archived"] {
+        background-color: var(--text-color-hint);
+    }
+
+    &[data-name="complete"] {
+        background-color: var(--green);
+    }
+
+    &[data-name="confirmed"] {
+        background-color: var(--pink);
+    }
+
+    &[data-name="inprogress"] {
+        background-color: var(--brown);
+    }
+
+    &[data-name="fixed"] {
+        background-color: var(--bright-sky-blue);
+    }
+
+    &[data-name="pending"] {
+        background-color: var(--dark-gray);
+    }
+
+    &[data-name="rejected"] {
+        background-color: var(--red);
+    }
+}

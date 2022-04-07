@@ -94,7 +94,7 @@ class hubBackendAction extends waViewAction
         $this->view->assign('can_create_topics', $config->getAvailableHubs(hubRightConfig::RIGHT_READ_WRITE));
 
         if (waRequest::request('sidebar')) {
-            $this->setTemplate('templates/actions/backend/include.sidebar.html');
+            $this->setTemplate('backend/include.sidebar.html', true);
         }
 
         $this->view->assign('backend_event', $this->backendEvent());

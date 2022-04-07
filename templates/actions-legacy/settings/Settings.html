@@ -1,0 +1,159 @@
+<div class="shadowed">
+
+    <div class="sidebar left200px h-settings-sidebar">
+        {include file="./Sidebar.html" inline}
+    </div>
+
+    <div class="content left200px blank bordered-left">
+
+        <div class="hidden block double-padded h-saved bordered-bottom">
+            <i class="icon16 yes"></i>[`Settings successfully updated`]
+        </div>
+        <div class="block double-padded blank" id="settings-block">
+            <form action="" method="post" id="settings-form">
+                <div class="fields form">
+
+                    <h5 class="heading"><i class="icon16 userpic20" style="background-image:url({$wa->user()->getPhoto(20)}); margin: 0;"></i> [`My personal settings`]</h5>
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">
+                                [`App icon counter`]
+                                <span class="indicator red">1</span>
+                            </div>
+
+                            <div class="value no-shift">
+                              <label class="s-label-with-check">
+                                <input type="checkbox" name="type_items_count[]" value="comments" class="js-primary-checkbox" {if !empty($settings.type_items_count.comments)} checked="checked"{/if}>
+                                [`New comments on topics I follow`]
+                              </label>
+                            </div>
+                            <div class="value no-shift">
+                              <label class="s-label-with-check">
+                                <input type="checkbox" name="type_items_count[]" value="topics"  {if !empty($settings.type_items_count.topics)} checked="checked"{/if}>
+                                [`New topics published by other users`]
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">
+                                [`Notifications`]
+                            </div>
+                            <div class="value no-shift">
+                              <label>
+                                <input type="checkbox" name="email_following" value="1"{if !empty($settings.email_following)} checked="checked"{/if}>
+                                [`Email me about new comments on topics I follow`]
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {if $is_admin}
+                        <h5 class="heading">[`General settings`]</h5>
+
+                        <div class="field-group">
+                            <div class="field">
+                                <div class="name">
+                                    [`Gravatar`]
+                                </div>
+                                <div class="value no-shift">
+                                  <label>
+                                    <input type="hidden" name="global_settings[gravatar]" value="0">
+                                    <input type="checkbox" name="global_settings[gravatar]" value="1" {if !empty($global_settings.gravatar)} checked="checked"{/if}>
+                                    [`Enable Gravatar userpics`]
+                                  </label>
+                                </div>
+                                <div class="value no-shift">
+                                    [`In case there were no Gravatar userpic uploaded`]:
+                                    <select name="global_settings[gravatar_default]">
+                                        {html_options selected=ifset($global_settings.gravatar_default, 'retro') options=[
+                                            'custom' => "[`Use default userpic`]",
+                                            'mm' => "[`(mystery-man) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)`]",
+                                            'identicon' => "[`a geometric pattern based on an email hash`]",
+                                            'monsterid' => "[`a generated 'monster' with different colors, faces, etc`]",
+                                            'wavatar' => "[`generated faces with differing features and backgrounds`]",
+                                            'retro' => "[`awesome generated, 8-bit arcade-style pixelated faces`]"
+                                        ]}
+                                    </select>
+                                    <br>
+                                    <img id="h-settings-general-gravatar" src="http://www.gravatar.com/avatar/0000000000000000?s=50&d={ifset($global_settings.gravatar_default, 'retro')}" style='width: 50px; margin-top: 10px;'>
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+                    <div class="field-group">
+                      <div class="field">
+                        <div class="value submit">
+                          <input type="submit" name="save" class="button green" value="[`Save`]">
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="clear-both"></div>
+
+    </div>
+
+</div>
+
+<script>(function() {
+
+    var $form = $('#settings-form');
+
+    $form.submit(function() {
+        $('#content .h-saved').slideUp();
+        $form.find(':submit').after($.parseHTML('<i class="icon16 loading"></i>'));
+        $.post("?module=settings", $(this).serialize(), function (html) {
+            $("#content").html(html);
+        });
+        return false;
+    });
+
+    {if !empty($saved)}
+        var $hsaved = $('#content .h-saved').slideDown();
+        setTimeout(function() {
+            $hsaved.slideUp();
+        }, 3000);
+    {/if}
+
+    // Gravatar control
+    (function() {
+        var $preview_img = $('#h-settings-general-gravatar');
+        var $select_wrapper = $preview_img.closest('.value');
+        var $select = $select_wrapper.find('select');
+        var $checkbox = $select_wrapper.closest('.field').find('input:checkbox');
+
+        var gravatar_url = $preview_img.attr('src').replace(/=[^=]+$/, '=');
+
+        var delay = 0;
+        $checkbox.on('change', function() {
+            if ($checkbox.is(':checked')) {
+                $select_wrapper.slideDown(delay);
+                ensurePreview();
+            } else {
+                $select_wrapper.slideUp(delay);
+            }
+        }).change();
+        delay = 300;
+
+        $select.on('change', function() {
+            ensurePreview();
+        });
+
+        function ensurePreview() {
+            var selected = $select.val();
+            if (selected == 'custom') {
+                $preview_img.attr('src', "{$wa_url}wa-content/img/userpic50.jpg");
+            } else {
+                $preview_img.attr('src', gravatar_url+$select.val());
+            }
+        }
+
+    })();
+
+})();</script>

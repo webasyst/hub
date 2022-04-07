@@ -1,0 +1,20 @@
+.h-vote-up {
+    .up,
+    &.up,
+    &:hover {
+        color: var(--green);
+    }
+}
+
+.h-vote-down {
+    .down,
+    &.down,
+    &:hover {
+        color: var(--red);
+    }
+}
+
+.up-bw,
+.down-bw {
+    color: var(--gray);
+}

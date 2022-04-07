@@ -1,0 +1,110 @@
+<mjml>
+    <mj-head>
+        <mj-attributes>
+            <mj-all font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif" font-size="15px" line-height="20px" />
+        </mj-attributes>
+        <mj-style>
+            .body {
+                background-color: #F6F6F6;
+                word-break: break-word;
+            }
+
+            .content {
+                word-break: break-word;
+                background-color: #FFFFFF;
+            }
+
+            .content pre {
+                white-space: pre-wrap;
+                background-color: rgba(255, 255, 255, 0.1);
+                padding: 20px !important;
+            }
+
+            a {
+                color: #1A9AFE !important;
+                text-decoration: none !important;
+            }
+
+            code {
+                background-color: rgba(0, 0, 0, 0.06);
+                border-radius: 3px;
+                padding: 2px 4px;
+            }
+
+            img {
+                max-width: 100%;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                .body {
+                    background-color: rgb(40, 41, 43);
+                }
+
+                .content {
+                    background-color: rgb(32, 33, 37);
+                }
+
+                blockquote {
+                    background-color: rgb(40, 41, 43) !important;
+                }
+
+                body table,
+                .content div,
+                .content p {
+                    color: rgb(232, 233, 237) !important;
+                }
+            }
+        </mj-style>
+    </mj-head>
+    <mj-body css-class="body">
+        <mj-raw>
+            <!-- Company Header -->
+        </mj-raw>
+        <mj-section>
+            <mj-group>
+                <mj-column>
+
+                    <mj-table>
+                        <tr>
+                            <td style="width: 38px;">
+                                <!-- WA App Icon -->
+                                <img src="{$wa->url(true)}wa-apps/hub/img/hub96.png" width="28" height="28" style="vertical-align: middle;" />
+                            </td>
+                            <td>
+                                <strong>{$wa->appName()}</strong>
+                            </td>
+                        </tr>
+                    </mj-table>
+
+                </mj-column>
+                <mj-column>
+                    <!-- WA App Link -->
+                    <mj-text align="right"><a href="{$wa->currentUrl(true)}" target="_blank" style="color: #777777 !important;">{$wa->accountName()}</a></mj-text>
+                </mj-column>
+            </mj-group>
+        </mj-section>
+        <mj-raw>
+            <!-- Intro text -->
+        </mj-raw>
+        <mj-section css-class="content" border-radius="10px">
+            <mj-column>
+                <mj-text>
+                    [`Hi,`]
+                </mj-text>
+
+                <mj-text>
+                    {sprintf_wp('User %s suggests an improvement to your topic “<a href="%s"><strong>%s</strong></a>” as follows:', htmlspecialchars($sender.name), $wa->getUrl('hub/frontend/topic', [ 'id' => $topic.id, 'topic_url' => $topic.url ], true)|escape, $topic.title|escape)}
+                </mj-text>
+
+                <mj-text font-style="italic" font-weight="bold">
+                    {$comment_text|escape|nl2br}
+                </mj-text>
+            </mj-column>
+        </mj-section>
+        <mj-section>
+            <mj-column>
+                <mj-image width="85px" src="{$wa->url(true)}wa-content/img/webasyst-logo.svg"></mj-image>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>

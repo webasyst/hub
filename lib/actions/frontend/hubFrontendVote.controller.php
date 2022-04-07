@@ -76,7 +76,7 @@ class hubFrontendVoteController extends waJsonController
                                 'contact' => $c,
                             ));
                             $m = new waMailMessage();
-                            $m->setSubject(_w('Someone suggested on how to improve your article'));
+                            $m->setSubject(_w('Someone suggested an improvement to your article'));
                             $m->setBody($view->fetch(wa()->getAppPath('templates/mail/Suggestion.html')));
                             $m->setTo($email, $c->getName());
                             $m->send();

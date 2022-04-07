@@ -38,92 +38,63 @@
 
             // Glory to the self-documenting code!
             this.initForm();
+            this.initTitleEditor();
             this.initEditor();
+            this.initTopicSettingsToggle();
             this.initTagsInput();
+            this.initMetaDropdown();
             this.initMetaDataDialog();
+            this.initTopicUrlDropdown();
             this.initTopicUrlEditor();
             this.initCategoriesSelector();
             this.initSubscribersNotification();
             this.initTypeSelector();
-            this.initHubSelector();
             this.initDateEditor();
-
-            // Make button bar sticky
-            var $window = $(window);
-            $('#h-topic-button-bar').sticky({
-                fixed_class: 'h-fixed-button-bar',
-                isStaticVisible: function (e, o) {
-                    return  $window.scrollTop() + $window.height() >= e.element.offset().top + e.element.outerHeight();
-                }
-            });
+            this.initBadgeSelector();
+            this.initFormChangesObserver();
 
             // Make sure the form is in non-changed state
-            this.button.removeClass('yellow').addClass('green');
-        },
-
-        initHubSelector: function() {
-            var that = this;
-            var hubs_selector = $("#hubs-selector");
-            hubs_selector.on('click', 'a', function () {
-                var self = $(this);
-                hubs_selector.find("li.selected").removeClass('selected');
-                self.parent('li').addClass('selected');
-                self.closest('.h-stream').attr('class', 'h-stream h-'+self.data('color'));
-                $("#topic-hub input").val(self.data('id'));
-                $("#topic-hub b i").text(self.text());
-
-                that.hub_id = self.data('id');
-
-                hubs_selector.trigger('change');
-
-                return false;
-            });
-            hubs_selector.find('a[data-id="'+that.hub_id+'"]').click();
-            $("#topic-hub").click(function () {
-                return false;
-            });
+            this.button.removeClass('yellow').addClass('blue');
         },
 
         initTypeSelector: function() {
 
-            var $hubs_selector = $("#hubs-selector");
-            var $wrapper = $.topics_edit.form.find('.h-topic-type:first');
-            var $input = $('#topic-type');
-
-            // Change topic type when user clicks on its element
-            $wrapper.on('click', 'a', function () {
-                var $a = $(this);
-                $('.h-topic-type .selected').removeClass('selected');
-                $a.closest('li').addClass('selected').find('i.h-glyph16').addClass('selected');
-                $input.val($a.data('type')).change();
-                return false;
-            });
+            const $hubs_selector_value = $.topics_edit.form.find('.js-meta-hub-selector-value:first');
+            const $wrapper = $.topics_edit.form.find('.js-meta-topic-type-wrapper:first');
+            const $topicTypeDropdown = $.topics_edit.form.find('.js-meta-topic-type:first');
+            const $topicTypeValue = $.topics_edit.form.find('.js-meta-topic-type-value:first');
 
             // List of topic types depends on selected hub
-            var updateTypesList;
-            $hubs_selector.change(updateTypesList = function() {
-                var hub_id = $hubs_selector.find('li.selected a').data('id');
+            $hubs_selector_value.on('change', updateTypesList);
+
+            updateTypesList();
+
+            $wrapper.show();
+
+            function updateTypesList() {
+                const hub_id = $hubs_selector_value.val();
 
                 // Types available in current hub
-                var type_ids = {};
+                const type_ids = {};
                 $.each($.topics_edit.options.hub_type_ids[hub_id] || [], function(i, type_id) {
                     type_ids[type_id] = true;
                 });
 
                 // Update type selector: show types available in new hub,
                 // and hide everything else
-                var selected_exists = false;
-                var selected_is_hidden = false;
-                $wrapper.find('li').each(function() {
-                    var $li = $(this);
-                    var type_id = $li.find('a').data('type');
+                let selected_exists = false;
+                let selected_is_hidden = false;
+                $topicTypeDropdown.find('li').each(function() {
+                    const $li = $(this);
+                    const type_id = $li.find('a').data('value');
+
                     if (type_ids[type_id]) {
-                        $li.show();
+                        $li.removeClass('hidden');
                         if ($li.hasClass('selected')) {
                             selected_exists = true;
                         }
                     } else {
-                        var $li = $li.hide();
+                        $li.addClass('hidden');
                         if ($li.hasClass('selected')) {
                             selected_is_hidden = true;
                             selected_exists = true;
@@ -131,133 +102,212 @@
                     }
                 });
 
-                // Select first available type if previously selected type
-                // is not available in new hub
+                $topicTypeDropdown.trigger('change');
+
                 if (selected_is_hidden || !selected_exists) {
-                    var $li = $wrapper.find('li:visible:first');
+                    const $li = $topicTypeDropdown.find('li').not('.hidden').first();
+                    $wrapper.show();
+
                     if ($li.length) {
                         $li.find('a').click();
                     } else {
-                        selected_exists && $wrapper.find('.selected').removeClass('selected');
-                        $input.val('').change();
+                        selected_exists && $topicTypeDropdown.find('.selected').removeClass('selected');
+                        $wrapper.hide();
+                        $topicTypeValue.val('').change();
                     }
                 }
-            });
-            updateTypesList();
-
-            $wrapper.show();
+            }
         },
 
         initForm: function() {
-
-            var that = $.topics_edit;
+            const that = $.topics_edit;
             that.form = $("#topic-form");
-            that.button = that.form.find('.button-form-submit');
+            that.button = that.form.find('.js-button-form-submit');
 
+            const $topicInfo = that.form.find('.js-topic-info');
+            const $topicTitle = that.form.find('.js-edit-topic-title');
+            const $topicMeta = that.form.find('.js-topic-meta');
+            const $newModeAlert = that.form.find('.js-new-mode-notification');
+            const $newModeAlertClose = $newModeAlert.find('.js-close-new-mode-notification');
+            const $notificationAlert = that.form.find('.js-saved-with-notification');
+            const $hubSelector = that.form.find('.js-hub-select');
+            const $unpublishLink = that.form.find('#h-unpublish-link');
 
-            $('#ul-priority a').click(function () {
-                $('#ul-priority li.selected').removeClass('selected');
-                $(this).parent().addClass('selected');
-                $('#input-priority').val($(this).data('value')).change();
-                return false;
+            if (!that.options.topic_id) {
+                $topicTitle.focus();
+            }
+
+            // show/close notification about new editor mode
+            const isNotificationAlertHidden = $.storage.get('wa_hub_new_mode_notification');
+
+            if (!isNotificationAlertHidden) {
+                $newModeAlert.removeClass('hidden');
+            }
+
+            $newModeAlertClose.on('click', function(event) {
+                event.preventDefault();
+
+                $.storage.set('wa_hub_new_mode_notification', '1');
+                $newModeAlert.remove();
             });
 
+            $hubSelector.find(`option[value="${$.topics_edit.hub_id}"]`).prop('selected', true);
+
             // Save as a draft button
-            that.form.find('.draft').click(function() {
-                $.topics_edit.form.append('<input type="hidden" name="draft" value="1">');
+            that.form.find('.draft').on('click', function() {
+                that.form.append('<input type="hidden" name="draft" class="js-topic-draft-input" value="1">');
             });
 
             // Link to un-publish the topic
-            $('#h-unpublish-link').click(function() {
-                if (confirm($(this).attr('title'))) {
-                    $.topics_edit.form.append('<input type="hidden" name="draft" value="1">');
-                    $.topics_edit.form.submit();
-                }
+            $unpublishLink.on('click', function(event) {
+                event.preventDefault();
+
+                const confirmTitle = $(this).attr('title');
+                const confirmButtonText = $(this).text();
+
+                $.waDialog.confirm({
+                    title: confirmTitle,
+                    success_button_title: confirmButtonText,
+                    success_button_class: 'warning',
+                    cancel_button_title: $.wa.locale['Cancel'],
+                    cancel_button_class: 'light-gray',
+                    onSuccess() {
+                        $.topics_edit.form.append('<input type="hidden" name="draft" value="1">');
+                        $.topics_edit.form.submit();
+                    }
+                });
             });
 
-            that.form.submit(function () {
-                if (that.button.first().prop('disabled')) {
-                    return false;
+            that.form.on('submit', function(event) {
+                event.preventDefault();
+
+                $topicTitle.blur();
+
+                const isExistSubmitter = (event.originalEvent && event.originalEvent.submitter);
+                let $submitButton;
+                if (isExistSubmitter) {
+                    $submitButton = $(event.originalEvent.submitter);
+                    if ($submitButton.hasClass('draft') && $.browser.mobile) {
+                        $submitButton.html('<span class="js-loading"><i class="fas fa-spinner fa-spin"></i></span>');
+                    } else {
+                        $submitButton.append('<span class="custom-ml-4 js-loading"><i class="fas fa-spinner fa-spin"></i></span>');
+                    }
+                    $submitButton.prop('disabled', true);
                 }
-                $('#topic-editor').waEditor2('sync');
-                that.tags_input.save();
-                var notification_sent = !!that.form.find('input[name="users_to_notify"]').val();
-                that.button.prop('disabled', true).parent().append('<i class="icon16 loading" style="margin-top: 12px;"></i>');
-                $.post($(this).attr('action'), $(this).serialize(), function (response) {
-                    that.button.prop('disabled', false).siblings('.loading').remove();
-                    if (response.status == 'ok') {
-                        that.button.removeClass('yellow').addClass('green');
-                        //that.tags_input.hide(); // tags input is never hidden anymore
 
-                        // When the topic is just saved, remember its ID
-                        if (response.data.add) {
-                            that.form.attr('action', that.form.attr('action') + '&id=' + response.data.topic.id);
+                $.post($(this).attr('action'), $(this).serialize(), function(response) {
+                    if (response.status !== 'ok') {
+                        console.warn(response);
+                        return;
+                    }
+
+                    if (response.data.error) {
+                        console.warn(response);
+                    }
+
+                    that.form.find('.js-topic-draft-input').remove();
+                    that.button.removeClass('yellow').addClass('blue');
+
+                    // When the topic is just saved, remember its ID
+                    if (response.data.add) {
+                        that.form.attr('action', that.form.attr('action') + '&id=' + response.data.topic.id);
+                    }
+
+                    $.sidebar.reload();
+
+                    if (isExistSubmitter) {
+                        $submitButton.prop('disabled', false);
+                        const $spinner = $submitButton.find('.js-loading');
+                        $spinner.html('<i class="fas fa-check-circle"></i>');
+
+                        setTimeout(() => {
+                            $spinner.remove();
+                        }, 2000);
+                    }
+
+                    if (response.data.topic && response.data.topic.status === '0') {
+                        // unpublish topic
+                        if (that.form.is('.published') && that.options.topic_id) {
+                            $.hub.topicEditAction(response.data.topic.id);
+
+                            return;
                         }
 
-                        $.hub.forceHash('#/topic/edit/' + response.data.topic.id + '/');
+                        // save existing draft
+                        if (that.form.is('.draft') && that.options.topic_id) {
+                            compareNewData(response.data.topic.id);
 
-                        if (response.data.topic && response.data.topic.status == '0') {
-                            if (that.form.is('.published')) {
-                                that.form.removeClass('published').addClass('draft');
-                                $.sidebar.reload();
-                            }
-
-                            var t = response.data.topic;
-                            var li = $('#draft-' + t.id);
-                            if (!li.length) {
-                                li = $('<li id="draft-' + t.id +'" class="selected" data-contact-id="' + t.contact_id + '">' +
-                                    '<a href="#/topic/edit/' + t.id + '/">' +
-                                    '<i class="icon16 userpic20" style="background-image: url(\' '  + response.data.contact.photo + ' \')"></i><span class="title">'  + t.title + '</span>' +
-                                    '<br><span class="hint">' + t.datetime + '</span></a></li>');
-                                $('#hub-drafts').append(li).closest('.block').slideDown();
-                            } else {
-                                li.find('.title').html(t.title);
-                            }
-
-                        } else {
-                            if (that.form.is('.draft')) {
-                                that.form.removeClass('draft').addClass('published');
-                                $.sidebar.reload();
-
-                                // Redirect to topic page. Load by hand to pass extra params.
-                                $.hub.forceHash('#/topic/' + response.data.topic.id + '/');
-                                $.hub.load('?module=topics&action=info&id=' + response.data.topic.id + (notification_sent ? '&notifications_sent=1' : ''));
-
-                            }
-                            $('#draft-' + response.data.topic.id).remove();
+                            return;
                         }
 
-                        // Remove the hidden field that could have been added by unpublish link
-                        // or draft button
-                        that.form.find('input:hidden[name="draft"]').remove();
+                        // save new topic to draft
+                        if (!that.options.topic_id) {
+                            $.hub.forceHash('#/topic/edit/' + response.data.topic.id + '/');
+                            $.hub.topicEditAction(response.data.topic.id);
+                        }
+                    }
 
-                        var e = new $.Event('wa_response');
-                        e.response_data = response.data;
-                        that.form.trigger(e);
+                    if (response.data.topic && response.data.topic.status === '1') {
+                        // publish draft
+                        if (that.form.is('.draft')) {
+                            $.hub.forceHash('#/topic/edit/' + response.data.topic.id + '/');
+
+                            // publish with notification
+                            if (that.notificationDialog) {
+                                that.notificationDialog.hide();
+                                $notificationAlert.show();
+
+                                setTimeout(() => {
+                                    $notificationAlert.hide();
+                                    $.hub.topicEditAction(response.data.topic.id);
+                                }, 2000);
+
+                                return;
+                            }
+
+                            // direct publish
+                            $.hub.topicEditAction(response.data.topic.id);
+                        }
+
+                        // save existing topic
+                        if (that.form.is('.published')) {
+                            compareNewData(response.data.topic.id);
+
+                            setTimeout(() => {
+                                that.form.removeClass('with-changes');
+                            }, 2000)
+                        }
                     }
                 }, "json");
 
-                return false;
-            });
+                function compareNewData(id) {
+                    $.get('?module=topics&action=edit&id=' + id, function(data) {
+                        const $data = $(data);
+                        const $dataInfo = $data.find('.js-topic-info');
+                        const $dataMeta = $data.find('.js-topic-meta');
 
-            // Turn the button yellow when something's changed by keyboard event
-            that.form.on('input keypress', function(e) {
-                if ((e.type == 'change' || e.charCode) && that.button.hasClass('green') && !$(e.target).hasClass('ignore-dirty')) {
-                    that.button.removeClass('green').addClass('yellow');
+                        $topicInfo.html($dataInfo.html());
+                        $topicMeta.html($dataMeta.html());
+                    });
                 }
             });
-
-            // Do not submit the form after Enter in input field
-            that.form.on('keypress', 'input:text', function(e) {
-                return (e.which || 0) !== 13;
-            });
-
         },
 
         initTagsInput: function() {
-            var that = this;
-            this.tags_input = tagsInput({
-                target: 'h-topic-tags',
+            const that = this;
+
+            const $tags = that.form.find('.js-topic-tags');
+            const $tagList = $tags.find('.js-tags-list');
+            const $tagsInputPlace = $tags.find('.js-tags-input-place');
+            const $tagsInput = $tags.find('#js-tags-input');
+            const $tagsInputHidden = $tags.find('.js-tags-input-hidden');
+            let tags = $tagsInputHidden.val() ? $tagsInputHidden.val().split(',') : [];
+            const tagTemplate = $tags.find('.js-tag-template').html();
+
+            $tagsInput.tagsInput({
+                'defaultText': '',
+                'width': '',
+                'height': '',
                 autocomplete_url: '',
                 autocomplete: {
                     source: function(request, response) {
@@ -270,15 +320,36 @@
                         });
                     }
                 },
-                width: '', // from .css
-                height: '', // from .css
-                defaultText: '',
-                onAddTag: function() {
-                    that.button.removeClass('green').addClass('yellow');
-                },
-                onRemoveTag: function() {
-                    that.button.removeClass('green').addClass('yellow');
+                onAddTag(tag) {
+                    tags.push(tag);
+
+                    const $tag = $(tagTemplate);
+
+                    $tag.find('.h-tag-name').text(tag);
+
+                    $tag.insertBefore($tagsInputPlace);
+                    $tagsInputHidden.val(tags.join(','));
+
+                    that.form.trigger('wa_hub_topic_edit_change');
                 }
+            });
+
+            const $tagsInputPlugin = that.form.find('#js-tags-input_tag');
+            const $plusIcon = $('<i class="fas fa-plus custom-mr-8 gray"></i>');
+
+            $plusIcon.insertBefore($tagsInputPlugin);
+            $tagsInputPlugin.attr('placeholder', $.wa.locale['Add_tag'])
+
+            $tagList.on('click', '.h-tag-remove', function(event) {
+                event.preventDefault();
+
+                const tagName = $(this).siblings('.h-tag-name').text();
+                tags = tags.filter(tag => tag !== tagName);
+                $tagsInputHidden.val(tags.join(','));
+                $tagsInput.removeTag(tagName);
+                $(this).closest('li').remove();
+
+                that.form.trigger('wa_hub_topic_edit_change');
             });
         },
 
@@ -303,19 +374,20 @@
                 dialog_og_video = dialog.find('input[name="og_video"]'),
                 dialog_og_description = dialog.find('textarea[name="og_description"]'),
                 dialog_params = dialog.find('textarea[name="params"]'),
-                switcher = dialog.find('.js-settings-custom-switcher');
+                switcher = dialog.find('.js-settings-custom-switcher'),
+                dialog_save = dialog.find('.js-meta-save');
 
-            var dialog_is_initialized = false;
+            let dialog_instance;
 
             inputs2sidebar();
 
-            dialog_topic.on('change', function () {
+            dialog_topic.on('input', function () {
                 if (switcher.prop('checked')) {
                     dialog_og_title.val($(this).val());
                 }
             });
 
-            dialog_description.on('change', function () {
+            dialog_description.on('input', function () {
                 if (switcher.prop('checked')) {
                     dialog_og_description.val($(this).val());
                 }
@@ -338,6 +410,13 @@
             edit_link.on("click", function(event) {
                 event.preventDefault();
                 showDialog();
+            });
+
+            dialog_save.on('click', function(event) {
+                event.preventDefault();
+                dialog2inputs();
+                inputs2sidebar();
+                dialog_instance.hide();
             });
 
             // Update sidebar according to data in hidden inputs
@@ -407,81 +486,107 @@
             }
 
             function showDialog() {
-                if (dialog_is_initialized) {
-                    inputs2dialog();
-                    dialog.show();
-                } else {
-                    dialog = dialog.waDialog({
-                        onLoad: function() {
-                            inputs2dialog();
-                        },
-                        onSubmit: function() {
-                            dialog2inputs();
-                            inputs2sidebar();
-                            hideDialog();
-                            return false;
-                        }
-                    });
-                    dialog_is_initialized = true;
+                if (dialog_instance) {
+                    dialog_instance.show();
+                    return;
                 }
-            }
 
-            function hideDialog() {
-                dialog.trigger('close');
+                dialog_instance = $.waDialog({
+                    $wrapper: dialog,
+                    onOpen() {
+                        inputs2dialog();
+                    },
+                    onClose(dialog) {
+                        dialog.hide();
+                        return false;
+                    }
+                });
             }
         },
 
-        initTopicUrlEditor: function() { "use strict";
-            var hub_url_templates = $.topics_edit.options.hub_url_templates;
+        initTitleEditor: function() {
+            const that = this;
 
-            var wrapper = $('#public-url-editor');
-            var wr_editable = wrapper.find('.editable-url');
-            var wr_not_editable = wrapper.find('.not-editable-url');
-            var wr_no_frontend = wrapper.find('.no-frontend');
-            var hubs_selector = $("#hubs-selector");
+            const $title = that.form.find('.js-edit-topic-title');
+            const $titleInput = that.form.find('#h-topic-title');
 
-            var topic_url_input = $('#h-topic-url-input');
+            $title.on('input', syncValue);
+            $title.on('paste', clearHtml);
+            $title.on('keydown', disableOnPressEnter);
 
-            wrapper.find('.edit-link').click(function() {
-                enableEditMode();
-                topic_url_input.focus();
-                return false;
-            });
+            function syncValue(event) {
+                $titleInput.val($title.text());
+                that.form.trigger('wa_hub_topic_edit_change');
+            }
 
-            hubs_selector.change(function() {
-                enableEditMode(); // since URLs will not work until saved anyway, no reason to keep them clickable
-                updateURLs();
-            });
+            function clearHtml(event) {
+                event.preventDefault();
 
-            $.topics_edit.form.on('wa_response', function(e) {
-                // If the topic is saved as not a draft, put the editor in clickable mode
-                if (e.response_data.topic && e.response_data.topic.status == '1') {
-                    wr_not_editable.show();
-                    wr_editable.hide();
-                    wr_no_frontend.hide();
-                    updateURLs();
+                let text = event.originalEvent.clipboardData.getData('text/plain');
+                text = text.replace(/<[^>]*>?/gm, '');
+
+                if (document.queryCommandSupported('insertText')) {
+                    document.execCommand('insertText', false, text);
+                } else {
+                    document.execCommand('paste', false, text);
                 }
+            }
+
+            function disableOnPressEnter(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    $title.blur();
+                }
+            }
+        },
+
+        initTopicSettingsToggle: function() {
+            const $topicSettingsLink = this.form.find('.js-topic-settings-link');
+            const $topicSettings = this.form.find('.js-topic-settings');
+
+            $topicSettingsLink.on('click', function(event) {
+                event.preventDefault();
+
+                $topicSettings.slideToggle(200);
+            });
+
+            $topicSettings.on('change', () => {
+                this.form.trigger('wa_hub_topic_edit_change');
+            });
+        },
+
+        initTopicUrlDropdown: function() {
+            const $dropdown = $('.js-topic-link');
+
+            $dropdown.waDropdown();
+        },
+
+        initTopicUrlEditor: function() {
+            const that = this;
+
+            const hub_url_templates = $.topics_edit.options.hub_url_templates;
+
+            const $wrapper = $('#public-url-editor');
+            const wr_editable = $wrapper.find('.editable-url');
+            const wr_no_frontend = $wrapper.find('.no-frontend');
+            const $hubs_selector_value = $.topics_edit.form.find('.js-meta-hub-selector-value:first');
+            const topic_url_input = $('#h-topic-url-input');
+
+            $hubs_selector_value.on('change', updateURLs);
+
+            topic_url_input.on('input', () => {
+                that.form.trigger('wa_hub_topic_edit_change');
             });
 
             updateURLs();
 
-            if ($.topics_edit.options.topic_id) {
-                if ($.topics_edit.form.find('input.draft:submit').length > 0) {
-                    setTimeout(enableEditMode, 0);
-                }
-                wrapper.removeClass('hidden');
-            } else {
+            if (!$.topics_edit.options.topic_id) {
                 // Auto-fill url field when user modifies draft title
                 $.topics_edit.title_input = titleInput({
                     src: 'h-topic-title',
                     dst: 'h-topic-url-input'
                 });
 
-                // For new topics the editor is not visible until user starts to enter the topic title
-                topic_url_input.one('change', function() {
-                    wrapper.slideDown().removeClass('.hidden');
-                    enableEditMode();
-                });
                 topic_url_input.one('keyup', function() {
                     $.topics_edit.title_input.stop();
                 });
@@ -489,69 +594,73 @@
 
             // Update human-visible URLS in links etc. using data from the form (hub_id and topic_url).
             function updateURLs() {
-                var hub_id = hubs_selector.find('li.selected a').data('id');
+                const hub_id = $hubs_selector_value.val();
+
                 if (!hub_id || !hub_url_templates[hub_id]) {
-                    wr_not_editable.hide();
-                    wr_no_frontend.show();
-                    wr_editable.hide();
+                    wr_no_frontend.removeClass('hidden');
+                    wr_editable.addClass('hidden');
                     return;
-                } else if (wr_no_frontend.is(':visible')) {
-                    wr_no_frontend.hide();
-                    wr_editable.show();
+                } else if (wr_no_frontend.not('.hidden')) {
+                    wr_no_frontend.addClass('hidden');
+                    wr_editable.removeClass('hidden');
                 }
 
-                var url_stub = hub_url_templates[hub_id].replace('%topic_id%', $.topics_edit.options.topic_id || '<id>');
+                const url_stub = hub_url_templates[hub_id].replace('%topic_id%', $.topics_edit.options.topic_id || '<id>');
                 wr_editable.find('.before-topic-url').text(url_stub.split('%topic_url%')[0]);
                 wr_editable.find('.after-topic-url').text(url_stub.split('%topic_url%')[1] || '');
-
-                var url = url_stub.replace('%topic_url%', topic_url_input.val());
-                wr_not_editable.find('a.preview').text(url).attr('href', url);
-            }
-
-            // Hide the clickable link and show text field to modify topic URL.
-            function enableEditMode() {
-                if (wr_not_editable.is(':visible')) {
-                    wr_not_editable.hide();
-                    wr_editable.show();
-                }
             }
         },
 
         initCategoriesSelector: function() { "use strict";
 
-            var $hubs_selector = $("#hubs-selector");
+            const $hubs_selector = $('.js-meta-hub-selector');
+            const $hubs_selector_value = $('.js-meta-hub-selector-value');
+            const $categoriesWrapper = $('.js-meta-category-editor');
+            const $categoriesDropdown = $('.js-meta-category-dropdown');
+            const $categoriesDropdownBody = $categoriesDropdown.find('.dropdown-body');
+            const $topicCategoryInput = $('.js-topic-category');
 
-            updateCategoriesInput();
-            $hubs_selector.change(function() {
-                updateCategoriesInput();
+            $hubs_selector.waDropdown({
+                items: '.menu > li > a',
+                hover: false,
+                ready(dropdown) {
+                    const currentHubItem = dropdown.$menu.find(`[data-id="${$.topics_edit.hub_id}"]`);
+                    currentHubItem.click();
+                },
+                change(event, item) {
+                    const $item = $(item);
+                    const id = $item.data('id');
+
+                    $item.closest('li').addClass('selected').siblings().removeClass('selected');
+                    $hubs_selector_value.val(id).trigger('change');
+                    updateCategoriesInput();
+                }
             });
 
+            updateCategoriesInput();
+
             function updateCategoriesInput() {
-
-                var hub_id = $hubs_selector.find('li.selected a').data('id');
-
-                var categories_wrapper = $('#categories-editor');
-                var categories_input_wrapper = $('#categories-input');
+                const hub_id = $hubs_selector_value.val();
 
                 // When selector is already updated to match current hub,
                 // there's nothing else to do.
-                var selector_hub_id = categories_input_wrapper.data('hub_id');
-                if (selector_hub_id && selector_hub_id == hub_id) {
+                const selector_hub_id = $categoriesDropdown.data('hub_id');
+                if (selector_hub_id && selector_hub_id === hub_id) {
                     return;
                 }
 
-                categories_input_wrapper.empty().data('hub_id', hub_id);
+                $categoriesDropdownBody.empty().data('hub_id', hub_id);
 
                 // Are there any categories in this hub?
                 if (!$.topics_edit.options.categories[hub_id]) {
-                    categories_wrapper.slideUp();
+                    $categoriesWrapper.hide();
                     return;
                 }
 
-                categories_wrapper.slideDown();
+                $categoriesWrapper.show();
 
                 // Pre-selected categories for this topic
-                var selected_categories;
+                let selected_categories;
                 if (hub_id == $.topics_edit.options.initial_hub_id) {
                     selected_categories = $.topics_edit.options.initial_topic_categories;
                 } else {
@@ -560,99 +669,161 @@
 
                 // For each category this topic is in, create a <select> element.
                 $.each(selected_categories, function(i, category_id) {
-                    i > 0 && categories_input_wrapper.append($.parseHTML('<br>'));
-                    categories_input_wrapper.append(createSelectElement(hub_id, category_id));
+                    $categoriesDropdownBody.append(createSelectElement(hub_id, category_id));
                 });
 
-                // If no <select>s are created, make an empty one.
+                // If no menus are created, make an empty one.
                 if (!selected_categories.length) {
-                    categories_input_wrapper.append(createSelectElement(hub_id));
+                    const toggleText = $.wa.locale['choose_category'] || 'Choose category...';
+                    $categoriesDropdownBody.append(createSelectElement(hub_id));
+                    $categoriesDropdown.find('.dropdown-toggle').text(toggleText);
+                    $topicCategoryInput.val('');
+                }
+
+                if (selected_categories.length) {
+                    $categoriesDropdownBody.find('.selected a').click();
                 }
             }
 
             function createSelectElement(hub_id, category_id) {
-                var options = [$($.parseHTML('<option value=""></option>'))];
+                const options = [];
+
                 $.each($.topics_edit.options.categories[hub_id], function(i, c) {
-                    options.push($($.parseHTML('<option value="'+c.id+'"'+(category_id == c.id ? ' selected' : '')+'></option>')).text(c.name));
+                    let optionClass = category_id === Math.abs(c.id) ? ' selected' : '';
+                    options.push($(`<li class="${optionClass}"><a href="#" data-value="${c.id}">${c.name}</a></li>`));
                 });
-                return $($.parseHTML('<select name="topic[categories][]"></select>')).append(options);
+
+                return $('<ul class="menu"></ul>').append(options);
             }
 
         },
 
+        initMetaDropdown: function() {
+            const $metaDropdown = $('.js-meta-dropdown');
+
+            $metaDropdown.each((index, dropdown) => {
+                const $dropdown = $(dropdown);
+                const $dropdownInput = $dropdown.next('.js-meta-dropdown-value');
+
+                $dropdown.waDropdown({
+                    items: '.menu > li > a',
+                    hover: false,
+                    change(event, item) {
+                        const $item = $(item);
+                        const value = $item.data('value');
+
+                        $item.closest('li').addClass('selected').siblings().removeClass('selected');
+                        $dropdownInput.val(value);
+                    }
+                });
+            });
+        },
+
         initSubscribersNotification: function() {
+            const that = this;
 
-            var $wrapper = $('#h-topic-button-bar').children(':first');
-            var $form_wrapper = $('#subscribers-form-wrapper');
-            var $autocomplete = $form_wrapper.find('.subscriber-autocomplete:first');
-            var $users_wrapper = $autocomplete.siblings('.users-to-notify');
+            const $notificationButton = $('.notify-subscribers-toggle');
+            const notificationHtml = $('.js-notification-publish').html();
+            let users_to_notify = [];
 
-            // Toggle edit / notifications mode when user clicks "Notify subscribers about this topic"
-            $wrapper.on('click', '.notify-subscribers-toggle', function() {
-                $wrapper.toggleClass('editing selecting-subscribers');
+            $notificationButton.on('click', function(event) {
+                event.preventDefault();
+
+                if (that.notificationDialog) {
+                    that.notificationDialog.show();
+                    setAutocomplete(that.notificationDialog);
+                    return;
+                }
+
+                that.notificationDialog = $.waDialog({
+                    html: notificationHtml,
+                    onOpen($dialog, dialog) {
+                        setAutocomplete(dialog);
+                    },
+                    onClose(dialog) {
+                        dialog.$content.find('.subscriber-autocomplete').autocomplete('destroy');
+                        dialog.hide();
+                        return false;
+                    }
+                });
             });
 
-            // Autocomplete to search users
-            $autocomplete.autocomplete({
-                source: '?action=autocomplete&type=usergroup&fullgroups=1',
-                minLength: 2,
-                delay: 300,
-                select: function (event, ui) {
+            function setAutocomplete(dialog) {
+                const $autocomplete = dialog.$content.find('.subscriber-autocomplete');
+                const $users_wrapper = $autocomplete.siblings('.users-to-notify');
 
-                    if (ui.item.id > 0) {
-                        addUser(ui.item);
-                    } else {
-                        $.each(ui.item.users, function(i, v) {
-                            addUser(v);
-                        });
+                $autocomplete.autocomplete({
+                    source: '?action=autocomplete&type=usergroup&fullgroups=1',
+                    minLength: 2,
+                    delay: 300,
+                    select(event, ui) {
+                        $autocomplete.val('').focus();
+
+                        const userInList = users_to_notify.includes(ui.item.id);
+                        if (userInList) {
+                            return false;
+                        }
+
+                        if (ui.item.id > 0) {
+                            addUser(ui.item);
+                        } else {
+                            $.each(ui.item.users, function(i, v) {
+                                addUser(v);
+                            });
+                        }
+
+                        return false;
+                    },
+                    focus(event, ui) {
+                        this.value = ui.item.name;
+                        return false;
+                    }
+                });
+
+                // Delete user from notify list
+                $users_wrapper.on('click', '.close', function() {
+                    const id = $(this).closest('.h-notify-user').data('user-id');
+                    users_to_notify = users_to_notify.filter(item => +item !== id);
+                    $(this).closest('.h-notify-user').remove();
+                    dialog.resize();
+                });
+
+                // When submitting through "Publish and notify", add form field to send notifications
+                const $submitButton = dialog.$wrapper.find('.js-notify-subscribers-submit');
+                $submitButton.on('click', function(event) {
+                    event.preventDefault();
+
+                    $(this).append('<i class="fas fa-spinner fa-spin custom-ml-4 js-loading"></i>');
+
+                    if (users_to_notify.length) {
+                        const notificationText = dialog.$content.find('.notification-message').val();
+                        that.form.append($(`<input type="hidden" name="users_to_notify" value="${users_to_notify.join(',')}">`));
+                        that.form.append(`<textarea class="hidden" name="notification_message">${notificationText}</textarea>`);
                     }
 
-                    $autocomplete.val('').focus();
-                    return false;
-                },
-                focus: function (event, ui) {
-                    this.value = ui.item.name;
-                    return false;
-                }
-            });
-
-            // Delete user from notify list
-            $users_wrapper.on('click', '.icon10.close', function() {
-                $(this).closest('.h-notify-user').remove();
-            });
-
-            // When submitting through "Publish and notify", add form field to send notifications
-            $wrapper.find('.notify-subscribers-submit').click(function() {
-                var users_to_notify = [];
-                $users_wrapper.children('.h-notify-user').each(function() {
-                    users_to_notify.push($(this).data('user-id'));
+                    that.form.submit();
                 });
-                if (users_to_notify.length) {
-                    $wrapper.append($($.parseHTML('<input type="hidden" name="users_to_notify">')).val(users_to_notify.join(',')));
-                }
-            });
 
-            // Helper to append user HTML into `To` field.
-            function addUser(data) {
-                var $div = $users_wrapper.siblings('.template').clone().removeClass('hidden template');
-                $div.find('.username').text(data.name);
-                $div.data('user-id', data.id);
-                if (data.userpic20) {
-                    $div.find('.icon-has-userpic').css('background-image', 'url('+data.userpic20+')');
-                    $div.find('.icon-no-userpic').remove();
-                } else {
-                    $div.find('.icon-has-userpic').remove();
+                // Helper to append user HTML into `To` field.
+                function addUser(data) {
+                    const $div = $users_wrapper.siblings('.template').clone().removeClass('hidden template');
+                    $div.find('.username').text(data.name);
+                    $div.attr('data-user-id', data.id);
+                    users_to_notify.push(data.id);
+                    dialog.resize();
+
+                    return $div.appendTo($users_wrapper);
                 }
-                return $div.appendTo($users_wrapper);
             }
-
         },
 
         initDateEditor: function() {
             $('#topic-create-date').val($('#topic-create-date').val()*1000); //convert php timestamp to js timestamp
 
-            $('#edit-datetime-link').click(function() {
-                var $wrapper = $(this).closest('.block');
+            $('#edit-datetime-link').on('click', function(event) {
+                event.preventDefault();
+
+                const $wrapper = $(this).closest('.js-editable-switch');
                 $wrapper.find('.non-editable-view').hide();
 
                 $inputs = $wrapper.find('.editable-view').show().find(':input').prop('disabled', false);
@@ -673,36 +844,118 @@
         },
 
         initEditor: function() {
-            var that = this;
+            const that = this;
 
-            if(!$.fileupload) {
-                $.wa.loadFiles(wa_url+"wa-content/js/jquery-plugins/fileupload/jquery.fileupload.js?v"+$.hub.framework_version);
-            }
+            RedactorX('#topic-editor', {
+                control: true,
+                context: true,
+                codemirror: {
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    mode: {
+                        name: 'text/x-smarty',
+                        baseMode: 'text/html'
+                    },
+                    theme: 'monokai'
+                },
+                editor: {
+                    lang: $.hub.lang || 'en',
+                    minHeight: '300px'
+                },
+                replaceTags: false,
+                clean: {
+                    enter: false,
+                    comments: true
+                },
+                buttons: {
+                    context: ['bold', 'italic', 'deleted', 'code', 'link', 'alignment', 'sub', 'sup', 'kbd']
+                },
+                toolbar: {
+                    hide: ['bold', 'italic', 'deleted', 'link']
+                },
+                topbar: !(!!that.options.topic_id),
+                format: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'ul', 'ol'],
+                image: {
+                    upload: '?module=pages&action=uploadimage&r=x&absolute=1',
+                    data: {
+                        _csrf: that.form.find('input[name="_csrf"]').val()
+                    }
+                },
+                buttons: {
+                    topbar: ['undo', 'redo', 'shortcut']
+                },
+                quote: {
+                    template: `<blockquote data-placeholder="${$.wa.locale["blockquote"] || 'Quote...'}"></blockquote>`
+                },
+                plugins: ['alignment', 'blockcode', 'imageposition', 'inlineformat', 'removeformat', 'allowstyle'],
+                subscribe: {
+                    'editor.change': function(event) {
+                        that.form.trigger('wa_hub_topic_edit_change');
+                    },
+                    'editor.before.copy': function(event) {
+                        event.stop();
 
-            $('#topic-editor').waEditor2({
-                allowedTags: 'iframe|img|a|b|i|u|pre|blockquote|p|strong|em|del|strike|span|ul|ol|li|div|span|br|table|thead|tbody|tfoot|tr|td|th|h1|h2|h3|h4|h5|h6'.split('|'),
-                formatting: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5'],
-                buttons: ['format', 'bold', 'italic', 'underline', 'deleted', 'lists',
-                          'outdent', 'indent', 'image', 'video', 'table', 'link', 'alignment',
-                          'horizontalrule', 'codeblock', 'blockquote'],
-                plugins: ['fontcolor', 'fontsize', 'fontfamily', 'table', 'video', 'alignment', 'codeblock', 'blockquote'],
-                upload_img_dialog: '#s-upload-dialog',
-                lang: $.hub.lang,
-                imageUpload: '?module=pages&action=uploadimage&r=2&absolute=1',
-                imageUploadFields: {
-                    _csrf: that.form.find('input[name="_csrf"]').val()
+                        const clipboard = event.params.e.clipboardData;
+
+                        const html = $.wa.decodeHTML(event.get('html'));
+                        const text = this.app.content.getTextFromHtml(html, { nl: true });
+
+                        clipboard.setData('text/html', html);
+                        clipboard.setData('text/plain', text);
+                    },
+                    'editor.click': function(event) {
+                        const e = event.params.e;
+                        const link = this.dom(e.target).closest('a');
+
+                        if (e.ctrlKey && !e.shiftKey && link.length) {
+                            const a = document.createElement('a');
+                            a.setAttribute('href', e.target.href);
+                            a.setAttribute('target', '_blank');
+                            a.click();
+                            a.remove();
+                        }
+
+                        if (e.ctrlKey && e.shiftKey && link.length) {
+                            window.location.href = e.target.href;
+                        }
+                    },
+                    'popup.open': function(event) {
+                        if (this.app.popup.name === 'link-items') {
+                            const link = this.app.selection.getNodes({ tags: ['a'] });
+                            if (link.length) {
+                                const nodes = this.dom(this.app.popup.getItems().nodes[0]);
+                                const newTabLocale = $.wa.locale["open_in_new_tab"];
+
+                                nodes.prepend(`
+                                    <div class="rx-popup-item rx-popup-stack-item">
+                                        <a href="${link[0].href}" class="flexbox width-100" target="_blank">
+                                            <span class="wide">${newTabLocale || 'Open in new tab'}</span>
+                                            <span class="custom-ml-4"><i class="fas fa-external-link-alt"></i></span>
+                                        </a>
+                                    </div>
+                                `);
+
+                                if (!newTabLocale) {
+                                    console.error('Missing locale: open_in_new_tab');
+                                }
+                            }
+                            return;
+                        }
+
+                        const $inputUrl = this.app.popup.getElement().find('.rx-form-input[name="url"]');
+                        const $btn = this.app.popup.getFooterPrimary();
+
+                        if ($inputUrl.length) {
+                            $inputUrl.on('keydown', (event) => {
+                                if (event.which === 13) {
+                                    event.stopPropagation();
+                                    $btn.click();
+                                }
+                            })
+                        }
+                    }
                 },
-                callbacks: {
-                    keydown: function () {} // without this waEditor intercepts Ctrl+S event in Redactor
-                },
-                changeCallback: function() {
-                    that.form.change();
-                    $(window).scroll();
-                }
             });
-
-            // without this waEditor intercepts Ctrl+S event in Ace
-            ace.edit($('#topic-editor').closest('.h-topic-editor-wrapper').find('> .ace > .ace_editor')[0]).commands.removeCommand('waSave');
 
             // Save on Ctrl+S, or Cmd+S
             (function() {
@@ -715,25 +968,59 @@
                 });
             })();
 
-            // Make sure sticky bottom buttons behave correctly when user switches between editors
-            $('#topic-editor').closest('.h-topic-editor').find('.html,.wysiwyg').click(function() {
-                setTimeout(function() { $(window).scroll(); }, 0);
-            });
-
             function submitIfCtrlS(event) {
                 if ($.hub.helper.isCtrlS(event)) {
+                    event.preventDefault();
+
                     if (that.form.is('.draft')) {
                         $.topics_edit.form.append('<input type="hidden" name="draft" value="1">');
                     }
                     that.form.submit();
-                    event.preventDefault();
-                    return false;
                 }
             }
+        },
+
+        initBadgeSelector: function() {
+            const $wrapper = $('.js-badge-selector');
+
+            if (!$wrapper.length) {
+                return;
+            }
+
+            const that = this;
+
+            $wrapper.waDropdown({
+                items: ".menu > li > a",
+                change(event, target, dropdown) {
+                    const badge_id = $(target).data('id');
+
+                    dropdown.$button.find('.h-badge').remove();
+                    dropdown.$button.attr('data-name', badge_id);
+                    dropdown.$button.prepend('<i class="fas fa-spinner fa-spin custom-mr-4"></i>');
+
+                    $.post(`?module=topics&action=changeBadge&id=${that.options.topic_id}`, { badge: badge_id }).always(function() {
+                        dropdown.$button.find('.fa-spinner').remove();
+                    });
+                }
+            });
+        },
+
+        initFormChangesObserver: function() {
+            const that = this;
+
+            if (!that.options.topic_id) {
+                return;
+            }
+
+            that.form.on('wa_hub_topic_edit_change', () => {
+                if (that.button.hasClass('blue')) {
+                    that.button.removeClass('blue').addClass('yellow');
+                }
+
+                that.form.addClass('with-changes');
+            });
         }
     };
-
-
 
     function titleInput(options) {
         var instance = {
@@ -743,16 +1030,17 @@
             src_input: null,
 
             init: function() {
-                var src_input = $('#' + options.src);
-                var dst_input = $('#' + options.dst);
-                var that = this;
+                const src_input = $('.' + options.src);
+                const dst_input = $('#' + options.dst);
+                const that = this;
+
                 src_input.bind('keydown.topic_edit', function() {
                     if (that.timer_id) {
                         clearTimeout(that.timer_id);
                     }
                     that.timer_id = setTimeout(function() {
                         $.get('?action=transliterate', {
-                            str: src_input.val()
+                            str: src_input.text()
                         }, function(r) {
                             if (r.status == 'ok') {
                                 dst_input.val(r.data).change();
@@ -771,89 +1059,6 @@
                 this.timer_id = null;
                 this.src_input.unbind('keydown.topic_edit');
             }
-        };
-        return instance.init();
-    }
-
-    // constructor of wrapper on tagsinput widget
-    function tagsInput(options) {
-        var instance = {
-            options: {},
-            init: function() {
-
-                this.options = options;
-                var target_id = options.target;
-                var tags = $('#' + target_id);
-                var tags_input = $('#' + target_id + '-input');
-                var tags_link = $('#' + target_id + '-edit');
-                tags_input.tagsInput(options);
-
-                var widget = $('#' + target_id + '-input_tagsinput').hide();
-
-                this.tags = tags;
-                this.link = tags_link;
-                this.tags_input = tags_input;
-                this.widget = widget;
-
-                var that = this;
-                tags_link.click(function() {
-                    tags_input.val(
-                        tags.children('.tag').map(
-                            function() { return $(this).text(); }
-                        ).toArray().join(',')
-                    );
-                    tags_input.importTags(tags_input.val());
-                    that.show();
-                    return false;
-                });
-
-                this.show();
-                return this;
-            },
-
-            setOptions: function(name, value) {
-                this.options.name = value;
-            },
-
-            save: function () {
-                if (this.widget) {
-                    var e = jQuery.Event("keypress", {which:13});
-                    $('#h-topic-tags-input_tag').trigger(e);
-                }
-            },
-
-            show: function() {
-                this.widget.show();
-                this.tags.hide();
-                this.link.hide();
-            },
-
-            hide: function() {
-                this.widget.hide();
-                var val = this.tags_input.val();
-                if (val) {
-                    var unique = {};
-                    var tags = [];
-                    $(val.split(',')).each(function(i, item) {
-                            item = item.toLocaleLowerCase();
-                            if (unique[item] !== true) {
-                                tags.push('<span class="tag">' + item + '</span>');
-                            }
-                            unique[item] = true;
-                    });
-                    this.tags.html(tags.join(' '));
-                } else {
-                    this.tags.html('<span class="gray">' + $_('No tags assigned')  + '</span>');
-                }
-                this.tags.show();
-                this.link.show();
-            },
-
-            clear: function() {
-                this.tags_input.importTags('');
-                //this.hide(); // tags input is never hidden anymore
-            }
-
         };
         return instance.init();
     }

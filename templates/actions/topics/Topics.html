@@ -1,293 +1,410 @@
-<div class="h-stream{if !empty($hub_color)} h-{$hub_color}{/if} h-mode-normal">
+<div class="content blank">
+    <div class="article">
+        <div class="article-body">
+            <div class="alert-fixed-box">
+                <div class="h-saved alert success" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    [`Saved`]
+                    <a href="#" class="h-close-saved alert-close"><i class="fas fa-times"></i></a>
+                </div>
+            </div>
 
-    <div class="h-header">
-
-        <ul class="menu-h h-sort js-bulk-menu">
-            <li>
-                <a href="#"><i class="icon16 hamburger"></i></a>
-            </li>
-            <li style="display: none;">
-                <a href="#" class="js-bulk-action" data-action="move" data-category="{if !empty($category.id)}{$category.id}{/if}" data-hub="{if !empty($hub.id)}{$hub.id}{elseif !empty($category.hub_id)}{$category.hub_id}{/if}"><i class="icon16 move"></i>[`Move`]<span class="indicator js-count">0</span></a>
-            </li>
-            <li style="display: none;">
-                <a href="#" class="js-bulk-action" data-action="delete" data-confirm="[`Selected topics will be permanently deleted. Are you sure?`]"><i class="icon16 delete"></i>[`Delete`]<span class="indicator js-count">0</span></a>
-            </li>
-            <li style="display: none;">
-                <ul class="menu-h dropdown">
-                    <li>
-                        <a href="javascript:void(0)">
-                            [`Priority`]
-                            <span class="indicator js-count">0</span>
-                        </a>
-                        <ul class="menu-v with-icons">
-                            <li><a href="#" class="js-bulk-action" data-action="priority" data-priority="1"><i class="icon16 exclamation-red"></i>[`High`]</a></li>
-                            <li><a href="#" class="js-bulk-action" data-action="priority" data-priority="0"><i class="icon16 status-gray-tiny"></i>[`Normal`]</a></li>
-                            <li><a href="#" class="js-bulk-action" data-action="priority" data-priority="-1"><i class="icon16 status-blue-tiny"></i>[`Low`]</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li style="display: none;">
-                <a href="#" class="gray inline-link"><b><i>[`Cancel`]</i></b></a>
-            </li>
-        </ul>
-
-        <div class="h-search-form show-in-normal-mode">
-            <form id="search-form">
-                <input id="search-query" type="search" placeholder="[`Search topics`]" autocomplete="off" {if isset($query)}value="{$query|escape}"{/if}>
-            </form>
-            <script type="text/javascript">
-                $('#search-form').submit(function () {
-                    if ($('#search-query').val()) {
-                        $.wa.setHash('#/search/' + $('#search-query').val());
-                    }
-                    return false;
-                });
-            </script>
-        </div>
-
-        {if $type != 'search'}
-            <ul class="menu-h dropdown h-sort js-sort-menu">
+            {if !empty($hub_context) && $type == 'category'}
+            <ul class="breadcrumbs">
                 <li>
+                    <a href="#/hub/{$hub_context.id}/" class="gray">
+                        {if !empty($hub_context.params.color) && $hub_context.params.color != 'white'}
+                        <i class="fas fa-circle smaller h-hub-text-color-{$hub_context.params.color}"></i>
+                        {/if}
+
+                        {$hub_context.name|escape}
+
+                        {if empty($hubs[$hub_context.id].status)}
+                        <i class="fas fa-lock small"></i>
+                        {/if}
+                    </a>
+                </li>
+
+                {if !empty($category) && $type != 'category'}
+                <li><a href="#/category/{$category.id}/" class="gray">{$category.name|escape}</a></li>
+                {/if}
+            </ul>
+            {/if}
+
+            <div class="flexbox middle wrap h-topic-header custom-py-12 js-topics-header">
+                <div class="h-topics-selected wide custom-mb-4">
+                    [`Selected`]:
+                    <span class="badge smaller blue js-count">0</span>
+                </div>
+
+                <div class="wide flexbox custom-mr-12 width-100-mobile custom-mr-0-mobile custom-mb-12-mobile h-topics-title">
+                    {if $type == 'hub' && !empty($hub_context.params.color) && $hub_context.params.color != 'white'}
+                    <i class="fas fa-circle custom-mt-12 custom-mr-8 h-circle-mobile h-hub-text-color-{$hub_context.params.color}"></i>
+                    {/if}
+
+                    <h2 class="custom-my-0 custom-mr-8 list-title{if empty($title)} gray{/if} js-page-title">
+                        {if $type == 'tag'}
+                        <span class="smaller text-gray">#</span>
+                        {/if}
+
+                        <span class="title">{$title|default:'[`(no name)`]'|escape}</span>
+                    </h2>
+
+                    {if $type == 'category'}
+                    {if $is_admin}
+                    <a href="#" class="button circle light-gray small custom-mt-4 flex-shrinkless stream-edit" data-category-id="{ifset($category.id)}"><i class="fas fa-pen text-blue"></i></a>
+                    {/if}
+                    {elseif $type == 'filter'}
+                    {if $is_admin || (-$filter.contact_id == $wa->userId())}
+                    <a href="#" class="button circle light-gray small custom-mt-4 flex-shrinkless stream-edit" data-filter-id="{ifset($filter.id)}"><i class="fas fa-pen text-blue"></i></a>
+                    {/if}
+                    {elseif $type == 'hub'}
+                    {if $is_admin}
+                    <a href="#/settings/hub/{ifset($hub.id)}/" class="button circle light-gray flex-shrinkless"><i class="fas fa-cog"></i></a>
+                    {/if}
+                    {/if}
+                </div>
+
+                {if $type !== 'search'}
+                <div class="dropdown h-sort small custom-mr-12 js-sort-menu">
                     {$sorts = [ 'recent' => "[`Newest`]", 'popular' => "[`Popular`]", 'updated' => "[`Updated`]" ]}
                     {if !empty($category.id) && empty($category.type)}
-                        {$sorts = ['manual' => "[`Manual sort`]"] + $sorts}
+                    {$sorts = ['manual' => "[`Manual sort`]"] + $sorts}
                     {/if}
                     {if !$order}{$order = 'recent'}{/if}
 
-                    <a href="#" class="inline-link"><b><i>{ifset($sorts[$order], $order)}</i></b> <i class="icon10 darr"></i></a>
+                    <button type="button" class="dropdown-toggle button light-gray">
+                        {ifset($sorts[$order], $order)}
+                    </button>
 
-                    <ul class="menu-v">
-                        {foreach $sorts as $s_id => $s_name}
+                    <div class="dropdown-body">
+                        <ul class="menu h-filter-by-type">
+                            {foreach $sorts as $s_id => $s_name}
                             <li class="{if $order == $s_id} selected{/if}">
                                 <a href="#/{if $hash}{$hash}/{/if}{$s_id}/">{$s_name|escape}</a>
                             </li>
-                        {/foreach}
+                            {/foreach}
 
-                        <li class="h-filter-by-type">
                             {if $collection_topic_types}
-                                {foreach $collection_topic_types as $t}
-                                    <label><input type="checkbox" value="{$t.id}"> {$t.name|escape}</label>
-                                {/foreach}
+                            {foreach $collection_topic_types as $t}
+                            <li>
+                                <div class="item">
+                                    <label class="width-100">
+                                        <span class="wa-checkbox">
+                                            <input type="checkbox" value="{$t.id}">
+                                            <span>
+                                                <span class="icon">
+                                                    <i class="fas fa-check"></i>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="wide">{$t.name|escape}</span>
+                                    </label>
+                                </div>
+                            </li>
+                            {/foreach}
                             {else}
-                                <span class="hint">[`Type selector is disabled since all topics in current view are of the same type.`]</span>
+                            <li>
+                                <div class="box">
+                                    <span class="hint">[`Type selector is disabled since all topics in current view are of the same type.`]</span>
+                                </div>
+                            </li>
                             {/if}
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        {/if}
-
-
-        <div class="h-stream-title">
-
-            <h1 class="list-title{if empty($title)} gray{/if}">
-                {if !empty($hub_context) && $type != 'hub'}
-                    <a href="#/hub/{$hub_context.id}/" class="back">&larr; {$hub_context.name|default:'[`(no name)`]'|escape}</a>
-                {/if}
-                <span id="list-title-text" class="title">{$title|default:'[`(no name)`]'|escape}</span>
-            </h1>
-
-            {if $type == 'category'}
-                {if $is_admin}
-                    <a href="#" class="list-title-suffix stream-edit" data-category-id="{ifset($category.id)}"><i class="icon16 settings"></i></a>
-                {/if}
-            {elseif $type == 'filter'}
-                {if $is_admin || (-$filter.contact_id == $wa->userId())}
-                    <a href="#" class="list-title-suffix stream-edit" data-filter-id="{ifset($filter.id)}"><i class="icon16 settings"></i></a>
-                {/if}
-            {elseif $type == 'tag'}
-                <i class="icon16 tags list-title-suffix"></i>
-            {elseif $type == 'hub'}
-                {if $is_admin}
-                    <a href="#/settings/hub/{ifset($hub.id)}/" class="list-title-suffix inline-link"><i class="icon16 settings"></i></a>
-                {/if}
-            {/if}
-
-            {if $type == 'hub' && !empty($tags)}
-                <div class="tags" style="display: none">
-                    {foreach $tags as $tag}
-                    <a href="#/tag/{$tag.id}/" style="font-size: {$tag.size}%; opacity: {$tag.opacity}">{$tag.name|escape}</a>
-                    {/foreach}
-                </div>
-            {/if}
-
-        </div>
-
-        <div class="clear-right"></div>
-
-    </div>
-
-    {if $type == 'hub' && $hub.status && !$hub_context.urls }
-        <div class="block double-padded">
-            <p class="small">
-                {sprintf('[`This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, <a href="%s">create a route</a> for Hub app and this hub in your Site app routing settings.`]', "../site/#/routing/")}
-            </p>
-        </div>
-    {/if}
-
-    <div class="h-saved block double-padded" style="display: none;">
-        <a href="#" class="h-close-saved">&times;</a>
-        <i class="icon16 yes"></i> [`Saved`]
-    </div>
-
-    <div id="h-content">
-
-        <div id="h-stream-settings" class="block double-padded" style="display: none;">
-            <!-- category/filter settings -->
-        </div>
-
-        {if !empty($topics)}
-
-            {if (!empty($hub_full_access) || $wa->user()->isAdmin('hub')) && $order != 'manual'}
-                <div class="block double-padded show-in-bulk-mode sort-handler-unavailable-notice">
-                    <p class="small" style="margin:0">
-                        <a href="#" class="h-close">&times;</a>
-                        {if empty($category.id) || $category.type}
-                            [`Manual sort for topics is not available in dynamic topic lists. If you want to activate the ability to sort topics, create a Folder category first.`]
-                        {else}
-                            {sprintf_wp("Manual sort for topics is not available in this view because current sort order is set to <strong>%s</strong>. To activate the ability to sort topics in this category, set current sort order to “Manual sort”.", ifset($sorts[$order], $order))}
-                        {/if}
-                    </p>
-                </div>
-            {/if}
-
-            <ul class="h-topics">
-            {foreach $topics as $t}
-
-                {$_r = $t.votes_up - $t.votes_down}
-                {if !empty($types[$t.type_id])}
-                    {$_topic_type = array_merge($types[$t.type_id], ['exists' => 1])}
-                {else}
-                    {* corrupted/missing topic type? fallback to 'custom' *}
-                    {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom', 'name'=> _w('Unknown topic type'), 'exists' => 0]}
-                {/if}
-
-                <li data-id="{$t.id}" data-type-id="{$t.type_id}" class="h-topic{if empty($hubs[$t.hub_id].status)} h-private{/if} {if !empty($t.follow)}h-followed{else}h-not-followed{/if}{if $t.hub_color != 'white'} h-color-marker h-{$t.hub_color}{/if}{if !$_topic_type.exists} unknown-topic-type{/if}">
-                    {* sort handle *}
-                    {if $order == 'manual' && !empty($hub_full_access)}
-                        <div class="h-sort-handle hide-when-filtered">
-                            <i class="icon16 sort"></i>
-                        </div>
-                    {/if}
-
-                    {* glyph *}
-                    <div class="h-topic-meta">
-
-                        <input type="checkbox" class="js-bulk-mode" value="{$t.id}">
-
-                        <a href="#/topic/{$t.id}/">{hubHelper::getGlyph( $_topic_type.glyph, 32, $t.is_new || $t.is_updated && !empty($t.new_comments), [ title=>$_topic_type.name,contact=>ifempty($t.contact,[]) ] )}</a>
-
+                        </ul>
                     </div>
+                </div>
+                {/if}
 
-                    {* comments & follow *}
-                    {if !empty($_topic_type.settings.commenting) && $_topic_type.settings.commenting == 1}
+                <div class="h-topic-action flexbox wrap small custom-ml-0">
+                    <div id="bulk-menu" class="flexbox space-8 custom-mr-12">
+                        <div class="dropdown" id="bulk-menu-priority">
+                            <button class="dropdown-toggle button light-gray" type="button">
+                                <i class="fas fa-list-ul"></i>
+                                <span class="desktop-and-tablet-only">[`Priority`]</span>
+                            </button>
 
-                        <div class="h-replies">
-                            {if count($t.new_comments) > 0}
-                                <a href="javascript:void(0)" class="inline-link toggle-comments"><b><i>{_w('%d new reply', '%d new replies', count($t.new_comments))}</i></b></a>
-                            {elseif !empty($t.follow)}
-                                <span class="gray">[`No new replies`]</span>
-                            {else}
-                                <span class="gray">{_w('%d reply', '%d replies', $t.comments_count)}</span>
-                            {/if}
-                           <a href="#" title="[`Follow`]" data-topic="{$t.id}" class="h-follow bold"><i class="icon16 star{if empty($t.follow)}-empty{/if}"></i><span class="followers-count">{if !empty($t.follow)}[`Following`]{/if}</span></a>
-                        </div>
-                    {else if $t.comments_count > 0}
-                        {* commenting for this topic type has been disabled after there were some comments for this particular topic *}
-                        <div class="h-replies">
-                            <span class="gray">{_w('%d reply', '%d replies', $t.comments_count)}</span>
-                        </div>
-                    {/if}
+                            <div class="dropdown-body right">
+                                <ul class="menu">
+                                    <li>
+                                        <a href="#" class="item js-bulk-action" data-action="priority" data-priority="1">
+                                            <i class="fas fa-exclamation-triangle text-red"></i>
+                                            <span>[`High`]</span>
+                                        </a>
+                                    </li>
 
-                    <h3>
+                                    <li>
+                                        <a href="#" class="item js-bulk-action" data-action="priority" data-priority="0">
+                                            <span>[`Normal`]</span>
+                                        </a>
+                                    </li>
 
-                        {* rating *}
-                        {if $_topic_type.type != 'forum' && !empty($_topic_type.settings.voting)}
-                            <strong class="h-rating {if $_r > 0}h-positive{elseif $_r < 0}h-negative{else}gray{/if}">{if $_r > 0}+{/if}{$_r}</strong>
-                        {/if}
-
-                        {* title *}
-                        <a href="#/topic/{$t.id}/" class="{if $t.is_new || !empty($t.is_updated) && !empty($t.new_comments)}bold{/if}">
-                            {if $t.priority}
-                                <i class="icon16 {if $t.priority == 1}exclamation-red{else}status-blue-tiny{/if}" title="{if $t.priority == 1}[`High priority`]{else}[`Low priority`]{/if}"></i>
-                            {/if}
-                            {if !empty($t.title)}{$t.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
-                        </a>
-
-                        {* badge *}
-                        {if $t.badge}
-                            <span class="h-badge h-{$t.badge.id}">{$t.badge.name}</span>
-                        {/if}
-
-                        {* date & author *}
-                        <br>
-                        <span class="hint">
-                            {sprintf('[`by %s`]', $t.contact.name|escape)}
-                            {$t.create_datetime|wa_datetime:"humandatetime"}
-                        </span>
-
-
-                    </h3>
-
-                    {* summary *}
-{*
-                    {if $_topic_type.type != 'forum' && $_topic_type.type != 'page'}
-                        <p class="h-topic-summary">{strip_tags($t.content)|truncate:255}</p>
-                    {/if}
-*}
-
-                    {* in-list replies *}
-                    {if !empty($t.new_comments)}
-                        {$load_js_for_comments = true}
-                        <div class="h-comments{* if empty($t.follow)} hidden{/if *}">
-                            <ul>
-                                {foreach $t.new_comments as $comment}
-                                    <li data-id="{$comment.id}" class="h-comment">{include file="../comments/include.comment.html" inline}</li>
-                                {/foreach}
-                            </ul>
-                            <div id="h-comment-add" style="display:none;">
-                                {include '../comments/include.addComment.html' inline}
+                                    <li>
+                                        <a href="#" class="item js-bulk-action" data-action="priority" data-priority="-1">
+                                            <i class="fas fa-pause-circle fa-lg text-purple"></i>
+                                            <span>[`Low`]</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                    {/if}
 
-                </li>
-            {/foreach}
-            </ul>
+                        <button class="button light-gray js-bulk-action" data-action="move" data-category="{if !empty($category.id)}{$category.id}{/if}" data-hub="{if !empty($hub.id)}{$hub.id}{elseif !empty($category.hub_id)}{$category.hub_id}{/if}">
+                            <i class="fas fa-arrow-right"></i>
+                            <span class="desktop-and-tablet-only">[`Move`]</span>
+                        </button>
 
-            {if isset($pages_count) && $pages_count > 1}
-            <div class="block lazyloading-paging"  data-link-text="[`Load more`]" data-times="4">
-                {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+                        <button class="button light-gray text-red js-bulk-action" data-action="delete" data-confirm="[`Selected topics will be permanently deleted. Are you sure?`]">
+                            <i class="fas fa-trash-alt"></i>
+                            <span class="desktop-and-tablet-only">[`Delete`]</span>
+                        </button>
+                    </div>
+
+                    <button type="button" class="button light-gray nowrap h-topic-actions-enable js-bulk-toggle">
+                        <i class="fas fa-bars"></i>
+                        <span class="custom-ml-4 desktop-and-tablet-only">[`Actions`]</span>
+                    </button>
+
+                    <button type="button" class="button light-gray outlined nowrap h-topics-actions-disable js-bulk-toggle">
+                        <i class="fas fa-times"></i>
+                        <span class="desktop-and-tablet-only">[`Cancel`]</span>
+                    </button>
+                </div>
+            </div>
+
+            {if $type == 'hub' && $hub.status && !$hub_context.urls }
+            <div class="alert small custom-mt-16">
+                {sprintf('[`This hub is not visible on your sites now, because there were no routing rules added for Hub app with this particular hub. To make this hub visible on your site, <a href="%s">create a route</a> for Hub app and this hub in your Site app routing settings.`]', "../site/#/routing/")}
             </div>
             {/if}
-        {else}
 
-            <p class="h-empty-view">[`There are no topics in this view.`]</p>
+            <div id="h-content">
+                <div id="h-stream-settings" style="display: none;">
+                    <!-- category/filter settings -->
+                </div>
 
-        {/if}
+                {if !empty($topics)}
+                {if (!empty($hub_full_access) || $wa->user()->isAdmin('hub')) && $order != 'manual'}
+                <div class="alert hidden show-in-bulk-mode sort-handler-unavailable-notice">
+                    <div class="flexbox">
+                        <div class="small">
+                        {if empty($category.id) || $category.type}
+                        [`Manual sort for topics is not available in dynamic topic lists. If you want to activate the ability to sort topics, create a Folder category first.`]
+                        {else}
+                        {sprintf_wp("Manual sort for topics is not available in this view because current sort order is set to <strong>%s</strong>. To activate the ability to sort topics in this category, set current sort order to “Manual sort”.", ifset($sorts[$order], $order))}
+                        {/if}
+                        </div>
 
+                        <a href="#" class="alert-close h-close"><i class="fas fa-times"></i></a>
+                    </div>
+                </div>
+                {/if}
+
+                <ul class="h-topics list" id="comments-wrapper">
+                {foreach $topics as $t}
+                    {$_r = $t.votes_up - $t.votes_down}
+                    {if !empty($types[$t.type_id])}
+                    {$_topic_type = array_merge($types[$t.type_id], ['exists' => 1])}
+                    {else}
+                    {* corrupted/missing topic type? fallback to 'custom' *}
+                    {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom', 'name'=> _w('Unknown topic type'), 'exists' => 0]}
+                    {/if}
+
+                    <li data-id="{$t.id}" data-type-id="{$t.type_id}" class="item h-topic{if empty($hubs[$t.hub_id].status)} h-topic-private custom-px-12-mobile{/if} {if !empty($t.follow)}h-followed{else}h-not-followed{/if}{if !$_topic_type.exists} unknown-topic-type{/if}">
+                        {if $order == 'manual' && !empty($hub_full_access)}
+                        <div class="h-sort-handle hide-when-filtered custom-pr-4 custom-pr-12-mobile">
+                            <i class="fas fa-grip-vertical gray sort"></i>
+                        </div>
+                        {/if}
+
+                        <div class="image h-topic-avatar desktop-and-tablet-only">
+                            {if !empty($t.contact.name)}
+                            <i class="userpic userpic-48" style="background-image: url('{$t.contact.photo_url_50}');"></i>
+                            {else}
+                            <i class="userpic userpic-48" style="background-image: url('{$wa_url}wa-content/img/userpic.svg');"></i>
+                            {/if}
+                        </div>
+
+                        <div class="details">
+                            {if $t.badge || !empty($types[$t.type_id])}
+                            <div class="custom-mb-4 mobile-only">
+                                {if !empty($types[$t.type_id])}
+                                <span class="semibold hint custom-mr-4">{$types[$t.type_id].name|escape}</span>
+                                {/if}
+
+                                {if $t.badge}
+                                <span class="h-topic-badge h-badge badge nowrap squared small" data-name="{$t.badge.id}" style="align-self: flex-start;">{$t.badge.name}</span>
+                                {/if}
+                            </div>
+                            {/if}
+                            <div class="flexbox wrap-mobile space-8">
+                                <div class="wide">
+                                    <div class="h-topic-checkbox">
+                                        <label>
+                                            <span class="wa-checkbox large">
+                                                <input type="checkbox" class="js-bulk-mode" value="{$t.id}">
+                                                <span>
+                                                    <span class="icon">
+                                                        <i class="fas fa-check"></i>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    {if $_topic_type.type != 'forum' && !empty($_topic_type.settings.voting)}
+                                    <strong class="h-rating {if $_r > 0}text-green{elseif $_r < 0}text-red{else}text-gray{/if}">{if $_r > 0}+{/if}{$_r}</strong>
+                                    {/if}
+
+                                    <a href="{if $t.editable}#/topic/edit/{$t.id}/{else}#/topic/{$t.id}/{/if}" class="semibold link-hover {if $t.is_new || !empty($t.is_updated) && !empty($t.new_comments)}bold{/if}">
+                                        {if $t.priority && $t.priority == 1}
+                                        <i class="fas fa-exclamation-triangle small text-red" title="[`High priority`]"></i>
+                                        {elseif $t.priority && $t.priority == -1}
+                                        <i class="fas fa-pause-circle text-purple" title="[`Low`]"></i>
+                                        {/if}
+                                        {if !empty($t.title)}{$t.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
+                                    </a>
+                                </div>
+
+                                {if !empty($types[$t.type_id])}
+                                <div class="semibold hint nowrap width-100-mobile custom-mt-4 desktop-and-tablet-only">{$types[$t.type_id].name|escape}</div>
+                                {/if}
+
+                                {if $t.badge}
+                                <div class="desktop-and-tablet-only">
+                                    <span class="h-topic-badge h-badge badge squared small nowrap" data-name="{$t.badge.id}">{$t.badge.name}</span>
+                                </div>
+                                {/if}
+                            </div>
+
+                            <div class="flexbox full-width space-8 custom-mb-8 custom-mb-0-mobile">
+                                <div class="wide custom-mt-8 custom-mt-4-mobile">
+                                    <div class="h-topic-author flexbox hint">
+                                        <div class="flexbox wrap">
+                                            <div class="custom-mr-12 custom-mb-4">{sprintf('[`by %s`]', $t.contact.name|escape|default:'Noname')}</div>
+
+                                            <div class="custom-mr-12 custom-mb-4">{$t.create_datetime|wa_datetime:"humandatetime"}</div>
+
+                                            <div class="nowrap">
+                                                {if !empty($t.hub_color) && $t.hub_color != 'white'}
+                                                <i class="fas fa-circle h-hub-text-color-{$t.hub_color}"></i>
+                                                {/if}
+
+                                                {$hubs[$t.hub_id].name|escape}
+
+                                                {if empty($hubs[$t.hub_id].status)}
+                                                <i class="fas fa-lock small text-gray"></i>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="h-topic-comments hint custom-mt-8 custom-mt-0-mobile">
+                                    {if !empty($_topic_type.settings.commenting) && $_topic_type.settings.commenting == 1}
+                                    <div class="flexbox h-replies nowrap blue-link custom-mt-4-mobile">
+                                        {if count($t.new_comments) > 0}
+                                        <div class="desktop-and-tablet-only custom-mr-8">
+                                            <a href="javascript:void(0)" class="toggle-comments bold blue-link">
+                                                {_w('%d new reply', '%d new replies', count($t.new_comments))}
+                                                <i class="fas fa-caret-down"></i>
+                                            </a>
+                                        </div>
+
+                                        <div class="mobile-only custom-mr-8">
+                                            <a href="javascript:void(0)" class="toggle-comments blue-link">
+                                                <i class="fas fa-comment large"></i>
+
+                                                <b>{count($t.new_comments)}</b>
+                                            </a>
+                                        </div>
+
+                                        {elseif !empty($t.follow)}
+                                        <span class="gray nowrap custom-mb-4 custom-mb-0-mobile">
+                                            <span class="desktop-and-tablet-only">
+                                                [`No new replies`]
+                                            </span>
+
+                                            <span class="mobile-only custom-mr-8">
+                                                <i class="fas fa-comment large"></i>
+                                                +0
+                                            </span>
+                                        </span>
+                                        {else}
+                                        <span class="gray nowrap custom-mb-4 custom-mb-0-mobile">
+                                            <span class="desktop-and-tablet-only">
+                                                {_w('%d reply', '%d replies', $t.comments_count)}
+                                            </span>
+
+                                            <span class="mobile-only custom-mr-12">
+                                                <i class="fas fa-comment"></i>
+                                                {$t.comments_count}
+                                            </span>
+                                        </span>
+                                        {/if}
+                                        <span title="[`Follow`]" data-topic="{$t.id}" class="h-follow cursor-pointer align-right-mobile custom-ml-4 js-follow-topic"><i class="{if empty($t.follow)}far gray{else}fas text-yellow{/if} fa-star large"></i></span>
+                                    </div>
+                                    {else if $t.comments_count > 0}
+                                    {* commenting for this topic type has been disabled after there were some comments for this particular topic *}
+                                    <div class="h-replies hint link-hover custom-mt-4-mobile">
+                                        {_w('%d reply', '%d replies', $t.comments_count)}
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+
+                            {if !empty($t.new_comments)}
+                            <div class="js-topic-comments">
+                                {$load_js_for_comments = true}
+                                <div class="h-comments">
+                                    {foreach $t.new_comments as $comment}
+                                    <div data-id="{$comment.id}" class="h-comment h-comment-highlighted{if $comment@index > 2} hidden{/if}">{include file="../comments/include.comment.html" inline}</div>
+                                    {/foreach}
+
+                                    {if count($t.new_comments) > 3}
+                                    <div class="align-center custom-mt-4 custom-mb-8">
+                                        <button class="button light-gray smaller rounded js-topic-comments-all">
+                                            {_w('%d more new comment', '%d more new comments', count($t.new_comments) - 3)}
+                                        </button>
+                                    </div>
+                                    {/if}
+
+                                    <div id="h-comment-add" style="display: none;">
+                                        {include '../comments/include.addComment.html' inline}
+                                    </div>
+                                </div>
+                            </div>
+                            {/if}
+                        </div>
+                    </li>
+                {/foreach}
+                </ul>
+
+                {if $topics_count}
+                <div class="box h-footer h-topics-footer">
+                    <div class="custom-ml-4 custom-mb-8 gray small">
+                        {sprintf('[`%d topics of %d`]', $loaded_count, $topics_count)}
+                        <span class="hidden place-for-hidden-label">{sprintf_wp('(%s hidden)', '<span></span>')}</span>
+                    </div>
+                    {if $page < $pages_count}
+                        <em class="loading-wrapper"><i class="fas fa-spinner wa-animation-spin speed-1500 loading"></i> [`Loading...`]</em>
+                    {/if}
+                </div>
+                {/if}
+
+                {if isset($pages_count) && $pages_count > 1}
+                <div class="box lazyloading-paging" data-link-text="[`Load more`]" data-times="4">
+                    {wa_pagination total=$pages_count attrs=['class' => "menu"]}
+                </div>
+                {/if}
+                {else}
+                <p class="h-empty-view h-topics-footer">[`There are no topics in this view.`]</p>
+                {/if}
+            </div>
+        </div>
     </div>
-
-    {if $topics_count}
-    <div class="h-footer">
-        <p>
-            {sprintf('[`%d topics of %d`]', $loaded_count, $topics_count)}
-            <span class="hidden place-for-hidden-label">{sprintf_wp('(%s hidden)', '<span></span>')}</span>
-        </p>
-        {if $page < $pages_count}
-            <em class="loading-wrapper"><i class="icon16 loading"></i> [`Loading...`]</em>
-        {/if}
-    </div>
-    {/if}
-
-    <div class="clear-both"></div>
-
 </div>
 
-<div id="h-bulk-topics-move">
-
-</div>
+<div id="h-bulk-topics-move" class="dialog"></div>
 
 <script>$(function () {
     $.wa.locale = $.extend($.wa.locale, {
@@ -296,7 +413,10 @@
         'Are you sure?': "[`Are you sure?`]",
         'Select at least one topic':"[`Select at least one topic`]",
         "Mark as solution":"[`Mark as solution`]",
-        "Unmark solution":"[`Unmark solution`]"
+        "Unmark solution":"[`Unmark solution`]",
+        "blockquote": "[`Quote...`]",
+        "Close":"[`Close`]",
+        "Delete":"[`Delete`]"
     });
 
     $.hub.topics.init({
@@ -304,30 +424,28 @@
     });
     $.hub.initLazyLoad();
 
+    // Comments
+    $.ajax({ // Load JS script, making sure it WILL get cached in non-debug mode
+        dataType: "script",
+        url: "{$wa_app_static_url}js/comments.js?{$wa->version()}",
+        cache: true
+    }).done(function() {
+        $.comments.init({
+            lang: {json_encode(substr($wa->locale(), 0, 2))},
+            statuses: {
+                deleted: '{hubCommentModel::STATUS_DELETED}',
+                published: '{hubCommentModel::STATUS_PUBLISHED}'
+            },
+            container: '#comments-wrapper'
+        });
+    });
+
     {if $order == 'manual' && !empty($category.id) && !empty($hub_full_access)}
         // Drag-and-drop for topics in Manual mode
         $.hub.topics.initManualDragAndDrop({$category.id});
     {/if}
 
-    // Controller for comments
-    {if !empty($load_js_for_comments)}
-        $.ajax({ // Load JS script, making sure it WILL get cached in non-debug mode
-              dataType: "script",
-              url: "{$wa_app_static_url}js/comments.js?{$wa->version()}",
-              cache: true
-        }).done(function() {
-            $.comments.init({
-                lang: {json_encode(substr($wa->locale(), 0, 2))},
-                statuses: {
-                    deleted: '{hubCommentModel::STATUS_DELETED}',
-                    published: '{hubCommentModel::STATUS_PUBLISHED}'
-                },
-                container: '#h-content'
-            });
-        });
-    {/if}
-
     {if !empty($hub_context)}
-        $.sidebar.setHub('{$hub_context.id}');
+    $.sidebar.setHub('{$hub_context.id}');
     {/if}
 });</script>

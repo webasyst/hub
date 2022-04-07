@@ -1,0 +1,446 @@
+<form id="topic-form" method="post" action="?module=topics&action=save{if $topic}&id={$topic.id}{/if}" class="{if empty($topic.status)}draft{else}published{/if}">
+    <h1 style="display: none">{if $topic.id}{$topic.title|escape}{else}[`New topic`]{/if}</h1>
+
+    <div class="sidebar right200px">
+        <div class="h-topic-options">
+
+            <!-- priority -->
+            <div class="block">
+                <h6>[`Priority`]</h6>
+                <ul id="ul-priority" class="menu-v">
+                    <li{if $topic.priority == 1} class="selected"{/if}><a data-value="1" href="javascript:void(0)"><i class="icon16 exclamation-red"></i>[`High`]</a></li>
+                    <li{if $topic.priority != 1 && $topic.priority != -1} class="selected"{/if}><a data-value="0" href="javascript:void(0)"><i class="icon16 status-gray-tiny"></i>[`Normal`]</a></li>
+                    <li{if $topic.priority == -1} class="selected"{/if}><a data-value="-1" href="javascript:void(0)"><i class="icon16 status-blue-tiny"></i>[`Low`]</a></li>
+                </ul>
+                <input id="input-priority" name="topic[priority]" type="hidden" value="{$topic.priority}">
+            </div>
+
+            <!-- author -->
+            <div class="block">
+                <h6>[`Author`]</h6>
+                <select name="topic[contact_id]"{if !$can_change_author} disabled{/if}>
+                    {foreach $users as $u_id => $name}
+                        <option value="{$u_id}"{if $topic['contact_id'] == $u_id} selected="selected"{/if}>
+                            {$name|escape}
+                        </option>
+                    {/foreach}
+                </select>
+            </div>
+
+            {if $topic.id && $topic.status > 0}
+                <div class="block">
+                    <h6>[`Published`]</h6>
+                    <div class="non-editable-view">
+                        <div>{$topic.create_datetime|wa_date:humandatetime}</div>
+                        <a href="javascript:void(0)" id="edit-datetime-link" class="inline-link small no-wrap"><i class="icon10 edit"></i><b><i>[`Edit`]</i></b></a>
+                    </div>
+                    <div class="hidden editable-view">
+                        <input type="text" class="short date" value="{$topic.create_datetime|wa_date:date|escape}" disabled>
+                        <input type="text" class="short time" name="topic[create_time]" value="{$topic.create_datetime|wa_date:time|escape}" disabled>
+                        <input id='topic-create-date' type="hidden" name="topic[create_date]" value="{strtotime($topic.create_datetime|escape)}">
+                    </div>
+                </div>
+            {/if}
+
+            <!-- meta -->
+            <div id="meta-editor" class="block">
+                <h6>[`Meta`]</h6>
+                <span class="hint no-parameters">[`No meta parameters are defined for this topic.`]</span>
+                <span class="small parameters"></span>
+                <a id="edit-meta-link" class="small" href="javascript:void(0)">[`Edit meta`]</a>
+
+                <input type="hidden" name="topic[meta_title]" value="{$topic.meta_title|escape}">
+                <input type="hidden" name="topic[meta_keywords]" value="{$topic.meta_keywords|escape}">
+                <input type="hidden" name="topic[meta_description]" value="{$topic.meta_description|escape}">
+                <input type="hidden" name="og[title]" value="{$og.title|escape}">
+                <input type="hidden" name="og[image]" value="{$og.image|escape}">
+                <input type="hidden" name="og[video]" value="{$og.video|escape}">
+                <input type="hidden" name="og[description]" value="{$og.description|escape}">
+                <input type="hidden" name="params_string" value="{$params_string|escape}">
+            </div>
+
+            {if $topic.id}
+                <div class="block">
+                    <ul class="menu-v with-icons compact">
+                        <li><a href="javascript:void(0)" id="delete-topic-link"><i class="icon16 delete"></i>[`Delete topic`]</a></li>
+                    </ul>
+                </div>
+            {/if}
+        </div>
+    </div>
+    <div class="content right200px">
+        <div class="h-stream h-{$hubs[$hub_id].hub_color}">
+            <div class="h-header">
+                <!-- hub -->
+                <ul class="menu-h dropdown h-topic-hub">
+                    <li>{if $topic.id}<a href="#/topic/{$topic.id}/" class="back" style="top: 0;">&larr; [`Back`]</a>{/if}</li>
+                    <li>[`Hub`]:</li>
+                    <li class="h-topic-hub-dropdown">
+                        <a id="topic-hub" class="inline-link" href="javascript:void(0)">
+                            <b><i>{$hubs[$hub_id].name|default:'[`(no name)`]'|escape}</i></b>
+                            <input type="hidden" name="topic[hub_id]" value="{$hubs[$hub_id].id}">
+                            <i class="icon10 darr"></i>
+                        </a>
+                        <ul class="menu-v with-icons" id="hubs-selector">
+                            {foreach $hubs as $h}
+                                <li{if $h.id == $hub_id} class="selected"{/if}>
+                                    <a href="javascript:void(0)" data-id="{$h.id}" data-color="{$h.hub_color}"><i class="icon16 color h-{$h.hub_color}"></i>{$h.name|default:'[`(no name)`]'|escape}{if !$h.status}<i class="icon10 lock-bw no-overhanging hide-when-published"></i>{/if}</a>
+                                </li>
+                            {/foreach}
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- topic type -->
+                <ul class="h-topic-type" style="display:none;">
+                    {* Some, or even all, of these <li>s get hidden by JS depending on selected hub *}
+                    {foreach $types as $type_id => $type}
+                        <li{if $topic.type_id == $type_id} class="selected"{/if}>
+                            <a data-type="{$type.id}" href="javascript:void(0)">{hubHelper::getGlyph($type.glyph)}{$type.name|default:'[`(no name)`]'|escape}</a>
+                        </li>
+                    {/foreach}
+                </ul>
+                <input id="topic-type" type="hidden" name="topic[type_id]" value="{$topic.type_id}">
+
+            </div>
+
+            <div class="h-topic not-padded">
+                <div class="block double-padded h-topic-fields">
+
+                    <input type="text" id="h-topic-title" name="topic[title]" class="h-title" value="{$topic.title|escape}" placeholder="[`Topic title`]">
+
+                    <p class="small hidden" id="public-url-editor" style="line-height:27px;">
+                        <span class="gray">[`Public URL`]:</span>
+
+                        {strip}
+                            <span class="not-editable-url">
+                                <a href="" class="preview" target="_blank"></a>
+                                &nbsp;
+                                <a href="javascript:void(0);" class="small inline-link edit-link">
+                                    <i class="icon10 edit" style="margin-top:10px;"></i><b><i>[`edit`]</i></b>
+                                </a>
+                            </span>
+
+                            <span class="editable-url" style="display:none">
+                                <span class="before-topic-url"></span>
+                                <input type="text" id="h-topic-url-input" name="topic[url]" value="{$topic.url}">
+                                <span class="after-topic-url"></span>
+                            </span>
+
+                            <span class="no-frontend" style="display:none">
+                                [`Selected hub has no frontend.`]
+                            </span>
+
+                        {/strip}
+                    </p>
+
+                    <p class="small" id="categories-editor">
+                        [`Category`]:
+                        <span id="categories-input">{* Updated by JS depending on currently selected hub. *}</span>
+                    </p>
+
+                </div>
+
+
+                <div class="h-topic-editor">
+
+                    <!-- / THIS PART CAN BE CUSTOMIZED/REPLACED BY TOPIC TYPE PLUGINS -->
+                    <div class="wa-editor-core-wrapper">
+
+                        <ul class="h-editor-toggle wa-editor-wysiwyg-html-toggle">
+                            <li class="selected">
+                                <a href="#" class="wysiwyg">[`Visual`]</a>
+                            </li>
+                            <li>
+                                <a href="#" class="html">HTML</a>
+                            </li>
+                        </ul>
+
+                        <div class="h-topic-editor-wrapper">
+                            <div class="wa-editor-upload-img hidden" title="[`Upload image`]">
+                                <i class="icon16 image"></i>
+                            </div>
+                            <textarea id="topic-editor" name="topic[content]" style="display: none;">{$topic.content|escape}</textarea>
+                            <div id="topic-editor-container"></div>
+                        </div>
+
+                        <div class="block double-padded small">
+                            [`Tags`]:
+                            <span id="h-topic-tags">
+                                {foreach $topic.tags as $t}
+                                    <span class="tag">{$t|escape}</span>
+                                {foreachelse}
+                                    <span class="gray">[`No tags assigned`]</span>
+                                {/foreach}
+                            </span>
+                            <input id="h-topic-tags-input" type="text" class="long" value="{foreach $topic.tags as $t}{$t|escape}{if !$t@last},{/if}{/foreach}" name="topic[tags]">
+                            <p class="gray">[`Separate tags with comma (,).`]</p>
+                            <a href="javascript:void(0)" id="h-topic-tags-edit">[`Edit`]</a>
+                        </div>
+
+                    </div>
+                    <!-- / THIS PART CAN BE CUSTOMIZED/REPLACED BY TOPIC TYPE PLUGINS -->
+
+                </div>
+
+                <div class="block double-padded" id="h-topic-button-bar"><div class="editing">
+
+                    <div class="hide-when-published">
+                        <div class="hide-when-selecting-subscribers">
+
+                            {*
+                             * Buttons for draft mode, NOT selecting subscribers
+                             *}
+
+                            <div class="float-right block half-padded">
+                                <ul class="menu-h">
+                                    <li><a href="javascript:void(0)" class="inline-link notify-subscribers-toggle"><i class="icon16 lightning"></i><b><i>[`Send a notification about this topic`]</i></b></a></li>
+                                </ul>
+                            </div>
+
+                            <input type="submit" value="[`Publish`]" class="button green button-form-submit" />
+                            <input type="submit" name="draft" value="[`Save draft`]" class="button gray draft" />
+                            <em class="hint">Ctrl + S</em>
+
+
+                        </div>
+                        <div class="hide-when-editing">
+
+                            {*
+                             * Buttons for draft mode, selecting subscribers
+                             *}
+
+                            <div class="block not-padded bottom-padded" id="subscribers-form-wrapper" style="padding-top:0">
+                                <div class="fields">
+                                    <div class="field">
+                                        <div class="name">[`To`]</div>
+                                        <div class="value" style="position:relative;left:-20px;top:-5px;">
+                                            <div class="users-to-notify">{* Updated by JS *}</div>
+
+                                            {* Template for user row *}
+                                            <div class="hidden template h-notify-user" data-user-id="">{strip}
+                                                <i class="icon16 userpic20 icon-has-userpic" style="background-image: none;"></i>
+                                                <i class="icon16 user icon-no-userpic"></i>
+                                                <span class="username"></span>
+                                                <i class="icon10 close"></i>
+                                            {/strip}</div>
+
+                                            {strip}
+                                                <i class="icon16 add" style="vertical-align:middle;margin-top:-2px;"></i>
+                                                <input type="text" class="subscriber-autocomplete ignore-dirty" placeholder="[`Start typing user or user group name...`]">
+                                            {/strip}
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="name">[`Message`]</div>
+                                        <div class="value"><textarea class="notification-message ignore-dirty" name="notification_message"></textarea></div>
+                                    </div>
+                                </div>
+                                <div class="clear-left"></div>
+
+                            </div>
+
+                            <div class="float-right block half-padded">
+                                <ul class="menu-h">
+                                    <li><a href="javascript:void(0)" class="inline-link gray notify-subscribers-toggle"><i class="icon16 lightning"></i><b><i>[`Cancel and back to editing mode`]</i></b></a></li>
+                                </ul>
+                            </div>
+
+                            <input type="submit" value="[`Publish topic &amp; Send notification`]" class="button green button-form-submit notify-subscribers-submit" />
+
+                        </div>
+                    </div>
+                    <div class="hide-when-draft">
+
+                        {*
+                         * Buttons for published topic
+                         *}
+
+                        <div class="float-right block half-padded">
+                            <ul class="menu-h">
+                                <li>
+                                    <a id="h-unpublish-link" href="javascript:void(0)" title="[`Unpublish this topic?`]"><i class="icon10 no-bw"></i>[`Unpublish`]</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <input type="submit" value="[`Save`]" class="button green button-form-submit" />
+                        <em class="hint">Ctrl + S</em>
+
+
+                    </div>
+
+
+                </div></div>
+
+            </div>
+
+            <div class="h-footer"></div>
+
+            <div class="clear-both"></div>
+        </div>
+        {$wa->csrf()}
+    </div>
+
+</form>
+
+
+
+{* Dialog to edit meta data *}
+<div class="dialog width650px height500px" id="meta-dialog">
+    <div class="dialog-background"></div>
+    <form>
+        <div class="dialog-window">
+            <div class="dialog-content">
+                <div class="dialog-content-indent">
+                    <h1>[`Meta`]</h1>
+                    <div class="fields">
+                        <div class="field">
+                            <div class="name">
+                                <span class="bold">[`Title`]</span>
+                                <span class="hint">&lt;title&gt;</span>
+                            </div>
+                            <div class="value">
+                                <input type="text" name="title">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Meta description`]</div>
+                            <div class="value"><textarea name="description" style="height: 40px"></textarea></div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Meta keywords`]</div>
+                            <div class="value"><textarea name="keywords" style="height: 40px"></textarea></div>
+                        </div>
+                        <div class="field top-padded">
+                            <div class="name">[`Custom parameters`]</div>
+                            <div class="value"><textarea name="params" style="height: 40px"></textarea></div>
+                        </div>
+
+                        {$use_custom_settings = !isset($og.title) && !isset($og.description)}
+                        <h5>[`Social media tags (Open Graph)`]</h5>
+
+                        <div class="field">
+                            <div class="name">[`Social sharing`]</div>
+                            <div class="value no-shift">
+                                <label><input type="checkbox" class="js-settings-custom-switcher" {if $use_custom_settings} checked{/if}> [`Use these meta tags for social sharing too`]</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing title`] <span class="hint">og:title</span></div>
+                            <div class="value"><input name="og_title"></div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing image URL`] <span class="hint">og:image</span></div>
+                            <div class="value"><input name="og_image"><br>
+                                <span class="hint">[`If no value is specified, a social network will attempt to automatically determine a preview image.`]</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing video URL`] <span class="hint">og:video</span></div>
+                            <div class="value"><input name="og_video"></div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Social sharing description`] <span class="hint">og:description</span></div>
+                            <div class="value"><textarea name="og_description" style="height: 40px"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-buttons">
+                <div class="dialog-buttons-gradient">
+                    <input type="submit" class="button green" value="[`Save`]">
+                    [`or`]
+                    <a href="javascript:void(0)" class="cancel">[`cancel`]</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="dialog" id="s-upload-dialog">
+    <div class="dialog-background"> </div>
+    <div class="dialog-window" style="height: 225px; min-height: 225px; width: 450px; min-width: 450px">
+        <form id="s-upload-form" method="post" action="?module=pages&action=uploadimage&r=2" enctype="multipart/form-data">
+            {$wa->csrf()}
+            <div class="dialog-content">
+                <div class="dialog-content-indent">
+                    <h2>[`Upload image`]</h2>
+                    <div id="redactor-droparea" style="text-align: center;">
+                        <input id="s-input-file" type="file" name="file" multiple>
+                        <input type="hidden" name="path" id="s-upload-path" value="" />
+                        <div class="loading" style="display:none; margin-top: 10px">
+                            <i class="icon16 loading"></i> [`Uploading...`]
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-buttons">
+                <div class="dialog-buttons-gradient">
+                    <input type="submit" class="button green" value="[`Upload`]">
+                    [`or`] <a href="#" class="inline-link cancel"><b><i>[`cancel`]</i></b></a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{include file="./include.delete_confirm.html" inline}
+
+
+<script>
+
+var wa_url = "{$wa_url}";
+var wa_app = 'hub';
+
+(function() { "use strict";
+
+    // Load JS script, making sure it WILL get cached in non-debug mode
+    $.ajax({
+          dataType: "script",
+          url: "{$wa_app_static_url}js-legacy/topics/edit.js?{$wa->version()}",
+          cache: true
+    }).done(function() {
+
+        {if empty($topic.id)}
+            var initial_topic_categories = [];
+            var m = $.hub.topics.last_hash.match(/^#\/category\/(\d+)/);
+            if (m) {
+                initial_topic_categories = [m[1]];
+            }
+        {else}
+            var initial_topic_categories = {json_encode(array_keys($topic.categories))};
+        {/if}
+
+        var hub_id = "{ifempty($topic.hub_id, 0)|escape:js}";
+        {if empty($topic.id)}
+            hub_id = $('#wa-app > .sidebar .h-hub:not(.folded):first').data('hubId') || hub_id;
+        {/if}
+        $.topics_edit.init({
+            lang: {json_encode(substr($wa->locale(), 0, 2))},
+            hub_id: hub_id,
+            initial_hub_id: hub_id,
+            topic_id: {ifempty($topic.id, 0)|escape:js},
+            hub_url_templates: {json_encode($hub_url_templates)},
+
+            types: {json_encode($types)},
+            hub_type_ids: {json_encode($hub_type_ids)},
+
+            categories: {json_encode($categories)},
+            initial_topic_categories: initial_topic_categories
+        });
+
+        // Confirmation before leaving this page
+        var form_button = $('#topic-form .button-form-submit');
+        $.hub.helper.confirmLeave(function() {
+            return form_button.hasClass('yellow') && form_button.closest('body').length > 0;
+        }, "[`Any changes you made will be lost if you leave.`]", "[`Are you sure?`]");
+
+        $('#h-topic-title').focus();
+    });
+
+})();</script>
+
+<script></script>
+
+

@@ -1,0 +1,123 @@
+@use 'variables' as v;
+
+.h-search-form {
+    display: flex;
+    flex-direction: column;
+
+    &:focus-within + div {
+        display: none;
+    }
+
+    #wa-plugin-search-link {
+        order: 1;
+    }
+}
+
+#hub-sidebar-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+
+    display: block !important;
+}
+
+.h-hub-sidebar {
+    display: flex;
+    align-items: flex-start;
+
+    overflow: hidden;
+    height: 100%;
+
+    &.active {
+        overflow: hidden;
+
+        & #hub-all {
+            transform: translateX(-100%);
+        }
+    }
+
+    &-item {
+        &:hover,
+        .selected & {
+            svg {
+                color: inherit !important;
+            }
+        }
+    }
+}
+
+.h-hub-select {
+    box-sizing: border-box;
+    overflow: hidden;
+
+    border-radius: .25em;
+    box-shadow: 0 0.125em 0.75em -0.25em var(--light-gray);
+
+    &-name {
+        overflow: hidden;
+
+        color: var(--text-color);
+        text-overflow: ellipsis;
+
+        &:hover {
+            color: inherit;
+        }
+    }
+}
+
+.h-hub-back {
+    flex: 0 0 40px;
+    cursor: pointer;
+
+    color: var(--text-color);
+}
+
+.h-hub {
+    flex-shrink: 0;
+    order: 3;
+
+    overflow-y: auto;
+    visibility: hidden;
+
+    width: 100%;
+    height: 100%;
+
+    overscroll-behavior-y: contain;
+    transition: visibility var(--timing-fast), transform var(--timing-default);
+
+    &.active {
+        order: 2;
+        visibility: visible;
+        transform: translateX(-100%);
+    }
+}
+
+.hub-name {
+    .icon {
+        margin-top: 2px;
+    }
+}
+
+#hub-all {
+    order: 1;
+    visibility: visible;
+
+    .active & {
+        visibility: hidden;
+    }
+}
+
+.hub {
+    .sidebar.mobile-friendly {
+        @media (v.$mobile) {
+            max-height: calc(100vh - 4rem);
+        }
+
+        &.-active {
+            z-index: 25;
+        }
+    }
+}

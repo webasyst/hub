@@ -1,0 +1,35 @@
+
+<div class="field">
+    <div class="name">
+        [`Voting`]
+    </div>
+    <div class="value no-shift">
+        <label><input type="checkbox" name="type[settings][voting][+]" value="+" {if !empty($type.settings.voting) && in_array('+',$type.settings.voting)}checked="checked"{/if}> [`+1: Users can PLUS topics of this type`]</label>
+    </div>
+    <div class="value no-shift">
+        <label><input type="checkbox" name="type[settings][voting][-]" value="-" {if !empty($type.settings.voting) && in_array('-',$type.settings.voting)}checked="checked"{/if}> [`-1: Users can MINUS topics of this type`]</label>
+    </div>
+</div>
+
+<div class="field">
+    <div class="name">
+        [`Commenting on answers`]
+    </div>
+    <div class="value no-shift">
+        <select name="type[settings][commenting]">
+            <option value="0" {if empty($type.settings.commenting)} selected="selected"{/if}>[`Disabled`]</option>
+            <option value="1" {if !empty($type.settings.commenting)} selected="selected"{/if}>[`Allowed`]</option>
+        </select>
+    </div>
+</div>
+
+<div class="field">
+    <div class="name">
+        [`Badges`]
+    </div>
+    <div class="value no-shift h-badge-list">
+        <span class="h-badge h-none">[`None`]</span>
+        <span class="h-badge h-answered">[`Answered`]</span>
+        <span class="h-badge h-archived">[`Archived`]</span>
+    </div>
+</div>

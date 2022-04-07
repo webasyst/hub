@@ -146,7 +146,7 @@ class hubHelper
      */
     public static function getFilterIcons()
     {
-        return array(
+        $oldUiIcons = array(
             'funnel',
             'star',
             'bug',
@@ -176,6 +176,39 @@ class hubHelper
             'target',
             'store'
         );
+
+        $newUiIcons = array(
+            'filter',
+            'star',
+            'bug',
+            'bolt',
+            'lightbulb',
+            'comments',
+            'lock',
+            'lock-open',
+            'broom',
+            'user-friends',
+            'chart-line',
+            'book',
+            'map-marker-alt',
+            'camera',
+            'clock',
+            'sticky-note',
+            'file-alt',
+            'car',
+            'save',
+            'cookie',
+            'radiation-alt',
+            'video',
+            'mug-hot',
+            'home',
+            'smile',
+            'medal',
+            'bullseye',
+            'store'
+        );
+
+        return (wa()->whichUI() === '1.3') ? $oldUiIcons : $newUiIcons;
     }
 
     /**
@@ -331,7 +364,7 @@ class hubHelper
             }
 
             if ($size == 20) {
-                $attributes['class'] .= " icon16 userpic20"; //for proper appearance in within .menu-v and .menu-h
+                $attributes['class'] .= " icon16 userpic userpic20"; //for proper appearance in within .menu-v and .menu-h
             } else {
                 $attributes['class'] .= ' userpic h-userpic'.$size;
             }

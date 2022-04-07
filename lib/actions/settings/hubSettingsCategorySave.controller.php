@@ -94,12 +94,12 @@ class hubSettingsCategorySaveController extends waJsonController
     {
         if (($file = waRequest::file('category_logo')) && ($file->uploaded())) {
             if (!preg_match('@^(jpe?g|png)$@ui', $e = $file->extension)) {
-                throw new waException(_w('Only PNG and JPEG images are allowed'));
+                throw new waException(_w('Only PNG and JPEG images are allowed.'));
             }
             $logo_path = wa()->getDataPath(sprintf('categories/%d/', $id), true, $this->getAppId());
             if ($image = $file->waImage()) {
                 if (!preg_match('@^(jpe?g|png)$@ui', $e = $image->getExt())) {
-                    throw new waException('Only PNG and JPEG images are allowed'.$e);
+                    throw new waException('Only PNG and JPEG images are allowed.'.$e);
                 }
                 waFiles::delete($logo_path);
                 waFiles::create($logo_path);

@@ -1,398 +1,496 @@
 {if empty($category.id)}
-<div class="h-stream{if !empty($hub_color)} h-{$hub_color}{/if}">
-    <div class="h-header">
-
-        <ul class="menu-h h-sort">
-            <li>
-                &nbsp;{* dummy placeholder *}
-            </li>
-        </ul>
-
-        <h1 class="list-title">
-            {if !empty($hub_context)}
-                <a href="#/hub/{$hub_context.id}/" class="back">&larr; {$hub_context.name|default:'[`(no name)`]'|escape}</a>
-            {/if}
-            {$category.name|default:'[`New category`]'|escape}
-
-        </h1>
-        <div class="clear-right"></div>
-
-    </div>
-
-    <div id="h-content">
-        <div id="h-stream-settings" class="block double-padded">
-        {else}
-        <div class="float-right">
-            <ul class="menu-h">
-                    <li><a href="#/category/{$category.id}/" class="js-delete js-dialog"><i class="icon16 delete"></i>[`Delete category`]</a></li>
-            </ul>
-        </div>
-
+<div id="h-stream-settings" class="width-100">
 {/if}
 
+<form id="h-category-settings" class="custom-mt-20 js-category-form" method="post" action="?module=settings&action=categorySave" enctype="multipart/form-data">
+    <input type="hidden" name="hub_id" value="{$category.hub_id}">
+    {if !empty($category.id)}
+    <input type="hidden" name="id" value="{$category.id}">
+    {/if}
 
-    <form id="h-category-settings" method="post" action="?module=settings&action=categorySave" enctype="multipart/form-data">
-        <input type="hidden" name="hub_id" value="{$category.hub_id}">
-        {if !empty($category.id)}
-            <input type="hidden" name="id" value="{$category.id}">
-        {/if}
-                <div class="fields form">
-                    <div class="field-group">
-                        <div class="field">
-                            <div class="name">[`Category name`]</div>
-                            <div class="value">
-                                <input type="text" name="category[name]" class="large long s-full-width-input" value="{$category.name|default:''|escape}" id="h-category-name" placeholder="[`Category name`]">
-                            </div>
-                        </div>
-                        {if $hub.status}
-                        <div class="field">
-                            <div class="name">
-                                [`Frontend URL`]
-                            </div>
-                            <div class="value">
-                                {if $routes}{$routes[0].start|escape}{/if}
-                                <input type="text" name="category[url]" value="{$category.url|default:''|escape}" id="h-category-url">
-                                {if $routes}{$routes[0].end|escape}{/if}
-                                <em class="errormsg"></em>
-                                <p class="hint">
-                                    {foreach $routes as $route}{if !$route@first}
-                                        <span class="js-category-url" data-url="{$route.url|escape}">{if !empty($category.url)}{$route.url|replace:'%url%':$category.url|escape}{/if}</span><br>
-                                    {/if}{/foreach}
-                                </p>
-                            </div>
-                        </div>
-                        {/if}
+    {if empty($category.id)}
+    <div class="article">
+        <div class="article-body">
+            <h2 class="list-title js-page-title">{$category.name|default:'[`New category`]'|escape}</h2>
+    {/if}
 
-                        <div class="field">
-                            <div class="name">
-                                [`Category summary`]
-                            </div>
-                            <div class="value">
-                                <textarea name="category[description]">{$category.description|escape}</textarea>
-                            </div>
-                        </div>
-
-                        {if $hub.status}
-                        <div class="field">
-                            <div class="name">
-                                [`Logo`]
-                            </div>
-                            <div class="value">
-                                {if !empty($category.logo)}
-                                    <img class="h-category-logo" src="{$logo_base_url}{$category.logo}"><br><br>
-                                {/if}
-
-                                <input type="file" name="category_logo">
-                                {if !empty($category.logo)}
-                                    <br><a href="javascript:void(0)" id="delete-category-logo-link" title="[`Delete category logo?`]">[`Delete`]</a>
-                                {/if}
-
-                                <div class="block">
-                                    <div class="progressbar small blue" style="display: none;">
-                                        <div class="progressbar-outer">
-                                            <div class="progressbar-inner" id="h-category-logo-progressbar" style="width: 0%;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="errormsg" style="display: none;"><em>[`Only PNG and JPEG images are allowed`]</em></p>
-                                <p class="hint">[`Category logo will be published on the hub frontend homepage. Logo size depend on design theme you are using. Most design themes will scale the logo down to about 50px wide.`]</p>
-                            </div>
-                        </div>
-
-                        {/if}
-                    </div>
-
-
-                    <div class="field-group">
-                        <div class="field">
-                            <div class="name">[`Category type`]</div>
-                            {if !empty($category.id)}
-                                <input type="hidden" name="category[type]" value="{if $category.type==hubCategoryModel::TYPE_DYNAMIC}{if empty($category.conditions.type_id)}tag_id{else}type{/if}{else}0{/if}">
-                            {/if}
-                            {if empty($category.id) || ($category.type==hubCategoryModel::TYPE_STATIC)}
-                            <div class="value no-shift">
-                                <label>
-                                    {if empty($category.id)}
-                                    <input type="radio" name="category[type]" value="0" {if $category.type==hubCategoryModel::TYPE_STATIC} checked="checked"{/if}>
-                                    {/if}
-                                    <strong>[`Folder`]</strong>
-                                    <i class="icon16 folder"></i>
-                                </label>
-                                <p class="hint">[`You’ll be able to manually add new topics and move existing topics into this category.`]</p>
-                            </div>
-                            {/if}
-
-                            {if empty($category.id) || (($category.type==hubCategoryModel::TYPE_DYNAMIC) && !empty($category.conditions.type_id))}
-                            <div class="value no-shift">
-                                <label>
-                                    {if empty($category.id)}
-                                    <input type="radio" name="category[type]" value="type"{if (!empty($category.id) && empty($category.type))||empty($types)} disabled="disabled"{elseif !empty($category.conditions.type_id)} checked="checked" {/if}>
-                                    {/if}
-                                    <strong>[`Filter by topic type`]</strong>
-
-                                </label>
-                                {hubHelper::getGlyph('info', 16, true)}
-                                <select name="category[conditions][type_id]"{if !empty($category.id) && empty($category.type)} disabled="disabled" {/if}>
-                                    {foreach $types as $t}
-                                        <option value="{$t.id}" data-type="{$t.type|escape}" data-glyph="{hubHelper::getGlyph($t.glyph, 16, true)|escape}" {if ifset($category.conditions.type_id)==$t.id} selected="selected"{/if}>{$t.name|escape}</option>
-                                    {/foreach}
-                                </select>
-
-                                <p class="hint">[`This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind.`]</p>
-
-                            </div>
-                            {/if}
-
-
-                            {if empty($category.id) || (($category.type==hubCategoryModel::TYPE_DYNAMIC) && empty($category.conditions.type_id))}
-                            <div class="value no-shift">
-                                <label>
-                                    {if empty($category.id)}
-                                    <input type="radio" name="category[type]" value="tag_id"{if (!empty($category.id) && empty($category.type))||empty($cloud)} disabled="disabled"{elseif isset($category.conditions.tag_id)} checked="checked"{/if}>
-                                    {/if}
-                                    <strong>[`Filter by tags`]</strong>
-                                    <i class="icon16 tags"></i>
-                                </label>
-                                {if empty($category.id) && empty($cloud)}
-                                    <p class="hint">[`This option is not available because this hub does not have any tags yet.`]</p>
-                                {else}
-                                    <p class="hint">[`This category will be automatically filled with topics with selected tags.`]</p>
-                                {/if}
-                            </div>
-                            <div class="value no-shift js-related-view" data-related="tag_id">
-
-                                <input id="h-category-tags" type="text" name="tags" value="{foreach $assigned_tags as $tag}{$tag.name|escape}{if !$tag@last},{/if}{/foreach}">
-
-                            </div>
-                            {/if}
-
-                        </div>
-
-                        {if $hub.status}
-                        <div class="field js-related-view" data-related="0">
-                            <div class="name">
-                                [`Default sort order`]
-                            </div>
-                            <div class="value no-shift">
-                                <select name="category[sorting]">
-                                    <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual sort`]</option>
-                                    {foreach $sorts as $s}
-                                        {if $s.id != 'unanswered'}
-                                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
-                                        {/if}
-                                    {/foreach}
-                                </select>
-                                <label>
-                                    <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
-                                    [`User selectable`]
-                                </label>
-                            </div>
-                        </div>
-
-                        {foreach $base_types as $t_id => $t}
-                        <div class="field js-related-view" data-related="type:{$t_id}">
-                            <div class="name">
-                                [`Default sort order`]
-                            </div>
-                            <div class="value">
-                                <select name="category[sorting]">
-                                    {foreach ifset($t.sorting,array()) as $s}
-                                        <option value="{$s}"{if ifset($category.sorting) == $s} selected="selected"{/if}>
-                                            {$sorts[$s].name|escape}
-                                        </option>
-                                    {/foreach}
-                                </select>
-                                <label>
-                                    <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
-                                    [`User selectable`]
-                                </label>
-                            </div>
-                        </div>
-                        {/foreach}
-
-
-                        <div class="field js-related-view" data-related="tag_id">
-                            <div class="name">
-                                [`Default sort order`]
-                            </div>
-                            <div class="value">
-                                <select name="category[sorting]">
-                                    {foreach $sorts as $s}
-                                        {if $s.id != 'unanswered'}
-                                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
-                                        {/if}
-                                    {/foreach}
-                                </select>
-                                <label>
-                                    <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
-                                    [`User selectable`]
-                                </label>
-                            </div>
-                        </div>
-                        {/if}
-
-
-                    </div>
-
-                    {*META TAGS*}
-                    <div class="field-group">
-                        <div class="field">
-                            <div class="name">[`Title`]</div>
-                            <div class="value">
-                                <input name="category[meta_title]" value="{$category.meta_title|default:''|escape}" class="long">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="name">[`META Keywords`]</div>
-                            <div class="value">
-                                <textarea name="category[meta_keywords]">{$category.meta_keywords|default:''|escape}</textarea>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="name">[`META Description`]</div>
-                            <div class="value">
-                                <textarea name="category[meta_description]">{$category.meta_description|default:''|escape}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    {*SOCIAL NETWORK*}
-                    {$use_custom_settings = !isset($og.title) && !isset($og.description)}
-                    <h5>[`Social media tags (Open Graph)`]</h5>
-                    <p class="hint">[`Please refer to <a href="http://ogp.me" target="_blank">Open Graph</a> protocol site for more information on social sharing meta tags and available values.`]</p>
-
-                    <div class="field-group">
-                        <div class="field">
-                            <div class="name">[`Social sharing`]</div>
-                            <div class="value no-shift">
-                                <label><input type="checkbox" class="js-settings-custom-switcher" {if $use_custom_settings} checked{/if}> [`Use these meta tags for social sharing too`]</label>
-                            </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="name">[`Social sharing title`] <span class="hint">og:title</span></div>
-                            <div class="value">
-                                <input name="og[title]" value="{$og.title|escape}" class="long">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="name">[`Social sharing image URL`] <span class="hint">og:image</span></div>
-                            <div class="value">
-                                <input name="og[image]" value="{$og.image|escape}" class="long">
-                                <br>
-                                <span class="hint">[`If no value is specified, a social network will attempt to automatically determine a preview image.`]</span>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="name">[`Social sharing video URL`] <span class="hint">og:video</span></div>
-                            <div class="value">
-                                <input name="og[video]" value="{$og.video|escape}" class="long">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="name">[`Social sharing description`] <span class="hint">og:description</span></div>
-                            <div class="value">
-                                <textarea name="og[description]">{$og.description|escape}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field-group">
-                        <div class="field">
-                            <div class="value">
-                                {$wa->csrf()}
-                            <input type="submit" name="submit" value="[`Save`]" class="button green">
-                            [`or`] <a class="cancel" href="#">[`cancel`]</a>
-                            </div>
-                        </div>
-                    </div>
-
+    <div class="fields form">
+        <div class="fields-group">
+            <div class="field">
+                <div class="name for-input">[`Category name`]</div>
+                <div class="value">
+                    <input type="text" name="category[name]" class="small bold long width-100" value="{$category.name|default:''|escape}" id="h-category-name" placeholder="[`Category name`]">
                 </div>
             </div>
 
-    </form>
+            {if $hub.status}
+            <div class="field">
+                <div class="name for-input">
+                    [`Frontend URL`]
+                </div>
 
-{if empty($category.id)}
+                <div class="value">
+                    {if $routes}{$routes[0].start|escape}{/if}
+                    <input type="text" name="category[url]" value="{$category.url|default:''|escape}" class="small long width-100-mobile" id="h-category-url">
+                    {if $routes}{$routes[0].end|escape}{/if}
+                    <em class="errormsg state-error"></em>
 
-            <div class="clear-both"></div>
+                    <div class="hint">
+                        {foreach $routes as $route}{if !$route@first}
+                        <p><span class="js-category-url" data-url="{$route.url|escape}">{if !empty($category.url)}{$route.url|replace:'%url%':$category.url|escape}{/if}</span></p>
+                        {/if}{/foreach}
+                    </div>
+                </div>
+            </div>
+            {/if}
 
+            <div class="field">
+                <div class="name">
+                    [`Category summary`]
+                </div>
+
+                <div class="value">
+                    <textarea name="category[description]" class="small">{$category.description|escape}</textarea>
+                </div>
+            </div>
+
+            {if $hub.status}
+            <div class="field">
+                <div class="name">
+                    [`Logo`]
+                </div>
+
+                <div class="value">
+                    {if !empty($category.logo)}
+                    <div class="custom-mb-16">
+                        <img class="h-category-logo" src="{$logo_base_url}{$category.logo}">
+                    </div>
+                    {/if}
+
+                    <div class="upload">
+                        <label class="button purple outlined rounded small">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>[`Select a file`]</span>
+                            <input type="file" name="category_logo" autocomplete="off">
+                        </label>
+                    </div>
+
+                    {if !empty($category.logo)}
+                    <p><a href="javascript:void(0)" class="text-red" id="delete-category-logo-link" title="[`Delete category logo?`]">[`Delete`]</a></p>
+                    {/if}
+
+                    <div class="progressbar custom-mt-12" id="h-category-logo-progressbar" style="display: none;">
+                        <div class="progressbar-line-wrapper text-outside">
+                            <div class="progressbar-outer"><div class="progressbar-inner" style="width: 0;"></div></div>
+                            <div class="progressbar-text">0%</div>
+                        </div>
+                    </div>
+
+                    <p class="errormsg state-error" style="display: none;"><em>[`Only PNG and JPEG images are allowed.`]</em></p>
+
+                    <p class="hint">[`Category logo will be published on the hub’s homepage. The logo size depends on the design theme you are using. Most design themes will scale the logo down to about 50px wide.`]</p>
+                </div>
+            </div>
+            {/if}
         </div>
-    </div>
 
-</div>
+        <div class="fields-group">
+            <div class="field">
+                <div class="name">[`Category type`]</div>
 
-<div class="clear-both"></div>
+                {if !empty($category.id)}
+                <input type="hidden" name="category[type]" value="{if $category.type==hubCategoryModel::TYPE_DYNAMIC}{if empty($category.conditions.type_id)}tag_id{else}type{/if}{else}0{/if}">
+                {/if}
 
-</div>
-{/if}
+                <div class="value">
+                    {if empty($category.id) || ($category.type==hubCategoryModel::TYPE_STATIC)}
+                    <div>
+                        {if empty($category.id)}
+                        <label class="small">
+                            <span class="wa-radio">
+                                <input type="radio" name="category[type]" value="0" {if $category.type==hubCategoryModel::TYPE_STATIC} checked="checked"{/if}>
+                                <span></span>
+                            </span>
+                            <i class="fas fa-folder custom-ml-4 text-dark-gray"></i>
+                            [`Folder`]
+                        </label>
+                        {else}
+                        <span class="small">
+                            <i class="fas fa-folder text-dark-gray"></i>
+                            [`Folder`]
+                        </span>
+                        {/if}
 
+                        <div class="hint">[`You’ll be able to manually add new topics and move existing topics into this category.`]</div>
+                    </div>
+                    {/if}
 
-{if !empty($category.id)}
-    <div id="h-category-delete" style="display: none;" class="dialog">
-        <div class="dialog-background"></div>
-        <form method="post" action="module=settings&action=categoryDelete">
-            <div class="dialog-window">
-                <div class="dialog-content">
-                    <div class="dialog-content-indent">
-                        <h1>[`Delete category`]</h1>
-                        {if ($category.type==hubCategoryModel::TYPE_STATIC) && ($category.topics_count) && (count($hub.categories)>1)}
-                        <ul class="menu-v">
+                    {if empty($category.id) || (($category.type==hubCategoryModel::TYPE_DYNAMIC) && !empty($category.conditions.type_id))}
+                    <div{if empty($category.id)} class="custom-mt-12"{/if}>
+                        <label class="small">
+                            {if empty($category.id)}
+                            <span class="wa-radio">
+                                <input type="radio" name="category[type]" value="type"{if (!empty($category.id) && empty($category.type))||empty($types)} disabled="disabled"{elseif !empty($category.conditions.type_id)} checked="checked" {/if}>
+                                <span></span>
+                            </span>
+                            {/if}
+                            <i class="fas fa-filter custom-ml-4 text-dark-gray"></i>
+                            [`Filter by topic type`]
+                        </label>
+
+                        <div class="wa-select smaller custom-ml-4">
+                            <select name="category[conditions][type_id]"{if !empty($category.id) && empty($category.type)} disabled="disabled"{/if}>
+                                {foreach $types as $t}
+                                <option value="{$t.id}" data-type="{$t.type|escape}" data-glyph="{hubHelper::getGlyph($t.glyph, 16, true)|escape}" {if ifset($category.conditions.type_id)==$t.id} selected="selected"{/if}>{$t.name|escape}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="hint">[`This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind.`]</div>
+                    </div>
+                    {/if}
+
+                    {if empty($category.id) || (($category.type==hubCategoryModel::TYPE_DYNAMIC) && empty($category.conditions.type_id))}
+                    <div{if empty($category.id)} class="custom-mt-12"{/if}>
+                        <label class="small">
+                            {if empty($category.id)}
+                            <span class="wa-radio">
+                                <input type="radio" name="category[type]" value="tag_id"{if (!empty($category.id) && empty($category.type))||empty($cloud)} disabled="disabled"{elseif isset($category.conditions.tag_id)} checked="checked"{/if}>
+                                <span></span>
+                            </span>
+                            {/if}
+                            <i class="fas fa-hashtag custom-ml-4 text-dark-gray"></i>
+                            [`Filter by tags`]
+                        </label>
+
+                        {if empty($category.id) && empty($cloud)}
+                        <div class="hint">[`This option is not available because this hub does not have any tags yet.`]</div>
+                        {else}
+                        <div class="hint">[`This category will be automatically filled with topics with selected tags.`]</div>
+                        {/if}
+                    </div>
+
+                    <div class="custom-mt-12 js-related-view" data-related="tag_id">
+                        <ul class="chips small custom-mt-0 js-tags-list">
                             <li>
-                                <label><input name="delete" type="radio" value="delete" checked="checked">
-                                    [`Don't delete topics`]
-                                    <span class="hint">
-                                        [`All topics will remain in the hub stream, and only the category will be deleted`]
-                                    </span>
-                                </label>
-                            </li>
-
-                            <li>
-                                {assign var="move_topics_text" value='[`Move all %d topics to`]'|sprintf:$category.topics_count}
-                                <label><input name="delete" type="radio" value="move">
-                                    {$move_topics_text}
-                                </label>
-
-                                <select name="target_category">
-                                    <option value="">[`Select category`]</option>
-                                    {foreach $hub.categories as $target_category}
-                                        <option value="{$target_category.id}" {if ($category.id==$target_category.id)} disabled{/if}>{$target_category.name|escape}</option>
-                                    {/foreach}
-                                </select>
+                                <input type="text" id="js-tags-input" class="small" placeholder="[`Add a tag`]">
                             </li>
                         </ul>
-                        {else}
-                            [`All topics will remain in the hub stream, and only the category will be deleted`]
-                        {/if}
+
+                        <div class="hidden js-tag-template">
+                            <li class="tag">
+                                <a href="#" class="h-tag-item">
+                                    <i class="fas fa-hashtag"></i>
+                                    <span class="h-tag-name"></span>
+                                    <i class="fas fa-times-circle h-tag-remove"></i>
+                                </a>
+                            </li>
+                        </div>
+
+                        <input type="hidden" name="tags" class="js-tags-input-hidden" value="{foreach $assigned_tags as $tag}{$tag.name|escape}{if !$tag@last},{/if}{/foreach}">
                     </div>
+                    {/if}
                 </div>
-                <div class="dialog-buttons">
-                    <div class="dialog-buttons-gradient">
-                        <input type="submit" value="[`Delete`]" class="button red">
-                        [`or`] <a class="cancel" href="#">[`close`]</a>
+            </div>
+
+            {if $hub.status}
+            <div class="field js-related-view" data-related="0">
+                <div class="name">
+                    [`Default sort order`]
+                </div>
+
+                <div class="value">
+                    <div class="wa-select small">
+                        <select name="category[sorting]">
+                            <option value="manual"{if ifempty($category.sorting,'manual') eq 'manual'} selected="selected" {/if}>[`Manual sort`]</option>
+                            {foreach $sorts as $s}
+                            {if $s.id != 'unanswered'}
+                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
+                            {/if}
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="custom-mt-4">
+                        <label class="small">
+                            <span class="wa-checkbox">
+                                <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
+                                <span>
+                                    <span class="icon">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </span>
+                            </span>
+                            [`User selectable`]
+                        </label>
                     </div>
                 </div>
             </div>
-        </form>
+
+            {foreach $base_types as $t_id => $t}
+            <div class="field js-related-view" data-related="type:{$t_id}">
+                <div class="name">
+                    [`Default sort order`]
+                </div>
+
+                <div class="value">
+                    <div class="wa-select small">
+                        <select name="category[sorting]">
+                            {foreach ifset($t.sorting,array()) as $s}
+                            <option value="{$s}"{if ifset($category.sorting) == $s} selected="selected"{/if}>
+                            {$sorts[$s].name|escape}
+                            </option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="small">
+                            <span class="wa-checkbox">
+                                <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
+                                <span>
+                                    <span class="icon">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </span>
+                            </span>
+                            [`User selectable`]
+                        </label>
+                    </div>
+                </div>
+            </div>
+            {/foreach}
+
+            <div class="field js-related-view" data-related="tag_id">
+                <div class="name">
+                    [`Default sort order`]
+                </div>
+
+                <div class="value">
+                    <div class="wa-select small">
+                        <select name="category[sorting]">
+                            {foreach $sorts as $s}
+                            {if $s.id != 'unanswered'}
+                            <option value="{$s.id}"{if $category.sorting == $s.id} selected="selected"{/if}>{$s.name|escape}</option>
+                            {/if}
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="small">
+                            <span class="wa-checkbox">
+                                <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
+                                <span>
+                                    <span class="icon">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </span>
+                            </span>
+                            [`User selectable`]
+                        </label>
+                    </div>
+                </div>
+            </div>
+            {/if}
+        </div>
+
+        {*META TAGS*}
+        <div class="fields-group">
+            <div class="field">
+                <div class="name">[`Title`]</div>
+                <div class="value">
+                    <input type="text" name="category[meta_title]" value="{$category.meta_title|default:''|escape}" class="small long width-100-mobile">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">[`META Keywords`]</div>
+                <div class="value">
+                    <textarea name="category[meta_keywords]" class="small width-100-mobile">{$category.meta_keywords|default:''|escape}</textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">[`META Description`]</div>
+                <div class="value">
+                    <textarea name="category[meta_description]" class="small width-100-mobile">{$category.meta_description|default:''|escape}</textarea>
+                </div>
+            </div>
+        </div>
+
+        {*SOCIAL NETWORK*}
+        {$use_custom_settings = !isset($og.title) && !isset($og.description)}
+        <h5>[`Social media tags (Open Graph)`]</h5>
+        <p class="hint">[`Please refer to <a href="http://ogp.me" target="_blank">Open Graph</a> protocol site for more information on social sharing meta tags and available values.`]</p>
+
+        <div class="fields-group">
+            <div class="field">
+                <div class="name">[`Social sharing`]</div>
+                <div class="value">
+                    <label class="small">
+                        <span class="wa-checkbox">
+                            <input type="checkbox" class="js-settings-custom-switcher" {if $use_custom_settings} checked{/if}>
+                            <span>
+                                <span class="icon">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </span>
+                        </span>
+                        [`Use these meta tags for social sharing too`]
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">[`Social sharing title`] <span class="hint">og:title</span></div>
+                <div class="value">
+                    <input type="text" name="og[title]" value="{$og.title|escape}" class="small long width-100-mobile">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">[`Social sharing image URL`] <span class="hint">og:image</span></div>
+                <div class="value">
+                    <input type="text" name="og[image]" value="{$og.image|escape}" class="small long width-100-mobile">
+
+                    <p class="hint">[`If no value is specified, a social network will attempt to automatically determine a preview image.`]</p>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">[`Social sharing video URL`] <span class="hint">og:video</span></div>
+                <div class="value">
+                    <input type="text" name="og[video]" value="{$og.video|escape}" class="small long width-100-mobile">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">[`Social sharing description`] <span class="hint">og:description</span></div>
+                <div class="value">
+                    <textarea name="og[description]" class="small width-100-mobile">{$og.description|escape}</textarea>
+                </div>
+            </div>
+        </div>
     </div>
+
+    {if empty($category.id)}
+        </div>
+    </div>
+    {/if}
+
+    <div class="bottombar bottombar--shadowless sticky bordered-top flexbox middle custom-mt-32">
+        {$wa->csrf()}
+
+        {if empty($category.id)}
+        <div class="article width-100">
+            <div class="article-body custom-py-0">
+        {/if}
+
+        <div class="flexbox middle space-12 width-100">
+            <div class="wide">
+                <button type="submit" name="submit" class="button blue js-category-save">[`Save`]</button>
+                <button type="button" class="button light-gray cancel">[`Cancel`]</button>
+            </div>
+
+            {if !empty($category.id)}
+            <button type="button" data-href="#/category/{$category.id}/" class="button red outlined js-delete js-dialog">
+                <i class="fas fa-trash-alt"></i>
+                <span class="desktop-and-tablet-only">[`Delete category`]</span>
+            </button>
+            {/if}
+        </div>
+
+        {if empty($category.id)}
+            </div>
+        </div>
+        {/if}
+    </div>
+</form>
+
+{if empty($category.id)}
+</div>
 {/if}
 
+<div id="h-category-delete" class="dialog">
+    <div class="dialog-background"></div>
 
+    <div class="dialog-body">
+        <form method="post" action="module=settings&action=categoryDelete">
+            <header class="dialog-header">
+                <h2>[`Delete category`]</h2>
+            </header>
+
+            <div class="dialog-content">
+                {if ($category.type==hubCategoryModel::TYPE_STATIC) && ($category.topics_count) && (count($hub.categories)>1)}
+                <ul class="menu">
+                    <li>
+                        <label>
+                            <span class="wa-radio">
+                                <input name="delete" type="radio" value="delete" checked="checked">
+                                <span></span>
+                            </span>
+                            [`Don't delete topics`]
+
+                            <span class="hint">
+                                [`All topics will remain in the hub stream, and only the category will be deleted`]
+                            </span>
+                        </label>
+                    </li>
+
+                    <li>
+                        {assign var="move_topics_text" value='[`Move all %d topics to`]'|sprintf:$category.topics_count}
+                        <label>
+                            <span class="wa-radio">
+                                <input name="delete" type="radio" value="move">
+                                <span></span>
+                            </span>
+                            {$move_topics_text}
+                        </label>
+
+                        <div class="wa-select">
+                            <select name="target_category">
+                                <option value="">[`Select category`]</option>
+                                {foreach $hub.categories as $target_category}
+                                <option value="{$target_category.id}" {if ($category.id==$target_category.id)} disabled{/if}>{$target_category.name|escape}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+                {else}
+                <p>[`All topics will remain in the hub stream, and only the category will be deleted`]</p>
+                {/if}
+            </div>
+
+            <footer class="dialog-footer">
+                <button type="submit" class="button red js-hub-remove-category">[`Delete`]</button>
+                <button type="button" class="button light-gray js-dialog-close">[`Cancel`]</button>
+            </footer>
+        </form>
+    </div>
+</div>
 <script type="text/javascript">
     $(function() {
 
-        var $form = $('#h-category-settings');
+        $.wa.locale = $.extend($.wa.locale, {
+            "Add_tag": "[`Add a tag`]",
+            "blockquote": "[`Quote...`]"
+        });
 
-        var type = 0;
-        var $type =  $form.find(':input[name="category\\[type\\]"]');
-        var $type_conditions =$form.find(':input[name="category\\[conditions\\]\\[type_id\\]"]'),
-            $meta_title = $form.find('input[name="category[meta_title]"]'),
-            $meta_description = $form.find('textarea[name="category[meta_description]"]'),
-            $og_title = $form.find('input[name="og[title]"]'),
-            $og_description = $form.find('textarea[name="og[description]"]'),
-            $switcher = $form.find('.js-settings-custom-switcher');
+        const $form = $('#h-category-settings');
+        const $saveButton = $form.find('.js-category-save');
 
-        var showViewSettings = function(selector){
+        let type = 0;
+        const $type =  $form.find(':input[name="category\\[type\\]"]');
+        const $type_conditions =$form.find(':input[name="category\\[conditions\\]\\[type_id\\]"]');
+        const $meta_title = $form.find('input[name="category[meta_title]"]');
+        const $meta_description = $form.find('textarea[name="category[meta_description]"]');
+        const $og_title = $form.find('input[name="og[title]"]');
+        const $og_description = $form.find('textarea[name="og[description]"]');
+        const $switcher = $form.find('.js-settings-custom-switcher');
+
+        const showViewSettings = function(selector){
             $form.find('div.js-related-view').each(function(index,el){
                 var $field = $(el);
                 if($field.data('related')==selector){
@@ -425,7 +523,7 @@
         }
 
         $form.find(':input[name="category\\[url\\]"]').on('change keyup keypress',function () {
-            var url = this.value;
+            const url = this.value;
             if(url.length) {
                 $(this).parents('div.field').find('.js-category-url').each(function (index, el) {
                     var $url = $(el);
@@ -433,7 +531,6 @@
                 });
             }
         });
-
 
         $type_conditions.change(function(){
             if (type=='type') {
@@ -474,9 +571,9 @@
 
         {if empty($category.id)}
             // Transliterate name to url
-            var src_input = $('#h-category-name');
-            var dst_input = $('#h-category-url');
-            var timer_id = null;
+            const src_input = $('#h-category-name');
+            const dst_input = $('#h-category-url');
+            let timer_id = null;
             src_input.bind('keydown.category_create', function() {
                 if (timer_id) {
                     clearTimeout(timer_id);
@@ -501,45 +598,46 @@
             });
         {else}
             // Category logo deletion link
-            $('#delete-category-logo-link').click(function() {
-                var $a = $(this);
-                if (!confirm($a.attr('title'))) {
-                    return false;
-                }
+            $('#delete-category-logo-link').on('click', function(event) {
+                event.preventDefault();
 
-                $a.closest('.field').find('.h-category-logo').remove();
-                $a.remove();
+                const $a = $(this);
+                const title = $a.attr('title');
 
-                $.post($form.attr('action'), { id: {$category.id}, delete_logo: 1 });
+                $.waDialog.confirm({
+                    title,
+                    success_button_title: '[`Delete`]',
+                    success_button_class: 'danger',
+                    cancel_button_title: '[`Cancel`]',
+                    cancel_button_class: 'light-gray',
+                    onSuccess() {
+                        $a.closest('.field').find('.h-category-logo').remove();
+                        $a.remove();
+
+                        $.post($form.attr('action'), { id: {$category.id}, delete_logo: 1 });
+                    }
+                });
             });
         {/if}
 
-        $('input[name=type]', $form).click(function() {
-            if ($(this).val() == '0') {
+        $('input[name=type]', $form).on('click', function() {
+            if ($(this).val() === '0') {
                 $('#s-dynamic-field-group').hide();
             } else {
                 $('#s-dynamic-field-group').show();
             }
         });
 
-        // WYSIWYG for description
-        $form.find('textarea[name="category[description]"]').redactor({
-            minHeight: 150,
-            paragraphy: false,
-            convertDivs: false,
-            lang: $.hub.lang,
-            imageUpload: '?module=pages&action=uploadimage&r=2&',
-            imageUploadFields: {
-                _csrf: $form.find('input[name="_csrf"]').val()
-            },
-            plugins: ['table'],
-            buttons: ['bold', 'italic', 'underline', 'deleted', 'lists', 'image', 'video', 'table']
-        });
-
         // Tags input
         (function() { "use strict";
-            var $div = $('<div>');
-            var tags = $.map({json_encode(array_values($cloud))},
+            const $tagList = $('.js-tags-list');
+            const $tagsInput = $('#js-tags-input');
+            const $tagsInputHidden = $('.js-tags-input-hidden');
+            let tags = $tagsInputHidden.val() ? $tagsInputHidden.val().split(',') : [];
+            const tagTemplate = $('.js-tag-template').html();
+
+            const $div = $('<div>');
+            const autocompleteTags = $.map({json_encode(array_values($cloud))},
                 function(tag) {
                     $div.text(tag.name);
                     return {
@@ -550,27 +648,66 @@
                 }
             );
 
-            $('#h-category-tags').tagsInput({
+            $tagsInput.tagsInput({
                 defaultText: '',
                 width: '', // from .css
                 height: '', // from .css
                 autocomplete_url: '',
                 autocomplete: {
                     source: function(request, response) {
-                        var result = [];
-                        $.each(tags, function(i, tag) {
-                            if (tag.value.indexOf(request.term) >= 0) {
-                                result.push(tag);
-                                if (result.length >= 5) {
-                                    return false;
-                                }
+                        const result = [];
+
+                        $.each(autocompleteTags, function(i, tag) {
+                            if (tag.value.indexOf(request.term) < 0) {
+                                return;
+                            }
+
+                            result.push(tag);
+
+                            if (result.length >= 5) {
+                                return false;
                             }
                         });
+
                         response(result);
                     }
+                },
+                onAddTag(tag) {
+                    tags.push(tag);
+
+                    const $tag = $(tagTemplate);
+
+                    $tag.find('.h-tag-name').text(tag);
+
+                    $tagList.prepend($tag);
+                    $tagsInputHidden.val(tags.join(','));
+                    $form.trigger('change');
                 }
+            });
+
+            const $tagsInputPlugin = $('#js-tags-input_tag');
+            const $plusIcon = $('<i class="fas fa-plus custom-mr-4 gray"></i>');
+
+            $plusIcon.insertBefore($tagsInputPlugin);
+            $tagsInputPlugin.attr('placeholder', $.wa.locale['Add_tag'])
+
+            $tagList.on('click', '.h-tag-remove', function(event) {
+                event.preventDefault();
+
+                const tagName = $(this).siblings('.h-tag-name').text();
+                tags = tags.filter(tag => tag !== tagName);
+                $tagsInputHidden.val(tags.join(','));
+                $tagsInput.removeTag(tagName);
+                $(this).closest('li').remove();
             });
         })();
 
+        $form.on('change', function(event) {
+            $saveButton.addClass('yellow');
+        });
+
+        {if empty($category.id)}
+        $.sidebar.setHub('{$category.hub_id}');
+        {/if}
     });
 </script>

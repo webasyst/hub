@@ -1,0 +1,92 @@
+<ul class="menu-v stack with-icons">
+    <li class="{if empty($type) && empty($hub)}selected {/if}top-padded">
+        <a href="#/settings/">
+            <i class="icon16 settings"></i>[`Settings`]
+        </a>
+    </li>
+</ul>
+
+{if $is_admin}
+
+    <!-- hubs -->
+    <h5 class="heading">
+        <a href="#/settings/hub/add/" class="count"><i class="icon16 add"></i></a>
+        [`Hubs`]
+    </h5>
+    <ul class="menu-v stack with-icons" id="h-hubs-list-settings">
+        {foreach $hubs as $h}
+        <li{if !empty($hub) && ($hub.id == $h.id)} class="selected"{/if} data-id="{$h.id}">
+            <a href="#/settings/hub/{$h.id}/"{if $h.status && !$h.urls} style="color: #aaa;"{/if}>{strip}<i class="icon16 color{if !empty($h.params.color)} h-{$h.params.color}{/if}"></i>{/strip}<span class="js-hub-name">{$h.name|default:'[`(no name)`]'|escape}</span>
+                {if !$h.status}
+                    <i class="icon10 lock-bw no-overhanging"></i>
+                {/if}
+            </a>
+        </li>
+        {/foreach}
+    </ul>
+
+    <!-- topic types -->
+    <h5 class="heading">
+        <a href="#/settings/type/new/" class="count"><i class="icon16 add"></i></a>
+        [`Topic types`]
+    </h5>
+    <ul class="menu-v stack with-icons" id="h-types-list-settings">
+        {foreach $types as $t}
+        <li{if !empty($type) && ($type.id == $t.id)} class="selected"{/if} data-id="{$t.id}">
+            <a href="#/settings/type/{$t.id}/">{hubHelper::getGlyph($t.glyph, 16, true)}<span class="js-type-name">{$t.name|escape}</span></a>
+        </li>
+        {/foreach}
+    </ul>
+
+<script>(function() { "use strict";
+
+    var timeout = null;
+
+    $('#h-hubs-list-settings').sortable({
+        axis: 'y',
+        items: '> li',
+        distance: 5,
+        containment: 'parent',
+        tolerance: 'pointer',
+        update: function (e, ui) {
+            var params = {
+                id: ui.item.data('id'),
+                prev_id: ui.item.prev().data('id') || 0,
+                type: 'hub'
+            };
+            $.post('?module=settings&action=move', params, null, 'json').always(function(r, status) {
+                if (status != 'success' || r.status !== 'ok') {
+                    console && console.log(status, r.errors || r);
+                }
+
+                timeout && clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    $.sidebar.reload();
+                }, 2500);
+            });
+        }
+    });
+
+    $('#h-types-list-settings').sortable({
+        axis: 'y',
+        items: '> li',
+        distance: 5,
+        containment: 'parent',
+        tolerance: 'pointer',
+        update: function (e, ui) {
+            var params = {
+                id: ui.item.data('id'),
+                prev_id: ui.item.prev().data('id') || 0,
+                type: 'type'
+            };
+            $.post('?module=settings&action=move', params, null, 'json').always(function(r, status) {
+                if (status != 'success' || r.status !== 'ok') {
+                    console && console.log(status, r.errors || r);
+                }
+            });
+        }
+    });
+
+})();</script>
+
+{/if}

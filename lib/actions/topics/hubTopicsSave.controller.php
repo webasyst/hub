@@ -122,11 +122,14 @@ class hubTopicsSaveController extends waJsonController
         // Prepare data for JS
         $this->response['topic'] = $topic;
         $this->response['topic']['title'] = htmlspecialchars($this->response['topic']['title']);
-        if (!$this->response['topic']['status']) {
-            $c = new waContact($this->response['topic']['contact_id']);
+        $c = new waContact($this->response['topic']['contact_id']);
+        if ($c->exists()) {
             $this->response['contact'] = array(
                 'photo' => $c->getPhoto(20)
             );
+        } else {
+            $this->response['error'] = sprintf(_w('Contact with ID %s does not exist.'), $c->getId());
+            waLog::log('Contact does not exist (HUB, topic): '.$c->getId());
         }
         $this->response['topic']['datetime'] = wa_date('humandate', $this->response['topic']['create_datetime']);
     }

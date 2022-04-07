@@ -1,162 +1,250 @@
 {if empty($filter.id)}
-<div class="h-stream">
-    <div class="h-header">
-
-        <ul class="menu-h h-sort">
-            <li>
-                &nbsp;{* dummy placeholder *}
-            </li>
-        </ul>
-        <h1 class="list-title">
-            {$filter.name|default:'[`New filter`]'|escape}
-
-        </h1>
-        <div class="clear-right"></div>
-
-    </div>
-
-    <div id="h-content">
-        <div id="h-stream-settings" class="block double-padded">
-{else}
-<div class="float-right">
-    <ul class="menu-h">
-        <li><a href="#/filter/{$filter.id}/delete/" class="js-delete"><i class="icon16 delete"></i>[`Delete filter`]</a></li>
-    </ul>
-</div>
+<div id="h-stream-settings" class="width-100">
 {/if}
 
+<form action="?module=settings&action=filterSave" method="post" class="js-filter-form">
+    {if empty($filter.id)}
+    <div class="article">
+        <div class="article-body">
+            <h2 class="js-page-title">{$filter.name|default:'[`New filter`]'|escape}</h2>
+    {/if}
 
-<form action="?module=settings&action=filterSave" method="post">
-    <div class="fields form">
-        <div class="field-group">
+    <div class="fields form custom-mb-24{if !empty($filter.id)} custom-mt-24{/if}">
+        <div class="fields-group">
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Filter name`]
                 </div>
+
                 <div class="value bold">
-                    <input type="text" class="large" name="filter[name]" value="{$filter.name|escape}" placeholder="[`Filter name`]">
+                    <input type="text" class="bold width-100-mobile" name="filter[name]" value="{$filter.name|escape}" placeholder="[`Filter name`]">
                 </div>
             </div>
+
             <div class="field">
                 <div class="name">
                     [`Visibility`]
                 </div>
+
                 {if $is_admin}
-                
-                    <div class="value no-shift h-ibutton-checkbox">
-                        <ul class="menu-h">
-                            <li><label for="h-filter-visibility"><span class="h-unselected">[`Only me`]</span></label></li>
-                            <li><input type="checkbox"{if $filter.contact_id>=0} checked="checked"{/if} id="h-filter-visibility"></li>
-                            <li><label for="h-filter-visibility"><span>[`Everybody`]</span></label></li>
-                        </ul>
+                <div class="value">
+                    <div class="toggle small js-hub-toggle-group-visibility">
+                        <span class="{if $filter.contact_id<0} selected{/if}">[`Only me`]</span>
+                        <span class="js-hub-toggle-custom-group{if $filter.contact_id>=0} selected{/if}">[`Everybody`]</span>
                     </div>
-    
-                    <!-- PUBLIC FILTER details -->
-                    <div class="value no-shift">
-                        <p class="small">
-                            [`Limit visibility only to the selected user groups`]:
-                            <select name="filter[contact_id]">
+
+                    <div class="custom-mt-12 js-hub-select-group-visibility"{if $filter.contact_id<0} style="display: none;"{/if}>
+                        <div class="text-gray small custom-mb-8">[`Limit visibility only to the selected user groups`]:</div>
+
+                        <div class="wa-select small">
+                            <select name="filter[contact_id]" class="js-hub-group-select">
                                 <option value="0" {if $filter.contact_id==0} selected="selected"{/if}>[`Everybody`]</option>
                                 {foreach $groups as $group_id=>$group}
-                                    <option value="{$group_id}" {if $filter.contact_id==$group_id} selected="selected"{/if}>{$group|escape}</option>
+                                <option value="{$group_id}" {if $filter.contact_id==$group_id} selected="selected"{/if}>{$group|escape}</option>
                                 {/foreach}
                             </select>
-                        </p>
+                        </div>
                     </div>
+                </div>
                 {else}
-                    <div class="value no-shift">
-                        [`Only me`] <i class="icon10 lock-bw"></i>
-                    </div>
+                <div class="value">
+                    [`Only me`] <i class="fas fa-lock"></i>
+                </div>
                 {/if}
             </div>
+
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Icon`]
                 </div>
+
                 <div class="value">
                     <input type="hidden" name="filter[icon]" value="{$filter.icon|escape}">
-                    <ul class="menu-h js-icon-templates h-filter-icon">
-                    {foreach hubHelper::getFilterIcons() as $_g}
-                        <li class="{if ($filter.icon == $_g)} selected{/if}" title="{$_g|escape}"><a href="#" data-icon="{$_g|escape}">{hubHelper::getIcon($_g,['class'=>'js-icon'])}</a></li>
-                    {/foreach}
-                    </ul>
+                    <ul class="chips custom-my-0 js-icon-templates">
+                        {foreach hubHelper::getFilterIcons() as $_g name=icons}
 
+                        {* fallback for old ui *}
+                        {if $filter.icon == 'funnel'}
+                            {$filter.icon = 'filter'}
+                        {else if $filter.icon == 'lightning'}
+                            {$filter.icon = 'bolt'}
+                        {else if $filter.icon == 'light-bulb'}
+                            {$filter.icon = 'lightbulb'}
+                        {else if $filter.icon == 'lock-unlocked'}
+                            {$filter.icon = 'lock-open'}
+                        {else if $filter.icon == 'contact'}
+                            {$filter.icon = 'user-friends'}
+                        {else if $filter.icon == 'reports'}
+                            {$filter.icon = 'chart-line'}
+                        {else if $filter.icon == 'books'}
+                            {$filter.icon = 'book'}
+                        {else if $filter.icon == 'marker'}
+                            {$filter.icon = 'map-marker-alt'}
+                        {else if $filter.icon == 'lens'}
+                            {$filter.icon = 'camera'}
+                        {else if $filter.icon == 'alarm-clock'}
+                            {$filter.icon = 'clock'}
+                        {else if $filter.icon == 'notebook'}
+                            {$filter.icon = 'sticky-note'}
+                        {else if $filter.icon == 'blog'}
+                            {$filter.icon = 'file-alt'}
+                        {else if $filter.icon == 'disk'}
+                            {$filter.icon = 'save'}
+                        {else if $filter.icon == 'burn'}
+                            {$filter.icon = 'radiation-alt'}
+                        {else if $filter.icon == 'clapperboard'}
+                            {$filter.icon = 'video'}
+                        {else if $filter.icon == 'cup'}
+                            {$filter.icon = 'mug-hot'}
+                        {else if $filter.icon == 'smiley'}
+                            {$filter.icon = 'smile'}
+                        {else if $filter.icon == 'target'}
+                            {$filter.icon = 'bullseye'}
+                        {/if}
+
+                        <li class="custom-my-4{if $filter.icon == $_g || (empty($filter.id) && $smarty.foreach.icons.first)} selected{/if}" title="{$_g|escape}">
+                            <a href="#" data-icon="{$_g|escape}">
+                                <i class="fas fa-{$_g}"></i>
+                            </a>
+                        </li>
+                        {/foreach}
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <h4 class="heading">[`Filter conditions`]</h4>
-        <div class="field-group">
+        <div class="fields-group">
+            <h4>[`Filter conditions`]</h4>
+
             <div class="field">
                 <div class="name">
                     [`Tags`]
                 </div>
+
                 <div class="value">
-                    <input id="h-filter-tags" type="text" name="tags" value="{join(',',ifempty($filter.conditions.tag_name, []))|escape}">
+                    <ul class="chips small custom-mt-0 js-tags-list">
+                        <li class="custom-mt-0">
+                            <input type="text" id="js-tags-input" class="small" placeholder="[`Add a tag`]">
+                        </li>
+                    </ul>
+
+                    <div class="hidden js-tag-template">
+                        <li class="tag custom-mt-0">
+                            <a href="#" class="h-tag-item">
+                                <i class="fas fa-hashtag"></i>
+                                <span class="h-tag-name"></span>
+                                <i class="fas fa-times-circle h-tag-remove"></i>
+                            </a>
+                        </li>
+                    </div>
+
+                    <input type="hidden" name="tags" class="js-tags-input-hidden" value="{join(',',ifempty($filter.conditions.tag_name, []))|escape}">
                 </div>
             </div>
+
             <div class="field">
                 <div class="name">
                     [`Topic types`]
                 </div>
-                <div class="value">
-                    <ul class="menu-v js-types-filter">
 
-                    {foreach $types as $t}
-                        <li>
-                            <label><input type="checkbox"{if !empty($filter.conditions.types) && !empty($filter.conditions.types[$t.id])} checked="checked"{/if} name="filter[conditions][types][{$t.id}][type_id]" value="{$t.id}" class="js-types-filter"> {hubHelper::getGlyph($t.glyph, 16, true)}{$t.name|escape}</label>
-                            {if $t.type == 'question'}
-                            <select name="filter[conditions][types][{$t.id}][comments_count]">
-                                <option value=""{if ifset($filter.conditions.types[$t.id]['comments_count'],'')===''} selected="selected"{/if}>[`All`]</option>
-                                <option value="0"{if ifset($filter.conditions.types[$t.id]['comments_count'],'')==='0'} selected="selected"{/if}>[`Unanswered only`]</option>
-                                <option value="1"{if ifset($filter.conditions.types[$t.id]['comments_count'],'')==='1'} selected="selected"{/if}>[`Answered only`]</option>
-                            </select>
-                            {/if}
-                            
-                            {if $t.type == 'question'}
-                                <div class="h-badge-list">
-                                    {* Virtual bage :no_bage: *}
-                                    <label>
-                                        <span class="h-badge">
-                                            <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
-                                            &nbsp;[`No badge`]
+                <div class="value small">
+                    <div class="js-types-filter">
+                        {foreach $types as $t}
+                        <div>
+                            <label>
+                                <span class="wa-checkbox">
+                                    <input type="checkbox"{if !empty($filter.conditions.types) && !empty($filter.conditions.types[$t.id])} checked="checked"{/if} name="filter[conditions][types][{$t.id}][type_id]" value="{$t.id}" class="js-types-filter">
+                                    <span>
+                                        <span class="icon">
+                                            <i class="fas fa-check"></i>
                                         </span>
-                                    </label>
-                                    {foreach hubHelper::getBadgesByType('question') as $badge_id=>$badge_info}
-                                    <label>
-                                            <span class="h-badge h-{$badge_id}">
-                                                <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
-                                                &nbsp;{$badge_info.name|escape}
-                                            </span>
-                                    </label>
-                                    {/foreach}
-                                </div>
-                            {/if}
+                                    </span>
+                                </span>
+                                <span>{$t.name|escape}</span>
+                            </label>
+                        </div>
 
-                            {if $t.type == 'feedback'}
-                                <div class="h-badge-list">
-                                    {* Virtual bage :no_bage: *}
-                                    <label>
-                                        <span class="h-badge">
-                                            <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
-                                            &nbsp;[`No badge`]
+                        {if $t.type == 'question'}
+                        <div class="custom-mt-4 custom-mb-8 custom-ml-24 h-badge-list"{if empty($filter.conditions.types) && empty($filter.conditions.types[$t.id])} style="display: none;"{/if}>
+                            <div class="wa-select">
+                                <select name="filter[conditions][types][{$t.id}][comments_count]">
+                                    <option value=""{if ifset($filter.conditions.types[$t.id]['comments_count'],'')===''} selected="selected"{/if}>[`All`]</option>
+                                    <option value="0"{if ifset($filter.conditions.types[$t.id]['comments_count'],'')==='0'} selected="selected"{/if}>[`Unanswered only`]</option>
+                                    <option value="1"{if ifset($filter.conditions.types[$t.id]['comments_count'],'')==='1'} selected="selected"{/if}>[`Answered only`]</option>
+                                </select>
+                            </div>
+
+                            <div class="custom-my-4">
+                                <label>
+                                    <span class="wa-checkbox">
+                                        <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
+                                        <span>
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
                                         </span>
-                                    </label>
-                                    {foreach hubHelper::getBadges() as $badge_id=>$badge_info}
-                                        <label>
-                                            <span class="h-badge h-{$badge_id}">
-                                                <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
-                                                &nbsp;{$badge_info.name|escape}
+                                    </span>
+
+                                    <span class="h-badge badge squared small" data-name="">[`No status`]</span>
+                                </label>
+                            </div>
+
+                            {foreach hubHelper::getBadgesByType('question') as $badge_id=>$badge_info}
+                            <div class="custom-my-4">
+                                <label>
+                                    <span class="wa-checkbox">
+                                        <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
+                                        <span>
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
                                             </span>
-                                        </label>
-                                    {/foreach}
-                                </div>
-                            {/if}
+                                        </span>
+                                    </span>
 
-                        </li>
-                    {/foreach}
-                    </ul>
+                                    <span class="h-badge badge squared small" data-name="{$badge_id}">{$badge_info.name|escape}</span>
+                                </label>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
 
+                        {if $t.type == 'feedback'}
+                        <div class="custom-mt-4 custom-mb-8 custom-ml-24 h-badge-list"{if empty($filter.conditions.types) && empty($filter.conditions.types[$t.id])} style="display: none;"{/if}>
+                            <div class="custom-my-4">
+                                <label>
+                                    <span class="wa-checkbox">
+                                        <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{hubConfig::VIRTUAL_NO_BADGE_ID}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array(hubConfig::VIRTUAL_NO_BADGE_ID, ifempty($filter.conditions.types[$t.id]['badge'], array())))} checked="checked"{/if}>
+                                        <span>
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                        </span>
+                                    </span>
+
+                                    <span class="h-badge badge squared small" data-name="">[`No status`]</span>
+                                </label>
+                            </div>
+
+                            {foreach hubHelper::getBadges() as $badge_id=>$badge_info}
+                            <div class="custom-my-4">
+                                <label>
+                                    <span class="wa-checkbox">
+                                        <input type="checkbox" name="filter[conditions][types][{$t.id}][badge][]" value="{$badge_id}" {if !isset($filter.conditions.types[$t.id]) || (!empty($filter.conditions.types[$t.id]['badge']) &&  in_array($badge_id,(array)ifempty($filter.conditions.types[$t.id]['badge'],array())))} checked="checked"{/if}>
+                                        <span>
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                        </span>
+                                    </span>
+
+                                    <span class="h-badge badge squared small" data-name="{$badge_id}">{$badge_info.name|escape}</span>
+                                </label>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+                        {/foreach}
+                    </div>
                 </div>
             </div>
 
@@ -164,107 +252,136 @@
                 <div class="name">
                     [`Hubs`]
                 </div>
-                <div class="value">
 
-                    <ul class="menu-v">
+                <div class="value small">
                     {foreach $hubs as $h}
-                        <li>
-                            <label><input type="checkbox"{if !empty($filter.conditions.hub_id) && in_array($h.id,(array)$filter.conditions.hub_id)} checked="checked"{/if} name="filter[conditions][hub_id][{$h.id}]" value="{$h.id}"> {$h.name|escape}{if !$h.status} <i class="icon10 lock-bw no-overhanging"></i>{/if}</label>
-                        </li>
+                    <div class="custom-mb-4">
+                        <label>
+                            <span class="wa-checkbox">
+                                <input type="checkbox"{if !empty($filter.conditions.hub_id) && in_array($h.id,(array)$filter.conditions.hub_id)} checked="checked"{/if} name="filter[conditions][hub_id][{$h.id}]" value="{$h.id}">
+                                <span>
+                                    <span class="icon">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </span>
+                            </span>
+                            {$h.name|escape}
+                            {if !$h.status}
+                            <i class="fas fa-lock"></i>
+                            {/if}
+                        </label>
+                    </div>
                     {/foreach}
-                    </ul>
-
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="field">
-            <div class="value">
+    {if empty($filter.id)}
+        </div>
+    </div>
+    {/if}
+
+    <div class="bottombar bottombar--shadowless sticky bordered-top flexbox middle custom-mt-32">
+        {if empty($filter.id)}
+        <div class="article width-100">
+            <div class="article-body custom-py-0">
+        {/if}
+
+        <div class="flexbox middle space-12 width-100">
+            <div class="wide">
+                <button type="submit" class="button blue submit js-filter-save">[`Save`]</button>
+                <button type="button" class="button light-gray cancel">[`Cancel`]</button>
+
                 {if !empty($filter.id)}
-                    <input type="hidden" name="id" value="{$filter.id}">
+                <input type="hidden" name="id" value="{$filter.id}">
                 {/if}
+            </div>
 
-                <input type="submit" class="button green submit" value="[`Save`]">
-                [`or`] <a class="cancel" href="#">[`cancel`]</a>
+            {if !empty($filter.id)}
+            <button type="button" data-href="#/filter/{$filter.id}/delete/" class="button red outlined js-filter-delete">
+                <i class="fas fa-trash-alt"></i>
+                <span class="desktop-and-tablet-only">[`Delete filter`]</span>
+            </button>
+            {/if}
+        </div>
 
+        {if empty($filter.id)}
             </div>
         </div>
-
+        {/if}
     </div>
-
-    <div class="clear-both"></div>
-    
 </form>
 
-
 {if empty($filter.id)}
-        </div>
-    </div>
-
 </div>
-
-    <div class="clear-both"></div>
-
-    </div>
 {/if}
-<script type="text/javascript">
+
+<script>
     $(function () {
-        var $context = $('#h-stream-settings');
+        $.wa.locale = $.extend($.wa.locale, {
+            "Add_tag": "[`Add a tag`]"
+        });
 
-        // Visibility control code
-        (function() {
-            var duration = 0;
-            var $checkbox = $('#h-filter-visibility');
-            var $wrapper = $checkbox.closest('div.value');
-            var $related = $wrapper.next('div.value');
-            var $label_only_me = $wrapper.find('li span').first();
-            var $label_everybody = $wrapper.find('li span').last();
-            $checkbox.change(function () {
-                if (this.checked) {
-                    $related.find(':input').prop('disabled', false);
-                    $related.slideDown(duration);
-                    $label_everybody.removeClass('h-unselected');
-                    $label_only_me.addClass('h-unselected');
+        const $form = $('.js-filter-form');
+        const $saveButton = $form.find('.js-filter-save');
+        const $groupToogle = $('.js-hub-toggle-group-visibility');
+        const $groupToggleCustom = $('.js-hub-toggle-custom-group');
+        const $groupsSelectWrapper = $('.js-hub-select-group-visibility');
+        const $groupSelect = $groupsSelectWrapper.find('.js-hub-group-select');
+
+        $groupToogle.waToggle({
+            change: function(event, target, toggle) {
+                if (event.target.classList.contains('js-hub-toggle-custom-group')) {
+                    $groupsSelectWrapper.slideDown(200);
                 } else {
-                    $related.find(':input').prop('disabled', true);
-                    $related.slideUp(duration);
-                    $label_everybody.addClass('h-unselected');
-                    $label_only_me.removeClass('h-unselected');
+                    $groupsSelectWrapper.slideUp(200);
                 }
-            }).change().iButton({
-                labelOn: '',
-                labelOff: '',
-                className: 'mini'
+            }
+        });
+
+        $groupSelect.on('change', function() {
+            const groupName = $(this).children('option:selected').text();
+            $groupToggleCustom.text(groupName);
+        });
+
+        const $deleteFilterButton = $('.js-filter-delete');
+        $deleteFilterButton.on('click', function() {
+            const href = $(this).data('href');
+
+            $.waDialog.confirm({
+                title: "[`Delete filter`]",
+                success_button_title: '[`Delete`]',
+                success_button_class: 'danger',
+                cancel_button_title: '[`Cancel`]',
+                cancel_button_class: 'light-gray',
+                onSuccess() {
+                    $.hub.streamDeleteHandler({$filter.id|default:'0'}, 'filter');
+                }
             });
+        });
 
-            $related.find('select').change(function() {
-                $label_everybody.text($(this).children("option:selected").text());
-            }).change();
+        const $context = $('.js-types-filter');
+        $context.on('change', function(event) {
+            const $badges = $(this).closest('div').next('.h-badge-list');
+            const $inputs = $context.find(':input:not(.js-types-filter)');
 
-            duration = 300;
-        })();
-
-
-        $context.find('ul.js-types-filter:first').find(':input.js-types-filter').change(function (event) {
-            var $container = $(this).parents('li:first');
-            var $related = $container.find('div');
-            var $inputs = $container.find(':input:not(.js-types-filter)');
-            if ($related.length) {
+            if ($badges.length) {
                 if (this.checked) {
-
                     if (event.originalEvent) {
-                        $related.slideDown();
+                        $badges.slideDown();
                     } else {
-                        $related.show();
+                        $badges.show();
                     }
                 } else {
                     if (event.originalEvent) {
-                        $related.slideUp();
+                        $badges.slideUp();
                     } else {
-                        $related.hide();
+                        $badges.hide();
                     }
                 }
             }
+
             if ($inputs.length) {
                 if (this.checked) {
                     $inputs.attr('disabled', null);
@@ -277,7 +394,13 @@
         });
 
         // Tags input
-        $('#h-filter-tags').tagsInput({
+        const $tagList = $('.js-tags-list');
+        const $tagsInput = $('#js-tags-input');
+        const $tagsInputHidden = $('.js-tags-input-hidden');
+        let tags = $tagsInputHidden.val() ? $tagsInputHidden.val().split(',') : [];
+        const tagTemplate = $('.js-tag-template').html();
+
+        $tagsInput.tagsInput({
             autocomplete_url: '',
             autocomplete: {
                 source: function(request, response) {
@@ -290,8 +413,38 @@
             },
             width: '', // from .css
             height: '', // from .css
-            defaultText: ''
+            defaultText: '',
+            onAddTag(tag) {
+                tags.push(tag);
+
+                const $tag = $(tagTemplate);
+
+                $tag.find('.h-tag-name').text(tag);
+
+                $tagList.prepend($tag);
+                $tagsInputHidden.val(tags.join(','));
+                $form.trigger('change');
+            }
         });
 
+        const $tagsInputPlugin = $('#js-tags-input_tag');
+        const $plusIcon = $('<i class="fas fa-plus custom-mr-4 gray"></i>');
+
+        $plusIcon.insertBefore($tagsInputPlugin);
+        $tagsInputPlugin.attr('placeholder', $.wa.locale['Add_tag'])
+
+        $tagList.on('click', '.h-tag-remove', function(event) {
+            event.preventDefault();
+
+            const tagName = $(this).siblings('.h-tag-name').text();
+            tags = tags.filter(tag => tag !== tagName);
+            $tagsInputHidden.val(tags.join(','));
+            $tagsInput.removeTag(tagName);
+            $(this).closest('li').remove();
+        });
+
+        $form.on('change', function(event) {
+            $saveButton.addClass('yellow');
+        });
     });
 </script>

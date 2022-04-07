@@ -1,0 +1,21 @@
+{*
+ * Sub-template included in comments/Comments.html and topics/Topics.html
+ *}
+
+<form id="h-comment-add-form" method="post">
+    <div class="h-comment-author">
+        <i class="icon16 userpic20" style="background-image: url('{$current_author.photo_url_20}');"></i>{$current_author.name|escape}
+    </div>
+    
+    <textarea name="text"></textarea>
+    
+    <input type="button" class="save button green" value="[`Add comment`]">
+    <span class="s-review-add-form-status s-ajax-status" style="display: none;">
+      <i class="s-ajax-status-loading icon16 loading"><!--icon --></i>
+    </span>
+    <input type="hidden" name="parent_id" value="0">
+    {if !empty($topic)}
+        <input type="hidden" name="topic_id" value="{$topic['id']}">
+    {/if}
+    {$wa->csrf()}
+</form>

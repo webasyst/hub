@@ -2,66 +2,42 @@
  * Sub-template included in comments/Comments.html and topics/Topics.html
  *}
 
-<div class="js-comment h-comment-container{if $comment.status == hubCommentModel::STATUS_DELETED} h-deleted{/if}{if $comment.solution} h-solution{/if}" id="h-comment-{$comment.id}" data-id="{$comment.id}">
+<div class="js-comment flexbox h-comment-container" id="h-comment-{$comment.id}" data-id="{$comment.id}">
 
-    <div class="float-right">
-        <strong class="{if $comment.vote > 0}h-positive{elseif $comment.vote < 0}h-negative{else}gray{/if} total-score">{if $comment.vote > 0}+{/if}{$comment.vote}</strong>
-        {if !($comment.status == hubCommentModel::STATUS_DELETED)}
-            <a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($comment.votes_up),true)}"><i class="icon16 hbicns up{if $comment.my_vote<=0}-bw{/if}"></i></a>
-            <a href="javascript:void(0)" class="h-vote-down" title="{_w('%d vote','%d votes',abs($comment.votes_down),true)}"><i class="icon16 hbicns down{if $comment.my_vote>=0}-bw{/if}"></i></a>
-        {/if}
-    </div>
-
-    {capture name=commentor_name}
-        {if $comment.author}<i class="icon16 userpic20" style="background-image: url('{$comment.author.photo_url_20}');"></i><span class="bold">{$comment.author.name|escape}</span>{else}<i class="icon16 userpic20" style="background-image: url('{$wa_url}wa-content/img/userpic20.jpg');"></i>{/if}
-    {/capture}
-
-    {if $comment.contact_id != 0}
-        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="bold h-comment-author">{$smarty.capture.commentor_name}</a>
-    {else}
-        <span class="h-comment-author">{$smarty.capture.commentor_name}</span>
-    {/if}
-
-    {if !empty($comment.topic)}
-        <span class="hint">[`on topic`] <strong><a href="#/topic/{$comment.topic.id}/">{$comment.topic.title|escape}</a></strong></span>
-    {/if}
-
-    <span class="hint{if !empty($comment['is_updated'])} highlighted{/if}">
-        {$comment.datetime|wa_datetime:"humandatetime"}, {$comment.ip}
-    </span>
-
-    {if !empty($comment.editable) && !empty($topic)}
-        <a href="#" class="small h-comment-edit" data-save-string="{_w('Save')}" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if}>[`edit`]</a>
-    {/if}
-
-    {if !empty($comment.can_delete)}
-        <a href="#" class="small h-comment-delete" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if}>[`delete`]</a>
-        <a href="#" class="small h-comment-restore" {if $comment.status == hubCommentModel::STATUS_PUBLISHED}style="display: none;"{/if}>[`restore`]</a>
-    {/if}
-
-    {if $comment.status != hubCommentModel::STATUS_DELETED && (!empty($topic) && !empty($topic.type) && $topic.type.type == hubTopicModel::TYPE_QUESTION) && !$comment.depth}{strip}
-        <a href="#" class="small h-comment-solution h-solution {if !$comment.solution}bold{else}{/if}"
-               data-solution="{if $comment.solution}1{/if}">
-            {if !$comment.solution}[`Mark as solution`]{else}[`Unmark solution`]{/if}
+    <div class="h-comment-image desktop-and-tablet-only">
+        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="h-comment-author" title="{$comment.author.name|escape}">
+            {if $comment.author}
+            <i class="userpic userpic-32 custom-mt-4" style="background-image: url('{$comment.author.photo_url_50}');"></i>
+            {else}
+            <i class="userpic userpic-32 custom-mt-4" style="background-image: url('{$wa_url}wa-content/img/userpic32@x2.jpg');"></i>
+            {/if}
         </a>
-    {/strip}{/if}
-
-    <div class="h-comment-text">
-        <em class="gray strike js-comment-deleted"{if $comment.status !== hubCommentModel::STATUS_DELETED} style="display: none;"{/if}>[`comment deleted`]</em>
-        <em class="js-comment-restored" style="display: none;">[`comment restored`]</em>
-        {if $comment.status !== hubCommentModel::STATUS_DELETED}
-            <div class="js-comment-text">
-                {$comment.text}
-            </div>
-        {/if}
     </div>
 
-    {if !empty($comment.parent)}
-        {$_parent_comment_preview = strip_tags($comment.parent.text)|truncate:27:'...'}
-        <div class="h-parent-comment js-parent-comment" data-id="{$comment.parent.id}">
+    <div class="h-comment-body{if $comment.status == hubCommentModel::STATUS_DELETED} h-deleted{/if}">
+        <header class="h-comment-header">
+            <div class="flexbox wrap-mobile">
+                <div class="wide width-100-mobile custom-mr-16 custom-mr-0-mobile">
+                    <div class="h-comment-author-title">
+                        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="small bold">{$comment.author.name|default:'[`(no name)`]'|escape}</a>
+                        {if !empty($comment.topic)}
+                        <span class="small h-comment-topic-title">[`on topic`] <a href="#/topic/{$comment.topic.id}/" class="bold">{$comment.topic.title|escape}</a></span>
+                        {/if}
+                    </div>
 
-            <div class="h-parent-comment-reference js-parent-comment-reference">
-                <span class="hint">[`in reply to`]
+                    <div class="hint custom-mt-4">{$comment.datetime|wa_datetime:"humandatetime"}, {$comment.ip}</div>
+                </div>
+
+                <div class="custom-mt-8-mobile custom-mb-12 js-comment-solution"{if !$comment.solution} style="display: none;"{/if}>
+                    <span class="badge purple squared small nowrap"><i class="fas fa-check custom-mr-4"></i>[`Solution`]</span>
+                </div>
+            </div>
+
+            {if !empty($comment.parent)}
+            {$_parent_comment_preview = strip_tags($comment.parent.text)|truncate:27:'...'}
+            <div class="h-parent-comment js-parent-comment">
+                <span class="small text-gray cursor-pointer js-parent-comment-reference" data-id="{$comment.parent.id}" style="vertical-align: top;">
+                    [`in reply to`]
                     <strong>
                         {if !empty($_parent_comment_preview)}
                             {$_parent_comment_preview}
@@ -70,42 +46,94 @@
                         {/if}
                     </strong>
                 </span>
-            </div>
 
-            <div class="h-popper-wrapper js-parent-comment-popper-wrapper" style="display: none;">
-
-                <div class="h-parent-meta">
-                    <span class="h-parent-author">
-                        <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="bold h-comment-author">
+                <div class="h-popper-wrapper js-parent-comment-popper-wrapper-{$comment.parent.id}" style="display: none;">
+                    <div class="flexbox middle">
+                        <div class="h-comment-header flexbox">
                             {if $comment.parent.author}
-                                <i class="icon16 userpic20" style="background-image: url('{$comment.parent.author.photo_url_20}');"></i><span class="bold">{$comment.parent.author.name|escape}</span>
-                            {else}
-                                <i class="icon16 userpic20" style="background-image: url('{$wa_url}wa-content/img/userpic20.jpg');"></i>
+                            <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="h-comment-author custom-mr-8">
+                                <i class="userpic userpic-20" style="background-image: url('{$comment.parent.author.photo_url_20}');"></i>
+                            </a>
                             {/if}
-                        </a>
-                    </span>
+                            <div class="wide custom-mt-4">
+                                {if $comment.parent.author}
+                                <div class="small">{$comment.parent.author.name|escape}</div>
+                                {/if}
 
-                    <span class="hint">
-                        {strip}
-                            <a href="javascript:void(0);" class="js-parent-datetime h-comment-datetime">
-                                {$comment.parent.datetime|wa_datetime:"humandatetime"}
-                            </a>, {$comment.parent.ip}
-                        {/strip}
-                    </span>
+                                <div class="small text-gray">{$comment.parent.datetime|wa_datetime:"humandatetime"}, {$comment.parent.ip}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="h-parent-content h-comment-main custom-mt-8">
+                        {$comment.parent.text}
+                    </div>
                 </div>
-
-                <div class="h-parent-content h-comment-text">
-                    {$comment.parent.text}
-                </div>
-
-                <div class="popper__arrow" x-arrow></div>
 
             </div>
+            {/if}
+        </header>
 
+        <div class="h-comment-main custom-mt-8">
+            <div class="h-comment-text break-word js-comment-text" {if $comment.status == hubCommentModel::STATUS_DELETED}style="dsiplay: none;"{/if}>
+                {$comment.text}
+            </div>
         </div>
-    {/if}
 
-    {if $comment.status != hubCommentModel::STATUS_DELETED && (empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting) && $comment.topic.type.type != 'forum')}
-        <a href="#" class="h-comment-reply small inline-link"><b><i>[`reply`]</i></b></a>
-    {/if}
+        <footer class="h-comment-footer flexbox middle full-width custom-mt-8 wrap-mobile">
+            <div class="wide flexbox middle wrap custom-mt-12 custom-mr-8 js-comment-buttons" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if}>
+                <div class="custom-mr-8 nowrap">
+                    <span class="h-comment-vote">
+                        <a href="javascript:void(0)" class="h-vote-up button circle smaller light-gray custom-mr-0" title="{_w('%d vote','%d votes',abs($comment.votes_up),true)}"><i class="fas fa-arrow-up hbicns up{if $comment.my_vote<=0}-bw{/if}"></i></a>
+                        <strong class="{if $comment.vote > 0}h-positive text-green{elseif $comment.vote < 0}h-negative text-red{else}gray{/if} total-score">{if $comment.vote > 0}+{/if}{$comment.vote}</strong>
+                        <a href="javascript:void(0)" class="h-vote-down button circle smaller light-gray" title="{_w('%d vote','%d votes',abs($comment.votes_down),true)}"><i class="fas fa-arrow-down hbicns down{if $comment.my_vote>=0}-bw{/if}"></i></a>
+                    </span>
+                </div>
+
+                {if empty($comment.topic.type.settings) || !empty($comment.topic.type.settings.commenting) && $comment.topic.type.type != 'forum'}
+                <a href="#" class="h-comment-reply button rounded smaller light-gray text-gray custom-mr-8">
+                    <span class="mobile-only"><i class="fas fa-comment"></i></span>
+                    <span class="desktop-and-tablet-only">[`reply`]</span>
+                </a>
+                {/if}
+
+                {if (!empty($topic) && !empty($topic.type) && $topic.type.type == hubTopicModel::TYPE_QUESTION) && !$comment.depth}
+                <a href="#" class="button rounded smaller light-gray text-gray nowrap h-comment-solution h-solution" data-solution="{if $comment.solution}1{/if}">
+                    <span class="js-solution-mark{if $comment.solution} hidden{/if}">
+                        <span class="mobile-only tablet-only"><i class="fas fa-check"></i></span>
+                        <span class="desktop-only">[`Mark as solution`]</span>
+                    </span>
+
+                    <span class="js-solution-unmark{if !$comment.solution} hidden{/if}">
+                        <span class="mobile-only tablet-only"><i class="fas fa-undo-alt"></i></span>
+                        <span class="desktop-only">[`Unmark solution`]</span>
+                    </span>
+                </a>
+                {/if}
+            </div>
+
+            <div class="flexbox custom-mt-12">
+                {if !empty($comment.editable) && !empty($topic)}
+                <a href="#" class="h-comment-edit button circle light-gray smaller{if !empty($comment.can_delete)} custom-mr-8{/if}" data-save-string="{_w('Save')}" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if} title="[`Edit`]">
+                    <i class="fas fa-pen text-blue"></i>
+                </a>
+                {/if}
+
+                {if !empty($comment.can_delete)}
+                <div class="wide">
+                    <a href="#" class="h-comment-delete button circle light-gray smaller" {if $comment.status == hubCommentModel::STATUS_DELETED}style="display: none;"{/if} title="[`Delete`]">
+                        <i class="fas fa-trash-alt text-red"></i>
+                    </a>
+
+                    <span class="small text-gray custom-mr-4 js-comment-deleted"{if $comment.status !== hubCommentModel::STATUS_DELETED} style="display: none;"{/if}>[`comment deleted`]</span>
+
+                    <a href="#" class="h-comment-restore button rounded light-gray smaller text-gray" {if $comment.status == hubCommentModel::STATUS_PUBLISHED}style="display: none;"{/if} title="[`Restore`]">
+                        <i class="fas fa-trash-restore"></i>
+                        [`Restore`]
+                    </a>
+                </div>
+                {/if}
+            </div>
+        </footer>
+    </div>
 </div>

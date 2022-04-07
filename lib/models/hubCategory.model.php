@@ -144,7 +144,7 @@ SQL;
             if (!empty($data['url'])) {
                 //validate
                 if ($this->urlExists($data['url'], $item['hub_id'], $item['id'])) {
-                    $errors['url'] = _w('Url is in use');
+                    $errors['url'] = _w('The URL is in use.');
                     $result = false;
                 }
             } elseif (isset($data['url'])) {

@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
 
     {$wa->css()}
-    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/hub.css?v{$wa->version()}">
-    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/glyphs.css?v{$wa->version()}">
-    <link rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css?v={$wa->version()}">
+    <link rel="stylesheet" href="{$wa_app_static_url}css/hub.css?v{$wa->version()}">
+    <link rel="stylesheet" href="{$wa_app_static_url}css/glyphs.css?v{$wa->version()}">
+    <link rel="stylesheet" href="{$wa_app_static_url}css/codemirror/codemirror.css?v{$wa->version()}">
+    <link rel="stylesheet" href="{$wa_app_static_url}css/codemirror/monokai.css?v{$wa->version()}">
+    <link rel="stylesheet" href="{$wa_app_static_url}js/redactorx/redactorx.min.css">
+    <link rel="stylesheet" href="{$wa_app_static_url}js/redactorx/redactorx.dark.css">
 
-    <link href="{$wa_url}wa-content/css/jquery-ui/base/jquery.ui.autocomplete.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="{$wa_url}wa-content/js/farbtastic/farbtastic.css" type="text/css" />
+    <link rel="stylesheet" href="{$wa_url}wa-content/css/jquery-ui/base/jquery.ui.autocomplete.css">
     <link rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/jquery-tagsinput/jquery.tagsinput.css">
+    <link rel="stylesheet" href="{$wa_url}wa-content/css/jquery-ui/base/jquery.ui.datepicker.css">
+    <link rel="stylesheet" href="{$wa_url}wa-content/js/pickr/themes/classic.min.css">
 
-    <script src="{$wa_url}wa-content/js/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
-    <script src="{$wa_url}wa-content/js/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+    <script src="{$wa_url}wa-content/js/jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <script src="{$wa_url}wa-content/js/jquery-wa/wa.js?v={$wa->version(true)}"></script>
 
-    <script type="text/javascript" src="{$wa_url}wa-content/js/ace/ace.js?v{$wa->version(true)}"></script>
+    {wa_js file="js/compiled/redactorx.bundle.min.js" uibundle=''}
+        {$wa_app_static_url}js/redactorx/redactorx.min.js
+        {$wa_app_static_url}js/redactorx/plugins/alignment/alignment.min.js
+        {$wa_app_static_url}js/redactorx/plugins/blockcode/blockcode.min.js
+        {$wa_app_static_url}js/redactorx/plugins/removeformat/removeformat.min.js
+        {$wa_app_static_url}js/redactorx/plugins/inlineformat/inlineformat.min.js
+        {$wa_app_static_url}js/redactorx/plugins/imageposition/imageposition.min.js
+        {$wa_app_static_url}js/redactorx/plugins/allowstyle/allowstyle.js
+        {$wa_app_static_url}js/redactorx/language/ru.js
+    {/wa_js}
 
-    <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/redactor/2/redactor.css?v{$wa->version(true)}">
-    <script src="{$wa_url}wa-content/js/redactor/2/redactor.min.js?v{$wa->version(true)}"></script>
-    {if substr($wa->locale(), 0, 2)!='en'}
-        <script src="{$wa_url}wa-content/js/redactor/2/{substr($wa->locale(), 0, 2)}.js?v{$wa->version(true)}"></script>
-    {/if}
-
-    {wa_js file="js/hub.min.js"}
-        {$wa_url}wa-content/js/jquery-wa/wa.core.js
-        {$wa_url}wa-content/js/jquery-wa/wa.dialog.js
+    {wa_js file="js/compiled/hub-external.min.js" uibundle=''}
+        {$wa_url}wa-content/js/sortable/sortable.min.js
+        {$wa_url}wa-content/js/sortable/jquery-sortable.min.js
         {$wa_url}wa-content/js/jquery-plugins/jquery.history.js
         {$wa_url}wa-content/js/jquery-plugins/jquery.store.js
         {$wa_url}wa-content/js/jquery-ui/jquery.ui.core.min.js
@@ -36,21 +43,21 @@
         {$wa_url}wa-content/js/jquery-ui/jquery.ui.autocomplete.min.js
         {$wa_url}wa-content/js/jquery-ui/jquery.ui.draggable.min.js
         {$wa_url}wa-content/js/jquery-ui/jquery.ui.droppable.min.js
-        {$wa_url}wa-content/js/jquery-ui/jquery.ui.sortable.min.js
         {$wa_url}wa-content/js/jquery-ui/jquery.ui.datepicker.min.js
-        {$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js
-        {$wa_url}wa-content/js/farbtastic/farbtastic.js
         {$wa_url}wa-content/js/jquery-plugins/jquery-tagsinput/jquery.tagsinput.min.js
-        {$wa_app_static_url}js/vendors/popper/popper.min.js
-
-        {$wa_app_static_url}js/jquery.sticky.js
         {$wa_app_static_url}js/lazy.load.js
+        {$wa_app_static_url}js/codemirror/codemirror.js
+        {$wa_app_static_url}js/codemirror/xml.js
+        {$wa_app_static_url}js/codemirror/smarty.js
+    {/wa_js}
+    <script src="{$wa_url}wa-content/js/pickr/pickr.min.js?v={$wa->version(true)}"></script>
+
+    {wa_js file="js/hub.min.js"}
         {$wa_app_static_url}js/hub.js
         {$wa_app_static_url}js/sidebar.js
     {/wa_js}
 
     <script src="{$wa_url}wa-content/js/jquery-ui/i18n/jquery.ui.datepicker-{$wa->locale()}.js"></script>
-    <script src="{$wa_url}wa-content/js/jquery-wa/editor2.js?v{$wa->version(true)}"></script>
 
     {$wa->js()}
     {foreach $backend_event as $e}{if !empty($e.head)}{$e.head}{/if}{/foreach}
@@ -58,17 +65,68 @@
 <body>
     <div id="wa">
         {$wa->header()}
-        <div id="wa-app">
-            <div class="sidebar left200px top-padded">
+        <div id="wa-app" class="hub flexbox wrap-mobile">
+            <div class="sidebar flexbox width-adaptive-wider mobile-friendly js-app-sidebar">
                 {include file="./include.sidebar.html" inline}
             </div>
-            <div class="content left200px">
-                <div class="block not-padded" id="content">
-                    <div class="block">
-                        <h1 class="wa-page-heading">[`Loading...`]</h1>
-                    </div>
+
+            <div class="content hide-scrollbar blank" id="content">
+                <div class="js-skeleton-default" style="display: none;">
+                    {include file="./skeleton/topics.html"}
+                </div>
+
+                <div class="js-skeleton-comments" style="display: none;">
+                    {include file="./skeleton/comments.html"}
+                </div>
+
+                <div class="js-skeleton-authors" style="display: none;">
+                    {include file="./skeleton/authors.html"}
+                </div>
+
+                <div class="js-skeleton-topic" style="display: none;">
+                    {include file="./skeleton/topic.html"}
+                </div>
+
+                <div class="js-skeleton-topic-edit" style="display: none;">
+                    {include file="./skeleton/topic-edit.html"}
+                </div>
+
+                <div class="js-skeleton-filter-add" style="display: none;">
+                    {include file="./skeleton/filter-add.html"}
+                </div>
+
+                <div class="js-skeleton-category-add" style="display: none;">
+                    {include file="./skeleton/category-add.html"}
+                </div>
+
+                <div class="js-skeleton-settings" style="display: none;">
+                    {include file="./skeleton/settings.html"}
+                </div>
+
+                <div class="js-skeleton-settings-hub" style="display: none;">
+                    {include file="./skeleton/settings-hub.html"}
+                </div>
+
+                <div class="js-skeleton-settings-type" style="display: none;">
+                    {include file="./skeleton/settings-type.html"}
+                </div>
+
+                <div class="js-skeleton-plugins" style="display: none;">
+                    {include file="./skeleton/plugins.html"}
+                </div>
+
+                <div class="js-skeleton-pages" style="display: none;">
+                    {include file="./skeleton/pages.html"}
                 </div>
             </div>
+
+            {if $can_create_topics}
+            <div class="add-topic-link">
+                <a class="button circle largest mobile-only js-add-topic-mobile" href="#/topic/add/" title="[`New topic`]">
+                    <i class="fas fa-pen-alt"></i>
+                </a>
+            </div>
+            {/if}
         </div>
     </div>
 
@@ -80,66 +138,9 @@
         });
         $.hub.lang = {json_encode(substr($wa->locale(), 0, 2))};
         $.hub.framework_version = {$wa->version(true)|json_encode};
-        $.hub.init({json_encode(['accountName' => $wa->accountName(false)])});
-    </script>
-
-    {* Tooltip with parent comments *}
-    <script>
-        $(function () {
-            var $document = $(document),
-                popper;
-
-            $document.on('mouseenter', '.js-parent-comment-reference', function () {
-                var $ref = $(this),
-                    $parent_comment = $ref.parents('.js-parent-comment'),
-                    comment_id = $parent_comment.data('id'),
-                    $popper = $parent_comment.find('.js-parent-comment-popper-wrapper');
-
-                if (popper) {
-                    return false;
-                }
-
-                popper = new Popper($ref, $popper, {
-                    placement: 'top-start',
-                    modifiers: {
-                        flip: {
-                            behavior: ['top', 'bottom']
-                        }
-                    }
-                });
-                $popper.show().css({ opacity: 1 });
-
-                $parent_comment.on('mouseleave', function () {
-                    setTimeout( function() {
-                        if (!$parent_comment.is(':hover')) {
-                            $popper.css({ opacity: 0 });
-                            setTimeout(function () {
-                                $popper.hide();
-                                $popper.html($popper.html()); // A hack that helps stop video playback :]
-
-                                if (!popper) {
-                                    return false;
-                                }
-
-                                popper.destroy();
-                                popper = null;
-                            }, 150);
-                        }
-                    }, 450);
-                });
-
-                // Scroll to parent comment in list
-                // Scroll worked only if parent comment exists in DOM :[
-                $parent_comment.on('click', '.js-parent-datetime', function () {
-                    var $real_parent_comment = $('.js-comment[data-id="'+ comment_id +'"]');
-
-                    if (!$real_parent_comment.length) {
-                        return false;
-                    }
-
-                    $('html, body').animate({ scrollTop: $real_parent_comment.offset().top });
-                });
-            });
+        $.hub.init({
+            accountName: {json_encode($wa->accountName(false))},
+            topics_count: {json_encode($count_topics)}
         });
     </script>
 </body>

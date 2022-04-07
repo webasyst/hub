@@ -1,0 +1,412 @@
+<div class="h-stream{if !empty($hub.params.color)} h-{$hub.params.color}{/if}">
+
+    <div class="h-header">
+        <div class="h-search-form">
+            <form id="search-form">
+                <input id="search-query" type="search" placeholder="[`Search topics`]" autocomplete="off" {if isset($query)}value="{$query|escape}"{/if}>
+            </form>
+            <script type="text/javascript">
+                $('#search-form').submit(function () {
+                    if ($('#search-query').val()) {
+                        $.wa.setHash('#/search/' + $('#search-query').val());
+                    }
+                    return false;
+                });
+            </script>
+        </div>
+
+        <div class="h-stream-title">
+            <h2 class="list-title">
+                <a href="#/hub/{$hub.id}/" class="back">&larr; [`Back`]</a>
+                {$hub.name|escape}
+                {if !$hub.status}
+                    <i class="icon16 lock-bw"></i>
+                {/if}
+            </h2>
+
+            {if !empty($topic.tags)}
+                <div class="tags list-title-suffix">
+                    <i class="icon16 tags"></i>
+                    {foreach $topic.tags as $tag}{if !$tag@first}, {/if}<a href="#/tag/{$tag.id}">{$tag.name|escape}</a>{/foreach}
+                </div>
+            {/if}
+        </div>
+
+        <div class="clear-right"></div>
+
+    </div>
+
+    {if $notifications_sent}
+        <div class="h-saved block double-padded">
+            <a href="#" class="h-close-saved">&times;</a>
+            <i class="icon16 yes"></i> [`Topic has been published and notifications have been sent!`]
+        </div>
+    {/if}
+
+    <article class="h-topic">
+
+        <div class="profile image50px">
+            <div class="image">{strip}
+                {$topic_type = ifempty($types[$topic.type_id], [ 'glyph' => 'unknown', 'name' => '' ])}
+                {hubHelper::getGlyph($topic_type.glyph, 48, false, [ title=>$topic_type.name,contact=>ifempty($topic.contact,[]) ] )}
+            {/strip}</div>
+            <div class="details">
+
+                {if $can_edit_delete}
+                    <div class="float-right block half-padded">
+                        <ul class="menu-h">
+                            <li><a href="#/topic/edit/{$topic.id}/"><i class="icon16 edit"></i>[`Edit topic`]</a></li>
+                            <li><a id="delete-topic-link" href="javascript:void(0)"><i class="icon16 delete"></i>[`Delete`]</a></li>
+                        </ul>
+                    </div>
+                {/if}
+
+                <h1>
+                    {if !empty($topic.title)}{$topic.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
+
+                    {if $possible_badges}
+                        {if $can_edit_delete}
+                            {* Drop-down badge selector *}
+                            <div id="h-badge-selector" class="h-badge{if !empty($topic.badge.id)} h-{$topic.badge.id|escape}{/if}">
+                                <ul class="menu-h dropdown">
+                                    <li>
+                                        <a href="javascript:void(0)" class="inline-link"><b><i>{ifset($topic.badge.name, "[`No status`]")|escape}</i></b><i class="icon10 darr"></i></a>
+                                        <ul class="menu-v">
+                                            {foreach $possible_badges as $b}
+                                                <li><a href="javascript:void(0)" data-id="{$b.id|escape}"><i class="icon16 h-badge-color-helper h-{$b.id|escape}"></i>{$b.name|escape}</a></li>
+                                            {/foreach}
+                                            <li><a href="javascript:void(0)" style="color: #aaa;" data-id=""><i class="icon16 h-badge-color-helper"></i>[`No status`]</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        {elseif !empty($topic.badge.id)}
+                            {* Read-only badge *}
+                            <div class="h-badge h-{$topic.badge.id|escape}">
+                                <ul class="menu-h"><li>
+                                    <a href="javascript:void(0)" class="inline-link"><i class="icon10 h-badge-icon"></i><b><i>{ifset($topic.badge.name)|escape}</i></b></a>
+                                </li></ul>
+                            </div>
+                        {/if}
+                    {/if}
+
+                </h1>
+
+                <p class="h-topic-author">
+
+                    {if !empty($topic.contact)}
+                        <a href="{$wa_backend_url}contacts/#/contact/{$topic.contact.id}" class="h-author-name">{* <i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($topic.contact.id, $topic.contact.photo, 20)});"></i> *}{$topic.contact.name|escape}</a>
+                    {/if}
+
+                    <span class="gray">
+                        {$topic.create_datetime|wa_datetime:"humandatetime"}
+                    </span>
+
+                    {if !$hub.status}
+                        <i class="icon16 lock-bw" title="[`Private hub topic`]"></i>
+                    {else}
+                        {if $topic_public_url}
+                            <a href="{$topic_public_url}" target="_blank">{$topic_public_url}</a> <i class="icon10 new-window"></i>
+                        {/if}
+                    {/if}
+
+                </p>
+
+
+
+            </div>
+        </div>
+
+        <div class="h-topic-content">
+            {$topic.content}
+        </div>
+
+
+        <div class="h-topic-meta">
+
+            {if !empty($types[$topic.type_id].settings.voting)}
+                <!-- rating -->
+                {if empty($voted)}{$voted = 0}{/if}
+                <div class="h-rating-box {if $topic.votes_sum > 0}h-positive{else if $topic.votes_sum < 0}h-negative{else}gray{/if}">
+
+                    <strong class="h-rating total-score{if $topic.votes_sum > 0} h-positive{elseif $topic.votes_sum < 0} h-negative{/if}">{if $topic.votes_sum > 0}+{/if}{$topic.votes_sum}</strong>
+
+                    {if !empty($types[$topic.type_id].settings.voting['+'])}<a href="javascript:void(0)" class="h-vote-up" title="{_w('%d vote','%d votes',abs($topic.votes_up),true)}"><span class="upvotes h-positive">{$topic.votes_up}</span> <i class="icon16 hbicns upup{if $voted <= 0}-bw{/if}"></i></a>{/if}
+                    &nbsp;
+                    {if !empty($types[$topic.type_id].settings.voting['-'])}<a href="javascript:void(0)" class="h-vote-down" title="{_w('%d vote','%d votes',abs($topic.votes_down),true)}"><span class="downvotes h-negative">{$topic.votes_down}</span> <i class="icon16 hbicns downdown{if $voted >= 0}-bw{/if}"></i></a>{/if}
+
+                </div>
+            {/if}
+
+            {if $allow_commenting}
+                <!-- follow -->
+                <a href="#" data-topic="{$topic.id}" title="[`Follow`]" class="h-follow bold{if !empty($follow)} highlighted{/if}"><i class="icon16 star{if empty($follow)}-empty{/if}"></i><span class="following-status">{if !empty($follow)}[`Following`]{else}[`Not following`]{/if}</span></a>
+
+
+                <span class="followers-count hint">{_w("%d follower", "%d followers", count($followers))}</span>
+                {function follower_html f=null}
+                    <a href="{$wa_backend_url}contacts/#/contact/{$f.id}" title="{$f.name|escape}"{if $f.id == $wa->user('id')} class="follower-me"{/if}><i class="icon16 userpic20" style="background-image: url({waContact::getPhotoUrl($f.id, $f.photo, 20)});"></i></a>
+                {/function}
+
+                {* Own follower icon *}
+                <span class="{if empty($follow)}hidden {/if}own-follower-icon">{follower_html f=$wa->user()}</span>
+
+                {* All other icons *}
+                {foreach $followers as $f}
+                    {if $f.id != $wa->user('id')}
+                        {follower_html f=$f}
+                    {/if}
+                {/foreach}
+            {/if}
+
+        </div>
+
+        {if !empty($topic.type) && ifset($topic.type.type) == 'forum'}
+
+            {* forum topics offers a plan list of discussions *}
+
+            <div class="h-plain-discussion">
+                <div class="h-comments top-padded" id="h-comments">
+                    <ul>
+                        {foreach $comments as $id => $comment}
+                            <li data-id="{$comment.id}" class="h-comment">{include file="../comments/include.comment.html" inline}</li>
+                        {/foreach}
+                    </ul>
+
+                    {if $allow_commenting}
+                        <div id="h-comment-add" style="display:none;">
+                            {include '../comments/include.addComment.html' inline}
+                        </div>
+                    {/if}
+
+                </div>
+            </div>
+
+        {else}
+
+            {* hierarchical comment tree *}
+
+            <div class="h-comments top-padded" id="h-comments">
+
+                {if !empty($comments)}
+
+                    <h2 class="comments-header">{_w('%d comment', '%d comments', $comments_count)}</h2>
+
+                    <!-- comments begin -->
+                    {$depth=-1}
+                    {foreach $comments as $comment}
+                      {if $comment.depth < $depth}
+
+                        {$loop=($depth-$comment.depth)}
+                        {section name="end-comment" loop=$loop}
+                            <ul></ul>
+                            </li>
+                          </ul>
+                        {/section}
+
+                        {$depth=$comment.depth}
+                      {/if}
+
+                      {if $comment.depth == $depth}
+                        </li>
+                        <li data-id="{$comment.id}" data-parent-id="{$comment.parent_id}" class="h-comment">
+                      {/if}
+
+                      {if $comment.depth > $depth}
+                        <ul>
+                          <li data-id={$comment.id} data-parent-id="{$comment.parent_id}" class="h-comment">
+                          {$depth=$comment.depth}
+                      {/if}
+
+                        {include file="../comments/include.comment.html" comment=$comment inline}
+
+                    {/foreach}
+                    {section name="end-comment" loop=$depth + 1}
+                          <ul></ul>
+                          </li>
+                        </ul>
+                    {/section}
+                    <!-- comments end -->
+
+                {elseif $allow_commenting}
+
+                    <h4 class="comments-header">[`No comments yet`]</h4>
+                    <ul style="display:none"></ul>
+
+                {/if}
+
+                {if $allow_commenting || (!empty($topic.type) && ifset($topic.type.type) == 'question')}
+                    <div id="h-comment-add" style="display:none;">
+                        <div class="hr"></div>
+                        {include '../comments/include.addComment.html' inline}
+                    </div>
+                {else}
+                    <div id="h-comment-add" style="display:none;">
+                        <div class="hr"></div>
+                        <p><em>[`Posting new comments has been restricted for this topic.`]</em></p>
+                    </div>
+                {/if}
+
+            </div>
+
+        {/if}
+
+    </article>
+
+    <div class="h-footer"></div>
+
+    <div class="clear-both"></div>
+
+</div>
+
+
+{include file="./include.delete_confirm.html" inline}
+
+
+<script>$(function () {
+
+    // Comments
+    $.ajax({ // Load JS script, making sure it WILL get cached in non-debug mode
+          dataType: "script",
+          url: "{$wa_app_static_url}js-legacy/comments.js?{$wa->version()}",
+          cache: true
+    }).done(function() {
+        $.comments.init({
+            lang: {json_encode(substr($wa->locale(), 0, 2))},
+            statuses: {
+                deleted: '{hubCommentModel::STATUS_DELETED}',
+                published: '{hubCommentModel::STATUS_PUBLISHED}'
+            },
+            topic_id: {$topic['id']},
+            container: '#h-comments'
+        });
+    });
+
+    // Link to follow a topic
+    $('.h-follow').click(function () {
+        var $a = $(this);
+        var $i = $(this).find('i');
+        var $wrapper = $a.closest('.h-topic-meta');
+        var $own_follower_icon = $wrapper.find('.own-follower-icon');
+
+        var follow = $i.hasClass('star-empty') ? 1 : 0;
+
+        $.post('?module=following', {
+            topic_id: $a.data('topic'),
+            follow: follow
+        }, function (response) {
+            if (response.status == 'ok') {
+                var n = parseInt($('#following-count').html());
+                if ($i.hasClass('star-empty')) {
+                    $a.addClass('highlighted');
+                    $i.removeClass('star-empty').addClass('star');
+                    $a.find('.following-status').text("[`Following`]");
+                    n += 1;
+                } else {
+                    $a.removeClass('highlighted');
+                    $i.addClass('star-empty').removeClass('star');
+                    $a.find('.following-status').text("[`Not following`]");
+                    n -= 1;
+                }
+
+                $('#following-count').addClass('highlighted').html(n);
+
+                $wrapper.find('.followers-count').text(response.data.followers);
+                if (follow) {
+                    $own_follower_icon.show();
+                } else {
+                    $own_follower_icon.hide();
+                }
+            }
+        }, 'json');
+        return false;
+    });
+
+    // Controller for up/down voting for topic
+    (function() {
+        var $wrapper = $('.h-rating-box');
+        var $total_score = $wrapper.children('.total-score');
+        var $upvotes = $wrapper.find('.upvotes');
+        var $downvotes = $wrapper.find('.downvotes');
+        var $i_up = $wrapper.find('i.upup,i.upup-bw');
+        var $i_down = $wrapper.find('i.downdown,i.downdown-bw');
+        $wrapper.on('click', 'a', function() {
+            var vote = $(this).hasClass('h-vote-down') ? -1 : 1;
+            if (vote > 0) {
+                $i_up.removeClass('upup-bw').addClass('upup');
+                $i_down.removeClass('downdown').addClass('downdown-bw');
+            } else {
+                $i_up.addClass('upup-bw').removeClass('upup');
+                $i_down.addClass('downdown').removeClass('downdown-bw');
+            }
+
+            $.post('?module=frontend&action=vote', { id: '{$topic.id}', type: 'topic', vote: vote }, undefined, 'json').always(function (r, text_status, xhr) {
+                if (text_status == 'success' && r && r.data && r.data.hasOwnProperty('votes_sum')) {
+                    $wrapper.removeClass('h-positive h-negative gray');
+                    $total_score.text(r.data.votes_sum);
+                    $downvotes.text(r.data.votes_down);
+                    $upvotes.text(r.data.votes_up);
+                    if (r.data.votes_sum - 0 > 0) {
+                        $wrapper.addClass('h-positive');
+                        $total_score.text('+'+r.data.votes_sum);
+                    } else if (r.data.votes_sum - 0 < 0) {
+                        $wrapper.addClass('h-negative');
+                    } else {
+                        $wrapper.addClass('gray');
+                    }
+                }
+            });
+        });
+    })();
+
+    // Badge selector
+    (function() {
+        var $wrapper = $('#h-badge-selector');
+        $wrapper.on('click', 'a[data-id]', function() {
+            var $a = $(this);
+            var $main_a = $wrapper.find('>ul>li>a');
+            var badge_id = $a.data('id');
+
+            // Close the dropdown
+            $wrapper.find('ul ul').hide().delay(1).queue(function() {
+                $(this).removeAttr('style').clearQueue();
+            });
+
+            // Ignore click?
+            if ($main_a.find('.loading').length) {
+                return;
+            } else if (badge_id && $wrapper.hasClass('h-'+badge_id)) {
+                return;
+            } else if (!badge_id && $wrapper.attr('class') == 'h-badge') {
+                return;
+            }
+
+            // Show new badge
+            $wrapper.attr('class', 'h-badge'+(badge_id ? ' h-'+badge_id : ''));
+            $main_a.find('>b>i').text($a.text());
+
+            // Save new badge on the server
+            $main_a.append($.parseHTML('<i class="icon16 loading"></i>'));
+            $.post('?module=topics&action=changeBadge&id={$topic.id}', { badge: badge_id }).always(function() {
+                $main_a.find('.loading').remove();
+            });
+        });
+    })();
+
+
+    {if $notifications_sent}
+        $('.h-saved .h-close-saved').on('click', function() {
+            $(this).closest('.h-saved').slideUp();
+            return false;
+        });
+        setTimeout(function() {
+            $('.h-saved').slideUp();
+        }, 3000);
+    {/if}
+
+
+    {if !empty($hub)}
+        $.sidebar.setHub('{$hub.id}');
+    {/if}
+
+});</script>

@@ -160,3 +160,9 @@ i.h-glyph16.custom.selected { filter: grayscale(0%); -webkit-filter: grayscale(0
 
 .h-userpic32 { width: 32px; height: 32px; display: inline-block; background-image: url(/wa-content/img/userpic32.jpg); background-size: 32px 32px; }
 .h-userpic50 { width: 50px; height: 50px; display: inline-block; background-image: url(/wa-content/img/userpic50.jpg); background-size: 50px 50px; }
+
+[data-theme="dark"] i.h-glyph48,
+[data-theme="dark"] i.h-glyph32,
+[data-theme="dark"] i.h-glyph16 {
+    filter: invert(1) brightness(1.5);
+}

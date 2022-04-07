@@ -1,21 +1,26 @@
 {*
  * Sub-template included in comments/Comments.html and topics/Topics.html
  *}
+<div class="h-add-comment">
+    <form id="h-comment-add-form" class="custom-mt-12" method="post">
+        <div class="flexbox space-12">
+            <div class="wide h-add-comment-body">
+                <textarea name="text" class="width-100" style="resize: none;"></textarea>
+            </div>
 
-<form id="h-comment-add-form" method="post">
-    <div class="h-comment-author">
-        <i class="icon16 userpic20" style="background-image: url('{$current_author.photo_url_20}');"></i>{$current_author.name|escape}
-    </div>
-    
-    <textarea name="text"></textarea>
-    
-    <input type="button" class="save button green" value="[`Add comment`]">
-    <span class="s-review-add-form-status s-ajax-status" style="display: none;">
-      <i class="s-ajax-status-loading icon16 loading"><!--icon --></i>
-    </span>
-    <input type="hidden" name="parent_id" value="0">
-    {if !empty($topic)}
-        <input type="hidden" name="topic_id" value="{$topic['id']}">
-    {/if}
-    {$wa->csrf()}
-</form>
+            <div class="image">
+                <i class="userpic userpic-32 custom-mt-8" style="background-image: url('{$current_author.photo_url_50}');" title="{$current_author.name|escape}"></i>
+            </div>
+        </div>
+
+        <div class="h-add-comment-button custom-my-12">
+            <button type="button" class="save button small">[`Add comment`]</button>
+
+            <input type="hidden" name="parent_id" value="0">
+            {if !empty($topic)}
+            <input type="hidden" name="topic_id" value="{$topic['id']}">
+            {/if}
+            {$wa->csrf()}
+        </div>
+    </form>
+</div>

@@ -1,0 +1,60 @@
+{capture name="comment_list"}
+    {foreach $comments as $id => $comment}
+        <li data-id="{$comment.id}" class="h-comment">{include file="./include.comment.html" inline}</li>
+    {/foreach}
+{/capture}
+
+<script type="text/javascript" src="{$wa_app_static_url}js-legacy/lazy.load.js"></script>
+<script type="text/javascript" src="{$wa_app_static_url}js-legacy/comments.js"></script>
+
+<div class="h-stream h-white" id="comments-wrapper">
+
+    <div class="h-header">
+        <div class="list-title">
+            <h1>[`Replies`]</h1>
+        </div>
+    </div>
+
+    <div class="h-content h-plain-discussion">
+
+        <div class="h-comments">
+            <ul>{$smarty.capture.comment_list}</ul>
+            <div id="h-comment-add" style="display:none;">
+                {include './include.addComment.html' inline}
+            </div>
+        </div>
+        <div class="lazyloading-wrapper">
+            <div class="lazyloading-progress-string">{_w('%d comment','%d comments', $offset + $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
+            <a href="javascript:void(0);" class="lazyloading-link" {if $count >= $total_count}style="display:none;"{/if}>[`Show more comments`]</a>
+            <span class="lazyloading-progress" style="display:none">
+                <i class="icon16 loading"></i> [`Loading`] <span class="lazyloading-chunk">{_w('%d comment', '%d comments', min($total_count - $count, $count))}...</span>
+            </span>
+        </div>
+
+    </div>
+
+</div>
+<script>
+    $.wa.locale = $.extend($.wa.locale || { }, {
+        'Loading...': "[`Loading...`]",
+        'Following': "[`Following`]",
+        "Mark as solution":"[`Mark as solution`]",
+        "Unmark solution":"[`Unmark solution`]"
+    });
+    document.title = "{_w('comments')|escape:js} — {$wa->accountName()|escape:js}";
+
+    $.comments.init({
+        statuses: {
+            deleted: '{hubCommentModel::STATUS_DELETED}',
+            published: '{hubCommentModel::STATUS_PUBLISHED}'
+        },
+        lazy_loading: {
+            auto: true,
+            total_count: {ifempty($total_count, 0)},
+            count: {$count},
+            contact_id: {json_encode($contact_id)}
+        },
+        container: '#comments-wrapper'
+    });
+    $('#h-all-comments').find('.count-new:first').text({if $sidebar_counters.new}'+{$sidebar_counters.new}'{else}''{/if});
+</script>

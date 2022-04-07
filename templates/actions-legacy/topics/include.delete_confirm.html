@@ -1,0 +1,68 @@
+{*
+ * Confirmation dialog to delete topic.
+ * Used in topic editor and topic info pages.
+ *}
+{if !empty($topic.id)}
+
+    <div id="delete-topic-dialog" class="hidden">
+        <div class="dialog-content">
+            <h1>[`Delete topic`]</h1>
+            <p>{sprintf_wp('Topic “<b>%s</b>” will be permanently deleted without a recovery option. Delete?', "{ifset($topic.title)|escape}")}</p>
+        </div>
+        <div class="dialog-buttons">
+            <input type="button" name="delete" class="delete button red cancel" value="[`Delete`]">
+            [`or`] <a href="#" class="cancel">[`cancel`]</a>
+        </div>
+    </div>
+
+    <script>(function() { "use strict";
+
+        var dialog = $('#delete-topic-dialog');
+
+        $('#delete-topic-link').click(function() {
+            if (dialog.hasClass('dialog')) {
+                dialog.show();
+            } else {
+                dialog = $('#delete-topic-dialog').waDialog({
+                    width: '350px',
+                    height: '140px'
+                });
+            }
+        });
+
+        dialog.find('input.delete').click(function() {
+            $.post("?module=topics&action=delete", { id: '{$topic.id}' }, function() {
+                var li = $('#draft-{$topic.id}');
+                if (li.length) {
+                    if (li.siblings().length <= 0) {
+                        li.closest('.block').slideUp();
+                    }
+                    li.remove();
+                }
+
+                // Go back to a safe place
+                if (history.length > 1) {
+                    $.hub.backWithoutDispatch(function() {
+                        // Make sure we won't end up on a topic page we just deleted
+                        if ($.hub.helper.cleanHash() == $.hub.helper.cleanHash('#/topic/{$topic.id}') || $.hub.helper.cleanHash() == $.hub.helper.cleanHash('#/topic/edit/{$topic.id}')) {
+                            if (history.length > 1) {
+                                history.back();
+                            } else {
+                                window.location.hash = '#/';
+                            }
+                        } else {
+                            $.hub.dispatch();
+                        }
+                    });
+                } else {
+                    window.location.hash = '#/';
+                }
+
+                $.sidebar.reload();
+
+            }, 'json');
+        });
+
+    })();</script>
+
+{/if}

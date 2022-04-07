@@ -564,7 +564,7 @@ class hubCommentModel extends waNestedSetModel
         if (empty($comment['id']) && !empty($comment['parent_id'])) {
             $parent = $this->getById($comment['parent_id']);
             if (!$parent || $parent['status'] != 'approved') {
-                $errors['text'] = _w('You can not reply to a removed comment.');
+                $errors['text'] = _w('You cannot reply to a removed comment.');
             }
         }
         return $errors;

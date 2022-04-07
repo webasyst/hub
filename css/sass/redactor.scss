@@ -1,0 +1,109 @@
+.rx-container {
+    #h-content &,
+    #h-stream-settings & {
+        overflow: hidden;
+        border: 1.875px solid var(--border-color-input);
+        border-radius: 0.25em;
+    }
+
+    #h-content &.rx-in-focus,
+    #h-stream-settings &.rx-in-focus {
+        border-color: var(--accent-color);
+    }
+}
+
+.rx-content {
+    #h-content &,
+    #h-stream-settings & {
+        background-color: var(--background-color-input);
+        padding: 12px !important;
+    }
+
+    #h-content &,
+    #h-content & p,
+    #h-stream-settings &,
+    #h-stream-settings & p {
+        font-size: .875rem;
+    }
+}
+
+.h-topic-editor {
+    .rx-toolbar-sticky {
+        top: 4rem !important;
+    }
+
+    .rx-toolbar-container.is-rx-toolbar {
+        background-color: var(--background-color-blank);
+    }
+
+    .rx-container {
+        border: none;
+    }
+
+    .rx-content {
+        padding: .5rem 0 !important;
+    }
+
+    .CodeMirror {
+        min-height: 50vh;
+        max-height: 70vh;
+        overscroll-behavior-y: contain;
+    }
+}
+
+.h-comments {
+    .rx-toolbar-sticky {
+        top: 4rem !important;
+    }
+
+    .rx-container {
+        overflow: hidden;
+        border: none;
+        border-radius: .375rem;
+        box-shadow: 0 .25rem 1.5rem -.75rem rgba(0, 0, 0, .25);
+
+        &.rx-in-focus {
+            border-color: var(--accent-color);
+        }
+    }
+
+    .rx-content {
+        blockquote {
+            color: var(--text-color);
+            font-style: normal;
+            background: var(--background-color-blockquote);
+            padding: 1.25em 1.75em;
+            margin: 0 0 1rem;
+        }
+    }
+
+    .h-edit-comment {
+        .rx-container {
+            border-radius: none;
+            margin: 0 -1rem;
+            box-shadow: none;
+
+            &.is-rx-toolbar {
+                padding: 0 .5rem;
+            }
+        }
+
+        .rx-source-container {
+            margin-bottom: 1rem;
+        }
+    }
+}
+
+#comments-wrapper {
+    .h-comments {
+        .rx-container {
+            border: 1px solid var(--menu-background-color-hover);
+        }
+    }
+
+    .h-edit-comment {
+        .rx-container {
+            border: none;
+        }
+    }
+}
