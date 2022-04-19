@@ -93,15 +93,12 @@ class hubTopicsEditAction extends waViewAction
             }
             wa('hub')->getConfig()->markAsRead(array($id), $visited_comments);
 
-            $routing_url = wa('hub')->getRouting();
-            $topic_public_url = waIdna::dec($routing_url->getUrl(
-                '/frontend/topic',
-                array(
-                    'id'        => $topic['id'],
-                    'topic_url' => $topic['url']
-                ),
-                true
-            ));
+            $hub_url_templates = self::getHubPublicUrlTemplates();
+            $topic_public_url = str_replace(
+                ['%topic_id%', '%topic_url%'],
+                [$topic['id'], $topic['url']],
+                ifempty($hub_url_templates, $hub_id, '')
+            );
         } else {
 
             $hub_id = waRequest::get('hub_id');
@@ -128,8 +125,8 @@ class hubTopicsEditAction extends waViewAction
         // Does user have access to hub where topic used to be?
         $access_level = wa()->getUser()->getRights('hub', 'hub.'.$topic['hub_id']);
         if ($access_level < hubRightConfig::RIGHT_READ_WRITE || ($access_level == hubRightConfig::RIGHT_READ_WRITE && $topic['contact_id'] != wa()->getUser()->getId())) {
-            if ((int) $access_level === hubRightConfig::RIGHT_READ_WRITE) {
-                echo '<script> document.location = "'.wa()->getRouting()->getCurrentUrl().'#/topic/'.$topic['id'].'/"; </script>';
+            if (in_array((int) $access_level, [hubRightConfig::RIGHT_READ, hubRightConfig::RIGHT_READ_WRITE])) {
+                echo '<script> document.location = "'.wa()->getUrl(true).'#/topic/'.$topic['id'].'/"; </script>';
                 exit;
             }
             throw new waRightsException('Access denied');
@@ -195,7 +192,7 @@ class hubTopicsEditAction extends waViewAction
                     'types'              => $topic_types,
                     'categories'         => $categories,
                     'hub_type_ids'       => $hub_type_ids,
-                    'hub_url_templates'  => self::getHubPublicUrlTemplates(),
+                    'hub_url_templates'  => $hub_url_templates,
                     'users'              => $users,
                     'user_id'            => wa()->getUser()->getId(),
                     'can_change_author'  => $can_change_author,

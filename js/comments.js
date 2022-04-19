@@ -439,7 +439,8 @@
             const that = this;
             const $submit = form.find(':submit,:button');
             $submit.append('<i class="fas fa-spinner fa-spin custom-ml-4 js-loading"></i>');
-            that.redactorx.app.editor.setEmpty();
+
+            that.redactorx.container.$main.nodes[0].style.pointerEvents = 'none';
 
             $.post(
                 '?module=comments&action=add',
@@ -447,6 +448,7 @@
                 function (r) {
                     $submit.prop('disabled', false);
                     $submit.find('.js-loading').remove();
+                    that.redactorx.container.$main.nodes[0].style.pointerEvents = 'auto';
 
                     if (r.status === 'fail') {
                         that.clear(false);
@@ -460,6 +462,8 @@
                         }
                         return;
                     }
+
+                    that.redactorx.app.editor.setEmpty();
 
                     const parent_id_input = $('input[name=parent_id]', form);
                     const parent_li = form.closest('.h-comment');

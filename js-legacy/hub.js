@@ -20,6 +20,8 @@
             this.options = options || {};
             $.sidebar.init();
 
+            this.$reviewWidget = $('.i-product-review-widget-wrappper');
+
             // Init dispatcher based on location.hash
             if (typeof($.History) != "undefined") {
                 $.History.bind($.hub.dispatch);
@@ -153,13 +155,17 @@
                             console.log('Invalid action name:', actionName + 'Action');
                         }
                     }
+
+                    this.toggleReviewWidget();
                 } else {
                     // call default action
                     $.hub.defaultAction();
+                    this.toggleReviewWidget();
                 }
             } else {
                 // call default action
                 $.hub.defaultAction();
+                this.toggleReviewWidget();
             }
         },
 
@@ -696,6 +702,17 @@
                 });
             }
 
+        },
+
+        toggleReviewWidget: function() {
+            if ((
+              $.hub.currentAction === 'hub' ||
+              $.hub.currentAction === 'category'
+            ) && this.$reviewWidget.length && $.hub.currentHash) {
+                this.$reviewWidget.show();
+            } else {
+                this.$reviewWidget.hide();
+            }
         },
 
 

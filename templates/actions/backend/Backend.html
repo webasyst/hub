@@ -130,6 +130,10 @@
         </div>
     </div>
 
+    {if method_exists($wa->installer, 'reviewWidget') && $count_topics['all'] > 10}
+    {$wa->installer->reviewWidget('app/hub')}
+    {/if}
+
     <script>
         $.wa.locale = $.extend($.wa.locale || { }, {
             'Insert code block': "[`Insert code block`]",

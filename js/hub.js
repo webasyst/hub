@@ -25,6 +25,7 @@
             this.$body = $('body');
             this.$content = $('#content');
             this.$addTopicButtonMobile = $('.js-add-topic-mobile');
+            this.$reviewWidget = $('.i-product-review-widget-wrappper');
 
             // loaded event
             this.loadedEvent = $.Event('wa_loaded');
@@ -169,6 +170,8 @@
                             console.log('Invalid action name:', actionName + 'Action');
                         }
                     }
+
+                    this.toggleReviewWidget();
                 } else {
                     // call default action
                     $.hub.defaultAction();
@@ -176,6 +179,7 @@
             } else {
                 // call default action
                 $.hub.defaultAction();
+                this.toggleReviewWidget();
             }
         },
 
@@ -1021,6 +1025,17 @@
                 },
                 shortcutsRemove: ['ctrl+h, ctrl+l, ctrl+alt+1, ctrl+alt+2, ctrl+alt+3, ctrl+alt+4, ctrl+alt+5, ctrl+alt+6']
             });
+        },
+
+        toggleReviewWidget: function() {
+            if ((
+              $.hub.currentAction === 'hub' ||
+              $.hub.currentAction === 'category'
+            ) && this.$reviewWidget.length && $.hub.currentHash) {
+                this.$reviewWidget.show();
+            } else {
+                this.$reviewWidget.hide();
+            }
         },
 
         manageHandler: function (element, event) {
