@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1058,7 +1058,7 @@ msgid "No status"
 msgstr "Без статуса"
 
 msgid "Hi %s,"
-msgstr "Привет, %s."
+msgstr "Привет, %s!"
 
 msgid "User %s has posted a new comment on <a href=\"%s\"><strong>%s</strong></a> topic you are following:"
 msgstr "Пользователь %s опубликовал новый комментарий к сообщению «<a href=\"%s\"><strong>%s</strong></a>», на которое вы подписаны:"
@@ -1393,8 +1393,8 @@ msgstr "Тема опубликована!"
 msgid "Good news: a topic can now be edited and viewed on the same screen."
 msgstr "Хорошие новости: теперь тему можно сразу редактировать и просматривать на одной странице."
 
-msgid "Summary"
-msgstr "Краткое описание"
+msgid "Text"
+msgstr "Текст"
 
 msgid "Save changes"
 msgstr "Сохранить изменения"

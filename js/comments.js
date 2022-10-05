@@ -474,7 +474,7 @@
                         $comment.append(html);
                         parent_li.append($comment);
                     } else {
-                        let ul = parent_li.children('ul');
+                        let ul = parent_li.children('ul:first-of-type');
                         let comment_block = that.container;
 
                         if (!parent_li.length) {

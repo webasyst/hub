@@ -84,14 +84,14 @@ class hubFrontendAction extends waViewAction
 
         $route = wa()->getRouting()->getRoute();
         $og = array(
-            'site_name'   => $route['og_site_name'],
-            'locale'      => $route['og_locale'],
-            'title'       => !empty($route['use_default_settings']) ? $route['title'] : $route['og_title'],
+            'site_name'   => ifset($route, 'og_site_name', ''),
+            'locale'      => ifset($route, 'og_locale', ''),
+            'title'       => !empty($route['use_default_settings']) ? ifset($route, 'title', '') : ifset($route, 'og_title', ''),
             'type'        => 'website',
             'url'         => wa()->getConfig()->getHostUrl() . wa()->getConfig()->getRequestUrl(false, true),
-            'description' => !empty($route['use_default_settings']) ? $route['meta_description'] : $route['og_description'],
-            'image'       => $route['og_image'],
-            'video'       => $route['og_video'],
+            'description' => !empty($route['use_default_settings']) ? ifset($route, 'meta_description', '') : ifset($route, 'og_description', ''),
+            'image'       => ifset($route, 'og_image', ''),
+            'video'       => ifset($route, 'og_video', ''),
         );
         foreach ($og as $property => $content) {
             if (strlen($content)) {
