@@ -12,57 +12,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
-
-msgid "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your your customers."
-msgstr "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your and your customers."
-
-msgid "In case there were no Gravatar userpic uploaded"
-msgstr "If no Gravatar userpic is uploaded"
-
-msgid "This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind."
-msgstr "This category will be automatically filled with topics of the selected type. Topic sort order is defined by topic type."
-
-msgid "User selectable"
-msgstr "user selectable"
-
-msgid "All topics will remain in the hub stream, and only the category will be deleted"
-msgstr "All topics will remain in the hub stream, and only the category will be deleted."
-
-msgid "Only me"
-msgstr "only me"
-
-msgid "Everybody"
-msgstr "everybody"
-
-msgid "Or enter glyph image URL (image will be scaled to 32x32 px image)"
-msgstr "Or enter glyph image URL (image will be scaled to 32x32 px size)"
-
-msgid "High"
-msgstr "high"
-
-msgid "Low"
-msgstr "low"
-
-msgid "Start typing user or user group name..."
-msgstr "type user name or user group"
-
-msgid "Comment text can not be left blank"
-msgstr "Comment cannot be empty"
-
-msgid "Homepage META Keywords"
-msgstr "Homepage META keywords"
-
-msgid "Homepage META Description"
-msgstr "Homepage META description"
 
 msgid "In just few words, tell us what you did not like about this article?"
 msgstr "Tell us in a few words what you did not like about this article."
 
 msgid "Favorites"
 msgstr "Following"
-
-msgid "Open in new tab"
-msgstr ""

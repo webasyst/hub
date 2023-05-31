@@ -45,9 +45,9 @@
 
                     <div class="value no-shift h-ibutton-checkbox">
                         <ul class="menu-h">
-                            <li><label for="h-filter-visibility"><span class="h-unselected">[`Only me`]</span></label></li>
+                            <li><label for="h-filter-visibility"><span class="h-unselected">[`only me`]</span></label></li>
                             <li><input type="checkbox"{if $filter.contact_id>=0} checked="checked"{/if} id="h-filter-visibility"></li>
-                            <li><label for="h-filter-visibility"><span>[`Everybody`]</span></label></li>
+                            <li><label for="h-filter-visibility"><span>[`everybody`]</span></label></li>
                         </ul>
                     </div>
 
@@ -56,7 +56,7 @@
                         <p class="small">
                             [`Limit visibility only to the selected user groups`]:
                             <select name="filter[contact_id]">
-                                <option value="0" {if $filter.contact_id==0} selected="selected"{/if}>[`Everybody`]</option>
+                                <option value="0" {if $filter.contact_id==0} selected="selected"{/if}>[`everybody`]</option>
                                 {foreach $groups as $group_id=>$group}
                                     <option value="{$group_id}" {if $filter.contact_id==$group_id} selected="selected"{/if}>{$group|escape}</option>
                                 {/foreach}
@@ -65,7 +65,7 @@
                     </div>
                 {else}
                     <div class="value no-shift">
-                        [`Only me`] <i class="icon10 lock-bw"></i>
+                        [`only me`] <i class="icon10 lock-bw"></i>
                     </div>
                 {/if}
             </div>

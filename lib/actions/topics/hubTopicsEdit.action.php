@@ -170,13 +170,13 @@ class hubTopicsEditAction extends waViewAction
 
         $users = $this->getUsers('backend');
         $access_level = wa()->getUser()->getRights('hub', 'hub.'.$hub_id);
-        $can_change_author = $access_level >= hubRightConfig::RIGHT_FULL && !empty($users[$topic['contact_id']]);
-        if (!$can_change_author) {
+        $can_change_author = $access_level >= hubRightConfig::RIGHT_FULL;
+        if (empty($users[$topic['contact_id']])) {
             try {
                 $c = new waContact($topic['contact_id']);
-                $users = array($topic['contact_id'] => $c->getName());
+                $users[$topic['contact_id']] = $c->getName();
             } catch(waException $e) {
-                $users = array($topic['contact_id'] => 'contact_id '.$topic['contact_id']);
+                $users[$topic['contact_id']] = 'contact_id '.$topic['contact_id'];
             }
         }
 

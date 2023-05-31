@@ -1,5 +1,5 @@
 <div class="article">
-    <div class="article-body custom-pb-0">
+    <div class="article-body custom-pb-0 break-word">
         {include file="./Sidebar.html" inline}
 
         <form method="post" action="?module=settings&action=typeSave&id={$type.id|default:'new'}" id="h-type-settings-form">
@@ -35,7 +35,7 @@
                             <input type="hidden" name="type[glyph]" class="js-glyph-from-collection" value="{if !strpos($type.glyph, '.')}{$type.glyph|escape}{/if}"{if strpos($type.glyph, '.')} disabled="disabled"{/if}>
 
                             <div class="custom-my-8 js-custom-glyph"{if !strpos($type.glyph, '.')} style="display: none;"{/if}>
-                                <p class="small custom-mb-8">[`Or enter glyph image URL (image will be scaled to 32x32 px image)`]:</p>
+                                <p class="small custom-mb-8">[`Or enter a glyph image URL (the image will be scaled to 32x32 px)`]:</p>
                                 <input type="text" name="type[glyph]" class="long small js-glyph-custom-value" value="{if strpos($type.glyph, '.')}{$type.glyph}{/if}" placeholder="https://example.com/custom/image.png" {if !strpos($type.glyph, '.')} disabled="disabled"{/if}>
                                 {if strpos($type.glyph, '.')}
                                 <br>{hubHelper::getGlyph($type.glyph, 32, true)}

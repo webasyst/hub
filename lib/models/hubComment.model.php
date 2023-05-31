@@ -559,7 +559,7 @@ class hubCommentModel extends waNestedSetModel
     {
         $errors = array();
         if (empty($comment['text'])) {
-            $errors['text'] = _w('Comment text can not be left blank');
+            $errors['text'] = _w('A comment cannot be empty.');
         }
         if (empty($comment['id']) && !empty($comment['parent_id'])) {
             $parent = $this->getById($comment['parent_id']);

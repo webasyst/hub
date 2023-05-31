@@ -4,6 +4,10 @@
  */
 class hubHandlersProfiletabAction extends waViewAction
 {
+    protected $contact_id;
+    protected $topics;
+    protected $total_comments;
+
     public function getTabContent($params)
     {
         $this->contact_id = $params;

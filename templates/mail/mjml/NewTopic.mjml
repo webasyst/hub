@@ -79,7 +79,7 @@
                 </mj-column>
                 <mj-column>
                     <!-- WA App Link -->
-                    <mj-text align="right"><a href="{$wa->currentUrl(true)}" target="_blank" style="color: #777777 !important;">{$wa->accountName()}</a></mj-text>
+                    <mj-text align="right"><a href="{$wa->getUrl('hub/frontend/', ['hub_id' => $topic['hub_id']], true)|escape}" target="_blank" style="color: #777777 !important;">{$wa->accountName()}</a></mj-text>
                 </mj-column>
             </mj-group>
         </mj-section>

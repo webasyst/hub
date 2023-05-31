@@ -337,6 +337,9 @@
 }
 .h-comment-author-title {
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .h-comment-container {
@@ -587,6 +590,18 @@
   bottom: 1rem;
   right: 1rem;
   margin-right: 0;
+}
+
+.wa-pages {
+  word-break: break-word;
+}
+
+.h-topic-type {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: end;
+  width: 20%;
 }
 
 .h-vote-up .up, .h-vote-up.up, .h-vote-up:hover {

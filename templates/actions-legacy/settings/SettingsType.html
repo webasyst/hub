@@ -42,7 +42,7 @@
                           <input type="hidden" name="type[glyph]" value="{if !strpos($type.glyph, '.')}{$type.glyph|escape}{/if}" {if strpos($type.glyph, '.')} disabled="disabled" {/if}>
                       </div>
                       <div class="value no-shift"{if !strpos($type.glyph, '.')} style="display: none;" {/if}>
-                          <span class="small">[`Or enter glyph image URL (image will be scaled to 32x32 px image)`]:</span><br>
+                          <span class="small">[`Or enter a glyph image URL (the image will be scaled to 32x32 px)`]:</span><br>
                           <input type="text" name="type[glyph]" value="{if strpos($type.glyph, '.')}{$type.glyph}{/if}" placeholder="https://example.com/custom/image.png" class="long"{if !strpos($type.glyph, '.')} disabled="disabled"{/if}>
                           {if strpos($type.glyph, '.')}<br>{hubHelper::getGlyph($type.glyph, 32, true)}{/if}
                       </div>

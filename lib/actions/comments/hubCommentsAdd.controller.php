@@ -137,6 +137,20 @@ class hubCommentsAddController extends waJsonController
             if ($c['id'] == $contact_id || empty($c['email'])) {
                 continue;
             }
+            $no_backend_rights = false;
+            if (!$hub_is_public) {
+                if ($c['is_user'] < 1) {
+                    $no_backend_rights = true;
+                } else {
+                    $backend_user = new waUser($c['id']);
+                    if (!$backend_user->getRights($this->getAppId(), 'backend')) {
+                        $no_backend_rights = true;
+                    }
+                }
+            }
+            if ($no_backend_rights) {
+                continue;
+            }
             $this->view->assign('contact', $c);
 
             $subject = _w('New comment to a Hub topic you are subscribed to');

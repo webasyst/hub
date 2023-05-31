@@ -8,9 +8,9 @@
             <div class="block">
                 <h6>[`Priority`]</h6>
                 <ul id="ul-priority" class="menu-v">
-                    <li{if $topic.priority == 1} class="selected"{/if}><a data-value="1" href="javascript:void(0)"><i class="icon16 exclamation-red"></i>[`High`]</a></li>
-                    <li{if $topic.priority != 1 && $topic.priority != -1} class="selected"{/if}><a data-value="0" href="javascript:void(0)"><i class="icon16 status-gray-tiny"></i>[`Normal`]</a></li>
-                    <li{if $topic.priority == -1} class="selected"{/if}><a data-value="-1" href="javascript:void(0)"><i class="icon16 status-blue-tiny"></i>[`Low`]</a></li>
+                    <li{if $topic.priority == 1} class="selected"{/if}><a data-value="1" href="javascript:void(0)"><i class="icon16 exclamation-red"></i>[`high`]</a></li>
+                    <li{if $topic.priority != 1 && $topic.priority != -1} class="selected"{/if}><a data-value="0" href="javascript:void(0)"><i class="icon16 status-gray-tiny"></i>[`normal`]</a></li>
+                    <li{if $topic.priority == -1} class="selected"{/if}><a data-value="-1" href="javascript:void(0)"><i class="icon16 status-blue-tiny"></i>[`low`]</a></li>
                 </ul>
                 <input id="input-priority" name="topic[priority]" type="hidden" value="{$topic.priority}">
             </div>
@@ -227,7 +227,7 @@
 
                                             {strip}
                                                 <i class="icon16 add" style="vertical-align:middle;margin-top:-2px;"></i>
-                                                <input type="text" class="subscriber-autocomplete ignore-dirty" placeholder="[`Start typing user or user group name...`]">
+                                                <input type="text" class="subscriber-autocomplete ignore-dirty" placeholder="[`type a user name or a user group name`]">
                                             {/strip}
                                         </div>
                                     </div>

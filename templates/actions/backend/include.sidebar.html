@@ -187,7 +187,7 @@
                 {foreach $hubs as $h}
                 <div class="brick full-width custom-mb-8 js-hub-selector" data-href="#/hub/{$h.id}/" data-hub-id="{$h.id}" data-hub-color="{$h.params.color|default:'white'}">
                     <div class="flexbox">
-                        <span class="hub-name wide flexbox">
+                        <span class="hub-name wide flexbox break-word">
                             {if !empty($h.params.color) && $h.params.color != 'white'}
                             <span class="icon custom-mr-4"><i class="fas fa-circle small h-hub-text-color-{$h.params.color}"></i></span>
                             {/if}

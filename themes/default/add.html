@@ -72,7 +72,7 @@
 
         <div data-url="{$wa->getUrl('/frontend/preview')}"  class="block double-padded topic-preview" {if empty($preview)}style="display:none"{/if}>{if !empty($preview)}{$preview}{/if}</div>
         <div>
-            <input type="submit" value="{if !empty($data.id)}[`Save`]{else}[`Submit topic`]{/if}">
+            <button type="submit">{if !empty($data.id)}[`Save`]{else}[`Submit topic`]{/if}</button>
             <input type="submit" class="gray" name="preview" value="[`Preview`]">
         </div>
         {$wa->csrf()}

@@ -1604,7 +1604,7 @@
 
                 if ($f.length) {
                     $f.find('.name').text(data.name);
-                    $f.find('.icon').replaceWith(data.icon_html);
+                    $f.find('.icon').replaceWith(`<span class="icon"><i class="fas fa-${data.icon} text-light-gray"></i></span>`);
                 } else {
                     // fallback for old ui icons
                     switch(data.icon) {
@@ -1662,8 +1662,7 @@
                         case 'target':
                             data.icon = 'bullseye';
                             break;
-                    };
-
+                    }
                     const html = `<li id="filter-${id || data.id}" data-filter-id="${id || data.id}">
                         <a href="#/filter/${id || data.id}/">
                             <span class="icon"><i class="fas fa-${data.icon}"></i></span>

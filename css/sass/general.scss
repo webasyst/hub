@@ -162,3 +162,15 @@
     z-index: 20;
     margin-right: 0;
 }
+
+.wa-pages {
+    word-break: break-word;
+}
+
+.h-topic-type {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: end;
+    width: 20%;
+}

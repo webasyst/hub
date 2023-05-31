@@ -367,7 +367,7 @@ $(function () {
         function addComment() {
             var $submit = form.find(':submit').after('<i class="icon16 loading"></i>').prop('disabled', true);
             $.post(
-                location.origin + location.pathname + '/comments/add/',
+                location.origin + location.pathname.replace(/\/$/, '') + '/comments/add/',
                 form.serialize(),
                 function (r) {
                     $submit.prop('disabled', false).siblings('.loading').remove();

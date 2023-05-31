@@ -103,7 +103,7 @@ msgstr "Загрузка..."
 msgid "Welcome to your new Hub!"
 msgstr "Добро пожаловать в ваш новый «Хаб»!"
 
-msgid "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for your your customers."
+msgid "Hub is an app for organizing your knowledge base. Store your articles, answer questions, collect customer feedback and bug reports, discuss various topics — all in one place. A perfect self-help tool for you and your customers."
 msgstr "«Хаб» — это приложение для организации базы знаний. Публикуйте статьи, отвечайте на вопросы, собирайте комментарии клиентов и сообщения об ошибках, обсуждайте любые темы — всё в едином пространстве. Отличное средство взаимопомощи для вас и ваших клиентов."
 
 msgid "Topic types"
@@ -208,7 +208,7 @@ msgstr ""
 msgid "Enable Gravatar userpics"
 msgstr "Включить юзерпики Gravatar"
 
-msgid "In case there were no Gravatar userpic uploaded"
+msgid "If no Gravatar userpic is uploaded"
 msgstr "Если юзерпик Gravatar не загружен"
 
 msgid "Use default userpic"
@@ -265,7 +265,7 @@ msgstr "Вы сможете добавлять новые темы и перен
 msgid "Filter by topic type"
 msgstr "Фильтровать по типу тем"
 
-msgid "This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind."
+msgid "This category will be automatically filled with topics of the selected type. The sort order of topics is defined by their type."
 msgstr "Эта категория будет автоматически заполняться темами выбранного типа. Порядок сортировки тем определяется их типом."
 
 msgid "Filter by tags"
@@ -277,7 +277,7 @@ msgstr "Эта категория будет автоматически запо
 msgid "This option is not available because this hub does not have any tags yet."
 msgstr "Этот вариант недоступен, потому что в хабе пока нет ни одного тега."
 
-msgid "User selectable"
+msgid "user-selectable sort order"
 msgstr "разрешить пользователям изменять способ сортировки"
 
 msgid "Newest topics on top"
@@ -301,7 +301,7 @@ msgstr "отмена"
 msgid "Don't delete topics"
 msgstr "Не удалять темы"
 
-msgid "All topics will remain in the hub stream, and only the category will be deleted"
+msgid "All topics will remain in the hub stream, only the category will be deleted."
 msgstr "Все темы останутся в потоке хаба; будет удалена только категория."
 
 msgid "Select category"
@@ -322,11 +322,11 @@ msgstr "Иконка"
 msgid "Visibility"
 msgstr "Кому виден"
 
-msgid "Only me"
-msgstr "Только мне"
+msgid "only me"
+msgstr "только мне"
 
-msgid "Everybody"
-msgstr "Всем пользователям"
+msgid "everybody"
+msgstr "всем пользователям"
 
 msgid "Limit visibility only to the selected user groups"
 msgstr "Только этой группе пользователей"
@@ -466,8 +466,8 @@ msgstr "Символ"
 msgid "custom glyph"
 msgstr "другой символ"
 
-msgid "Or enter glyph image URL (image will be scaled to 32x32 px image)"
-msgstr "Либо введите URL изображения символа (указанное изображение будет уменьшено до 32x32 пикселей)"
+msgid "Or enter a glyph image URL (the image will be scaled to 32x32 px)"
+msgstr "Либо введите URL изображения символа (изображение будет уменьшено до 32x32 пикселей)"
 
 msgid "Functionality"
 msgstr "Функциональность"
@@ -616,11 +616,11 @@ msgstr[2] "%d ответов"
 msgid "Priority"
 msgstr "Приоритет"
 
-msgid "High"
-msgstr "Высокий"
+msgid "high"
+msgstr "высокий"
 
-msgid "Low"
-msgstr "Низкий"
+msgid "low"
+msgstr "низкий"
 
 msgid "Author"
 msgstr "Автор"
@@ -667,7 +667,7 @@ msgstr "Сохранить черновик"
 msgid "To"
 msgstr "Кому"
 
-msgid "Start typing user or user group name..."
+msgid "type a user name or a user group name"
 msgstr "имя пользователя или название группы"
 
 msgid "Message"
@@ -745,8 +745,8 @@ msgstr "Категория не найдена"
 msgid "Topic not found"
 msgstr "Тема не найдена"
 
-msgid "Comment text can not be left blank"
-msgstr "Комментарий не может быть пустым"
+msgid "A comment cannot be empty."
+msgstr "Комментарий не может быть пустым."
 
 msgid "My account"
 msgstr "Личный кабинет"
@@ -847,10 +847,10 @@ msgstr "Полный доступ"
 msgid "Homepage title <title>"
 msgstr "Заголовок главной страницы <title>"
 
-msgid "Homepage META Keywords"
+msgid "Homepage META keywords"
 msgstr "META keywords главной страницы"
 
-msgid "Homepage META Description"
+msgid "Homepage META description"
 msgstr "META description главной страницы"
 
 msgid "The URL is in use."
@@ -954,6 +954,9 @@ msgstr "голоса"
 
 msgid "newest"
 msgstr "новые"
+
+msgid "oldest"
+msgstr "старые"
 
 msgid "Answers"
 msgstr "Ответы"
@@ -1198,8 +1201,8 @@ msgstr "В динамических списках возможность руч
 msgid "Manual sort for topics is not available in this view because current sort order is set to <strong>%s</strong>. To activate the ability to sort topics in this category, set current sort order to “Manual sort”."
 msgstr "В данном списке возможность ручной сортировки тем недоступна, потому что включён режим автоматической сортировки — <strong>%s</strong>. Для ручной сортировки тем переключите режим на «Ручной»."
 
-msgid "Normal"
-msgstr "Средний"
+msgid "normal"
+msgstr "средний"
 
 msgid "Visual"
 msgstr "Визуальный редактор"

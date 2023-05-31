@@ -139,7 +139,7 @@
                                     {/foreach}
                                 </select>
 
-                                <p class="hint">[`This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind.`]</p>
+                                <p class="hint">[`This category will be automatically filled with topics of the selected type. The sort order of topics is defined by their type.`]</p>
 
                             </div>
                             {/if}
@@ -185,7 +185,7 @@
                                 </select>
                                 <label>
                                     <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
-                                    [`User selectable`]
+                                    [`user-selectable sort order`]
                                 </label>
                             </div>
                         </div>
@@ -205,7 +205,7 @@
                                 </select>
                                 <label>
                                     <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
-                                    [`User selectable`]
+                                    [`user-selectable sort order`]
                                 </label>
                             </div>
                         </div>
@@ -226,7 +226,7 @@
                                 </select>
                                 <label>
                                     <input type="checkbox" name="category[enable_sorting]" value="1"{if !empty($category.enable_sorting)} checked="checked"{/if}>
-                                    [`User selectable`]
+                                    [`user-selectable sort order`]
                                 </label>
                             </div>
                         </div>
@@ -342,7 +342,7 @@
                                 <label><input name="delete" type="radio" value="delete" checked="checked">
                                     [`Don't delete topics`]
                                     <span class="hint">
-                                        [`All topics will remain in the hub stream, and only the category will be deleted`]
+                                        [`All topics will remain in the hub stream, only the category will be deleted.`]
                                     </span>
                                 </label>
                             </li>
@@ -362,7 +362,7 @@
                             </li>
                         </ul>
                         {else}
-                            [`All topics will remain in the hub stream, and only the category will be deleted`]
+                            [`All topics will remain in the hub stream, only the category will be deleted.`]
                         {/if}
                     </div>
                 </div>

@@ -26,7 +26,7 @@ class hubTopicsInfoAction extends waViewAction
         $domain_routes = $routing->getByApp($this->getAppId());
         foreach ($domain_routes as $domain => $routes) {
             foreach ($routes as $r) {
-                if ($r['hub_id'] == $topic['hub_id']) {
+                if (!empty($r['hub_id']) && $r['hub_id'] == $topic['hub_id']) {
                     $routing->setRoute($r, $domain);
                     break 2;
                 }

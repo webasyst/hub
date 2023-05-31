@@ -10,7 +10,7 @@
 
     {if empty($category.id)}
     <div class="article">
-        <div class="article-body">
+        <div class="article-body break-word">
             <h2 class="list-title js-page-title">{$category.name|default:'[`New category`]'|escape}</h2>
     {/if}
 
@@ -146,7 +146,7 @@
                             </select>
                         </div>
 
-                        <div class="hint">[`This category will be automatically filled with topics of the selected type. Topic sort order will be defined by topic type kind.`]</div>
+                        <div class="hint">[`This category will be automatically filled with topics of the selected type. The sort order of topics is defined by their type.`]</div>
                     </div>
                     {/if}
 
@@ -221,7 +221,7 @@
                                     </span>
                                 </span>
                             </span>
-                            [`User selectable`]
+                            [`user-selectable sort order`]
                         </label>
                     </div>
                 </div>
@@ -254,7 +254,7 @@
                                     </span>
                                 </span>
                             </span>
-                            [`User selectable`]
+                            [`user-selectable sort order`]
                         </label>
                     </div>
                 </div>
@@ -287,7 +287,7 @@
                                     </span>
                                 </span>
                             </span>
-                            [`User selectable`]
+                            [`user-selectable sort order`]
                         </label>
                     </div>
                 </div>
@@ -433,7 +433,7 @@
                             [`Don't delete topics`]
 
                             <span class="hint">
-                                [`All topics will remain in the hub stream, and only the category will be deleted`]
+                                [`All topics will remain in the hub stream, only the category will be deleted.`]
                             </span>
                         </label>
                     </li>
@@ -459,7 +459,7 @@
                     </li>
                 </ul>
                 {else}
-                <p>[`All topics will remain in the hub stream, and only the category will be deleted`]</p>
+                <p>[`All topics will remain in the hub stream, only the category will be deleted.`]</p>
                 {/if}
             </div>
 

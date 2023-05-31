@@ -17,7 +17,7 @@
     <div class="h-comment-body{if $comment.status == hubCommentModel::STATUS_DELETED} h-deleted{/if}">
         <header class="h-comment-header">
             <div class="flexbox wrap-mobile">
-                <div class="wide width-100-mobile custom-mr-16 custom-mr-0-mobile">
+                <div class="wide width-100-mobile custom-mr-16 custom-mr-0-mobile" style="max-width:100%">
                     <div class="h-comment-author-title">
                         <a href="{$wa_backend_url}contacts/#/contact/{$comment.contact_id}" class="small bold">{$comment.author.name|default:'[`(no name)`]'|escape}</a>
                         {if !empty($comment.topic)}

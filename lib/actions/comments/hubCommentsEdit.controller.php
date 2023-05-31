@@ -27,7 +27,7 @@ class hubCommentsEditController extends waJsonController
     {
         $text = hubHelper::sanitizeHtml(waRequest::post('text'));
         if (!$text) {
-            $this->errors['text'] = _w('Comment text can not be left blank');
+            $this->errors['text'] = _w('A comment cannot be empty.');
             return;
         }
 

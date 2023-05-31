@@ -5,7 +5,7 @@
 <form action="?module=settings&action=filterSave" method="post" class="js-filter-form">
     {if empty($filter.id)}
     <div class="article">
-        <div class="article-body">
+        <div class="article-body break-word">
             <h2 class="js-page-title">{$filter.name|default:'[`New filter`]'|escape}</h2>
     {/if}
 
@@ -29,8 +29,8 @@
                 {if $is_admin}
                 <div class="value">
                     <div class="toggle small js-hub-toggle-group-visibility">
-                        <span class="{if $filter.contact_id<0} selected{/if}">[`Only me`]</span>
-                        <span class="js-hub-toggle-custom-group{if $filter.contact_id>=0} selected{/if}">[`Everybody`]</span>
+                        <span class="{if $filter.contact_id<0} selected{/if}">[`only me`]</span>
+                        <span class="js-hub-toggle-custom-group{if $filter.contact_id>=0} selected{/if}">[`everybody`]</span>
                     </div>
 
                     <div class="custom-mt-12 js-hub-select-group-visibility"{if $filter.contact_id<0} style="display: none;"{/if}>
@@ -38,7 +38,7 @@
 
                         <div class="wa-select small">
                             <select name="filter[contact_id]" class="js-hub-group-select">
-                                <option value="0" {if $filter.contact_id==0} selected="selected"{/if}>[`Everybody`]</option>
+                                <option value="0" {if $filter.contact_id==0} selected="selected"{/if}>[`everybody`]</option>
                                 {foreach $groups as $group_id=>$group}
                                 <option value="{$group_id}" {if $filter.contact_id==$group_id} selected="selected"{/if}>{$group|escape}</option>
                                 {/foreach}
@@ -48,7 +48,7 @@
                 </div>
                 {else}
                 <div class="value">
-                    [`Only me`] <i class="fas fa-lock"></i>
+                    [`only me`] <i class="fas fa-lock"></i>
                 </div>
                 {/if}
             </div>

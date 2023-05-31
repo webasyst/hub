@@ -11,14 +11,14 @@
     <ul class="topics lazyloading-list">
 
         {foreach $topics as $t}
-        
+
             {if !empty($types[$t.type_id])}
                 {$_topic_type = $types[$t.type_id]}
             {else}
                 {* corrupted/missing topic type? fallback to 'custom' *}
                 {$_topic_type = [ 'glyph' => 'unknown', 'type' => 'custom','name'=> _w('Unknown topic type')]}
             {/if}
-        
+
             <li itemscope itemtype="http://schema.org/{if $_topic_type.type == 'question'}Question{else}Article{/if}">
 
                 {* glyph *}
@@ -27,22 +27,22 @@
                 </div>
 
                 <div class="summary">
-                
-                    {* rating *}
-                    {if $_topic_type.type != 'forum' && $_topic_type.type != 'page' && !empty($_topic_type.settings.voting)}
-                        <strong class="rating-label {if $t.votes_sum > 0}positive{elseif $t.votes_sum < 0}negative{else}gray{/if}">{if $t.votes_sum > 0}+{/if}{$t.votes_sum}</strong>
-                    {/if}
-                    
                     {* title *}
-                    <a href="{$t.url|escape}" itemprop="url" class="big{if !empty($t.is_updated)} bold{/if}"><span   itemprop="name">{$t.title|escape}</span>{if $t.follow} <i class="icon16 star" title="[`You are following this topic`]"></i>{/if}</a>
+                    <a href="{$t.url|escape}" itemprop="url" class="big{if !empty($t.is_updated)} bold{/if}">
+                        {* rating *}
+                        {if $_topic_type.type != 'forum' && $_topic_type.type != 'page' && !empty($_topic_type.settings.voting)}
+                            <strong class="wa-mr-4 rating-label {if $t.votes_sum > 0}positive{elseif $t.votes_sum < 0}negative{else}gray{/if}">{if $t.votes_sum > 0}+{/if}{$t.votes_sum}</strong>
+                        {/if}
+                        <span itemprop="name">{$t.title|escape}</span>
+                        {if $t.follow} <i class="wa-ml-4 icon16 star" title="[`You are following this topic`]"></i>{/if}
+                    </a>
 
-                    {* badge *}    
+                    {* badge *}
                     {if !empty($t.badge)}
                         <span class="badge badge-{$t.badge.id}">{$t.badge.name}</span>
-                    {/if}
+                    {/if}<span class="badge badge-staff">wer</span>
 
                     {* author & datetime *}
-                    <br>
                     <span class="hint">
                         {if !empty($t.author)}
                             {sprintf('[`by %s`]', $t.author.name|escape)}
@@ -53,36 +53,36 @@
                     {*
                         <p>{strip_tags($t.content)|truncate:128}</p>
                     *}
-                    
+
                     {* featured comment / solution *}
                     {if !empty($t.solution)}
                         <div class="comment {if $_topic_type.type == 'question'}solution{else}featured-comment{/if}">
                             {strip_tags($t.solution.text)|truncate:255}
-                            
+
                             {if $t.solution.author.name}
                                 <div class="credentials">
                                     <img src="{$t.solution.author.photo_url_20}" class="userpic" title="{$t.solution.author.name|escape}" alt="{$t.solution.author.name|escape}">
                                     <span class="username">
-                                        
+
                                             <span>{$t.solution.author.name}</span>
-                                        
+
                                         {if !empty($t.solution.author.name.author.badge)}
                                             <span class="staff"{if !empty($t.solution.author.name.author.badge_color)} style="background-color: {$t.solution.author.name.author.badge_color}"{/if}>{$t.solution.author.name.author.badge}</span>
                                         {/if}
                                     </span>
                                 </div>
                             {/if}
-                                            
+
                         </div>
                     {/if}
                 </div>
-                
+
                 {if $t.comments_count || !empty($_topic_type.settings.commenting) && $_topic_type.settings.commenting == 1}
                     <div class="replies{if !empty($t.is_updated)} bold{/if}">
                         <span class="hint">{_w('%d reply', '%d replies', $t.comments_count)}</span>
                     </div>
                 {/if}
-                
+
             </li>
         {/foreach}
     </ul>

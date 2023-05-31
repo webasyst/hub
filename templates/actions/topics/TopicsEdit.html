@@ -7,7 +7,7 @@
         {/if}
 
         <article class="article">
-            <div class="article-body custom-pb-12">
+            <div class="article-body custom-pb-12 break-word">
                 <div class="alert-fixed-box">
                     <div class="js-saved-with-notification alert success" style="display: none;">
                         <div class="flexbox">
@@ -249,7 +249,7 @@
                                                 </div>
 
                                                 {strip}
-                                                <input type="text" class="subscriber-autocomplete ignore-dirty width-100" placeholder="[`Start typing user or user group name...`]">
+                                                <input type="text" class="subscriber-autocomplete ignore-dirty width-100" placeholder="[`type a user name or a user group name`]">
                                                 {/strip}
                                             </div>
                                         </div>
@@ -422,12 +422,12 @@
                                     <a href="#" class="dropdown-toggle without-arrow h-topic-custom-dropdown">
                                         {if $topic.priority == 1}
                                         <i class="fas fa-exclamation-triangle text-red custom-mr-4"></i>
-                                        [`High`]
+                                        [`high`]
                                         {/if}
-                                        {if $topic.priority == 0}[`Normal`]{/if}
+                                        {if $topic.priority == 0}[`normal`]{/if}
                                         {if $topic.priority == -1}
                                         <i class="fas fa-pause-circle text-purple custom-mr-4"></i>
-                                        [`Low`]
+                                        [`low`]
                                         {/if}
                                     </a>
 
@@ -436,18 +436,18 @@
                                             <li{if $topic.priority == 1} class="selected"{/if}>
                                                 <a href="#" data-value="1">
                                                     <i class="fas fa-exclamation-triangle small text-red custom-mr-4"></i>
-                                                    [`High`]
+                                                    [`high`]
                                                 </a>
                                             </li>
 
                                             <li{if $topic.priority == 0} class="selected"{/if}>
-                                                <a href="#" data-value="0">[`Normal`]</a>
+                                                <a href="#" data-value="0">[`normal`]</a>
                                             </li>
 
                                             <li{if $topic.priority == -1} class="selected"{/if}>
                                                 <a href="#" data-value="-1">
                                                     <i class="fas fa-pause-circle small text-purple custom-mr-4"></i>
-                                                    [`Low`]
+                                                    [`low`]
                                                 </a>
                                             </li>
                                         </ul>

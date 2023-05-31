@@ -65,11 +65,11 @@ return array(
             'type' => 'input',
         ),
         'meta_keywords' => array(
-            'name' => _w('Homepage META Keywords'),
+            'name' => _w('Homepage META keywords'),
             'type' => 'input'
         ),
         'meta_description' => array(
-            'name' => _w('Homepage META Description'),
+            'name' => _w('Homepage META description'),
             'type' => 'textarea'
         ),
         $og_section,

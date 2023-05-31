@@ -1,6 +1,6 @@
 <div class="content blank">
     <div class="article">
-        <div class="article-body">
+        <div class="article-body break-word">
             <div class="alert-fixed-box">
                 <div class="h-saved alert success" style="display: none;">
                     <i class="fas fa-check-circle"></i>
@@ -37,7 +37,7 @@
                     <span class="badge smaller blue js-count">0</span>
                 </div>
 
-                <div class="wide flexbox custom-mr-12 width-100-mobile custom-mr-0-mobile custom-mb-12-mobile h-topics-title">
+                <div class="wide flexbox custom-mr-12 width-100-mobile custom-mr-0-mobile custom-mb-12-mobile h-topics-title break-word">
                     {if $type == 'hub' && !empty($hub_context.params.color) && $hub_context.params.color != 'white'}
                     <i class="fas fa-circle custom-mt-12 custom-mr-8 h-circle-mobile h-hub-text-color-{$hub_context.params.color}"></i>
                     {/if}
@@ -128,20 +128,20 @@
                                     <li>
                                         <a href="#" class="item js-bulk-action" data-action="priority" data-priority="1">
                                             <i class="fas fa-exclamation-triangle text-red"></i>
-                                            <span>[`High`]</span>
+                                            <span>[`high`]</span>
                                         </a>
                                     </li>
 
                                     <li>
                                         <a href="#" class="item js-bulk-action" data-action="priority" data-priority="0">
-                                            <span>[`Normal`]</span>
+                                            <span>[`normal`]</span>
                                         </a>
                                     </li>
 
                                     <li>
                                         <a href="#" class="item js-bulk-action" data-action="priority" data-priority="-1">
                                             <i class="fas fa-pause-circle fa-lg text-purple"></i>
-                                            <span>[`Low`]</span>
+                                            <span>[`low`]</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -224,7 +224,7 @@
                             {/if}
                         </div>
 
-                        <div class="details">
+                        <div class="details break-words">
                             {if $t.badge || !empty($types[$t.type_id])}
                             <div class="custom-mb-4 mobile-only">
                                 {if !empty($types[$t.type_id])}
@@ -259,14 +259,14 @@
                                         {if $t.priority && $t.priority == 1}
                                         <i class="fas fa-exclamation-triangle small text-red" title="[`High priority`]"></i>
                                         {elseif $t.priority && $t.priority == -1}
-                                        <i class="fas fa-pause-circle text-purple" title="[`Low`]"></i>
+                                        <i class="fas fa-pause-circle text-purple" title="[`low`]"></i>
                                         {/if}
                                         {if !empty($t.title)}{$t.title|escape}{else}<span class="gray">([`no title`])</span>{/if}
                                     </a>
                                 </div>
 
                                 {if !empty($types[$t.type_id])}
-                                <div class="semibold hint nowrap width-100-mobile custom-mt-4 desktop-and-tablet-only">{$types[$t.type_id].name|escape}</div>
+                                <div class="semibold hint nowrap width-100-mobile custom-mt-4 desktop-and-tablet-only h-topic-type">{$types[$t.type_id].name|escape}</div>
                                 {/if}
 
                                 {if $t.badge}
@@ -277,14 +277,14 @@
                             </div>
 
                             <div class="flexbox full-width space-8 custom-mb-8 custom-mb-0-mobile">
-                                <div class="wide custom-mt-8 custom-mt-4-mobile">
+                                <div class="wide width-80 custom-mt-8 custom-mt-4-mobile">
                                     <div class="h-topic-author flexbox hint">
                                         <div class="flexbox wrap">
                                             <div class="custom-mr-12 custom-mb-4">{sprintf('[`by %s`]', $t.contact.name|escape|default:'Noname')}</div>
 
                                             <div class="custom-mr-12 custom-mb-4">{$t.create_datetime|wa_datetime:"humandatetime"}</div>
 
-                                            <div class="nowrap">
+                                            <div>
                                                 {if !empty($t.hub_color) && $t.hub_color != 'white'}
                                                 <i class="fas fa-circle h-hub-text-color-{$t.hub_color}"></i>
                                                 {/if}
