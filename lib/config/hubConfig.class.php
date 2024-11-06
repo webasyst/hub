@@ -63,8 +63,12 @@ class hubConfig extends waAppConfig
     public function onCount()
     {
         $storage = wa()->getStorage();
-        $type = explode(',', wa()->getUser()->getSettings('hub', 'type_items_count'));
-        $type = array_filter(array_map('trim', $type), 'strlen');
+        $type = [];
+        $type_items_count = wa()->getUser()->getSettings('hub', 'type_items_count');
+        if (!empty($type_items_count)) {
+            $type = explode(',', $type_items_count);
+            $type = array_filter(array_map('trim', $type), 'strlen');
+        }
         $count = 0;
 
         $url = $this->getBackendUrl(true).$this->application.'/';

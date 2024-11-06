@@ -8,17 +8,18 @@ class hubHandlersProfiletabAction extends waViewAction
     protected $topics;
     protected $total_comments;
 
-    public function getTabContent($params)
+    public function getTab($params, $counter_inside = true)
     {
         $this->contact_id = $params;
-        $html = $this->display();
-
-        if ($this->topics || $this->total_comments) {
-            return array(
-                'title' => _w('Hub').' ('.count($this->topics).')',
-                'html' => $html,
-                'count' => 0,
-            );
+        $c = new hubTopicsCollection('contact/'.$this->contact_id);
+        $count = $c->count();
+        if ($count) {
+            return [
+                'title' => _w('Hub').($counter_inside ? ' ('.$count.')' : ''),
+                'html' => '',
+                'count' => ($counter_inside ? 0 : $count),
+                'url' => wa()->getAppUrl('hub').'?module=handlers&action=profiletab&id='.$this->contact_id,
+            ];
         } else {
             return null;
         }
@@ -26,6 +27,8 @@ class hubHandlersProfiletabAction extends waViewAction
 
     public function execute()
     {
+        $this->contact_id = waRequest::get('id', 0, waRequest::TYPE_INT);
+        
         // List of topics user created
         $limit = 50;
         $c = new hubTopicsCollection('contact/'.$this->contact_id);

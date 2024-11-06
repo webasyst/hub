@@ -631,11 +631,17 @@
                 this.loaded = true;
             }
 
-            if ($('#wa-design-container').length) {
-                waDesignLoad();
+            if (params) {
+                if ($('#wa-design-container').length) {
+                    waDesignLoad();
+                } else {
+                    this.load('?module=design', function() {
+                        waDesignLoad(params);
+                    });
+                }
             } else {
-                this.load('?module=design', function () {
-                    params ? waDesignLoad(params) : waDesignLoad();
+                this.load('?module=design', function() {
+                    waDesignLoad('');
                 });
             }
 
@@ -1454,11 +1460,6 @@
                 const $dialog = $('#h-bulk-topics-move');
                 const self = this;
 
-                if (self.bulMoveDialog) {
-                    self.bulkMoveDialog();
-                    return;
-                }
-
                 $dialog.load('?module=dialog&action=topicsMove' + params, function () {
                     $dialog.find(':input[name="hub_id"]').on('change', function () {
                         if (!this.checked) {
@@ -1479,59 +1480,51 @@
             bulkMoveDialog: function ($dialog) {
                 const self = this;
 
-                if (!$dialog) {
-                    self.bulMoveDialog.show();
-                    return;
-                }
-
-                self.bulMoveDialog = $.waDialog({
+                $.waDialog({
                     html: $dialog,
-                    onOpen($dialog) {
+                    onOpen($dialog, dialog) {
                         const ids = [];
                         self.$topics_ul.find(':input.js-bulk-mode:checked').each(function () {
                             ids.push(this.value);
                         });
                         $dialog.find(':input[name="topic_ids"]').val(ids.join(','));
-                    },
-                    onClose(dialog) {
-                        dialog.hide();
-                        return false;
+
+
+                        const $saveButton = $dialog.find('.js-move-dialog-save');
+
+                        $saveButton.on('click', function(event) {
+                            event.preventDefault();
+
+                            const $form = $dialog.find('form:first');
+                            const $hub = $form.find(':input[name="hub_id"]:checked');
+                            const hub_id = $hub.val();
+                            const category_id = $hub.closest('.js-move-dialog-section').find('select:first').val();
+
+                            const $saveButton = $(this);
+                            const $spinner = $('<i class="fas fa-spinner fa-spin custom-ml-4"></i>');
+                            $saveButton.attr('disabled', true);
+                            $saveButton.append($spinner);
+
+                            $.ajax({
+                                url: $form.attr('action'),
+                                data: $form.serialize(),
+                                dataType: 'json',
+                                type: 'post',
+                                success: function (r) {
+                                    $saveButton.attr('disabled', false);
+                                    $spinner.remove();
+                                    dialog.close();
+                                    if (category_id) {
+                                        window.location.hash = '/category/' + category_id + '/';
+                                    } else if (hub_id) {
+                                        window.location.hash = '/hub/' + hub_id + '/';
+                                    } else {
+                                        window.location.hash = '/';
+                                    }
+                                }
+                            });
+                        });
                     }
-                });
-
-                const $saveButton = self.bulMoveDialog.$block.find('.js-move-dialog-save');
-
-                $saveButton.on('click', function(event) {
-                    event.preventDefault();
-
-                    const $form = self.bulMoveDialog.$block.find('form:first');
-                    const $hub = $form.find(':input[name="hub_id"]:checked');
-                    const hub_id = $hub.val();
-                    const category_id = $hub.closest('.js-move-dialog-section').find('select:first').val();
-
-                    const $saveButton = $(this);
-                    const $spinner = $('<i class="fas fa-spinner fa-spin custom-ml-4"></i>');
-                    $saveButton.attr('disabled', true);
-                    $saveButton.append($spinner);
-
-                    $.ajax({
-                        url: $form.attr('action'),
-                        data: $form.serialize(),
-                        dataType: 'json',
-                        type: 'post',
-                        success: function (r) {
-                            $saveButton.attr('disabled', false);
-                            $spinner.remove();
-                            self.bulMoveDialog.hide();
-                            if (category_id) {
-                                window.location.hash = '/category/' + category_id + '/';
-                            } else if (hub_id) {
-                                window.location.hash = '/hub/' + hub_id + '/';
-                            } else {
-                                window.location.hash = '/';
-                            }
-                        }
-                    });
                 });
             }
         },

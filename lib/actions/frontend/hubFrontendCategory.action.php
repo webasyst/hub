@@ -40,8 +40,8 @@ class hubFrontendCategoryAction extends hubFrontendAction
         $category_og_model = new hubCategoryOgModel();
         $route = wa()->getRouting()->getRoute();
         $og = $category_og_model->get($category['id']) + array(
-            'site_name'   => $route['og_site_name'],
-            'locale'      => $route['og_locale'],
+            'site_name'   => ifset($route, 'og_site_name', ''),
+            'locale'      => ifset($route, 'og_locale', wa()->getLocale()),
             'type'        => 'website',
             'url'         => wa()->getConfig()->getHostUrl() . wa()->getConfig()->getRequestUrl(false, true),
         );
