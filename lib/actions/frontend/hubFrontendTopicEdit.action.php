@@ -98,6 +98,9 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
         if (!strlen($data['content'])) {
             $errors['content'] = true;
         }
+
+        $this->hookSaveBefore((int) $this->topic_id, $errors, $data);
+
         if ($data['content'] && (!$errors || waRequest::request('preview'))) {
             $sanitized_content = hubHelper::sanitizeHtml($data['content']);
         }
@@ -109,6 +112,9 @@ class hubFrontendTopicEditAction extends hubFrontendAddAction
                 'title' => $data['title'],
                 'tags' => $data['tags'],
             ));
+
+            $this->hookSaveAfter((int) $this->topic_id, false, $data);
+
             return array('id' => $this->topic_id, 'topic_url' => $this->topic['url'], 'hub_id' => $this->hub_id);
         } elseif (waRequest::request('preview')) {
             return ifset($sanitized_content);

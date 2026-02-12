@@ -138,31 +138,15 @@
             {* @event frontend_nav.%plugin_id% *}
             {foreach $frontend_nav as $_}{$_}{/foreach}
 
-            <!-- FOLLOW -->
-            {strip}
-            <aside class="connect">
-                {if !empty($theme_settings.facebook_likebox_code)}
+            {*
+                <!-- FOLLOW -->
+                <aside class="connect">
                     <div class="likebox">
-                        {$theme_settings.facebook_likebox_code}
+                         your custom social code widgets
                     </div>
-                {/if}
-                {if !empty($theme_settings.twitter_timeline_code)}
-                    <div class="likebox">
-                        {$theme_settings.twitter_timeline_code}
-                    </div>
-                {/if}
-                {if !empty($theme_settings.vk_widget_code)}
-                    <div class="likebox">
-                        {$theme_settings.vk_widget_code}
-                    </div>
-                {/if}
-                {*
-                <div class="likebox">
-                     your custom social widget
-                </div>
-                *}
-            </aside>
-            {/strip}
+                </aside>
+            *}
+            
         </nav>
     </div>
 </div>

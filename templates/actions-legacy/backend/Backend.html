@@ -72,8 +72,8 @@
         </div>
     </div>
 
-    {if method_exists($wa->installer, 'reviewWidget') && $count_topics['all'] > 10}
-    {$wa->installer->reviewWidget('app/hub')}
+    {if $wa->installer && method_exists($wa->installer, 'reviewWidget') && $count_topics['all'] > 10}
+        {$wa->installer->reviewWidget('app/hub')}
     {/if}
 
     <script>

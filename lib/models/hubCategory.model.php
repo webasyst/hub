@@ -333,7 +333,7 @@ SQL;
     {
         $datetime = wa('hub')->getConfig()->getLastDatetime();
         foreach ($items as &$item) {
-            $item['update_datetime_ts'] = ifset($item['update_datetime_ts'], strtotime($item['update_datetime']));
+            $item['update_datetime_ts'] = ifset($item['update_datetime_ts'], strtotime(ifset($item['update_datetime'], '')));
             $item['is_updated'] = $item['update_datetime_ts'] > $datetime;
         }
         unset($item);

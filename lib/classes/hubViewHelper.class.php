@@ -83,7 +83,7 @@ class hubViewHelper extends waAppViewHelper
             $priority_topics = $topic_categories_model->getPriorityTopicIds(array_keys($cats));
 
             $tc = new hubTopicsCollection('search/priority=1');
-            $topics = $tc->getTopics('*,url,author,params');
+            $topics = $tc->getTopics('*,url,author,params', 0, 200);
             foreach ($cats as &$c) {
                 $c['priority_topics'] = array();
                 if (isset($priority_topics[$c['id']])) {

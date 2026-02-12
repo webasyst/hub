@@ -34,6 +34,9 @@ class hubTopicsCollection
         if (is_array($hash)) {
             $hash = '/id/'.implode(',', $hash);
         }
+        if ($hash === null) {
+            $hash = '';
+        }
         if (substr($hash, 0, 1) == '#') {
             $hash = substr($hash, 1);
         }

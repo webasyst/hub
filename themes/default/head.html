@@ -18,3 +18,13 @@
 <!-- plugin hook: 'frontend_head' -->
 {* @event frontend_head.%plugin_id% *}
 {foreach $frontend_head as $_}{$_}{/foreach}
+
+{if $theme_settings.color_scheme != 'light'}
+    <style>
+        @media (prefers-color-scheme: dark) {
+            i.h-glyph16:not(.selected), i.h-glyph32:not(.selected) {
+                filter: invert(1);
+            }
+        }
+    </style>
+{/if}

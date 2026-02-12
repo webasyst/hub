@@ -58,7 +58,7 @@ class hubFrontendCategoryAction extends hubFrontendAction
         $this->getResponse()->setMeta('keywords', $category['meta_keywords']);
         $this->getResponse()->setMeta('description', $category['meta_description']);
         foreach ($og as $property => $content) {
-            if (strlen($content)) {
+            if (strlen((string)$content)) {
                 $this->getResponse()->setOGMeta('og:'.$property, $content);
             }
         }

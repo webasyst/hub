@@ -121,6 +121,8 @@ class hubFrontendAddAction extends hubFrontendAction
             $data['category_id'] = null;
         }
 
+        $this->hookSaveBefore(null, $errors, $data);
+
         // Prepare HTML for saving or preview
         if ($data['content'] && (!$errors || waRequest::request('preview'))) {
             $sanitized_content = hubHelper::sanitizeHtml($data['content']);
@@ -163,10 +165,46 @@ class hubFrontendAddAction extends hubFrontendAction
                 wa()->getUser()->addToCategory($this->getAppId());
             }
 
+            $this->hookSaveAfter((int) $topic_id, true, $data);
+
             return array('id' => $topic_id, 'topic_url' => $url, 'hub_id' => $this->hub_id);
         } elseif (waRequest::request('preview')) {
             return ifset($sanitized_content);
         }
         return false;
+    }
+
+    protected function hookSaveBefore(?int $topic_id, array &$errors, array &$data)
+    {
+        /**
+         * @event 'frontend_topic_save_before'
+         * 
+         * @param ?int $params['topic_id']    null if it's a new topic
+         * @param bool $params['is_new']      true if topic is new, false if editing existing topic
+         * @param array &$params['errors']    Validation errors as expected by theme template. Plugins may change this to prevent save and turn it into a preview.
+         * @param array &$params['data']      Topic data as came from user. Plugins may change this to affect topic state.
+         */
+        wa('hub')->event('frontend_topic_save_before', ref([
+            'topic_id' => $topic_id,
+            'is_new' => !$topic_id,
+            'errors' => &$errors,
+            'data' => &$data,
+        ]));
+    }
+
+    protected function hookSaveAfter(int $topic_id, bool $is_new, array $data)
+    {
+        /**
+         * @event 'frontend_topic_save_after'
+         * 
+         * @param int $params['topic_id']
+         * @param bool $params['is_new']     true if topic is new, false if editing existing topic
+         * @param array $params['data']      Topic data as came from user (not from DB)
+         */
+        wa('hub')->event('frontend_topic_save_after', ref([
+            'topic_id' => $topic_id,
+            'is_new' => $is_new,
+            'data' => $data,
+        ]));
     }
 }

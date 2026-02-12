@@ -124,8 +124,14 @@ class hubTopicsEditAction extends waViewAction
 
         // Does user have access to hub where topic used to be?
         $access_level = wa()->getUser()->getRights('hub', 'hub.'.$topic['hub_id']);
+        if ($access_level < hubRightConfig::RIGHT_READ_WRITE) {
+            $hub_is_public = !!ifset($hubs, $topic['hub_id'], 'status', false);
+            if ($hub_is_public) {
+                $access_level = hubRightConfig::RIGHT_READ_WRITE;
+            }
+        }
         if ($access_level < hubRightConfig::RIGHT_READ_WRITE || ($access_level == hubRightConfig::RIGHT_READ_WRITE && $topic['contact_id'] != wa()->getUser()->getId())) {
-            if (in_array((int) $access_level, [hubRightConfig::RIGHT_READ, hubRightConfig::RIGHT_READ_WRITE])) {
+            if ($topic['id'] && in_array((int) $access_level, [hubRightConfig::RIGHT_READ, hubRightConfig::RIGHT_READ_WRITE])) {
                 echo '<script> document.location = "'.wa()->getUrl(true).'#/topic/'.$topic['id'].'/"; </script>';
                 exit;
             }

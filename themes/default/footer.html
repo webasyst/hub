@@ -1,7 +1,8 @@
-{* HINT: for the rest of footer links, please see index.html <!-- FOOTER --> section *}
+<div class="copyright small">
+    &copy; {time()|wa_datetime:"Y"}
+    <a href="{$wa_url}">{$wa->accountName()}</a>
+</div>
 
-<!-- plugin hook: 'frontend_footer' -->
+<!-- hub plugin hook: 'frontend_footer' -->
 {* @event frontend_footer.%plugin_id% *}
 {foreach $frontend_footer as $_}{$_}{/foreach}
-
-{include file="`$wa_parent_theme_path`/footer.html" inline}
